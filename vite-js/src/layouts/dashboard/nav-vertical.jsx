@@ -15,9 +15,10 @@ import Scrollbar from 'src/components/scrollbar';
 import { NavSectionVertical } from 'src/components/nav-section';
 
 import { NAV } from '../config-layout';
-import NavUpgrade from '../common/nav-upgrade';
+// import NavUpgrade from '../common/nav-upgrade';
 import { useNavData } from './config-navigation';
 import NavToggleButton from '../common/nav-toggle-button';
+import { Typography } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -48,7 +49,12 @@ export default function NavVertical({ openNav, onCloseNav }) {
         },
       }}
     >
-      <Logo sx={{ mt: 3, ml: 4, mb: 1 }} />
+      <Box display="flex" alignItems="center" sx={{ mt: 3, ml: 4, mb: 1 }}>
+        <Logo />
+        <Typography color="primary" mx={1} fontWeight="500">
+          زيتي أعمال
+        </Typography>
+      </Box>
 
       <NavSectionVertical
         data={navData}
@@ -59,7 +65,7 @@ export default function NavVertical({ openNav, onCloseNav }) {
 
       <Box sx={{ flexGrow: 1 }} />
 
-      <NavUpgrade />
+      {/* <NavUpgrade /> */}
     </Scrollbar>
   );
 

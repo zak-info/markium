@@ -47,7 +47,7 @@ function Container({ children }) {
 
       const loginPath = loginPaths[method];
 
-      const href = `${loginPath}?${searchParams}`;
+      const href = `/auth/jwt/login?${searchParams}`;
 
       router.replace(href);
     } else {
