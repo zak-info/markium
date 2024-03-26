@@ -36,11 +36,6 @@ export default function AppCurrentDownload({ title, subheader, chart, ...other }
   const chartSeries = series.map((i) => i.value);
 
   const chartOptions = useChart({
-    chart: {
-      sparkline: {
-        enabled: true,
-      },
-    },
     colors,
     labels: series.map((i) => i.label),
     stroke: { colors: [theme.palette.background.paper] },
@@ -50,7 +45,6 @@ export default function AppCurrentDownload({ title, subheader, chart, ...other }
       position: 'bottom',
       horizontalAlign: 'center',
     },
-
     tooltip: {
       fillSeriesColor: false,
       y: {
@@ -60,26 +54,55 @@ export default function AppCurrentDownload({ title, subheader, chart, ...other }
         },
       },
     },
+
+    chart: {
+      type: 'bar',
+    },
+    legend: {
+      show: true,
+      showForSingleSeries: true,
+      customLegendItems: ['Actual', 'Mac', 'Windows'],
+      horizontalAlign: 'center',
+      floating: true,
+
+      markers: {
+        fillColors: ['#00E396', '#775DD0'],
+      },
+    },
     plotOptions: {
-      pie: {
-        donut: {
-          size: '90%',
-          labels: {
-            value: {
-              formatter: (value) => fNumber(value),
-            },
-            total: {
-              formatter: (w) => {
-                const sum = w.globals.seriesTotals.reduce((a, b) => a + b, 0);
-                return fNumber(sum);
-              },
-            },
-          },
-        },
+      bar: {
+        horizontal: true,
       },
     },
     ...options,
   });
+
+  const options2 = {
+    chart: {
+      type: 'bar',
+    },
+    plotOptions: {
+      bar: {
+        horizontal: true,
+      },
+    },
+
+    goals: [
+      {
+        name: 'Expected',
+        value: 52,
+        strokeColor: '#775DD0',
+      },
+    ],
+  };
+
+  const w = [
+    {
+      name: 'series-1',
+      data: [49, 60, 70, 91],
+      strokeColor: '#775DD0',
+    },
+  ];
 
   return (
     <Card {...other}>
@@ -87,11 +110,11 @@ export default function AppCurrentDownload({ title, subheader, chart, ...other }
 
       <StyledChart
         dir="ltr"
-        type="donut"
-        series={chartSeries}
+        type="bar"
+        series={w}
         options={chartOptions}
         width="100%"
-        height={280}
+        height={350}
       />
     </Card>
   );

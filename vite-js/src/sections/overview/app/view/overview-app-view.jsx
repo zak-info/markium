@@ -20,12 +20,15 @@ import AppTopRelated from '../app-top-related';
 import AppAreaInstalled from '../app-area-installed';
 import AppWidgetSummary from '../app-widget-summary';
 import AppCurrentDownload from '../app-current-download';
+import LineChart from '../line-chart';
 import AppTopInstalledCountries from '../app-top-installed-countries';
+import { useTranslation } from 'react-i18next';
 
 // ----------------------------------------------------------------------
 
 export default function OverviewAppView() {
   const { user } = useMockedUser();
+  const { t } = useTranslation();
 
   const theme = useTheme();
 
@@ -34,7 +37,7 @@ export default function OverviewAppView() {
   return (
     <Container maxWidth={settings.themeStretch ? false : 'xl'}>
       <Grid container spacing={3}>
-        <Grid xs={12} md={8}>
+        {/* <Grid xs={12} md={8}>
           <AppWelcome
             title={`Welcome back 👋 \n ${user?.displayName}`}
             description="If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything."
@@ -49,11 +52,11 @@ export default function OverviewAppView() {
 
         <Grid xs={12} md={4}>
           <AppFeatured list={_appFeatured} />
-        </Grid>
+        </Grid> */}
 
         <Grid xs={12} md={4}>
           <AppWidgetSummary
-            title="Total Active Users"
+            title={t('vehicles')}
             percent={2.6}
             total={18765}
             chart={{
@@ -64,7 +67,7 @@ export default function OverviewAppView() {
 
         <Grid xs={12} md={4}>
           <AppWidgetSummary
-            title="Total Installed"
+            title={t('claims')}
             percent={0.2}
             total={4876}
             chart={{
@@ -76,7 +79,7 @@ export default function OverviewAppView() {
 
         <Grid xs={12} md={4}>
           <AppWidgetSummary
-            title="Total Downloads"
+            title={t('drivers')}
             percent={-0.1}
             total={678}
             chart={{
@@ -88,7 +91,7 @@ export default function OverviewAppView() {
 
         <Grid xs={12} md={6} lg={4}>
           <AppCurrentDownload
-            title="Current Download"
+            title={t('vehicles')}
             chart={{
               series: [
                 { label: 'Mac', value: 12244 },
@@ -100,52 +103,29 @@ export default function OverviewAppView() {
           />
         </Grid>
 
-        <Grid xs={12} md={6} lg={8}>
-          <AppAreaInstalled
-            title="Area Installed"
-            subheader="(+43%) than last year"
+        <Grid xs={12} md={6} lg={4}>
+          <LineChart
+            title={t('claims')}
             chart={{
-              categories: [
-                'Jan',
-                'Feb',
-                'Mar',
-                'Apr',
-                'May',
-                'Jun',
-                'Jul',
-                'Aug',
-                'Sep',
-                'Oct',
-                'Nov',
-                'Dec',
-              ],
               series: [
-                {
-                  year: '2019',
-                  data: [
-                    {
-                      name: 'Asia',
-                      data: [10, 41, 35, 51, 49, 62, 69, 91, 148, 35, 51, 49],
-                    },
-                    {
-                      name: 'America',
-                      data: [10, 34, 13, 56, 77, 88, 99, 77, 45, 13, 56, 77],
-                    },
-                  ],
-                },
-                {
-                  year: '2020',
-                  data: [
-                    {
-                      name: 'Asia',
-                      data: [51, 35, 41, 10, 91, 69, 62, 148, 91, 69, 62, 49],
-                    },
-                    {
-                      name: 'America',
-                      data: [56, 13, 34, 10, 77, 99, 88, 45, 77, 99, 88, 77],
-                    },
-                  ],
-                },
+                { label: 'Mac', value: 12244 },
+                { label: 'Window', value: 53345 },
+                { label: 'iOS', value: 44313 },
+                { label: 'Android', value: 78343 },
+              ],
+            }}
+          />
+        </Grid>
+
+        <Grid xs={12} md={6} lg={4}>
+          <AppCurrentDownload
+            title={t('drivers')}
+            chart={{
+              series: [
+                { label: 'Mac', value: 12244 },
+                { label: 'Window', value: 53345 },
+                { label: 'iOS', value: 44313 },
+                { label: 'Android', value: 78343 },
               ],
             }}
           />
@@ -153,7 +133,7 @@ export default function OverviewAppView() {
 
         <Grid xs={12} lg={8}>
           <AppNewInvoice
-            title="New Invoice"
+            title={t('allNoti')}
             tableData={_appInvoices}
             tableLabels={[
               { id: 'id', label: 'Invoice ID' },
@@ -166,18 +146,18 @@ export default function OverviewAppView() {
         </Grid>
 
         <Grid xs={12} md={6} lg={4}>
-          <AppTopRelated title="Top Related Applications" list={_appRelated} />
+          <AppTopAuthors title={t('log')} list={_appAuthors} />
         </Grid>
 
-        <Grid xs={12} md={6} lg={4}>
+        {/* <Grid xs={12} md={6} lg={4}>
           <AppTopInstalledCountries title="Top Installed Countries" list={_appInstalled} />
         </Grid>
 
         <Grid xs={12} md={6} lg={4}>
           <AppTopAuthors title="Top Authors" list={_appAuthors} />
-        </Grid>
+        </Grid> */}
 
-        <Grid xs={12} md={6} lg={4}>
+        {/* <Grid xs={12} md={6} lg={4}>
           <Stack spacing={3}>
             <AppWidget
               title="Conversion"
@@ -198,7 +178,7 @@ export default function OverviewAppView() {
               }}
             />
           </Stack>
-        </Grid>
+        </Grid> */}
       </Grid>
     </Container>
   );

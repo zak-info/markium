@@ -98,11 +98,12 @@ export function useNavData() {
           // USER
           {
             title: t('vehicles'),
-            path: paths.dashboard.user.root,
+            path: paths.dashboard.vehicle.root,
             icon: ICONS.user,
             children: [
-              { title: t('maintenance'), path: paths.dashboard.user.root },
-              { title: t('alerts'), path: paths.dashboard.user.list },
+              { title: t('vehiclesList'), path: paths.dashboard.vehicle.root },
+              { title: t('maintenance'), path: paths.dashboard.vehicle.root },
+              { title: t('alerts'), path: paths.dashboard.vehicle.root },
               // { title: t('list'), path: paths.dashboard.user.list },
               // { title: t('create'), path: paths.dashboard.user.new },
               // { title: t('edit'), path: paths.dashboard.user.demo.edit },

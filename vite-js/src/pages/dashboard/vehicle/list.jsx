@@ -1,17 +1,17 @@
 import { Helmet } from 'react-helmet-async';
 
-import { HomeView } from 'src/sections/home/view';
+import { ProductListView } from 'src/sections/vehicles/view';
 
 // ----------------------------------------------------------------------
 
-export default function HomePage() {
+export default function ProductListPage() {
   return (
     <>
       <Helmet>
-        <title> Zaity Plus : Home Page</title>
+        <title> Dashboard: Vehicles List</title>
       </Helmet>
 
-      <HomeView />
+      <ProductListView />
     </>
   );
 }
