@@ -55,7 +55,7 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
       </TableCell>
 
       <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-        <Avatar alt={customer.name} src={customer.avatarUrl} sx={{ mr: 2 }} />
+        {/* <Avatar alt={customer.name} src={customer.avatarUrl} sx={{ mr: 2 }} />
 
         <ListItemText
           primary={customer.name}
@@ -65,7 +65,8 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
             component: 'span',
             color: 'text.disabled',
           }}
-        />
+        /> */}
+        232fs
       </TableCell>
 
       <TableCell>
@@ -81,6 +82,7 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
         />
       </TableCell>
 
+      <TableCell align="center"> {totalQuantity} </TableCell>
       <TableCell align="center"> {totalQuantity} </TableCell>
 
       <TableCell> {fCurrency(subTotal)} </TableCell>

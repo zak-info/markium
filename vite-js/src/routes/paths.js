@@ -137,15 +137,47 @@ export const paths = {
       },
     },
 
+    maintenance: {
+      root: `${ROOTS.DASHBOARD}/maintenance`,
+      notifications: `${ROOTS.DASHBOARD}/maintenance/notifications`,
+      new: `${ROOTS.DASHBOARD}/maintenance/new`,
+      currentInMaintenance: `${ROOTS.DASHBOARD}/maintenance/current-in-maintenance`,
+    },
+
+    drivers: {
+      root: `${ROOTS.DASHBOARD}/drivers`,
+      alerts: `${ROOTS.DASHBOARD}/drivers/alerts`,
+      new: `${ROOTS.DASHBOARD}/drivers/new`,
+    },
+
+    documents: {
+      root: `${ROOTS.DASHBOARD}/documents`,
+      alerts: `${ROOTS.DASHBOARD}/documents/alerts`,
+      new: `${ROOTS.DASHBOARD}/documents/new`,
+    },
+    clients: {
+      root: `${ROOTS.DASHBOARD}/clients`,
+      alerts: `${ROOTS.DASHBOARD}/clients/alerts`,
+      claims: `${ROOTS.DASHBOARD}/clients/claims`,
+      contracts: `${ROOTS.DASHBOARD}/clients/contracts`,
+      new: `${ROOTS.DASHBOARD}/clients/new`,
+    },
+
+    log: {
+      root: `${ROOTS.DASHBOARD}/log`,
+      list: `${ROOTS.DASHBOARD}/log/list`,
+    },
     vehicle: {
       root: `${ROOTS.DASHBOARD}/vehicle`,
       new: `${ROOTS.DASHBOARD}/vehicle/new`,
+      log: `${ROOTS.DASHBOARD}/vehicle/log`,
       details: (id) => `${ROOTS.DASHBOARD}/vehicle/${id}`,
       edit: (id) => `${ROOTS.DASHBOARD}/vehicle/${id}/edit`,
       demo: {
         details: `${ROOTS.DASHBOARD}/vehicle/${MOCK_ID}`,
         edit: `${ROOTS.DASHBOARD}/vehicle/${MOCK_ID}/edit`,
       },
+      inputs: `${ROOTS.DASHBOARD}/vehicle/inputs`,
     },
     invoice: {
       root: `${ROOTS.DASHBOARD}/invoice`,

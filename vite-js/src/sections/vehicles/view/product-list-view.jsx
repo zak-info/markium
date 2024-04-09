@@ -11,6 +11,7 @@ import Container from '@mui/material/Container';
 import TableBody from '@mui/material/TableBody';
 import IconButton from '@mui/material/IconButton';
 import TableContainer from '@mui/material/TableContainer';
+import Grid from '@mui/material/Unstable_Grid2';
 
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
@@ -45,17 +46,11 @@ import OrderTableFiltersResult from '../order-table-filters-result';
 import { useTranslate } from 'src/locales';
 import { RouterLink } from 'src/routes/components';
 
-// ----------------------------------------------------------------------
+import AppNewInvoice from '../app-new-invoice';
 
-const TABLE_HEAD = [
-  { id: 'orderNumber', label: 'Order', width: 116 },
-  { id: 'name', label: 'Customer' },
-  { id: 'createdAt', label: 'Date', width: 140 },
-  { id: 'totalQuantity', label: 'Items', width: 120, align: 'center' },
-  { id: 'totalAmount', label: 'Price', width: 140 },
-  { id: 'status', label: 'Status', width: 110 },
-  { id: '', width: 88 },
-];
+import { _appAuthors, _appRelated, _appFeatured, _appInvoices, _appInstalled } from 'src/_mock';
+
+// ----------------------------------------------------------------------
 
 const defaultFilters = {
   name: '',
@@ -70,6 +65,17 @@ export default function OrderListView() {
   const { enqueueSnackbar } = useSnackbar();
 
   const { t } = useTranslate();
+
+  const TABLE_HEAD = [
+    { id: 'orderNumber', label: t('company'), width: 116 },
+    { id: 'name', label: t('model') },
+    { id: 'createdAt', label: t('plateNumber'), width: 140 },
+    { id: 'totalQuantity', label: t('manufacturingYear'), width: 120, align: 'center' },
+    { id: 'totalAmount', label: t('vehicleCondition'), width: 140 },
+    { id: 'status', label: t('driver'), width: 110 },
+    { id: 'status', label: t('contract'), width: 110 },
+    { id: '', width: 88 },
+  ];
 
   const STATUS_OPTIONS = [
     { value: 'all', label: t('all') },
@@ -155,7 +161,7 @@ export default function OrderListView() {
 
   const handleViewRow = useCallback(
     (id) => {
-      router.push(paths.dashboard.order.details(id));
+      router.push(paths.dashboard.vehicle.details(id));
     },
     [router]
   );
@@ -183,7 +189,7 @@ export default function OrderListView() {
           action={
             <Button
               component={RouterLink}
-              href={paths.dashboard.product.new}
+              href={paths.dashboard.vehicle.new}
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
             >
@@ -198,7 +204,7 @@ export default function OrderListView() {
           }}
         />
 
-        <Card>
+        <Card sx={{ mb: 4 }}>
           <Tabs
             value={filters.status}
             onChange={handleFilterStatus}

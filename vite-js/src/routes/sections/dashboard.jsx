@@ -42,9 +42,41 @@ const BlogNewPostPage = lazy(() => import('src/pages/dashboard/post/new'));
 const BlogEditPostPage = lazy(() => import('src/pages/dashboard/post/edit'));
 // Vehicles
 const VehiclesListPage = lazy(() => import('src/pages/dashboard/vehicle/list'));
+const LogListPage = lazy(() => import('src/pages/dashboard/vehicle/log'));
+const InputsListPage = lazy(() => import('src/pages/dashboard/vehicle/inputs&costs'));
+
 const VehiclePage = lazy(() => import('src/pages/dashboard/vehicle/details'));
 const VehiclesCreatePage = lazy(() => import('src/pages/dashboard/vehicle/new'));
 const VehiclesEditPage = lazy(() => import('src/pages/dashboard/vehicle/edit'));
+
+// Maintains
+const MaintainListPage = lazy(() => import('src/pages/dashboard/maintain/list'));
+const MaintainNewPage = lazy(() => import('src/pages/dashboard/maintain/new'));
+const NotificationsMaintainListPage = lazy(
+  () => import('src/pages/dashboard/maintain/notifications')
+);
+
+// Documents
+const DocumentsListPage = lazy(() => import('src/pages/dashboard/documents/list'));
+const DocumentsNewPage = lazy(() => import('src/pages/dashboard/documents/new'));
+const NotificationDocumentsListView = lazy(() => import('src/pages/dashboard/documents/alerts'));
+const CurrentInMaintainListView = lazy(
+  () => import('src/pages/dashboard/maintain/currentInMaintain')
+);
+
+// JOB
+const DriversDetailsPage = lazy(() => import('src/pages/dashboard/drivers/details'));
+const DriversListPage = lazy(() => import('src/pages/dashboard/drivers/list'));
+const DriversCreatePage = lazy(() => import('src/pages/dashboard/drivers/new'));
+const AlertsDriversCreatePage = lazy(() => import('src/pages/dashboard/drivers/alerts'));
+
+// Clients
+const ClientsListPage = lazy(() => import('src/pages/dashboard/clients/list'));
+const ContractsListPage = lazy(() => import('src/pages/dashboard/clients/contracts'));
+const ClaimsListPage = lazy(() => import('src/pages/dashboard/clients/claims'));
+const ClientsCreatePage = lazy(() => import('src/pages/dashboard/clients/new'));
+const AlertsClientsListPage = lazy(() => import('src/pages/dashboard/clients/alerts'));
+
 // JOB
 const JobDetailsPage = lazy(() => import('src/pages/dashboard/job/details'));
 const JobListPage = lazy(() => import('src/pages/dashboard/job/list'));
@@ -115,11 +147,58 @@ export const dashboardRoutes = [
         children: [
           { element: <VehiclesListPage />, index: true },
           { path: 'list', element: <VehiclesListPage /> },
+          { path: 'log', element: <LogListPage /> },
+          { path: 'inputs', element: <InputsListPage /> },
           { path: ':id', element: <VehiclePage /> },
           { path: 'new', element: <VehiclesCreatePage /> },
           { path: ':id/edit', element: <VehiclesEditPage /> },
         ],
       },
+      {
+        path: 'maintenance',
+        children: [
+          { element: <MaintainListPage />, index: true },
+          { path: 'list', element: <MaintainListPage /> },
+          { path: ':id', element: <VehiclePage /> },
+          { path: 'new', element: <MaintainNewPage /> },
+          { path: 'notifications', element: <NotificationsMaintainListPage /> },
+          { path: 'current-in-maintenance', element: <CurrentInMaintainListView /> },
+        ],
+      },
+
+      {
+        path: 'documents',
+        children: [
+          { element: <DocumentsListPage />, index: true },
+          { path: 'list', element: <DocumentsListPage /> },
+          { path: ':id', element: <VehiclePage /> },
+          { path: 'new', element: <DocumentsNewPage /> },
+          { path: 'alerts', element: <NotificationDocumentsListView /> },
+        ],
+      },
+      {
+        path: 'drivers',
+        children: [
+          { element: <DriversListPage />, index: true },
+          { path: 'list', element: <DriversListPage /> },
+          { path: ':id', element: <DriversDetailsPage /> },
+          { path: 'new', element: <DriversCreatePage /> },
+          { path: 'alerts', element: <AlertsDriversCreatePage /> },
+        ],
+      },
+
+      {
+        path: 'clients',
+        children: [
+          { element: <ClientsListPage />, index: true },
+          { path: 'list', element: <ClientsListPage /> },
+          { path: 'new', element: <ClientsCreatePage /> },
+          { path: 'contracts', element: <ContractsListPage /> },
+          { path: 'claims', element: <ClaimsListPage /> },
+          { path: 'alerts', element: <AlertsClientsListPage /> },
+        ],
+      },
+
       {
         path: 'order',
         children: [
@@ -128,6 +207,7 @@ export const dashboardRoutes = [
           { path: ':id', element: <OrderDetailsPage /> },
         ],
       },
+
       {
         path: 'invoice',
         children: [

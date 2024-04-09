@@ -5,34 +5,37 @@ import { paths } from 'src/routes/paths';
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 
-import ProductNewEditForm from '../product-new-edit-form';
+import UserNewEditForm from '../user-new-edit-form';
+import { useTranslate } from 'src/locales';
 
 // ----------------------------------------------------------------------
 
-export default function ProductCreateView() {
+export default function UserCreateView() {
   const settings = useSettingsContext();
+
+  const { t } = useTranslate();
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
       <CustomBreadcrumbs
-        heading="Create a new product"
+        heading={t('addNewVehicle')}
         links={[
           {
-            name: 'Dashboard',
+            name: t('dashboard'),
             href: paths.dashboard.root,
           },
           {
-            name: 'Product',
-            href: paths.dashboard.product.root,
+            name: t('vehicles'),
+            href: paths.dashboard.vehicle.root,
           },
-          { name: 'New product' },
+          { name: t('addNewVehicle') },
         ]}
         sx={{
           mb: { xs: 3, md: 5 },
         }}
       />
 
-      <ProductNewEditForm />
+      <UserNewEditForm />
     </Container>
   );
 }

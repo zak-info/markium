@@ -43,6 +43,10 @@ const ICONS = {
   ecommerce: icon('ic_ecommerce'),
   analytics: icon('ic_analytics'),
   dashboard: icon('ic_dashboard'),
+  car: <Iconify icon="tabler:car" />,
+  maintenance: <Iconify icon="map:car-repair" />,
+  document: <Iconify icon="carbon:document" />,
+  driver: <Iconify icon="healthicons:truck-driver" />,
 };
 
 // ----------------------------------------------------------------------
@@ -62,31 +66,6 @@ export function useNavData() {
             path: paths.dashboard.root,
             icon: ICONS.dashboard,
           },
-          // {
-          //   title: t('ecommerce'),
-          //   path: paths.dashboard.general.ecommerce,
-          //   icon: ICONS.ecommerce,
-          // },
-          // {
-          //   title: t('analytics'),
-          //   path: paths.dashboard.general.analytics,
-          //   icon: ICONS.analytics,
-          // },
-          // {
-          //   title: t('banking'),
-          //   path: paths.dashboard.general.banking,
-          //   icon: ICONS.banking,
-          // },
-          // {
-          //   title: t('booking'),
-          //   path: paths.dashboard.general.booking,
-          //   icon: ICONS.booking,
-          // },
-          // {
-          //   title: t('file'),
-          //   path: paths.dashboard.general.file,
-          //   icon: ICONS.file,
-          // },
         ],
       },
 
@@ -99,11 +78,38 @@ export function useNavData() {
           {
             title: t('vehicles'),
             path: paths.dashboard.vehicle.root,
-            icon: ICONS.user,
+            icon: ICONS.car,
             children: [
               { title: t('vehiclesList'), path: paths.dashboard.vehicle.root },
-              { title: t('maintenance'), path: paths.dashboard.vehicle.root },
-              { title: t('alerts'), path: paths.dashboard.vehicle.root },
+              { title: t('logAndNotification'), path: paths.dashboard.vehicle.log },
+              { title: t('costAndInput'), path: paths.dashboard.vehicle.inputs },
+            ],
+          },
+
+          // USER
+          {
+            title: t('maintenance'),
+            path: paths.dashboard.maintenance.root,
+            icon: ICONS.maintenance,
+            children: [
+              { title: t('maintainList'), path: paths.dashboard.maintenance.root },
+              { title: t('allNoti'), path: paths.dashboard.maintenance.notifications },
+              { title: t('inMaintenance'), path: paths.dashboard.maintenance.currentInMaintenance },
+              // { title: t('list'), path: paths.dashboard.user.list },
+              // { title: t('create'), path: paths.dashboard.user.new },
+              // { title: t('edit'), path: paths.dashboard.user.demo.edit },
+              // { title: t('account'), path: paths.dashboard.user.account },
+            ],
+          },
+
+          // USER
+          {
+            title: t('documents'),
+            path: paths.dashboard.documents.root,
+            icon: ICONS.file,
+            children: [
+              { title: t('documents'), path: paths.dashboard.documents.root },
+              { title: t('allNoti'), path: paths.dashboard.documents.alerts },
               // { title: t('list'), path: paths.dashboard.user.list },
               // { title: t('create'), path: paths.dashboard.user.new },
               // { title: t('edit'), path: paths.dashboard.user.demo.edit },
@@ -114,10 +120,12 @@ export function useNavData() {
           // PRODUCT
           {
             title: t('drivers'),
-            path: paths.dashboard.product.root,
-            icon: ICONS.product,
+            path: paths.dashboard.drivers.root,
+            icon: ICONS.driver,
             children: [
-              { title: t('alerts'), path: paths.dashboard.product.root },
+              { title: t('driversList'), path: paths.dashboard.drivers.root },
+              { title: t('alerts'), path: paths.dashboard.drivers.alerts },
+              { title: t('salaries'), path: paths.dashboard.drivers.root },
               // {
               //   title: t('details'),
               //   path: paths.dashboard.product.demo.details,
@@ -130,104 +138,15 @@ export function useNavData() {
           // ORDER
           {
             title: t('clients'),
-            path: paths.dashboard.order.root,
-            icon: ICONS.order,
+            path: paths.dashboard.clients.root,
+            icon: ICONS.user,
             children: [
-              { title: t('contracts'), path: paths.dashboard.order.root },
-              { title: t('claims'), path: paths.dashboard.order.demo.details },
+              { title: t('clients'), path: paths.dashboard.clients.root },
+              { title: t('alerts'), path: paths.dashboard.clients.alerts },
+              { title: t('contracts'), path: paths.dashboard.clients.contracts },
+              { title: t('claims'), path: paths.dashboard.clients.claims },
             ],
           },
-
-          // // INVOICE
-          // {
-          //   title: t('invoice'),
-          //   path: paths.dashboard.invoice.root,
-          //   icon: ICONS.invoice,
-          //   children: [
-          //     { title: t('list'), path: paths.dashboard.invoice.root },
-          //     {
-          //       title: t('details'),
-          //       path: paths.dashboard.invoice.demo.details,
-          //     },
-          //     { title: t('create'), path: paths.dashboard.invoice.new },
-          //     { title: t('edit'), path: paths.dashboard.invoice.demo.edit },
-          //   ],
-          // },
-
-          // // BLOG
-          // {
-          //   title: t('blog'),
-          //   path: paths.dashboard.post.root,
-          //   icon: ICONS.blog,
-          //   children: [
-          //     { title: t('list'), path: paths.dashboard.post.root },
-          //     { title: t('details'), path: paths.dashboard.post.demo.details },
-          //     { title: t('create'), path: paths.dashboard.post.new },
-          //     { title: t('edit'), path: paths.dashboard.post.demo.edit },
-          //   ],
-          // },
-
-          // JOB
-          // {
-          //   title: t('job'),
-          //   path: paths.dashboard.job.root,
-          //   icon: ICONS.job,
-          //   children: [
-          //     { title: t('list'), path: paths.dashboard.job.root },
-          //     { title: t('details'), path: paths.dashboard.job.demo.details },
-          //     { title: t('create'), path: paths.dashboard.job.new },
-          //     { title: t('edit'), path: paths.dashboard.job.demo.edit },
-          //   ],
-          // },
-
-          // // TOUR
-          // {
-          //   title: t('tour'),
-          //   path: paths.dashboard.tour.root,
-          //   icon: ICONS.tour,
-          //   children: [
-          //     { title: t('list'), path: paths.dashboard.tour.root },
-          //     { title: t('details'), path: paths.dashboard.tour.demo.details },
-          //     { title: t('create'), path: paths.dashboard.tour.new },
-          //     { title: t('edit'), path: paths.dashboard.tour.demo.edit },
-          //   ],
-          // },
-
-          // // FILE MANAGER
-          // {
-          //   title: t('file_manager'),
-          //   path: paths.dashboard.fileManager,
-          //   icon: ICONS.folder,
-          // },
-
-          // // MAIL
-          // {
-          //   title: t('mail'),
-          //   path: paths.dashboard.mail,
-          //   icon: ICONS.mail,
-          //   info: <Label color="error">+32</Label>,
-          // },
-
-          // // CHAT
-          // {
-          //   title: t('chat'),
-          //   path: paths.dashboard.chat,
-          //   icon: ICONS.chat,
-          // },
-
-          // CALENDAR
-          // {
-          //   title: t('calendar'),
-          //   path: paths.dashboard.calendar,
-          //   icon: ICONS.calendar,
-          // },
-
-          // // KANBAN
-          // {
-          //   title: t('kanban'),
-          //   path: paths.dashboard.kanban,
-          //   icon: ICONS.kanban,
-          // },
         ],
       },
 
@@ -235,6 +154,12 @@ export function useNavData() {
       {
         subheader: t(t('other_cases')),
         items: [
+          {
+            title: t('reports'),
+            path: paths.dashboard.permission,
+            icon: ICONS.blog,
+            roles: ['admin', 'manager'],
+          },
           {
             // default roles : All roles can see this entry.
             // roles: ['user'] Only users can see this item.
@@ -246,74 +171,6 @@ export function useNavData() {
             icon: ICONS.lock,
             roles: ['admin', 'manager'],
           },
-          // {
-          //   title: t('menu_level'),
-          //   path: '#/dashboard/menu_level',
-          //   icon: ICONS.menuItem,
-          //   children: [
-          //     {
-          //       title: t('menu_level_1a'),
-          //       path: '#/dashboard/menu_level/menu_level_1a',
-          //     },
-          //     {
-          //       title: t('menu_level_1b'),
-          //       path: '#/dashboard/menu_level/menu_level_1b',
-          //       children: [
-          //         {
-          //           title: t('menu_level_2a'),
-          //           path: '#/dashboard/menu_level/menu_level_1b/menu_level_2a',
-          //         },
-          //         {
-          //           title: t('menu_level_2b'),
-          //           path: '#/dashboard/menu_level/menu_level_1b/menu_level_2b',
-          //           children: [
-          //             {
-          //               title: t('menu_level_3a'),
-          //               path: '#/dashboard/menu_level/menu_level_1b/menu_level_2b/menu_level_3a',
-          //             },
-          //             {
-          //               title: t('menu_level_3b'),
-          //               path: '#/dashboard/menu_level/menu_level_1b/menu_level_2b/menu_level_3b',
-          //             },
-          //           ],
-          //         },
-          //       ],
-          //     },
-          //   ],
-          // },
-          // {
-          //   title: t('item_disabled'),
-          //   path: '#disabled',
-          //   icon: ICONS.disabled,
-          //   disabled: true,
-          // },
-          // {
-          //   title: t('item_label'),
-          //   path: '#label',
-          //   icon: ICONS.label,
-          //   info: (
-          //     <Label color="info" startIcon={<Iconify icon="solar:bell-bing-bold-duotone" />}>
-          //       NEW
-          //     </Label>
-          //   ),
-          // },
-          // {
-          //   title: t('item_caption'),
-          //   path: '#caption',
-          //   icon: ICONS.menuItem,
-          //   caption:
-          //     'Quisque malesuada placerat nisl. In hac habitasse platea dictumst. Cras id dui. Pellentesque commodo eros a enim. Morbi mollis tellus ac sapien.',
-          // },
-          // {
-          //   title: t('item_external_link'),
-          //   path: 'https://www.google.com/',
-          //   icon: ICONS.external,
-          // },
-          // {
-          //   title: t('blank'),
-          //   path: paths.dashboard.blank,
-          //   icon: ICONS.blank,
-          // },
         ],
       },
     ],

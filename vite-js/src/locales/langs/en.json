@@ -29,6 +29,14 @@
   "allNoti": "Notifications",
   "vehiclesList": "Vehicles List",
   "log": "Transaction log",
+  "addMaintain": "Add Maintenance",
+  "maintainList": "Maintenance List",
+  "logAndNotification": "History and notifications",
+  "costAndInput": "Costs and inputs",
+  "inMaintenance": "Currently in maintenance",
+  "documents": "Documents",
+  "salaries": "Salaries",
+  "reports": "Reports",
   "cards": "cards",
   "blank": "blank",
   "order": "order",
@@ -68,5 +76,21 @@
   "upgrade_to_pro": "Upgrade to Pro",
   "demo": {
     "title": "English"
-  }
+  },
+  "company": "Company",
+  "model": "Modal",
+  "manufacturingYear": "Manufacturing Year",
+  "plateNumber": "Plate Number",
+  "vehicleCondition": "Vehicle Condition",
+  "driver": "Driver",
+  "contract": "Contract",
+  "search": "Search",
+  "addNewVehicle": "Add New Vehicle",
+  "structureNo": "Structure No",
+  "serialNumber": "Serial Number",
+  "vehcileColor": "Vehicle Color",
+  "numberOfPassengers": "Number of Passengers",
+  "specifications": "Specifications",
+  "typeOfLicense": "Type of license",
+  "workSite": "Work Site"
 }
