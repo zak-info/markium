@@ -12,8 +12,8 @@ import Switch from '@mui/material/Switch';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
-import FormControlLabel from '@mui/material/FormControlLabel';
-
+import Divider from '@mui/material/Divider';
+import MenuItem from '@mui/material/MenuItem';
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
@@ -28,52 +28,69 @@ import FormProvider, {
   RHFTextField,
   RHFUploadAvatar,
   RHFAutocomplete,
+  RHFSelect,
 } from 'src/components/hook-form';
 
 import { useTranslate } from 'src/locales';
 
+import { useGetCompany } from 'src/api/company';
+import { createCar, editCar } from 'src/api/car';
+import { useValues } from 'src/api/utils';
+
 // ----------------------------------------------------------------------
 
-export default function UserNewEditForm({ currentUser }) {
+export default function UserNewEditForm({ currentCar }) {
   const router = useRouter();
 
+  const { company } = useGetCompany();
+
+  const { data } = useValues();
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslate();
 
   const NewUserSchema = Yup.object().shape({
-    name: Yup.string().required('Name is required'),
-    email: Yup.string().required('Email is required').email('Email must be a valid email address'),
-    phoneNumber: Yup.string().required('Phone number is required'),
-    address: Yup.string().required('Address is required'),
-    country: Yup.string().required('Country is required'),
-    company: Yup.string().required('Company is required'),
-    state: Yup.string().required('State is required'),
-    city: Yup.string().required('City is required'),
-    role: Yup.string().required('Role is required'),
-    zipCode: Yup.string().required('Zip code is required'),
-    avatarUrl: Yup.mixed().nullable().required('Avatar is required'),
-    // not required
-    status: Yup.string(),
-    isVerified: Yup.boolean(),
+    production_year: Yup.number().required('Production year is required').positive().integer(),
+    plat_number: Yup.string().required('Plate number is required'),
+    chassis_number: Yup.string().required('Chassis number is required'),
+    vin: Yup.string().required('VIN is required'),
+    passengers_capacity: Yup.number()
+      .required('Passenger capacity is required')
+      .positive()
+      .integer(),
+    odometer: Yup.number().required('Odometer is required').positive(),
+    depreciation: Yup.number()
+      .required('Depreciation is required')
+      .min(0, 'Depreciation cannot be negative')
+      .test(
+        'is-decimal',
+        'Depreciation must be a decimal number with up to 2 decimal places',
+        (value) => value !== undefined && /^\d+(\.\d{1,2})?$/.test(value)
+      ),
+    car_model_id: Yup.string().required('Car model is required'),
+    color_id: Yup.string().required('Color is required'),
+    state_id: Yup.string().required('Location is required'),
+    car_company_id: Yup.string().required('Car company is required'),
+    spec_id: Yup.string().required('Specification is required'),
+    license_type_id: Yup.string().required('License type is required'),
   });
 
   const defaultValues = useMemo(
     () => ({
-      name: currentUser?.name || '',
-      city: currentUser?.city || '',
-      role: currentUser?.role || '',
-      email: currentUser?.email || '',
-      state: currentUser?.state || '',
-      status: currentUser?.status || '',
-      address: currentUser?.address || '',
-      country: currentUser?.country || '',
-      zipCode: currentUser?.zipCode || '',
-      company: currentUser?.company || '',
-      avatarUrl: currentUser?.avatarUrl || null,
-      phoneNumber: currentUser?.phoneNumber || '',
-      isVerified: currentUser?.isVerified || true,
+      production_year: currentCar?.production_year || '', // Default to current year
+      plat_number: currentCar?.plat_number || '',
+      chassis_number: currentCar?.chassis_number || '',
+      vin: currentCar?.vin || '',
+      passengers_capacity: currentCar?.passengers_capacity || null, // Default to 1 passenger
+      odometer: currentCar?.odometer || null, // Default to 0
+      depreciation: currentCar?.depreciation || null, // Default to 0
+      car_model_id: currentCar?.car_model_id || '',
+      color_id: currentCar?.color_id || '',
+      state_id: currentCar?.state_id || '',
+      car_company_id: currentCar?.company?.id || '',
+      spec_id: currentCar?.spec_id || '',
+      license_type_id: currentCar?.license_type_id || '',
     }),
-    [currentUser]
+    [currentCar]
   );
 
   const methods = useForm({
@@ -87,45 +104,26 @@ export default function UserNewEditForm({ currentUser }) {
     control,
     setValue,
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, errors },
   } = methods;
-
-  const values = watch();
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      reset();
-      enqueueSnackbar(currentUser ? 'Update success!' : 'Create success!');
-      router.push(paths.dashboard.user.list);
-      console.info('DATA', data);
+      const response = currentCar?.id ? await editCar(currentCar?.id, data) : await createCar(data);
+      enqueueSnackbar(response?.data?.message);
+
+      router.push(paths.dashboard.vehicle.root);
     } catch (error) {
       console.error(error);
     }
   });
 
-  const handleDrop = useCallback(
-    (acceptedFiles) => {
-      const file = acceptedFiles[0];
-
-      const newFile = Object.assign(file, {
-        preview: URL.createObjectURL(file),
-      });
-
-      if (file) {
-        setValue('avatarUrl', newFile, { shouldValidate: true });
-      }
-    },
-    [setValue]
-  );
-
-  const options = ['نيسان', 'تويتا'];
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>
       <Grid container spacing={3}>
         {/* <Grid xs={12} md={4}>
           <Card sx={{ pt: 10, pb: 5, px: 3 }}>
-            {currentUser && (
+            {currentCar && (
               <Label
                 color={
                   (values.status === 'active' && 'success') ||
@@ -161,7 +159,7 @@ export default function UserNewEditForm({ currentUser }) {
               />
             </Box>
 
-            {currentUser && (
+            {currentCar && (
               <FormControlLabel
                 labelPlacement="start"
                 control={
@@ -209,7 +207,7 @@ export default function UserNewEditForm({ currentUser }) {
               sx={{ mx: 0, width: 1, justifyContent: 'space-between' }}
             />
 
-            {currentUser && (
+            {currentCar && (
               <Stack justifyContent="center" alignItems="center" sx={{ mt: 3 }}>
                 <Button variant="soft" color="error">
                   Delete User
@@ -230,23 +228,70 @@ export default function UserNewEditForm({ currentUser }) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <RHFAutocomplete
-                name="name"
-                label={t('company')}
-                options={options}
-                getOptionLabel={(option) => option}
-              />
-              <RHFTextField name="email" label={t('model')} />
-              <RHFTextField name="phoneNumber" label={t('manufacturingYear')} />
+              <RHFSelect name="car_company_id" label={t('company')}>
+                <Divider sx={{ borderStyle: 'dashed' }} />
+                {company.map((option) => (
+                  <MenuItem key={option.value} value={option?.id}>
+                    {option?.name}
+                  </MenuItem>
+                ))}
+              </RHFSelect>
+              <RHFTextField name="production_year" label={t('manufacturingYear')} />
 
-              <RHFTextField name="state" label={t('plateNumber')} />
-              <RHFTextField name="state" label={t('structureNo')} />
-              <RHFTextField name="state" label={t('serialNumber')} />
-              <RHFTextField name="state" label={t('vehcileColor')} />
-              <RHFTextField name="state" label={t('numberOfPassengers')} />
-              <RHFTextField name="state" label={t('specifications')} />
-              <RHFTextField name="state" label={t('typeOfLicense')} />
-              <RHFTextField name="state" label={t('workSite')} />
+              <RHFSelect name="car_model_id" label={t('model')}>
+                <Divider sx={{ borderStyle: 'dashed' }} />
+                {data?.car_model?.map((option) => (
+                  <MenuItem key={option.name} value={option?.id}>
+                    {option?.name}
+                  </MenuItem>
+                ))}
+              </RHFSelect>
+              <RHFTextField name="plat_number" label={t('plateNumber')} />
+
+              <RHFTextField name="chassis_number" label={t('structureNo')} />
+
+              <RHFTextField name="vin" label={t('serialNumber')} />
+              <RHFTextField name="odometer" label={t('odometer')} />
+              <RHFTextField name="depreciation" label={t('depreciation')} />
+              <RHFTextField
+                type="number"
+                name="passengers_capacity"
+                label={t('numberOfPassengers')}
+              />
+              <RHFSelect name="color_id" label={t('vehcileColor')}>
+                <Divider sx={{ borderStyle: 'dashed' }} />
+                {data?.color?.map((option) => (
+                  <MenuItem key={option?.translations?.[0]?.name} value={option?.id}>
+                    {option?.translations?.[0]?.name}
+                  </MenuItem>
+                ))}
+              </RHFSelect>
+
+              <RHFSelect name="spec_id" label={t('specifications')}>
+                <Divider sx={{ borderStyle: 'dashed' }} />
+                {data?.spec?.map((option) => (
+                  <MenuItem key={option?.name} value={option?.id}>
+                    {option?.name}
+                  </MenuItem>
+                ))}
+              </RHFSelect>
+              <RHFSelect name="license_type_id" label={t('typeOfLicense')}>
+                <Divider sx={{ borderStyle: 'dashed' }} />
+                {data?.license_type?.map((option) => (
+                  <MenuItem key={option?.name} value={option?.id}>
+                    {option?.name}
+                  </MenuItem>
+                ))}
+              </RHFSelect>
+
+              <RHFSelect name="state_id" label={t('workSite')}>
+                <Divider sx={{ borderStyle: 'dashed' }} />
+                {data?.state?.map((option) => (
+                  <MenuItem key={option?.name} value={option?.id}>
+                    {option?.name}
+                  </MenuItem>
+                ))}
+              </RHFSelect>
 
               {/* <RHFAutocomplete
                 name="country"
@@ -260,7 +305,7 @@ export default function UserNewEditForm({ currentUser }) {
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                {!currentUser ? t('addNewVehicle') : 'Save Changes'}
+                {!currentCar ? t('addNewVehicle') : t('saveChange')}
               </LoadingButton>
             </Stack>
           </Card>
@@ -271,5 +316,5 @@ export default function UserNewEditForm({ currentUser }) {
 }
 
 UserNewEditForm.propTypes = {
-  currentUser: PropTypes.object,
+  currentCar: PropTypes.object,
 };

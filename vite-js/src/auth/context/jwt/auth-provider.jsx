@@ -1,10 +1,12 @@
+'use client';
+
 import PropTypes from 'prop-types';
 import { useMemo, useEffect, useReducer, useCallback } from 'react';
 
 import axios, { endpoints } from 'src/utils/axios';
 
 import { AuthContext } from './auth-context';
-import { setSession, isValidToken } from './utils';
+import { setSession, isValidToken, jwtDecode } from './utils';
 
 // ----------------------------------------------------------------------
 /**
@@ -51,29 +53,30 @@ const reducer = (state, action) => {
 
 const STORAGE_KEY = 'accessToken';
 
+const USER_STORAGE_KEY = 'zaity-user-info';
+
 export function AuthProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const initialize = useCallback(async () => {
     try {
-      const accessToken = sessionStorage.getItem(STORAGE_KEY);
+      const token = localStorage.getItem(STORAGE_KEY);
+      if (token) {
+        setSession(token);
 
-      if (accessToken && isValidToken(accessToken)) {
-        setSession(accessToken);
-
-        const response = await axios.get(endpoints.auth.me);
-
-        const { user } = response.data;
-
-        dispatch({
-          type: 'INITIAL',
-          payload: {
-            user: {
-              ...user,
-              accessToken,
+        const getUserInfo = localStorage.getItem(USER_STORAGE_KEY);
+        if (getUserInfo !== null) {
+          const user = JSON.parse(getUserInfo);
+          dispatch({
+            type: 'INITIAL',
+            payload: {
+              user: {
+                ...user,
+                token,
+              },
             },
-          },
-        });
+          });
+        }
       } else {
         dispatch({
           type: 'INITIAL',
@@ -83,7 +86,6 @@ export function AuthProvider({ children }) {
         });
       }
     } catch (error) {
-      console.error(error);
       dispatch({
         type: 'INITIAL',
         payload: {
@@ -98,24 +100,24 @@ export function AuthProvider({ children }) {
   }, [initialize]);
 
   // LOGIN
-  const login = useCallback(async (email, password) => {
-    const data = {
-      email,
+  const login = useCallback(async (username, password) => {
+    const body = {
+      username,
       password,
     };
+    const response = await axios.post(endpoints.auth.login, body);
 
-    const response = await axios.post(endpoints.auth.login, data);
+    const { token, user } = response.data.data;
 
-    const { accessToken, user } = response.data;
-
-    setSession(accessToken);
+    setSession(token);
+    localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
 
     dispatch({
       type: 'LOGIN',
       payload: {
         user: {
           ...user,
-          accessToken,
+          token,
         },
       },
     });
@@ -132,16 +134,16 @@ export function AuthProvider({ children }) {
 
     const response = await axios.post(endpoints.auth.register, data);
 
-    const { accessToken, user } = response.data;
+    const { token, user } = response.data;
 
-    sessionStorage.setItem(STORAGE_KEY, accessToken);
+    localStorage.setItem(STORAGE_KEY, token);
 
     dispatch({
       type: 'REGISTER',
       payload: {
         user: {
           ...user,
-          accessToken,
+          token,
         },
       },
     });
@@ -150,6 +152,7 @@ export function AuthProvider({ children }) {
   // LOGOUT
   const logout = useCallback(async () => {
     setSession(null);
+    localStorage.removeItem(USER_STORAGE_KEY);
     dispatch({
       type: 'LOGOUT',
     });

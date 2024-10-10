@@ -55,6 +55,7 @@ const MaintainNewPage = lazy(() => import('src/pages/dashboard/maintain/new'));
 const NotificationsMaintainListPage = lazy(
   () => import('src/pages/dashboard/maintain/notifications')
 );
+const MaintainDetailsPage = lazy(() => import('src/pages/dashboard/maintain/details'));
 
 // Documents
 const DocumentsListPage = lazy(() => import('src/pages/dashboard/documents/list'));
@@ -72,11 +73,13 @@ const AlertsDriversCreatePage = lazy(() => import('src/pages/dashboard/drivers/a
 
 // Clients
 const ClientsListPage = lazy(() => import('src/pages/dashboard/clients/list'));
+const ClientsDetailsPage = lazy(() => import('src/pages/dashboard/clients/clients-details'));
 const ContractsListPage = lazy(() => import('src/pages/dashboard/clients/contracts'));
 const ClaimsListPage = lazy(() => import('src/pages/dashboard/clients/claims'));
 const ClientsCreatePage = lazy(() => import('src/pages/dashboard/clients/new'));
 const AlertsClientsListPage = lazy(() => import('src/pages/dashboard/clients/alerts'));
 
+const ContractsDetailsPage = lazy(() => import('src/pages/dashboard/clients/contracts-details'));
 // JOB
 const JobDetailsPage = lazy(() => import('src/pages/dashboard/job/details'));
 const JobListPage = lazy(() => import('src/pages/dashboard/job/list'));
@@ -159,7 +162,7 @@ export const dashboardRoutes = [
         children: [
           { element: <MaintainListPage />, index: true },
           { path: 'list', element: <MaintainListPage /> },
-          { path: ':id', element: <VehiclePage /> },
+          { path: ':id', element: <MaintainDetailsPage /> },
           { path: 'new', element: <MaintainNewPage /> },
           { path: 'notifications', element: <NotificationsMaintainListPage /> },
           { path: 'current-in-maintenance', element: <CurrentInMaintainListView /> },
@@ -196,6 +199,8 @@ export const dashboardRoutes = [
           { path: 'contracts', element: <ContractsListPage /> },
           { path: 'claims', element: <ClaimsListPage /> },
           { path: 'alerts', element: <AlertsClientsListPage /> },
+          { path: 'contracts/:id', element: <ContractsDetailsPage /> },
+          { path: ':id', element: <ClientsDetailsPage /> },
         ],
       },
 

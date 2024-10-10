@@ -11,7 +11,6 @@ import Container from '@mui/material/Container';
 import TableBody from '@mui/material/TableBody';
 import IconButton from '@mui/material/IconButton';
 import TableContainer from '@mui/material/TableContainer';
-import Grid from '@mui/material/Unstable_Grid2';
 
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
@@ -19,8 +18,6 @@ import { useRouter } from 'src/routes/hooks';
 import { useBoolean } from 'src/hooks/use-boolean';
 
 import { isAfter, isBetween } from 'src/utils/format-time';
-
-import { _orders, ORDER_STATUS_OPTIONS } from 'src/_mock';
 
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
@@ -46,10 +43,7 @@ import OrderTableFiltersResult from '../order-table-filters-result';
 import { useTranslate } from 'src/locales';
 import { RouterLink } from 'src/routes/components';
 
-import AppNewInvoice from '../app-new-invoice';
-
-import { _appAuthors, _appRelated, _appFeatured, _appInvoices, _appInstalled } from 'src/_mock';
-
+import { useGetCar, deleteCar } from 'src/api/car';
 // ----------------------------------------------------------------------
 
 const defaultFilters = {
@@ -66,20 +60,22 @@ export default function OrderListView() {
 
   const { t } = useTranslate();
 
+  const { car, mutate } = useGetCar();
+
   const TABLE_HEAD = [
     { id: 'orderNumber', label: t('company'), width: 116 },
-    { id: 'name', label: t('model') },
+    { id: 'name', label: t('model'), width: 140 },
     { id: 'createdAt', label: t('plateNumber'), width: 140 },
     { id: 'totalQuantity', label: t('manufacturingYear'), width: 120, align: 'center' },
     { id: 'totalAmount', label: t('vehicleCondition'), width: 140 },
     { id: 'status', label: t('driver'), width: 110 },
-    { id: 'status', label: t('contract'), width: 110 },
+    { id: 'status2', label: t('contract'), width: 110 },
     { id: '', width: 88 },
   ];
 
   const STATUS_OPTIONS = [
     { value: 'all', label: t('all') },
-    { value: 'completed', label: t('available') },
+    { value: 'available', label: t('available') },
     { value: 'pending', label: t('underProcessing') },
     { value: 'refunded', label: t('rented') },
     { value: 'cancelled', label: t('maintain') },
@@ -93,14 +89,14 @@ export default function OrderListView() {
 
   const confirm = useBoolean();
 
-  const [tableData, setTableData] = useState(_orders);
+  const [tableData, setTableData] = useState(car);
 
   const [filters, setFilters] = useState(defaultFilters);
 
   const dateError = isAfter(filters.startDate, filters.endDate);
 
   const dataFiltered = applyFilter({
-    inputData: tableData,
+    inputData: car,
     comparator: getComparator(table.order, table.orderBy),
     filters,
     dateError,
@@ -135,13 +131,10 @@ export default function OrderListView() {
 
   const handleDeleteRow = useCallback(
     (id) => {
-      const deleteRow = tableData.filter((row) => row.id !== id);
+      deleteCar(id);
+      mutate();
 
       enqueueSnackbar('Delete success!');
-
-      setTableData(deleteRow);
-
-      table.onUpdatePageDeleteRow(dataInPage.length);
     },
     [dataInPage.length, enqueueSnackbar, table, tableData]
   );
@@ -162,6 +155,13 @@ export default function OrderListView() {
   const handleViewRow = useCallback(
     (id) => {
       router.push(paths.dashboard.vehicle.details(id));
+    },
+    [router]
+  );
+
+  const handleEditRow = useCallback(
+    (id) => {
+      router.push(paths.dashboard.vehicle.edit(id));
     },
     [router]
   );
@@ -225,15 +225,15 @@ export default function OrderListView() {
                       ((tab.value === 'all' || tab.value === filters.status) && 'filled') || 'soft'
                     }
                     color={
-                      (tab.value === 'completed' && 'success') ||
+                      (tab.value === 'available' && 'success') ||
                       (tab.value === 'pending' && 'warning') ||
                       (tab.value === 'cancelled' && 'error') ||
                       'default'
                     }
                   >
-                    {['completed', 'pending', 'cancelled', 'refunded'].includes(tab.value)
-                      ? tableData.filter((user) => user.status === tab.value).length
-                      : tableData.length}
+                    {['available', 'pending', 'cancelled', 'refunded'].includes(tab.value)
+                      ? car.filter((user) => user.status?.key === tab.value).length
+                      : car.length}
                   </Label>
                 }
               />
@@ -310,6 +310,7 @@ export default function OrderListView() {
                         onSelectRow={() => table.onSelectRow(row.id)}
                         onDeleteRow={() => handleDeleteRow(row.id)}
                         onViewRow={() => handleViewRow(row.id)}
+                        onEditRow={() => handleEditRow(row.id)}
                       />
                     ))}
 
@@ -380,15 +381,12 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
 
   if (name) {
     inputData = inputData.filter(
-      (order) =>
-        order.orderNumber.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.customer.name.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.customer.email.toLowerCase().indexOf(name.toLowerCase()) !== -1
+      (order) => order.company.name.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
   }
 
   if (status !== 'all') {
-    inputData = inputData.filter((order) => order.status === status);
+    inputData = inputData.filter((order) => order.status?.key === status);
   }
 
   if (!dateError) {

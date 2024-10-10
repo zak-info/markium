@@ -56,6 +56,8 @@ export default function UserTableRow({ row, selected, onEditRow, onSelectRow, on
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{company}</TableCell>
 
         <TableCell sx={{ whiteSpace: 'nowrap' }}>{role}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{role}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{role}</TableCell>
 
         <TableCell>
           <Label
@@ -71,7 +73,7 @@ export default function UserTableRow({ row, selected, onEditRow, onSelectRow, on
           </Label>
         </TableCell>
 
-        <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
+        {/* <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
           <Tooltip title="Quick Edit" placement="top" arrow>
             <IconButton color={quickEdit.value ? 'inherit' : 'default'} onClick={quickEdit.onTrue}>
               <Iconify icon="solar:pen-bold" />
@@ -81,7 +83,7 @@ export default function UserTableRow({ row, selected, onEditRow, onSelectRow, on
           <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
             <Iconify icon="eva:more-vertical-fill" />
           </IconButton>
-        </TableCell>
+        </TableCell> */}
       </TableRow>
 
       <UserQuickEditForm currentUser={row} open={quickEdit.value} onClose={quickEdit.onFalse} />

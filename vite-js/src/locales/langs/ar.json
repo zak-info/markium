@@ -149,5 +149,14 @@
   "payingOff": "الدفع",
   "city": "المدينة",
   "vehicleDetails": "تفاصيل المركبة",
-  "depreciation": "الإهلاك"
+  "depreciation": "الإهلاك",
+  "login": "تسجيل الدخول",
+  "password": "كلمة المرور",
+  "email": "البريد الإلكتروني",
+  "forgotPassword": "هل نسيت كلمة السر",
+  "delete": " حذف",
+  "view": " عرض",
+  "username": "اسم المستخدم",
+  "odometer": "عداد المسافات في السيارة",
+  "saveChange": "حفظ التغييرات"
 }

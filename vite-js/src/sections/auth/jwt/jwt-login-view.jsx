@@ -11,6 +11,8 @@ import Typography from '@mui/material/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 import InputAdornment from '@mui/material/InputAdornment';
 
+import { useTranslation } from 'react-i18next';
+
 import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
 import { useRouter, useSearchParams } from 'src/routes/hooks';
@@ -32,20 +34,38 @@ export default function JwtLoginView() {
 
   const [errorMsg, setErrorMsg] = useState('');
 
+  const { t } = useTranslation();
+
   const searchParams = useSearchParams();
 
   const returnTo = searchParams.get('returnTo');
 
   const password = useBoolean();
 
+  const validateEmail = (email) => {
+    return Yup.string().email().isValidSync(email);
+  };
+
+  const validatePhone = (phone) => {
+    return Yup.number()
+      .integer()
+      .positive()
+      .test((phone) => {
+        return phone && phone.toString().length >= 8 && phone.toString().length <= 14
+          ? true
+          : false;
+      })
+      .isValidSync(phone);
+  };
+
   const LoginSchema = Yup.object().shape({
-    email: Yup.string().required('Email is required').email('Email must be a valid email address'),
+    username: Yup.string().required('Username is required'),
     password: Yup.string().required('Password is required'),
   });
 
   const defaultValues = {
-    email: 'demo@minimals.cc',
-    password: 'demo1234',
+    username: '',
+    password: '',
   };
 
   const methods = useForm({
@@ -61,7 +81,7 @@ export default function JwtLoginView() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await login?.(data.email, data.password);
+      await login?.(data.username, data.password);
 
       router.push(returnTo || PATH_AFTER_LOGIN);
     } catch (error) {
@@ -73,25 +93,25 @@ export default function JwtLoginView() {
 
   const renderHead = (
     <Stack spacing={2} sx={{ mb: 5 }}>
-      <Typography variant="h4">Sign in to Zaity Plus</Typography>
+      <Typography variant="h4"> {t('login')} </Typography>
 
-      <Stack direction="row" spacing={0.5}>
+      {/* <Stack direction="row" spacing={0.5}>
         <Typography variant="body2">New user?</Typography>
 
         <Link component={RouterLink} href={paths.auth.jwt.register} variant="subtitle2">
           Create an account
         </Link>
-      </Stack>
+      </Stack> */}
     </Stack>
   );
 
   const renderForm = (
     <Stack spacing={2.5}>
-      <RHFTextField name="email" label="Email address" />
+      <RHFTextField name="username" label={t('username')} />
 
       <RHFTextField
         name="password"
-        label="Password"
+        label={t('password')}
         type={password.value ? 'text' : 'password'}
         InputProps={{
           endAdornment: (
@@ -104,9 +124,9 @@ export default function JwtLoginView() {
         }}
       />
 
-      <Link variant="body2" color="inherit" underline="always" sx={{ alignSelf: 'flex-end' }}>
-        Forgot password?
-      </Link>
+      {/* <Link variant="body2" color="inherit" underline="always" sx={{ alignSelf: 'flex-end' }}>
+        {t('forgotPassword')}
+      </Link> */}
 
       <LoadingButton
         fullWidth
@@ -116,7 +136,7 @@ export default function JwtLoginView() {
         variant="contained"
         loading={isSubmitting}
       >
-        Login
+        {t('login')}
       </LoadingButton>
     </Stack>
   );
@@ -124,10 +144,6 @@ export default function JwtLoginView() {
   return (
     <>
       {renderHead}
-
-      <Alert severity="info" sx={{ mb: 3 }}>
-        Use email : <strong>demo@minimals.cc</strong> / password :<strong> demo1234</strong>
-      </Alert>
 
       {!!errorMsg && (
         <Alert severity="error" sx={{ mb: 3 }}>

@@ -13,6 +13,21 @@ axiosInstance.interceptors.response.use(
 
 export default axiosInstance;
 
+// Add a request interceptor
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const settings = localStorage.getItem('settings');
+    if (settings !== null) {
+      const getLang = JSON.parse(settings);
+      config.headers['Accept-Language'] = getLang?.themeDirection === 'rtl' ? 'ar-AR' : 'en-US';
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 // ----------------------------------------------------------------------
 
 export const fetcher = async (args) => {
@@ -31,7 +46,7 @@ export const endpoints = {
   calendar: '/api/calendar',
   auth: {
     me: '/api/auth/me',
-    login: '/api/auth/login',
+    login: '/auth/login',
     register: '/api/auth/register',
   },
   mail: {
@@ -49,5 +64,14 @@ export const endpoints = {
     list: '/api/product/list',
     details: '/api/product/details',
     search: '/api/product/search',
+  },
+
+  utils: { values: '/values' },
+  company: {
+    list: '/company',
+  },
+
+  cars: {
+    list: '/car',
   },
 };

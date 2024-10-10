@@ -21,9 +21,9 @@ import AppAreaInstalled from '../app-area-installed';
 import AppWidgetSummary from '../app-widget-summary';
 import AppCurrentDownload from '../app-current-download';
 import LineChart from '../line-chart';
-import AppTopInstalledCountries from '../app-top-installed-countries';
 import { useTranslation } from 'react-i18next';
 
+import { useGetCompany } from 'src/api/company';
 // ----------------------------------------------------------------------
 
 export default function OverviewAppView() {
@@ -33,6 +33,8 @@ export default function OverviewAppView() {
   const theme = useTheme();
 
   const settings = useSettingsContext();
+
+  const { company } = useGetCompany();
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'xl'}>

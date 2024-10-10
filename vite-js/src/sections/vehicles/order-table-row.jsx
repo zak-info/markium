@@ -22,17 +22,38 @@ import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import { useTranslate } from 'src/locales';
 
 // ----------------------------------------------------------------------
 
-export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteRow }) {
-  const { items, status, orderNumber, createdAt, customer, totalQuantity, subTotal } = row;
+export default function OrderTableRow({
+  row,
+  selected,
+  onViewRow,
+  onSelectRow,
+  onDeleteRow,
+  onEditRow,
+}) {
+  const {
+    company,
+    car_model_id,
+    status,
+    model,
+    production_year,
+    plat_number,
+    totalQuantity,
+    subTotal,
+  } = row;
 
   const confirm = useBoolean();
+
+  const { t } = useTranslate();
 
   const collapse = useBoolean();
 
   const popover = usePopover();
+
+  const statusString = status?.translations?.[0]?.name;
 
   const renderPrimary = (
     <TableRow hover selected={selected}>
@@ -50,29 +71,18 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
             },
           }}
         >
-          {orderNumber}
+          {company?.name}
         </Box>
       </TableCell>
 
-      <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-        {/* <Avatar alt={customer.name} src={customer.avatarUrl} sx={{ mr: 2 }} />
+      <TableCell>{model?.name}</TableCell>
 
-        <ListItemText
-          primary={customer.name}
-          secondary={customer.email}
-          primaryTypographyProps={{ typography: 'body2' }}
-          secondaryTypographyProps={{
-            component: 'span',
-            color: 'text.disabled',
-          }}
-        /> */}
-        232fs
-      </TableCell>
+      <TableCell align="center"> {plat_number} </TableCell>
 
       <TableCell>
         <ListItemText
-          primary={fDate(createdAt)}
-          secondary={fTime(createdAt)}
+          primary={fDate(production_year)}
+          secondary={fTime(production_year)}
           primaryTypographyProps={{ typography: 'body2', noWrap: true }}
           secondaryTypographyProps={{
             mt: 0.5,
@@ -82,27 +92,25 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
         />
       </TableCell>
 
-      <TableCell align="center"> {totalQuantity} </TableCell>
-      <TableCell align="center"> {totalQuantity} </TableCell>
-
-      <TableCell> {fCurrency(subTotal)} </TableCell>
-
       <TableCell>
         <Label
           variant="soft"
           color={
-            (status === 'completed' && 'success') ||
-            (status === 'pending' && 'warning') ||
-            (status === 'cancelled' && 'error') ||
+            (status?.key === 'available' && 'success') ||
+            (status?.key === 'pending' && 'warning') ||
+            (status?.key === 'cancelled' && 'error') ||
             'default'
           }
         >
-          {status}
+          {statusString}
         </Label>
       </TableCell>
+      <TableCell align="center"> - </TableCell>
+
+      <TableCell>- </TableCell>
 
       <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
-        <IconButton
+        {/* <IconButton
           color={collapse.value ? 'inherit' : 'default'}
           onClick={collapse.onToggle}
           sx={{
@@ -112,7 +120,7 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
           }}
         >
           <Iconify icon="eva:arrow-ios-downward-fill" />
-        </IconButton>
+        </IconButton> */}
 
         <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
           <Iconify icon="eva:more-vertical-fill" />
@@ -131,7 +139,7 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
           sx={{ bgcolor: 'background.neutral' }}
         >
           <Stack component={Paper} sx={{ m: 1.5 }}>
-            {items.map((item) => (
+            {/* {items.map((item) => (
               <Stack
                 key={item.id}
                 direction="row"
@@ -166,7 +174,7 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
 
                 <Box sx={{ width: 110, textAlign: 'right' }}>{fCurrency(item.price)}</Box>
               </Stack>
-            ))}
+            ))} */}
           </Stack>
         </Collapse>
       </TableCell>
@@ -193,7 +201,17 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
           sx={{ color: 'error.main' }}
         >
           <Iconify icon="solar:trash-bin-trash-bold" />
-          Delete
+          {t('delete')}
+        </MenuItem>
+
+        <MenuItem
+          onClick={() => {
+            onEditRow();
+            popover.onClose();
+          }}
+        >
+          <Iconify icon="solar:pen-bold" />
+          {t('edit')}
         </MenuItem>
 
         <MenuItem
@@ -203,7 +221,7 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
           }}
         >
           <Iconify icon="solar:eye-bold" />
-          View
+          {t('view')}
         </MenuItem>
       </CustomPopover>
 

@@ -92,5 +92,14 @@
   "numberOfPassengers": "Number of Passengers",
   "specifications": "Specifications",
   "typeOfLicense": "Type of license",
-  "workSite": "Work Site"
+  "workSite": "Work Site",
+  "login": "Login ",
+  "password": "Password",
+  "email": "Email",
+  "forgotPassword": "Forgot Password",
+  "delete": " Delete",
+  "view": "View",
+  "username": "Username",
+  "odometer": "Odometer",
+  "saveChange": "Save Changes"
 }

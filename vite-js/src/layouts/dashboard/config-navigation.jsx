@@ -76,6 +76,16 @@ export function useNavData() {
         items: [
           // USER
           {
+            title: t('company'),
+            path: paths.dashboard.company.root,
+            icon: ICONS.menuItem,
+            children: [
+              { title: t('list'), path: paths.dashboard.company.root },
+              { title: t('create'), path: paths.dashboard.company.root },
+            ],
+          },
+
+          {
             title: t('vehicles'),
             path: paths.dashboard.vehicle.root,
             icon: ICONS.car,
@@ -85,7 +95,6 @@ export function useNavData() {
               { title: t('costAndInput'), path: paths.dashboard.vehicle.inputs },
             ],
           },
-
           // USER
           {
             title: t('maintenance'),
@@ -167,7 +176,7 @@ export function useNavData() {
             // roles: ['admin', 'manager'] Only admin/manager can see this item.
             // Reference from 'src/guards/RoleBasedGuard'.
             title: t('users'),
-            path: paths.dashboard.permission,
+            path: paths.dashboard.user.list,
             icon: ICONS.lock,
             roles: ['admin', 'manager'],
           },

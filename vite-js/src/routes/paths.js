@@ -141,6 +141,9 @@ export const paths = {
       root: `${ROOTS.DASHBOARD}/maintenance`,
       notifications: `${ROOTS.DASHBOARD}/maintenance/notifications`,
       new: `${ROOTS.DASHBOARD}/maintenance/new`,
+
+      details: (id) => `${ROOTS.DASHBOARD}/maintenance/${id}`,
+
       currentInMaintenance: `${ROOTS.DASHBOARD}/maintenance/current-in-maintenance`,
     },
 
@@ -148,6 +151,7 @@ export const paths = {
       root: `${ROOTS.DASHBOARD}/drivers`,
       alerts: `${ROOTS.DASHBOARD}/drivers/alerts`,
       new: `${ROOTS.DASHBOARD}/drivers/new`,
+      details: (id) => `${ROOTS.DASHBOARD}/drivers/${id}`,
     },
 
     documents: {
@@ -161,6 +165,8 @@ export const paths = {
       claims: `${ROOTS.DASHBOARD}/clients/claims`,
       contracts: `${ROOTS.DASHBOARD}/clients/contracts`,
       new: `${ROOTS.DASHBOARD}/clients/new`,
+      details: (id) => `${ROOTS.DASHBOARD}/clients/${id}`,
+      contractsDetails: (id) => `${ROOTS.DASHBOARD}/clients/contracts/${id}`,
     },
 
     log: {
@@ -178,6 +184,19 @@ export const paths = {
         edit: `${ROOTS.DASHBOARD}/vehicle/${MOCK_ID}/edit`,
       },
       inputs: `${ROOTS.DASHBOARD}/vehicle/inputs`,
+    },
+
+    company: {
+      root: `${ROOTS.DASHBOARD}/company`,
+      new: `${ROOTS.DASHBOARD}/company/new`,
+      log: `${ROOTS.DASHBOARD}/company/log`,
+      details: (id) => `${ROOTS.DASHBOARD}/company/${id}`,
+      edit: (id) => `${ROOTS.DASHBOARD}/company/${id}/edit`,
+      demo: {
+        details: `${ROOTS.DASHBOARD}/company/${MOCK_ID}`,
+        edit: `${ROOTS.DASHBOARD}/company/${MOCK_ID}/edit`,
+      },
+      inputs: `${ROOTS.DASHBOARD}/company/inputs`,
     },
     invoice: {
       root: `${ROOTS.DASHBOARD}/invoice`,

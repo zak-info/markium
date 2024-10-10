@@ -41,7 +41,7 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
       </TableCell>
 
       <TableCell>
-        <Box
+        {/* <Box
           onClick={onViewRow}
           sx={{
             cursor: 'pointer',
@@ -49,9 +49,9 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
               textDecoration: 'underline',
             },
           }}
-        >
-          {orderNumber}
-        </Box>
+        > */}
+        {orderNumber}
+        {/* </Box> */}
       </TableCell>
 
       <TableCell sx={{ display: 'flex', alignItems: 'center' }}>

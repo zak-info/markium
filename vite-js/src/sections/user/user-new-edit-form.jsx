@@ -29,11 +29,13 @@ import FormProvider, {
   RHFUploadAvatar,
   RHFAutocomplete,
 } from 'src/components/hook-form';
+import { useTranslation } from 'react-i18next';
 
 // ----------------------------------------------------------------------
 
 export default function UserNewEditForm({ currentUser }) {
   const router = useRouter();
+  const { t } = useTranslation();
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -119,7 +121,7 @@ export default function UserNewEditForm({ currentUser }) {
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>
       <Grid container spacing={3}>
-        <Grid xs={12} md={4}>
+        {/* <Grid xs={12} md={4}>
           <Card sx={{ pt: 10, pb: 5, px: 3 }}>
             {currentUser && (
               <Label
@@ -213,7 +215,7 @@ export default function UserNewEditForm({ currentUser }) {
               </Stack>
             )}
           </Card>
-        </Grid>
+        </Grid> */}
 
         <Grid xs={12} md={8}>
           <Card sx={{ p: 3 }}>
@@ -226,31 +228,19 @@ export default function UserNewEditForm({ currentUser }) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <RHFTextField name="name" label="Full Name" />
-              <RHFTextField name="email" label="Email Address" />
-              <RHFTextField name="phoneNumber" label="Phone Number" />
+              <RHFTextField name="name" label={t('name')} />
+              <RHFTextField name="name" label={t('userName')} />
+              <RHFTextField name="email" label={t('email')} />
 
-              <RHFAutocomplete
-                name="country"
-                type="country"
-                label="Country"
-                placeholder="Choose a country"
-                fullWidth
-                options={countries.map((option) => option.label)}
-                getOptionLabel={(option) => option}
-              />
-
-              <RHFTextField name="state" label="State/Region" />
-              <RHFTextField name="city" label="City" />
-              <RHFTextField name="address" label="Address" />
-              <RHFTextField name="zipCode" label="Zip/Code" />
-              <RHFTextField name="company" label="Company" />
-              <RHFTextField name="role" label="Role" />
+              <RHFTextField name="state" label={t('phone')} />
+              <RHFTextField name="phoneNumber" label={t('numberSecret')} />
+              <RHFTextField name="phoneNumber" label={t('userType')} />
+              <RHFTextField name="phoneNumber" label={t('functionalNumber')} />
             </Box>
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                {!currentUser ? 'Create User' : 'Save Changes'}
+                {!currentUser ? t('addNewUser') : 'Save Changes'}
               </LoadingButton>
             </Stack>
           </Card>

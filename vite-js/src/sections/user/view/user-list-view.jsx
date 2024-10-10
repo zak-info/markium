@@ -42,19 +42,11 @@ import {
 import UserTableRow from '../user-table-row';
 import UserTableToolbar from '../user-table-toolbar';
 import UserTableFiltersResult from '../user-table-filters-result';
+import { useTranslation } from 'react-i18next';
 
 // ----------------------------------------------------------------------
 
 const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...USER_STATUS_OPTIONS];
-
-const TABLE_HEAD = [
-  { id: 'name', label: 'Name' },
-  { id: 'phoneNumber', label: 'Phone Number', width: 180 },
-  { id: 'company', label: 'Company', width: 220 },
-  { id: 'role', label: 'Role', width: 180 },
-  { id: 'status', label: 'Status', width: 100 },
-  { id: '', width: 88 },
-];
 
 const defaultFilters = {
   name: '',
@@ -67,7 +59,20 @@ const defaultFilters = {
 export default function UserListView() {
   const { enqueueSnackbar } = useSnackbar();
 
+  const { t } = useTranslation();
+
   const table = useTable();
+
+  const TABLE_HEAD = [
+    { id: 'name', label: t('userName') },
+    { id: 'phoneNumber', label: t('numberSecret'), width: 180 },
+    { id: 'company', label: t('phone'), width: 220 },
+    { id: 'company2', label: t('userType'), width: 220 },
+    { id: 'name2', label: t('name'), width: 220 },
+    { id: 'role', label: t('functionalNumber'), width: 180 },
+    { id: 'status', label: t('email'), width: 100 },
+    { id: '', width: 88 },
+  ];
 
   const settings = useSettingsContext();
 
@@ -155,12 +160,8 @@ export default function UserListView() {
     <>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
-          heading="List"
-          links={[
-            { name: 'Dashboard', href: paths.dashboard.root },
-            { name: 'User', href: paths.dashboard.user.root },
-            { name: 'List' },
-          ]}
+          heading={t('userList')}
+          links={[{ name: t('dashboard'), href: paths.dashboard.root }, { name: t('userList') }]}
           action={
             <Button
               component={RouterLink}
@@ -168,7 +169,7 @@ export default function UserListView() {
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
             >
-              New User
+              {t('addNewUser')}
             </Button>
           }
           sx={{
@@ -177,7 +178,7 @@ export default function UserListView() {
         />
 
         <Card>
-          <Tabs
+          {/* <Tabs
             value={filters.status}
             onChange={handleFilterStatus}
             sx={{
@@ -210,7 +211,7 @@ export default function UserListView() {
                 }
               />
             ))}
-          </Tabs>
+          </Tabs> */}
 
           <UserTableToolbar
             filters={filters}

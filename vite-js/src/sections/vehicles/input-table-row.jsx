@@ -40,19 +40,7 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
         <Checkbox checked={selected} onClick={onSelectRow} />
       </TableCell>
 
-      <TableCell>
-        <Box
-          onClick={onViewRow}
-          sx={{
-            cursor: 'pointer',
-            '&:hover': {
-              textDecoration: 'underline',
-            },
-          }}
-        >
-          {orderNumber}
-        </Box>
-      </TableCell>
+      <TableCell>{orderNumber}</TableCell>
 
       <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
         {/* <Avatar alt={customer.name} src={customer.avatarUrl} sx={{ mr: 2 }} />
