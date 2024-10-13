@@ -81,8 +81,7 @@ export default function OrderTableRow({
 
       <TableCell>
         <ListItemText
-          primary={fDate(production_year)}
-          secondary={fTime(production_year)}
+          primary={fDate(production_year, 'yyyy')}
           primaryTypographyProps={{ typography: 'body2', noWrap: true }}
           secondaryTypographyProps={{
             mt: 0.5,

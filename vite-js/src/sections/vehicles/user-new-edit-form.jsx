@@ -228,7 +228,7 @@ export default function UserNewEditForm({ currentCar }) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <RHFSelect name="car_company_id" label={t('company')}>
+              <RHFSelect required name="car_company_id" label={t('company')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
                 {company.map((option) => (
                   <MenuItem key={option.value} value={option?.id}>
@@ -236,9 +236,9 @@ export default function UserNewEditForm({ currentCar }) {
                   </MenuItem>
                 ))}
               </RHFSelect>
-              <RHFTextField name="production_year" label={t('manufacturingYear')} />
+              <RHFTextField required name="production_year" label={t('manufacturingYear')} />
 
-              <RHFSelect name="car_model_id" label={t('model')}>
+              <RHFSelect required name="car_model_id" label={t('model')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
                 {data?.car_model?.map((option) => (
                   <MenuItem key={option.name} value={option?.id}>
@@ -246,19 +246,20 @@ export default function UserNewEditForm({ currentCar }) {
                   </MenuItem>
                 ))}
               </RHFSelect>
-              <RHFTextField name="plat_number" label={t('plateNumber')} />
+              <RHFTextField required name="plat_number" label={t('plateNumber')} />
 
-              <RHFTextField name="chassis_number" label={t('structureNo')} />
+              <RHFTextField required name="chassis_number" label={t('structureNo')} />
 
-              <RHFTextField name="vin" label={t('serialNumber')} />
-              <RHFTextField name="odometer" label={t('odometer')} />
-              <RHFTextField name="depreciation" label={t('depreciation')} />
+              <RHFTextField required name="vin" label={t('serialNumber')} />
+              <RHFTextField required name="odometer" label={t('odometer')} />
+              <RHFTextField required name="depreciation" label={t('depreciation')} />
               <RHFTextField
                 type="number"
+                required
                 name="passengers_capacity"
                 label={t('numberOfPassengers')}
               />
-              <RHFSelect name="color_id" label={t('vehcileColor')}>
+              <RHFSelect required name="color_id" label={t('vehcileColor')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
                 {data?.color?.map((option) => (
                   <MenuItem key={option?.translations?.[0]?.name} value={option?.id}>
@@ -267,7 +268,7 @@ export default function UserNewEditForm({ currentCar }) {
                 ))}
               </RHFSelect>
 
-              <RHFSelect name="spec_id" label={t('specifications')}>
+              <RHFSelect required name="spec_id" label={t('specifications')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
                 {data?.spec?.map((option) => (
                   <MenuItem key={option?.name} value={option?.id}>
@@ -275,7 +276,7 @@ export default function UserNewEditForm({ currentCar }) {
                   </MenuItem>
                 ))}
               </RHFSelect>
-              <RHFSelect name="license_type_id" label={t('typeOfLicense')}>
+              <RHFSelect required name="license_type_id" label={t('typeOfLicense')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
                 {data?.license_type?.map((option) => (
                   <MenuItem key={option?.name} value={option?.id}>
@@ -284,7 +285,7 @@ export default function UserNewEditForm({ currentCar }) {
                 ))}
               </RHFSelect>
 
-              <RHFSelect name="state_id" label={t('workSite')}>
+              <RHFSelect required name="state_id" label={t('workSite')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
                 {data?.state?.map((option) => (
                   <MenuItem key={option?.name} value={option?.id}>

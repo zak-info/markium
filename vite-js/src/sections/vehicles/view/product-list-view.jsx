@@ -66,7 +66,7 @@ export default function OrderListView() {
     { id: 'orderNumber', label: t('company'), width: 116 },
     { id: 'name', label: t('model'), width: 140 },
     { id: 'createdAt', label: t('plateNumber'), width: 140 },
-    { id: 'totalQuantity', label: t('manufacturingYear'), width: 120, align: 'center' },
+    { id: 'totalQuantity', label: t('manufacturingYear'), width: 120 },
     { id: 'totalAmount', label: t('vehicleCondition'), width: 140 },
     { id: 'status', label: t('driver'), width: 110 },
     { id: 'status2', label: t('contract'), width: 110 },
