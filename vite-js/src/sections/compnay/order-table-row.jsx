@@ -45,6 +45,7 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
   const collapse = useBoolean();
 
   const popover = usePopover();
+  const statusString = status?.translations?.[0]?.name;
 
   const renderPrimary = (
     <TableRow hover selected={selected}>
@@ -66,20 +67,7 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
         </Box>
       </TableCell>
 
-      <TableCell>
-        {/* <Avatar alt={customer.name} src={customer.avatarUrl} sx={{ mr: 2 }} />
-
-        <ListItemText
-          primary={customer.name}
-          secondary={customer.email}
-          primaryTypographyProps={{ typography: 'body2' }}
-          secondaryTypographyProps={{
-            component: 'span',
-            color: 'text.disabled',
-          }}
-        /> */}
-        {model?.name}
-      </TableCell>
+      <TableCell>{model?.name}</TableCell>
 
       <TableCell align="center"> {plat_number} </TableCell>
 
@@ -100,13 +88,13 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
         <Label
           variant="soft"
           color={
-            (status === 'available' && 'success') ||
-            (status === 'pending' && 'warning') ||
-            (status === 'cancelled' && 'error') ||
+            (status?.key === 'available' && 'success') ||
+            (status?.key === 'pending' && 'warning') ||
+            (status?.key === 'cancelled' && 'error') ||
             'default'
           }
         >
-          {status}
+          {statusString}
         </Label>
       </TableCell>
       <TableCell align="center"> - </TableCell>

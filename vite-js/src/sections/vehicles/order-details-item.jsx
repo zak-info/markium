@@ -21,6 +21,7 @@ import { Divider } from '@mui/material';
 export default function OrderDetailsItems({
   items,
   taxes,
+  carDetails,
   shipping,
   discount,
   subTotal,
@@ -40,17 +41,17 @@ export default function OrderDetailsItems({
       <Stack spacing={2} sx={{ my: 3, typography: 'body2' }}>
         <Stack direction="row">
           <Box sx={{ width: 160, color: 'text.secondary' }}>{t('plateNumber')}</Box>
-          <Box sx={{ typography: 'subtitle2' }}>23444vf</Box>
+          <Box sx={{ typography: 'subtitle2' }}>{carDetails?.plat_number}</Box>
         </Stack>
 
         <Stack direction="row">
           <Box sx={{ width: 160, color: 'text.secondary' }}>{t('structureNo')}</Box>
-          <Box sx={{ typography: 'subtitle2' }}>23444vf</Box>
+          <Box sx={{ typography: 'subtitle2' }}>{carDetails?.chassis_number}</Box>
         </Stack>
 
         <Stack direction="row">
           <Box sx={{ width: 160, color: 'text.secondary' }}>{t('vehcileColor')}</Box>
-          <Box sx={{ typography: 'subtitle2' }}>23444vf</Box>
+          <Box sx={{ typography: 'subtitle2' }}>{carDetails?.color?.translations?.[0]?.name}</Box>
         </Stack>
       </Stack>
 
@@ -59,30 +60,26 @@ export default function OrderDetailsItems({
       <Stack spacing={2} sx={{ my: 3, typography: 'body2' }}>
         <Stack direction="row">
           <Box sx={{ width: 160, color: 'text.secondary' }}>{t('serialNumber')}</Box>
-          <Box sx={{ typography: 'subtitle2' }}>23444vf</Box>
+          <Box sx={{ typography: 'subtitle2' }}>{carDetails?.odometer}</Box>
         </Stack>
 
         <Stack direction="row">
           <Box sx={{ width: 160, color: 'text.secondary' }}>{t('vehicleCondition')}</Box>
-          <Box
-            sx={{
-              ...(shipping && { color: 'error.main' }),
-            }}
-          >
+          <Box>
             <Label variant="soft" color={'default'}>
-              مؤجر
+              {carDetails?.status?.translations?.[0]?.name}
             </Label>
           </Box>
         </Stack>
 
         <Stack direction="row">
           <Box sx={{ width: 160, color: 'text.secondary' }}>{t('driver')}</Box>
-          <Box sx={{ typography: 'subtitle2' }}>23444vf</Box>
+          <Box sx={{ typography: 'subtitle2' }}>-</Box>
         </Stack>
 
         <Stack direction="row">
           <Box sx={{ width: 160, color: 'text.secondary' }}>{t('numberOfPassengers')}</Box>
-          <Box sx={{ typography: 'subtitle2' }}>2</Box>
+          <Box sx={{ typography: 'subtitle2' }}>{carDetails?.passengers_capacity}</Box>
         </Stack>
       </Stack>
     </Stack>
@@ -108,8 +105,10 @@ export default function OrderDetailsItems({
             }}
           >
             <ListItemText
-              primary={'  نيسان (كامري) 1990'}
-              secondary={'(234) ABD'}
+              primary={carDetails?.model?.name}
+              secondary={
+                carDetails?.model?.company?.name + ` (${carDetails?.model?.company?.country?.name})`
+              }
               primaryTypographyProps={{
                 typography: 'body2',
               }}

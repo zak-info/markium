@@ -57,14 +57,15 @@ export default function UserNewEditForm({ currentCar }) {
       .required('Passenger capacity is required')
       .positive()
       .integer(),
-    odometer: Yup.number().required('Odometer is required').positive(),
+    odometer: Yup.number().nullable().positive(),
     depreciation: Yup.number()
-      .required('Depreciation is required')
+      .nullable()
+      .notRequired()
       .min(0, 'Depreciation cannot be negative')
       .test(
         'is-decimal',
         'Depreciation must be a decimal number with up to 2 decimal places',
-        (value) => value !== undefined && /^\d+(\.\d{1,2})?$/.test(value)
+        (value) => value === undefined || value === null || /^\d+(\.\d{1,2})?$/.test(value)
       ),
     car_model_id: Yup.string().required('Car model is required'),
     color_id: Yup.string().required('Color is required'),
@@ -251,8 +252,8 @@ export default function UserNewEditForm({ currentCar }) {
               <RHFTextField required name="chassis_number" label={t('structureNo')} />
 
               <RHFTextField required name="vin" label={t('serialNumber')} />
-              <RHFTextField required name="odometer" label={t('odometer')} />
-              <RHFTextField required name="depreciation" label={t('depreciation')} />
+              <RHFTextField name="odometer" label={t('odometer')} />
+              <RHFTextField name="depreciation" label={t('depreciation')} />
               <RHFTextField
                 type="number"
                 required

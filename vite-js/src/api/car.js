@@ -27,19 +27,41 @@ export function useGetCar() {
 
 // ----------------------------------------------------------------------
 
-export function useGetCompanyByID(productId) {
-  const URL = productId ? [endpoints.cars.list, { params: { productId } }] : '';
+export function useGetBreakDown(id) {
+  const URL = endpoints.cars.list + '/' + id + '/breakdown';
+
+  const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher);
+
+  const memoizedValue = useMemo(
+    () => ({
+      breakdown: data?.data || [],
+      breakdownLoading: isLoading,
+      breakdownError: error,
+      breakdownValidating: isValidating,
+      breakdownEmpty: !isLoading && !data?.data.length,
+      mutate,
+    }),
+    [data, error, isLoading, isValidating]
+  );
+
+  return memoizedValue;
+}
+
+// ----------------------------------------------------------------------
+
+export function useGetCompanyByID(id) {
+  const URL = endpoints.cars.list + '/' + id;
 
   const { data, isLoading, error, isValidating } = useSWR(URL, fetcher);
 
   const memoizedValue = useMemo(
     () => ({
-      product: data?.product,
-      productLoading: isLoading,
-      productError: error,
-      productValidating: isValidating,
+      carDetails: data?.data,
+      carDetailsLoading: isLoading,
+      carDetailsError: error,
+      carDetailsValidating: isValidating,
     }),
-    [data?.product, error, isLoading, isValidating]
+    [data?.data, error, isLoading, isValidating]
   );
 
   return memoizedValue;

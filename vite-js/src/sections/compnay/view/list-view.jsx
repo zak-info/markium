@@ -56,7 +56,7 @@ const defaultFilters = {
 
 // ----------------------------------------------------------------------
 
-export default function OrderListView() {
+export default function CompanyListView() {
   const { enqueueSnackbar } = useSnackbar();
 
   const { t } = useTranslate();
@@ -231,7 +231,6 @@ export default function OrderListView() {
                     {['available', 'pending', 'cancelled', 'refunded'].includes(tab.value)
                       ? tableData.filter((user) => user.status === tab.value).length
                       : tableData.length}
-                    {console.log('tableData', tableData)}
                   </Label>
                 }
               />

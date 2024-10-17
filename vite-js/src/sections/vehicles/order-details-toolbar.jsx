@@ -52,13 +52,13 @@ export default function OrderDetailsToolbar({
               <Label
                 variant="soft"
                 color={
-                  (status === 'completed' && 'success') ||
-                  (status === 'pending' && 'warning') ||
-                  (status === 'cancelled' && 'error') ||
+                  (status?.key === 'available' && 'success') ||
+                  (status?.key === 'pending' && 'warning') ||
+                  (status?.key === 'cancelled' && 'error') ||
                   'default'
                 }
               >
-                {status}
+                {status?.translations?.[0]?.name}
               </Label>
             </Stack>
 
@@ -67,7 +67,7 @@ export default function OrderDetailsToolbar({
             </Typography>
           </Stack>
         </Stack>
-
+        {/* 
         <Stack
           flexGrow={1}
           spacing={1.5}
@@ -82,7 +82,7 @@ export default function OrderDetailsToolbar({
             onClick={popover.onOpen}
             sx={{ textTransform: 'capitalize' }}
           >
-            {status}
+            {status?.translations?.[0]?.name}
           </Button>
 
           <Button
@@ -96,7 +96,7 @@ export default function OrderDetailsToolbar({
           <Button color="inherit" variant="contained" startIcon={<Iconify icon="solar:pen-bold" />}>
             Edit
           </Button>
-        </Stack>
+        </Stack> */}
       </Stack>
 
       <CustomPopover
@@ -108,7 +108,7 @@ export default function OrderDetailsToolbar({
         {statusOptions.map((option) => (
           <MenuItem
             key={option.value}
-            selected={option.value === status}
+            selected={option.value === status?.translations?.[0]?.name}
             onClick={() => {
               popover.onClose();
               onChangeStatus(option.value);

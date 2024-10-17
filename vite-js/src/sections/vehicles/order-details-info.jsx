@@ -16,7 +16,7 @@ import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
-export default function OrderDetailsInfo({ customer, delivery, payment, shippingAddress }) {
+export default function OrderDetailsInfo({ carDetails, delivery, payment, shippingAddress }) {
   const { t } = useTranslation();
 
   const renderCustomer = (
@@ -75,26 +75,26 @@ export default function OrderDetailsInfo({ customer, delivery, payment, shipping
           <Box component="span" sx={{ color: 'text.secondary', width: 120, flexShrink: 0 }}>
             {t('specifications')}
           </Box>
-          خليجي
+          {carDetails?.spec?.name}
         </Stack>
         <Stack direction="row" alignItems="center">
           <Box component="span" sx={{ color: 'text.secondary', width: 120, flexShrink: 0 }}>
             {t('typeOfLicense')}
           </Box>
-          نقل عام
+          {carDetails?.license_type?.name}
         </Stack>
         <Stack direction="row" alignItems="center">
           <Box component="span" sx={{ color: 'text.secondary', width: 120, flexShrink: 0 }}>
             {t('workSite')}
           </Box>
-          جدة{' '}
+          {carDetails?.state?.translations?.[0]?.name}
         </Stack>
         <Stack direction="row" alignItems="center">
           <Box component="span" sx={{ color: 'text.secondary', width: 120, flexShrink: 0 }}>
             {t('depreciation')}
           </Box>
           <Link underline="always" color="inherit">
-            {delivery.trackingNumber}
+            {carDetails?.depreciation}
           </Link>
         </Stack>
       </Stack>
@@ -116,14 +116,14 @@ export default function OrderDetailsInfo({ customer, delivery, payment, shipping
           <Box component="span" sx={{ color: 'text.secondary', width: 120, flexShrink: 0 }}>
             Address
           </Box>
-          {shippingAddress.fullAddress}
+          test
         </Stack>
 
         <Stack direction="row">
           <Box component="span" sx={{ color: 'text.secondary', width: 120, flexShrink: 0 }}>
             Phone number
           </Box>
-          {shippingAddress.phoneNumber}
+          test{' '}
         </Stack>
       </Stack>
     </>
@@ -143,8 +143,7 @@ export default function OrderDetailsInfo({ customer, delivery, payment, shipping
         <Box component="span" sx={{ color: 'text.secondary', flexGrow: 1 }}>
           Phone number
         </Box>
-
-        {payment.cardNumber}
+        test
         <Iconify icon="logos:mastercard" width={24} sx={{ ml: 0.5 }} />
       </Stack>
     </>

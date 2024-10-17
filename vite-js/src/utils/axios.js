@@ -49,6 +49,9 @@ export const endpoints = {
     login: '/auth/login',
     register: '/api/auth/register',
   },
+  clauses: {
+    list: '/contract',
+  },
   mail: {
     list: '/api/mail/list',
     details: '/api/mail/details',
