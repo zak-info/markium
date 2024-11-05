@@ -158,5 +158,13 @@
   "view": " عرض",
   "username": "اسم المستخدم",
   "odometer": "عداد المسافة",
-  "saveChange": "حفظ التغييرات"
+  "saveChange": "حفظ التغييرات",
+  "deleteConfirm": "هل أنت متأكد أنك تريد الحذف؟",
+  "cancel": "إلغاء",
+  "maintenanceNumber": "رقم الصيانة",
+  "maintenanceName": "تفاصيل الصيانة",
+  "price": "السعر",
+  "maintenanceType": "نوع الصيانة",
+  "numberOfRepetitions": "عدد التكرارات",
+  "recurringFaults": "الأعطال المتكررة"
 }

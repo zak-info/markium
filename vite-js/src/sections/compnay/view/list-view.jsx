@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
@@ -97,11 +97,15 @@ export default function CompanyListView() {
   const dateError = isAfter(filters.startDate, filters.endDate);
 
   const dataFiltered = applyFilter({
-    inputData: car,
+    inputData: tableData,
     comparator: getComparator(table.order, table.orderBy),
     filters,
     dateError,
   });
+
+  useEffect(() => {
+    setTableData(car);
+  }, [car]);
 
   const dataInPage = dataFiltered.slice(
     table.page * table.rowsPerPage,
@@ -229,7 +233,7 @@ export default function CompanyListView() {
                     }
                   >
                     {['available', 'pending', 'cancelled', 'refunded'].includes(tab.value)
-                      ? tableData.filter((user) => user.status === tab.value).length
+                      ? tableData.filter((user) => user.status?.key === tab.value)?.length
                       : tableData.length}
                   </Label>
                 }

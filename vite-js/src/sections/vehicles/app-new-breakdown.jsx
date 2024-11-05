@@ -12,6 +12,7 @@ import TableCell from '@mui/material/TableCell';
 import CardHeader from '@mui/material/CardHeader';
 import IconButton from '@mui/material/IconButton';
 import TableContainer from '@mui/material/TableContainer';
+import { fDate } from 'src/utils/format-time';
 
 import { fCurrency } from 'src/utils/format-number';
 
@@ -20,7 +21,6 @@ import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 import { TableHeadCustom } from 'src/components/table';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
-import { fDate } from 'src/utils/format-time';
 
 // ----------------------------------------------------------------------
 
@@ -93,13 +93,14 @@ function AppNewInvoiceRow({ row }) {
   return (
     <>
       <TableRow>
-        <TableCell>{row.id}</TableCell>
+        <TableCell>{row.name}</TableCell>
 
-        <TableCell>{row.cause}</TableCell>
+        <TableCell>{row.count}</TableCell>
+
         <TableCell>{fDate(row.created_at)}</TableCell>
         <TableCell>{fCurrency(row.cost) || '-'}</TableCell>
-
-        {/* <TableCell align="right" sx={{ pr: 1 }}>
+        {/* 
+        <TableCell align="right" sx={{ pr: 1 }}>
           <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
             <Iconify icon="eva:more-vertical-fill" />
           </IconButton>

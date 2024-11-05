@@ -153,8 +153,8 @@ export default function OrderDetailsInfo({ carDetails, delivery, payment, shippi
     <Card>
       {renderDelivery}
 
-      <Divider sx={{ borderStyle: 'dashed' }} />
-      {renderCustomer}
+      {/* <Divider sx={{ borderStyle: 'dashed' }} />
+      {renderCustomer} */}
 
       {/* <Divider sx={{ borderStyle: 'dashed' }} />
 

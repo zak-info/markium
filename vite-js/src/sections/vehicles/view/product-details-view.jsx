@@ -16,12 +16,11 @@ import OrderDetailsItems from '../order-details-item';
 import OrderDetailsToolbar from '../order-details-toolbar';
 import OrderDetailsHistory from '../order-details-history';
 import AppNewInvoice from '../app-new-invoice';
+import AppNewInvoiceBreakdown from '../app-new-breakdown';
 
 import { _appAuthors, _appRelated, _appFeatured, _appInvoices, _appInstalled } from 'src/_mock';
 import { useTranslate } from 'src/locales';
-import { useGetCompanyByID, useGetBreakDown } from 'src/api/car';
-
-import { useGetClauses } from 'src/api/clauses';
+import { useGetCompanyByID, useGetBreakDown, useGetCarMaintenance } from 'src/api/car';
 
 // ----------------------------------------------------------------------
 
@@ -34,7 +33,7 @@ export default function OrderDetailsView({ id }) {
 
   const { breakdown } = useGetBreakDown(id);
 
-  const { clauses } = useGetClauses(id);
+  const { maintenance } = useGetCarMaintenance(id);
 
   const currentOrder = _orders.filter((order) => order.id === id)[0];
 
@@ -43,8 +42,6 @@ export default function OrderDetailsView({ id }) {
   const handleChangeStatus = useCallback((newValue) => {
     setStatus(newValue);
   }, []);
-
-  console.log('id', clauses);
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
@@ -89,26 +86,26 @@ export default function OrderDetailsView({ id }) {
         <Grid xs={12} md={6}>
           <AppNewInvoice
             title={t('maintenanceItems')}
-            tableData={_appInvoices}
+            tableData={maintenance}
             tableLabels={[
-              { id: 'id', label: 'Invoice ID' },
-              { id: 'category', label: 'Category' },
-              { id: 'price', label: 'Price' },
-              { id: 'status', label: 'Status' },
+              { id: 'id', label: t('maintenanceNumber') },
+              { id: 'category', label: t('maintenanceName') },
+              { id: 'price', label: t('date') },
+              { id: 'status', label: t('cost') },
               { id: '' },
             ]}
           />
         </Grid>
 
         <Grid xs={12} md={6}>
-          <AppNewInvoice
-            title={t('*  الأعطال المتكررة')}
-            tableData={_appInvoices}
+          <AppNewInvoiceBreakdown
+            title={t('recurringFaults')}
+            tableData={breakdown}
             tableLabels={[
-              { id: 'id', label: 'Invoice ID' },
-              { id: 'category', label: 'Category' },
-              { id: 'price', label: 'Price' },
-              { id: 'status', label: 'Status' },
+              { id: 'id', label: t('maintenanceType') },
+              { id: 'category', label: t('numberOfRepetitions') },
+              { id: 'price', label: t('date') },
+              { id: 'status', label: t('cost') },
               { id: '' },
             ]}
           />

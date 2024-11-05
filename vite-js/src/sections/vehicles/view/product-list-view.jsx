@@ -131,10 +131,14 @@ export default function OrderListView() {
 
   const handleDeleteRow = useCallback(
     (id) => {
-      deleteCar(id);
-      mutate();
-
-      enqueueSnackbar('Delete success!');
+      deleteCar(id)
+        .then(() => {
+          enqueueSnackbar('Delete success!');
+          mutate();
+        })
+        .catch((err) => {
+          enqueueSnackbar(err?.message, { variant: 'error' });
+        });
     },
     [dataInPage.length, enqueueSnackbar, table, tableData]
   );

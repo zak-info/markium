@@ -210,11 +210,11 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Delete"
-        content="Are you sure want to delete?"
+        title={t('delete')}
+        content={t('deleteConfirm')}
         action={
           <Button variant="contained" color="error" onClick={onDeleteRow}>
-            Delete
+            {t('delete')}
           </Button>
         }
       />

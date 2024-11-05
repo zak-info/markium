@@ -66,7 +66,10 @@ export default function OrderDetailsItems({
         <Stack direction="row">
           <Box sx={{ width: 160, color: 'text.secondary' }}>{t('vehicleCondition')}</Box>
           <Box>
-            <Label variant="soft" color={'default'}>
+            <Label
+              variant="soft"
+              color={carDetails?.status?.key === 'available' ? 'success' : 'default'}
+            >
               {carDetails?.status?.translations?.[0]?.name}
             </Label>
           </Box>

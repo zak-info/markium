@@ -101,5 +101,14 @@
   "view": "View",
   "username": "Username",
   "odometer": "Odometer",
-  "saveChange": "Save Changes"
+  "saveChange": "Save Changes",
+  "deleteConfirm": "Are you sure want to delete?",
+  "cancel": "Cancel",
+  "maintenanceNumber": "Maintenance Number",
+  "maintenanceName": "Maintenance Name",
+  "date": "Date",
+  "price": "Price",
+  "maintenanceType": "Maintenance Type",
+  "numberOfRepetitions": "Number of Repetitions",
+  "recurringFaults": "Recurring Faults"
 }

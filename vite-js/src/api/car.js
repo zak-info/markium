@@ -49,6 +49,28 @@ export function useGetBreakDown(id) {
 
 // ----------------------------------------------------------------------
 
+export function useGetCarMaintenance(id) {
+  const URL = endpoints.cars.list + '/' + id + '/maintenance';
+
+  const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher);
+
+  const memoizedValue = useMemo(
+    () => ({
+      maintenance: data?.data || [],
+      maintenanceLoading: isLoading,
+      maintenanceError: error,
+      maintenanceValidating: isValidating,
+      maintenanceEmpty: !isLoading && !data?.data.length,
+      mutate,
+    }),
+    [data, error, isLoading, isValidating]
+  );
+
+  return memoizedValue;
+}
+
+// ----------------------------------------------------------------------
+
 export function useGetCompanyByID(id) {
   const URL = endpoints.cars.list + '/' + id;
 

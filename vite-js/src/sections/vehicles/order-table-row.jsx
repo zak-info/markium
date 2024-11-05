@@ -227,11 +227,19 @@ export default function OrderTableRow({
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Delete"
-        content="Are you sure want to delete?"
+        title={t('delete')}
+        content={t('deleteConfirm')}
         action={
-          <Button variant="contained" color="error" onClick={onDeleteRow}>
-            Delete
+          <Button
+            variant="contained"
+            color="error"
+            onClick={() => {
+              onDeleteRow();
+
+              confirm.onFalse();
+            }}
+          >
+            {t('delete')}
           </Button>
         }
       />
