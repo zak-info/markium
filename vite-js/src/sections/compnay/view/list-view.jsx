@@ -43,7 +43,7 @@ import OrderTableFiltersResult from '../order-table-filters-result';
 import { useTranslate } from 'src/locales';
 import { RouterLink } from 'src/routes/components';
 
-import { useGetCar } from 'src/api/car';
+import { useGetCompany } from 'src/api/company';
 
 // ----------------------------------------------------------------------
 
@@ -61,7 +61,7 @@ export default function CompanyListView() {
 
   const { t } = useTranslate();
 
-  const { car } = useGetCar();
+  const { company } = useGetCompany();
 
   const TABLE_HEAD = [
     { id: 'orderNumber', label: t('company'), width: 116 },
@@ -90,7 +90,7 @@ export default function CompanyListView() {
 
   const confirm = useBoolean();
 
-  const [tableData, setTableData] = useState(car);
+  const [tableData, setTableData] = useState(company);
 
   const [filters, setFilters] = useState(defaultFilters);
 
@@ -104,8 +104,8 @@ export default function CompanyListView() {
   });
 
   useEffect(() => {
-    setTableData(car);
-  }, [car]);
+    setTableData(company);
+  }, [company]);
 
   const dataInPage = dataFiltered.slice(
     table.page * table.rowsPerPage,
@@ -178,23 +178,23 @@ export default function CompanyListView() {
     <>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
-          heading={t('vehiclesList')}
+          heading={t('companyList')}
           links={[
             { name: t('dashboard'), href: paths.dashboard.root },
             {
-              name: t('vehicles'),
-              href: paths.dashboard.vehicle.root,
+              name: t('company'),
+              href: paths.dashboard.company.root,
             },
-            { name: t('vehiclesList') },
+            { name: t('companyList') },
           ]}
           action={
             <Button
               component={RouterLink}
-              href={paths.dashboard.vehicle.new}
+              href={paths.dashboard.company.new}
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
             >
-              {t('addVehicle')}
+              {t('addCompany')}
             </Button>
           }
           sx={{

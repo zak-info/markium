@@ -32,6 +32,7 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
     car_model_id,
     status,
     model,
+    name,
     production_year,
     plat_number,
     totalQuantity,
@@ -63,7 +64,7 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
             },
           }}
         >
-          {company?.name}
+          {name}
         </Box>
       </TableCell>
 

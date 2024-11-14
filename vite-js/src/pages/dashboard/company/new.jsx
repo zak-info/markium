@@ -1,17 +1,17 @@
 import { Helmet } from 'react-helmet-async';
 
-import { CompanyListView } from 'src/sections/compnay/view';
+import { CompanyNewView } from 'src/sections/compnay/view';
 
 // ----------------------------------------------------------------------
 
-export default function ProductListPage() {
+export default function UserCreatePage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: Company List</title>
+        <title> Dashboard: Create a new company</title>
       </Helmet>
 
-      <CompanyListView />
+      <CompanyNewView />
     </>
   );
 }

@@ -32,11 +32,11 @@ export default function OrderDetailsItems({
   const renderTotal = (
     <Stack
       spacing={8}
-      justifyContent="space-between"
+      // justifyContent="space-between"
       direction="row"
       flexWrap="wrap"
       sx={{ my: 3, typography: 'body2' }}
-      divider={<Divider />}
+      // divider={<Divider />}
     >
       <Stack spacing={2} sx={{ my: 3, typography: 'body2' }}>
         <Stack direction="row">

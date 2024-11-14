@@ -96,7 +96,7 @@
   "date": "التاريخ",
   "transaction": "العملية",
   "addNewMaintain": "إضافة صيانة جديدة",
-  "maintenanceItems": "بنود الصيانة",
+  "maintenanceItems": "سجل الصيانات",
   "numberOfMaintenanceDays": "عدد أيام الصيانة",
   "malfunction": "سبب العطل",
   "manualy": "شغل اليد",
@@ -166,5 +166,7 @@
   "price": "السعر",
   "maintenanceType": "نوع الصيانة",
   "numberOfRepetitions": "عدد التكرارات",
-  "recurringFaults": "الأعطال المتكررة"
+  "recurringFaults": "الأعطال المتكررة",
+  "companyList": "قائمة الشركة",
+  "addCompany": "إضافة شركة جديدة"
 }

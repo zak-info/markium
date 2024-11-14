@@ -110,5 +110,7 @@
   "price": "Price",
   "maintenanceType": "Maintenance Type",
   "numberOfRepetitions": "Number of Repetitions",
-  "recurringFaults": "Recurring Faults"
+  "recurringFaults": "Recurring Faults",
+  "companyList": "Company List",
+  "addCompany": "Add new company"
 }

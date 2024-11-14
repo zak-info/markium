@@ -103,6 +103,8 @@ const PermissionDeniedPage = lazy(() => import('src/pages/dashboard/permission')
 const BlankPage = lazy(() => import('src/pages/dashboard/blank'));
 
 const CompanyPage = lazy(() => import('src/pages/dashboard/company/list'));
+const CompanyEditPage = lazy(() => import('src/pages/dashboard/company/edit'));
+const CompanyNewPage = lazy(() => import('src/pages/dashboard/company/new'));
 
 // ----------------------------------------------------------------------
 
@@ -251,8 +253,8 @@ export const dashboardRoutes = [
         children: [
           { element: <CompanyPage />, index: true },
           { path: 'list', element: <CompanyPage /> },
-          { path: ':id', element: <JobDetailsPage /> },
-          { path: 'new', element: <JobCreatePage /> },
+          { path: ':id', element: <CompanyEditPage /> },
+          { path: 'new', element: <CompanyNewPage /> },
           { path: ':id/edit', element: <JobEditPage /> },
         ],
       },

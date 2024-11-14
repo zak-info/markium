@@ -51,13 +51,8 @@ export default function UserNewEditForm({ currentCar }) {
   const NewUserSchema = Yup.object().shape({
     production_year: Yup.number().required('Production year is required').positive().integer(),
     plat_number: Yup.string().required('Plate number is required'),
-    chassis_number: Yup.string()
-      .length(17, 'يجب أن يتكون الرقم الهيكل من 17 خانة ')
-      .required('Chassis number is required'),
-    vin: Yup.string()
-      .length(9, 'يجب أن يتكون الرقم التسلسلي من 9 خانة ')
-      .required('VIN is required')
-      .label('Vin'),
+    chassis_number: Yup.string().required('Chassis number is required'),
+    vin: Yup.string().required('VIN is required'),
     passengers_capacity: Yup.number()
       .required('Passenger capacity is required')
       .positive()
@@ -65,10 +60,12 @@ export default function UserNewEditForm({ currentCar }) {
     odometer: Yup.number().nullable().positive(),
     depreciation: Yup.number()
       .nullable()
-      .required()
+      .notRequired()
       .min(0, 'Depreciation cannot be negative')
-      .test('is-decimal', 'يجب أن يكون الاستهلاك رقم عشري مع حدين عشريين كحد أقصى', (value) =>
-        (value + '').match(/^\d*\.{1}\d*$/)
+      .test(
+        'is-decimal',
+        'Depreciation must be a decimal number with up to 2 decimal places',
+        (value) => value === undefined || value === null || /^\d+(\.\d{1,2})?$/.test(value)
       ),
     car_model_id: Yup.string().required('Car model is required'),
     color_id: Yup.string().required('Color is required'),

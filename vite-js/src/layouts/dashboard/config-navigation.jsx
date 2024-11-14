@@ -75,15 +75,15 @@ export function useNavData() {
         subheader: t('management'),
         items: [
           // USER
-          {
-            title: t('company'),
-            path: paths.dashboard.company.root,
-            icon: ICONS.menuItem,
-            children: [
-              { title: t('list'), path: paths.dashboard.company.root },
-              { title: t('create'), path: paths.dashboard.company.root },
-            ],
-          },
+          // {
+          //   title: t('company'),
+          //   path: paths.dashboard.company.root,
+          //   icon: ICONS.menuItem,
+          //   children: [
+          //     { title: t('list'), path: paths.dashboard.company.root },
+          //     { title: t('create'), path: paths.dashboard.company.root },
+          //   ],
+          // },
 
           {
             title: t('vehicles'),
