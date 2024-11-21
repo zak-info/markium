@@ -31,7 +31,7 @@ export default function AppNewInvoice({ title, subheader, tableData, tableLabels
 
       <TableContainer sx={{ overflow: 'unset' }}>
         <Scrollbar>
-          <Table sx={{ minWidth: 680 }}>
+          <Table sx={{ minWidth: 550 }}>
             <TableHeadCustom headLabel={tableLabels} />
 
             <TableBody>

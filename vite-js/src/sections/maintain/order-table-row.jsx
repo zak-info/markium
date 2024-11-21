@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { differenceInDays } from 'date-fns';
 
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
@@ -26,7 +27,17 @@ import CustomPopover, { usePopover } from 'src/components/custom-popover';
 // ----------------------------------------------------------------------
 
 export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteRow }) {
-  const { items, status, orderNumber, createdAt, customer, totalQuantity, subTotal } = row;
+  const {
+    exit_date,
+    status,
+    maintenance_manager,
+    orderNumber,
+    cause,
+    entry_date,
+    company,
+    car,
+    cost,
+  } = row;
 
   const confirm = useBoolean();
 
@@ -36,55 +47,25 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
 
   const renderPrimary = (
     <TableRow hover selected={selected}>
-      <TableCell padding="checkbox">
-        <Checkbox checked={selected} onClick={onSelectRow} />
-      </TableCell>
-
       <TableCell>
-        <Box
-          onClick={onViewRow}
-          sx={{
-            cursor: 'pointer',
-            '&:hover': {
-              textDecoration: 'underline',
-            },
-          }}
-        >
-          {orderNumber}
-        </Box>
+        <ListItemText primary={company?.name} secondary={car?.plat_number} />
       </TableCell>
+      <TableCell>{fDate(entry_date)}</TableCell>
+      <TableCell>{fDate(exit_date)}</TableCell>
+
+      <TableCell>{cause}</TableCell>
       <TableCell>
         <ListItemText
-          primary={fDate(createdAt)}
-          secondary={fTime(createdAt)}
-          primaryTypographyProps={{ typography: 'body2', noWrap: true }}
-          secondaryTypographyProps={{
-            mt: 0.5,
-            component: 'span',
-            typography: 'caption',
-          }}
+          primary={maintenance_manager?.[0]?.name}
+          secondary={maintenance_manager?.[0]?.phone_number}
         />
       </TableCell>
-
-      <TableCell> {fCurrency(subTotal)} </TableCell>
 
       <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-        <Avatar alt={customer.name} src={customer.avatarUrl} sx={{ mr: 2 }} />
-
-        <ListItemText
-          primary={customer.name}
-          secondary={customer.email}
-          primaryTypographyProps={{ typography: 'body2' }}
-          secondaryTypographyProps={{
-            component: 'span',
-            color: 'text.disabled',
-          }}
-        />
+        {differenceInDays(new Date(exit_date), new Date(entry_date))}
       </TableCell>
 
-      <TableCell align="center"> {totalQuantity} </TableCell>
-
-      <TableCell> {fCurrency(subTotal)} </TableCell>
+      <TableCell> {cost} SAR </TableCell>
 
       <TableCell>
         <Label
@@ -101,7 +82,7 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
       </TableCell>
 
       <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
-        <IconButton
+        {/* <IconButton
           color={collapse.value ? 'inherit' : 'default'}
           onClick={collapse.onToggle}
           sx={{
@@ -111,7 +92,7 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
           }}
         >
           <Iconify icon="eva:arrow-ios-downward-fill" />
-        </IconButton>
+        </IconButton> */}
 
         <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
           <Iconify icon="eva:more-vertical-fill" />
@@ -120,63 +101,63 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
     </TableRow>
   );
 
-  const renderSecondary = (
-    <TableRow>
-      <TableCell sx={{ p: 0, border: 'none' }} colSpan={8}>
-        <Collapse
-          in={collapse.value}
-          timeout="auto"
-          unmountOnExit
-          sx={{ bgcolor: 'background.neutral' }}
-        >
-          <Stack component={Paper} sx={{ m: 1.5 }}>
-            {items.map((item) => (
-              <Stack
-                key={item.id}
-                direction="row"
-                alignItems="center"
-                sx={{
-                  p: (theme) => theme.spacing(1.5, 2, 1.5, 1.5),
-                  '&:not(:last-of-type)': {
-                    borderBottom: (theme) => `solid 2px ${theme.palette.background.neutral}`,
-                  },
-                }}
-              >
-                <Avatar
-                  src={item.coverUrl}
-                  variant="rounded"
-                  sx={{ width: 48, height: 48, mr: 2 }}
-                />
+  // const renderSecondary = (
+  //   <TableRow>
+  //     <TableCell sx={{ p: 0, border: 'none' }} colSpan={8}>
+  //       <Collapse
+  //         in={collapse.value}
+  //         timeout="auto"
+  //         unmountOnExit
+  //         sx={{ bgcolor: 'background.neutral' }}
+  //       >
+  //         <Stack component={Paper} sx={{ m: 1.5 }}>
+  //           {items.map((item) => (
+  //             <Stack
+  //               key={item.id}
+  //               direction="row"
+  //               alignItems="center"
+  //               sx={{
+  //                 p: (theme) => theme.spacing(1.5, 2, 1.5, 1.5),
+  //                 '&:not(:last-of-type)': {
+  //                   borderBottom: (theme) => `solid 2px ${theme.palette.background.neutral}`,
+  //                 },
+  //               }}
+  //             >
+  //               <Avatar
+  //                 src={item.coverUrl}
+  //                 variant="rounded"
+  //                 sx={{ width: 48, height: 48, mr: 2 }}
+  //               />
 
-                <ListItemText
-                  primary={item.name}
-                  secondary={item.sku}
-                  primaryTypographyProps={{
-                    typography: 'body2',
-                  }}
-                  secondaryTypographyProps={{
-                    component: 'span',
-                    color: 'text.disabled',
-                    mt: 0.5,
-                  }}
-                />
+  //               <ListItemText
+  //                 primary={item.name}
+  //                 secondary={item.sku}
+  //                 primaryTypographyProps={{
+  //                   typography: 'body2',
+  //                 }}
+  //                 secondaryTypographyProps={{
+  //                   component: 'span',
+  //                   color: 'text.disabled',
+  //                   mt: 0.5,
+  //                 }}
+  //               />
 
-                <Box>x{item.quantity}</Box>
+  //               <Box>x{item.quantity}</Box>
 
-                <Box sx={{ width: 110, textAlign: 'right' }}>{fCurrency(item.price)}</Box>
-              </Stack>
-            ))}
-          </Stack>
-        </Collapse>
-      </TableCell>
-    </TableRow>
-  );
+  //               <Box sx={{ width: 110, textAlign: 'right' }}>{fCurrency(item.price)}</Box>
+  //             </Stack>
+  //           ))}
+  //         </Stack>
+  //       </Collapse>
+  //     </TableCell>
+  //   </TableRow>
+  // );
 
   return (
     <>
       {renderPrimary}
 
-      {renderSecondary}
+      {/* {renderSecondary} */}
 
       <CustomPopover
         open={popover.open}

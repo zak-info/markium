@@ -168,5 +168,8 @@
   "numberOfRepetitions": "عدد التكرارات",
   "recurringFaults": "الأعطال المتكررة",
   "companyList": "قائمة الشركة",
-  "addCompany": "إضافة شركة جديدة"
+  "addCompany": "إضافة شركة جديدة",
+  "exitDate": "تاريخ الانتهاء",
+  "remainingDate": "عدد الايام المتبقية",
+  "maintanceResponsible": "مسؤول الصيانة"
 }

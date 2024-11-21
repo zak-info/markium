@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
@@ -45,6 +45,8 @@ import OrderTableFiltersResult from '../order-table-filters-result';
 import { useTranslate } from 'src/locales';
 import { RouterLink } from 'src/routes/components';
 
+import { useGetMaintenance, deleteMaintenance } from 'src/api/maintainance';
+
 // ----------------------------------------------------------------------
 
 const defaultFilters = {
@@ -62,11 +64,12 @@ export default function OrderListView() {
   const { t } = useTranslate();
 
   const TABLE_HEAD = [
-    { id: 'orderNumber', label: t('vehicle'), width: 116 },
-    { id: 'name', label: t('maintainDate') },
+    { id: 'orderNumber', label: t('vehicle'), width: 144 },
+    { id: 'name', label: t('entryDate') },
+    { id: 'exit', label: t('exitDate') },
     { id: 'createdAt', label: t('maintainType'), width: 140 },
-    { id: 'totalAmount', label: t('tenantName'), width: 140 },
-    { id: 'totalAmount', label: t('numberOfMaintenanceDays'), width: 140 },
+    { id: 'totalAmount', label: t('maintanceResponsible'), width: 140 },
+    { id: 'totalAmount', label: t('remainingDate'), width: 140 },
     { id: 'status', label: t('total'), width: 110 },
     { id: 'status', label: t('maintainStatus'), width: 110 },
     { id: '', width: 88 },
@@ -88,7 +91,13 @@ export default function OrderListView() {
 
   const confirm = useBoolean();
 
-  const [tableData, setTableData] = useState(_orders);
+  const { maintenance } = useGetMaintenance();
+
+  const [tableData, setTableData] = useState([]);
+
+  useEffect(() => {
+    setTableData(maintenance);
+  }, [maintenance]);
 
   const [filters, setFilters] = useState(defaultFilters);
 
@@ -130,13 +139,14 @@ export default function OrderListView() {
 
   const handleDeleteRow = useCallback(
     (id) => {
-      const deleteRow = tableData.filter((row) => row.id !== id);
-
-      enqueueSnackbar('Delete success!');
-
-      setTableData(deleteRow);
-
-      table.onUpdatePageDeleteRow(dataInPage.length);
+      deleteMaintenance(id)
+        .then((res) => {
+          enqueueSnackbar(res?.message);
+          mutate();
+        })
+        .catch((error) => {
+          enqueueSnackbar(error?.message, { variant: 'error' });
+        });
     },
     [dataInPage.length, enqueueSnackbar, table, tableData]
   );
@@ -282,13 +292,13 @@ export default function OrderListView() {
                   headLabel={TABLE_HEAD}
                   rowCount={dataFiltered.length}
                   numSelected={table.selected.length}
-                  onSort={table.onSort}
-                  onSelectAllRows={(checked) =>
-                    table.onSelectAllRows(
-                      checked,
-                      dataFiltered.map((row) => row.id)
-                    )
-                  }
+                  // onSort={table.onSort}
+                  // onSelectAllRows={(checked) =>
+                  //   table.onSelectAllRows(
+                  //     checked,
+                  //     dataFiltered.map((row) => row.id)
+                  //   )
+                  // }
                 />
 
                 <TableBody>
@@ -363,22 +373,21 @@ export default function OrderListView() {
 function applyFilter({ inputData, comparator, filters, dateError }) {
   const { status, name, startDate, endDate } = filters;
 
-  const stabilizedThis = inputData.map((el, index) => [el, index]);
+  // const stabilizedThis = inputData.map((el, index) => [el, index]);
 
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) return order;
-    return a[1] - b[1];
-  });
+  // stabilizedThis.sort((a, b) => {
+  //   const order = comparator(a[0], b[0]);
+  //   if (order !== 0) return order;
+  //   return a[1] - b[1];
+  // });
 
-  inputData = stabilizedThis.map((el) => el[0]);
+  // inputData = stabilizedThis.map((el) => el[0]);
 
   if (name) {
     inputData = inputData.filter(
       (order) =>
-        order.orderNumber.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.customer.name.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.customer.email.toLowerCase().indexOf(name.toLowerCase()) !== -1
+        order.company?.name?.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        order.car?.plat_number?.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
   }
 

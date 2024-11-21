@@ -92,7 +92,6 @@ export default function OrderDetailsView({ id }) {
               { id: 'category', label: t('maintenanceName') },
               { id: 'price', label: t('date') },
               { id: 'status', label: t('cost') },
-              { id: '' },
             ]}
           />
         </Grid>
@@ -104,9 +103,7 @@ export default function OrderDetailsView({ id }) {
             tableLabels={[
               { id: 'id', label: t('maintenanceType') },
               { id: 'category', label: t('numberOfRepetitions') },
-              { id: 'price', label: t('date') },
               { id: 'status', label: t('cost') },
-              { id: '' },
             ]}
           />
         </Grid>

@@ -231,20 +231,7 @@ export default function UserNewEditForm({ currentUser }) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <RHFAutocomplete
-                name="name"
-                label={t('company')}
-                options={options}
-                getOptionLabel={(option) => option}
-              />
-              <RHFTextField name="email" label={t('model')} />
               <RHFTextField name="state" label={t('plateNumber')} />
-              <RHFAutocomplete
-                name="state"
-                label={t('maintenanceItems')}
-                options={options}
-                getOptionLabel={(option) => option}
-              />
 
               <DatePicker
                 label={t('entryDate')}
@@ -263,15 +250,9 @@ export default function UserNewEditForm({ currentUser }) {
                 options={options}
                 getOptionLabel={(option) => option}
               />
-              <RHFAutocomplete
-                name="name"
-                label={t('tenantName')}
-                options={options}
-                getOptionLabel={(option) => option}
-              />
+
               <RHFTextField name="state" label={t('numberOfMaintenanceDays')} />
               <RHFTextField name="state" label={t('malfunction')} />
-              <RHFTextField name="state" label={t('manualy')} />
 
               {/* <RHFAutocomplete
                 name="country"

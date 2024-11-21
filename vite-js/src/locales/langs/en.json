@@ -112,5 +112,8 @@
   "numberOfRepetitions": "Number of Repetitions",
   "recurringFaults": "Recurring Faults",
   "companyList": "Company List",
-  "addCompany": "Add new company"
+  "addCompany": "Add new company",
+  "exitDate": "Exit Date ",
+  "remainingDate": "Remaining Date",
+  "maintanceResponsible": "Maintenance Responsible"
 }

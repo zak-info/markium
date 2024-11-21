@@ -31,7 +31,7 @@ export default function AppNewInvoice({ title, subheader, tableData, tableLabels
 
       <TableContainer sx={{ overflow: 'unset' }}>
         <Scrollbar>
-          <Table sx={{ minWidth: 680 }}>
+          <Table sx={{ minWidth: 550 }}>
             <TableHeadCustom headLabel={tableLabels} />
 
             <TableBody>
@@ -97,7 +97,6 @@ function AppNewInvoiceRow({ row }) {
 
         <TableCell>{row.count}</TableCell>
 
-        <TableCell>{fDate(row.created_at)}</TableCell>
         <TableCell>{fCurrency(row.cost) || '-'}</TableCell>
         {/* 
         <TableCell align="right" sx={{ pr: 1 }}>

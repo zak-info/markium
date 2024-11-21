@@ -73,6 +73,9 @@ export const endpoints = {
   company: {
     list: '/company',
   },
+  maintenance: {
+    list: '/maintenance',
+  },
 
   cars: {
     list: '/car',
