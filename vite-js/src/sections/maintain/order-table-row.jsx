@@ -48,7 +48,17 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
   const renderPrimary = (
     <TableRow hover selected={selected}>
       <TableCell>
-        <ListItemText primary={company?.name} secondary={car?.plat_number} />
+        <ListItemText
+          onClick={onViewRow}
+          sx={{
+            cursor: 'pointer',
+            '&:hover': {
+              textDecoration: 'underline',
+            },
+          }}
+          primary={company?.name}
+          secondary={car?.plat_number}
+        />
       </TableCell>
       <TableCell>{fDate(entry_date)}</TableCell>
       <TableCell>{fDate(exit_date)}</TableCell>

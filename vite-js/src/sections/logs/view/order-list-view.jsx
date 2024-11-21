@@ -217,12 +217,12 @@ export default function OrderListView() {
             ))}
           </Tabs> */}
 
-          {/* <OrderTableToolbar
+          <OrderTableToolbar
             filters={filters}
             onFilters={handleFilters}
             //
             dateError={dateError}
-          /> */}
+          />
 
           {canReset && (
             <OrderTableFiltersResult

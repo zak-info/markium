@@ -166,7 +166,7 @@ export default function OrderListView() {
 
   const handleViewRow = useCallback(
     (id) => {
-      router.push(paths.dashboard.maintenance.details(id));
+      router.push(paths.dashboard.vehicle.details(id));
     },
     [router]
   );
@@ -314,7 +314,7 @@ export default function OrderListView() {
                         selected={table.selected.includes(row.id)}
                         onSelectRow={() => table.onSelectRow(row.id)}
                         onDeleteRow={() => handleDeleteRow(row.id)}
-                        onViewRow={() => handleViewRow(row.id)}
+                        onViewRow={() => handleViewRow(row.car.id)}
                       />
                     ))}
 
