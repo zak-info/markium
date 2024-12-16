@@ -26,17 +26,26 @@ import CustomPopover, { usePopover } from 'src/components/custom-popover';
 
 // ----------------------------------------------------------------------
 
-export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteRow }) {
+export default function OrderTableRow({
+  row,
+  selected,
+  onViewRow,
+  onSelectRow,
+  onDeleteRow,
+  onEditRow,
+}) {
   const {
     exit_date,
     status,
     maintenance_manager,
-    orderNumber,
+    car_model,
     cause,
-    entry_date,
-    company,
+    driver_phone_number,
+    plat_number,
     car,
-    cost,
+    state,
+    occupant_name,
+    type,
   } = row;
 
   const confirm = useBoolean();
@@ -56,40 +65,29 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
               textDecoration: 'underline',
             },
           }}
-          primary={company?.name}
+          primary={plat_number}
           secondary={car?.plat_number}
         />
       </TableCell>
-      <TableCell>{fDate(entry_date)}</TableCell>
-      <TableCell>{fDate(exit_date)}</TableCell>
-
-      <TableCell>{cause}</TableCell>
-      <TableCell>
-        <ListItemText
-          primary={maintenance_manager?.[0]?.name}
-          secondary={maintenance_manager?.[0]?.phone_number}
-        />
-      </TableCell>
-
-      <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-        {differenceInDays(new Date(exit_date), new Date(entry_date))}
-      </TableCell>
-
-      <TableCell> {cost} SAR </TableCell>
+      <TableCell>{car_model}</TableCell>
+      <TableCell>{state?.translations?.name}</TableCell>
+      <TableCell>{type?.translations?.name}</TableCell>
+      <TableCell>{occupant_name}</TableCell>
 
       <TableCell>
         <Label
           variant="soft"
           color={
-            (status === 'completed' && 'success') ||
-            (status === 'pending' && 'warning') ||
-            (status === 'cancelled' && 'error') ||
+            (status?.translations?.name === 'completed' && 'success') ||
+            (status?.translations?.name === 'pending' && 'warning') ||
+            (status?.translations?.name === 'cancelled' && 'error') ||
             'default'
           }
         >
-          {status}
+          {status?.translations?.name}
         </Label>
       </TableCell>
+      <TableCell> {driver_phone_number || '-'} </TableCell>
 
       <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
         {/* <IconButton
@@ -177,6 +175,26 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
       >
         <MenuItem
           onClick={() => {
+            onViewRow();
+            popover.onClose();
+          }}
+        >
+          <Iconify icon="solar:eye-bold" />
+          View
+        </MenuItem>
+
+        <MenuItem
+          onClick={() => {
+            onEditRow();
+            popover.onClose();
+          }}
+        >
+          <Iconify icon="solar:pen-bold" />
+          Edit
+        </MenuItem>
+
+        <MenuItem
+          onClick={() => {
             confirm.onTrue();
             popover.onClose();
           }}
@@ -184,16 +202,6 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
         >
           <Iconify icon="solar:trash-bin-trash-bold" />
           Delete
-        </MenuItem>
-
-        <MenuItem
-          onClick={() => {
-            onViewRow();
-            popover.onClose();
-          }}
-        >
-          <Iconify icon="solar:eye-bold" />
-          View
         </MenuItem>
       </CustomPopover>
 
@@ -203,7 +211,14 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
         title="Delete"
         content="Are you sure want to delete?"
         action={
-          <Button variant="contained" color="error" onClick={onDeleteRow}>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={() => {
+              onDeleteRow();
+              confirm.onFalse();
+            }}
+          >
             Delete
           </Button>
         }

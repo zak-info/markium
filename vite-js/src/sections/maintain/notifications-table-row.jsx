@@ -36,13 +36,11 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
 
   const renderPrimary = (
     <TableRow hover selected={selected}>
-      <TableCell padding="checkbox">
-        <Checkbox checked={selected} onClick={onSelectRow} />
-      </TableCell>
-
       <TableCell>{orderNumber}</TableCell>
 
       <TableCell> {fCurrency(subTotal)} </TableCell>
+      <TableCell>- </TableCell>
+      <TableCell>- </TableCell>
 
       <TableCell>
         <ListItemText
@@ -57,6 +55,8 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
         />
       </TableCell>
 
+      <TableCell align="center"> {totalQuantity} </TableCell>
+      <TableCell align="center"> {totalQuantity} </TableCell>
       <TableCell align="center"> {totalQuantity} </TableCell>
 
       <TableCell>

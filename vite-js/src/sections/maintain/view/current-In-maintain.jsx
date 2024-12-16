@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
@@ -45,6 +45,8 @@ import OrderTableFiltersResult from '../order-table-filters-result';
 import { useTranslate } from 'src/locales';
 import { RouterLink } from 'src/routes/components';
 
+import { useGetCarUnderMaintenance } from 'src/api/car';
+
 // ----------------------------------------------------------------------
 
 const defaultFilters = {
@@ -59,15 +61,23 @@ const defaultFilters = {
 export default function NotificationsListView() {
   const { enqueueSnackbar } = useSnackbar();
 
+  const { car } = useGetCarUnderMaintenance();
+
   const { t } = useTranslate();
 
   const TABLE_HEAD = [
+    { id: 'plateNumber', label: t('plateNumber'), width: 116 },
     { id: 'orderNumber', label: t('vehicle'), width: 116 },
-    { id: 'name', label: t('maintainDate'), width: 140 },
+    { id: 'entryDate', label: t('entryDate'), width: 140 },
+    { id: 'manitainClassification', label: t('manitainClassification'), width: 140 },
+    { id: 'expectedMaintainDays', label: t('expectedMaintainDays') },
+    { id: 'theRest', label: t('theRest') },
+
+    { id: 'malfunction', label: t('malfunction'), width: 140 },
     { id: 'totalAmount', label: t('workSite'), width: 140 },
-    { id: 'totalAmount2', label: t('tenantName'), width: 140 },
-    { id: 'totalAmount2', label: t('numberOfMaintenanceDays'), width: 140 },
-    { id: 'totalAmount2', label: t('malfunction'), width: 140 },
+
+    { id: 'tenantName', label: t('tenantName'), width: 140 },
+    { id: 'driver', label: t('driver'), width: 140 },
 
     { id: '', width: 88 },
   ];
@@ -88,7 +98,11 @@ export default function NotificationsListView() {
 
   const confirm = useBoolean();
 
-  const [tableData, setTableData] = useState(_orders);
+  const [tableData, setTableData] = useState([]);
+
+  useEffect(() => {
+    setTableData(car);
+  }, [car]);
 
   const [filters, setFilters] = useState(defaultFilters);
 
@@ -282,13 +296,13 @@ export default function NotificationsListView() {
                   headLabel={TABLE_HEAD}
                   rowCount={dataFiltered.length}
                   numSelected={table.selected.length}
-                  onSort={table.onSort}
-                  onSelectAllRows={(checked) =>
-                    table.onSelectAllRows(
-                      checked,
-                      dataFiltered.map((row) => row.id)
-                    )
-                  }
+                  // onSort={table.onSort}
+                  // onSelectAllRows={(checked) =>
+                  //   table.onSelectAllRows(
+                  //     checked,
+                  //     dataFiltered.map((row) => row.id)
+                  //   )
+                  // }
                 />
 
                 <TableBody>

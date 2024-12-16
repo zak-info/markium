@@ -62,11 +62,18 @@ export default function NotificationsListView() {
   const { t } = useTranslate();
 
   const TABLE_HEAD = [
+    { id: 'plateNumber', label: t('plateNumber'), width: 116 },
+
     { id: 'orderNumber', label: t('vehicle'), width: 116 },
+    { id: 'manitainClassification', label: t('manitainClassification'), width: 140 },
+    { id: 'maintainType', label: t('maintainType') },
+
     { id: 'name', label: t('theRest'), width: 140 },
     { id: 'createdAt', label: t('alert'), width: 140 },
-    { id: 'totalAmount', label: t('workSite'), width: 140 },
-    { id: 'status', label: t('contract'), width: 110 },
+    { id: 'workSite', label: t('workSite'), width: 140 },
+    { id: 'tenantName', label: t('tenantName'), width: 140 },
+    { id: 'driver', label: t('driver') },
+
     { id: '', width: 88 },
   ];
 
@@ -280,13 +287,13 @@ export default function NotificationsListView() {
                   headLabel={TABLE_HEAD}
                   rowCount={dataFiltered.length}
                   numSelected={table.selected.length}
-                  onSort={table.onSort}
-                  onSelectAllRows={(checked) =>
-                    table.onSelectAllRows(
-                      checked,
-                      dataFiltered.map((row) => row.id)
-                    )
-                  }
+                  // onSort={table.onSort}
+                  // onSelectAllRows={(checked) =>
+                  //   table.onSelectAllRows(
+                  //     checked,
+                  //     dataFiltered.map((row) => row.id)
+                  //   )
+                  // }
                 />
 
                 <TableBody>

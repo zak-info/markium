@@ -27,6 +27,28 @@ export function useGetCar() {
 
 // ----------------------------------------------------------------------
 
+export function useGetCarUnderMaintenance() {
+  const URL = endpoints.cars.under_maintainance;
+
+  const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher);
+
+  const memoizedValue = useMemo(
+    () => ({
+      car: data?.data || [],
+      carLoading: isLoading,
+      carError: error,
+      carValidating: isValidating,
+      carEmpty: !isLoading && !data?.data.length,
+      mutate,
+    }),
+    [data, error, isLoading, isValidating]
+  );
+
+  return memoizedValue;
+}
+
+//----------------------------------------------------------------
+
 export function useGetBreakDown(id) {
   const URL = endpoints.cars.list + '/' + id + '/breakdown';
 

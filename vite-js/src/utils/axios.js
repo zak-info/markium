@@ -79,5 +79,6 @@ export const endpoints = {
 
   cars: {
     list: '/car',
+    under_maintainance: '/car/under_maintainance',
   },
 };

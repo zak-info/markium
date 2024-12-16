@@ -71,7 +71,7 @@ export default function OrderTableRow({
             },
           }}
         >
-          {company?.name}
+          {model?.company?.name}
         </Box>
       </TableCell>
 
@@ -101,7 +101,7 @@ export default function OrderTableRow({
             'default'
           }
         >
-          {statusString}
+          {status?.translations?.name}
         </Label>
       </TableCell>
       <TableCell align="center"> - </TableCell>
@@ -190,7 +190,7 @@ export default function OrderTableRow({
         open={popover.open}
         onClose={popover.onClose}
         arrow="right-top"
-        sx={{ width: 140 }}
+        sx={{ width: 180 }}
       >
         <MenuItem
           onClick={() => {
@@ -221,6 +221,16 @@ export default function OrderTableRow({
         >
           <Iconify icon="solar:eye-bold" />
           {t('view')}
+        </MenuItem>
+
+        <MenuItem
+          onClick={() => {
+            onViewRow();
+            popover.onClose();
+          }}
+        >
+          <Iconify icon="map:car-repair" />
+          {t('addToMaintenance')}
         </MenuItem>
       </CustomPopover>
 

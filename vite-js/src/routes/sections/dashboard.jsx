@@ -52,6 +52,7 @@ const VehiclesEditPage = lazy(() => import('src/pages/dashboard/vehicle/edit'));
 // Maintains
 const MaintainListPage = lazy(() => import('src/pages/dashboard/maintain/list'));
 const MaintainNewPage = lazy(() => import('src/pages/dashboard/maintain/new'));
+const MaintainEditPage = lazy(() => import('src/pages/dashboard/maintain/edit'));
 const NotificationsMaintainListPage = lazy(
   () => import('src/pages/dashboard/maintain/notifications')
 );
@@ -169,6 +170,9 @@ export const dashboardRoutes = [
           { path: ':id', element: <MaintainDetailsPage /> },
           { path: 'new', element: <MaintainNewPage /> },
           { path: 'notifications', element: <NotificationsMaintainListPage /> },
+
+          { path: ':id/edit', element: <MaintainEditPage /> },
+
           { path: 'current-in-maintenance', element: <CurrentInMaintainListView /> },
         ],
       },

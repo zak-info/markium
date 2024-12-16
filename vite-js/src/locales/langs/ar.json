@@ -171,5 +171,8 @@
   "addCompany": "إضافة شركة جديدة",
   "exitDate": "تاريخ الانتهاء",
   "remainingDate": "عدد الايام المتبقية",
-  "maintanceResponsible": "مسؤول الصيانة"
+  "maintanceResponsible": "مسؤول الصيانة",
+  "addToMaintenance": "إضافة إلى الصيانة",
+  "manitainClassification": "تصنيف الصيانة",
+  "expectedMaintainDays": "عدد أيام الصيانة المتوقعة"
 }

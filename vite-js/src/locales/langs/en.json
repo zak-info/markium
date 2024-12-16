@@ -115,5 +115,7 @@
   "addCompany": "Add new company",
   "exitDate": "Exit Date ",
   "remainingDate": "Remaining Date",
-  "maintanceResponsible": "Maintenance Responsible"
+  "maintanceResponsible": "Maintenance Responsible",
+  "addToMaintenance": "Add To Maintenance",
+  "expectedMaintainDays": "Number of expected maintenance days"
 }

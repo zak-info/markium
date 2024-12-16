@@ -1,5 +1,5 @@
 import * as Yup from 'yup';
-import PropTypes from 'prop-types';
+import PropTypes, { number } from 'prop-types';
 import { useMemo, useCallback } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -12,7 +12,8 @@ import Switch from '@mui/material/Switch';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
-import FormControlLabel from '@mui/material/FormControlLabel';
+import Divider from '@mui/material/Divider';
+import MenuItem from '@mui/material/MenuItem';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 import { paths } from 'src/routes/paths';
@@ -27,56 +28,58 @@ import { useSnackbar } from 'src/components/snackbar';
 import FormProvider, {
   RHFSwitch,
   RHFTextField,
-  RHFUploadAvatar,
+  RHFSelect,
   RHFAutocomplete,
 } from 'src/components/hook-form';
 
 import { useTranslate } from 'src/locales';
+import { useValues } from 'src/api/utils';
+
+import { createMaintenance } from 'src/api/maintainance';
+import { fDate } from 'src/utils/format-time';
 
 // ----------------------------------------------------------------------
 
 export default function UserNewEditForm({ currentUser }) {
   const router = useRouter();
 
+  const { data } = useValues();
+
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslate();
 
-  const NewUserSchema = Yup.object().shape({
-    name: Yup.string().required('Name is required'),
-    email: Yup.string().required('Email is required').email('Email must be a valid email address'),
-    phoneNumber: Yup.string().required('Phone number is required'),
-    address: Yup.string().required('Address is required'),
-    country: Yup.string().required('Country is required'),
-    company: Yup.string().required('Company is required'),
-    state: Yup.string().required('State is required'),
-    city: Yup.string().required('City is required'),
-    role: Yup.string().required('Role is required'),
-    zipCode: Yup.string().required('Zip code is required'),
-    avatarUrl: Yup.mixed().nullable().required('Avatar is required'),
-    // not required
-    status: Yup.string(),
-    isVerified: Yup.boolean(),
+  const NewUserSchema = Yup.object({
+    state_id: Yup.number()
+      .required('State ID is required')
+      .positive('State ID must be a positive number')
+      .integer('State ID must be an integer'),
+
+    type: Yup.string().required('Type is required'),
+
+    car_plat_number: Yup.string()
+      .required('Car plate number is required')
+      .matches(/^\d+$/, 'Car plate number must be numeric'), // Assuming car plate number is numeric only
+
+    entry_date: Yup.date().required('Entry date is required'), // Validates that the entry date is not in the future
+    cause: Yup.string()
+      .required('Cause is required')
+      .min(3, 'Cause must be at least 3 characters long'), // Validates that cause has a minimum length of 3
+
+    exit_date: Yup.date().nullable(), // Allowing an empty string for exit date (since it's not required)
+    // Exit date validation for the future
   });
 
   const defaultValues = useMemo(
     () => ({
-      name: currentUser?.name || '',
-      city: currentUser?.city || '',
-      role: currentUser?.role || '',
-      email: currentUser?.email || '',
-      state: currentUser?.state || '',
-      status: currentUser?.status || '',
-      address: currentUser?.address || '',
-      country: currentUser?.country || '',
-      zipCode: currentUser?.zipCode || '',
-      company: currentUser?.company || '',
-      avatarUrl: currentUser?.avatarUrl || null,
-      phoneNumber: currentUser?.phoneNumber || '',
-      isVerified: currentUser?.isVerified || true,
+      state_id: null, // default value for state_id
+      car_plat_number: '', // default value for car plate number
+      type: '', // default value for car plate number
+      entry_date: null, // default value for entry date
+      cause: '', // default value for cause
+      exit_date: null, // default value for exit date (empty string)
     }),
     [currentUser]
   );
-
   const methods = useForm({
     resolver: yupResolver(NewUserSchema),
     defaultValues,
@@ -95,10 +98,10 @@ export default function UserNewEditForm({ currentUser }) {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await createMaintenance(values);
       reset();
       enqueueSnackbar(currentUser ? 'Update success!' : 'Create success!');
-      router.push(paths.dashboard.user.list);
+      router.push(paths.dashboard.maintenance.root);
       console.info('DATA', data);
     } catch (error) {
       console.error(error);
@@ -120,106 +123,20 @@ export default function UserNewEditForm({ currentUser }) {
     [setValue]
   );
 
-  const options = ['نيسان', 'تويتا'];
+  const maintainType = [
+    {
+      value: 'urgent',
+      label: 'طارئ',
+    },
+
+    {
+      label: 'اعتيادي',
+      value: 'normal',
+    },
+  ];
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>
       <Grid container spacing={3}>
-        {/* <Grid xs={12} md={4}>
-          <Card sx={{ pt: 10, pb: 5, px: 3 }}>
-            {currentUser && (
-              <Label
-                color={
-                  (values.status === 'active' && 'success') ||
-                  (values.status === 'banned' && 'error') ||
-                  'warning'
-                }
-                sx={{ position: 'absolute', top: 24, right: 24 }}
-              >
-                {values.status}
-              </Label>
-            )}
-
-            <Box sx={{ mb: 5 }}>
-              <RHFUploadAvatar
-                name="avatarUrl"
-                maxSize={3145728}
-                onDrop={handleDrop}
-                helperText={
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      mt: 3,
-                      mx: 'auto',
-                      display: 'block',
-                      textAlign: 'center',
-                      color: 'text.disabled',
-                    }}
-                  >
-                    Allowed *.jpeg, *.jpg, *.png, *.gif
-                    <br /> max size of {fData(3145728)}
-                  </Typography>
-                }
-              />
-            </Box>
-
-            {currentUser && (
-              <FormControlLabel
-                labelPlacement="start"
-                control={
-                  <Controller
-                    name="status"
-                    control={control}
-                    render={({ field }) => (
-                      <Switch
-                        {...field}
-                        checked={field.value !== 'active'}
-                        onChange={(event) =>
-                          field.onChange(event.target.checked ? 'banned' : 'active')
-                        }
-                      />
-                    )}
-                  />
-                }
-                label={
-                  <>
-                    <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
-                      Banned
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                      Apply disable account
-                    </Typography>
-                  </>
-                }
-                sx={{ mx: 0, mb: 3, width: 1, justifyContent: 'space-between' }}
-              />
-            )}
-
-            <RHFSwitch
-              name="isVerified"
-              labelPlacement="start"
-              label={
-                <>
-                  <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
-                    Email Verified
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                    Disabling this will automatically send the user a verification email
-                  </Typography>
-                </>
-              }
-              sx={{ mx: 0, width: 1, justifyContent: 'space-between' }}
-            />
-
-            {currentUser && (
-              <Stack justifyContent="center" alignItems="center" sx={{ mt: 3 }}>
-                <Button variant="soft" color="error">
-                  Delete User
-                </Button>
-              </Stack>
-            )}
-          </Card>
-        </Grid> */}
-
         <Grid xs={12} md={8}>
           <Card sx={{ p: 3 }}>
             <Box
@@ -231,28 +148,54 @@ export default function UserNewEditForm({ currentUser }) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <RHFTextField name="state" label={t('plateNumber')} />
+              <RHFTextField required name="car_plat_number" label={t('plateNumber')} />
 
               <DatePicker
                 label={t('entryDate')}
-                value={new Date()}
-                onChange={(e) => console.log('ssss')}
+                value={values.entry_date ? new Date(values.entry_date) : null}
+                required
+                name="entry_date"
+                onChange={(newValue) => setValue('entry_date', fDate(newValue, 'yyyy-MM-dd'))}
                 slotProps={{
                   textField: {
                     fullWidth: true,
                   },
                 }}
+                minDate={new Date()}
               />
 
-              <RHFAutocomplete
-                name="name"
-                label={t('workSite')}
-                options={options}
-                getOptionLabel={(option) => option}
+              <DatePicker
+                label={t('exitDate')}
+                value={values.exit_date ? new Date(values.exit_date) : null}
+                name="exit_date"
+                onChange={(newValue) => setValue('exit_date', fDate(newValue, 'yyyy-MM-dd'))}
+                slotProps={{
+                  textField: {
+                    fullWidth: true,
+                  },
+                }}
+                minDate={new Date()}
               />
 
-              <RHFTextField name="state" label={t('numberOfMaintenanceDays')} />
-              <RHFTextField name="state" label={t('malfunction')} />
+              <RHFSelect required name="state_id" label={t('workSite')}>
+                <Divider sx={{ borderStyle: 'dashed' }} />
+                {data?.state?.map((option) => (
+                  <MenuItem key={option?.name} value={option?.id}>
+                    {option?.name}
+                  </MenuItem>
+                ))}
+              </RHFSelect>
+
+              <RHFTextField required name="cause" label={t('malfunction')} />
+
+              <RHFSelect required name="type" label={t('maintainType')}>
+                <Divider sx={{ borderStyle: 'dashed' }} />
+                {maintainType?.map((option) => (
+                  <MenuItem key={option?.value} value={option?.value}>
+                    {option?.label}
+                  </MenuItem>
+                ))}
+              </RHFSelect>
 
               {/* <RHFAutocomplete
                 name="country"

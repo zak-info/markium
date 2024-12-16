@@ -141,6 +141,7 @@ export const paths = {
       root: `${ROOTS.DASHBOARD}/maintenance`,
       notifications: `${ROOTS.DASHBOARD}/maintenance/notifications`,
       new: `${ROOTS.DASHBOARD}/maintenance/new`,
+      edit: (id) => `${ROOTS.DASHBOARD}/maintenance/${id}/edit`,
 
       details: (id) => `${ROOTS.DASHBOARD}/maintenance/${id}`,
 

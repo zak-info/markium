@@ -64,14 +64,14 @@ export default function OrderListView() {
   const { t } = useTranslate();
 
   const TABLE_HEAD = [
+    { id: 'plateNumber', label: t('plateNumber'), width: 116 },
+
     { id: 'orderNumber', label: t('vehicle'), width: 144 },
-    { id: 'name', label: t('entryDate') },
-    { id: 'exit', label: t('exitDate') },
-    { id: 'createdAt', label: t('maintainType'), width: 140 },
-    { id: 'totalAmount', label: t('maintanceResponsible'), width: 140 },
-    { id: 'totalAmount', label: t('remainingDate'), width: 140 },
-    { id: 'status', label: t('total'), width: 110 },
-    { id: 'status', label: t('maintainStatus'), width: 110 },
+    { id: 'workSite', label: t('workSite'), width: 144 },
+    { id: 'maintainType', label: t('maintainType'), width: 144 },
+    { id: 'tenantName', label: t('tenantName'), width: 144 },
+    { id: 'maintainStatus', label: t('maintainStatus'), width: 140 },
+    { id: 'driver', label: t('driver'), width: 140 },
     { id: '', width: 88 },
   ];
 
@@ -91,7 +91,7 @@ export default function OrderListView() {
 
   const confirm = useBoolean();
 
-  const { maintenance } = useGetMaintenance();
+  const { maintenance, mutate } = useGetMaintenance();
 
   const [tableData, setTableData] = useState([]);
 
@@ -141,11 +141,11 @@ export default function OrderListView() {
     (id) => {
       deleteMaintenance(id)
         .then((res) => {
-          enqueueSnackbar(res?.message);
+          enqueueSnackbar(res?.data?.message);
           mutate();
         })
         .catch((error) => {
-          enqueueSnackbar(error?.message, { variant: 'error' });
+          enqueueSnackbar(error?.data?.message, { variant: 'error' });
         });
     },
     [dataInPage.length, enqueueSnackbar, table, tableData]
@@ -167,6 +167,13 @@ export default function OrderListView() {
   const handleViewRow = useCallback(
     (id) => {
       router.push(paths.dashboard.vehicle.details(id));
+    },
+    [router]
+  );
+
+  const handleEditRow = useCallback(
+    (id) => {
+      router.push(paths.dashboard.maintenance.edit(id));
     },
     [router]
   );
@@ -314,6 +321,7 @@ export default function OrderListView() {
                         selected={table.selected.includes(row.id)}
                         onSelectRow={() => table.onSelectRow(row.id)}
                         onDeleteRow={() => handleDeleteRow(row.id)}
+                        onEditRow={() => handleEditRow(row.id)}
                         onViewRow={() => handleViewRow(row.car.id)}
                       />
                     ))}
