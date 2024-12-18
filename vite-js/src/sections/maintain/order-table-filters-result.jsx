@@ -9,6 +9,7 @@ import Button from '@mui/material/Button';
 
 import Iconify from 'src/components/iconify';
 import { shortDateLabel } from 'src/components/custom-date-range-picker';
+import { useTranslate } from 'src/locales';
 
 // ----------------------------------------------------------------------
 
@@ -22,6 +23,8 @@ export default function OrderTableFiltersResult({
   ...other
 }) {
   const shortLabel = shortDateLabel(filters.startDate, filters.endDate);
+
+  const { t } = useTranslate();
 
   const handleRemoveKeyword = useCallback(() => {
     onFilters('name', '');
@@ -48,7 +51,7 @@ export default function OrderTableFiltersResult({
       <Stack flexGrow={1} spacing={1} direction="row" flexWrap="wrap" alignItems="center">
         {filters.status !== 'all' && (
           <Block label="Status:">
-            <Chip size="small" label={filters.status} onDelete={handleRemoveStatus} />
+            <Chip size="small" label={t(filters.status)} onDelete={handleRemoveStatus} />
           </Block>
         )}
 

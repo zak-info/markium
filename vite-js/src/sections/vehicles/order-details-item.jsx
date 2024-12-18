@@ -51,7 +51,7 @@ export default function OrderDetailsItems({
 
         <Stack direction="row">
           <Box sx={{ width: 160, color: 'text.secondary' }}>{t('vehcileColor')}</Box>
-          <Box sx={{ typography: 'subtitle2' }}>{carDetails?.color?.translations?.[0]?.name}</Box>
+          <Box sx={{ typography: 'subtitle2' }}>{carDetails?.color?.translations?.name}</Box>
         </Stack>
       </Stack>
 
@@ -60,7 +60,7 @@ export default function OrderDetailsItems({
       <Stack spacing={2} sx={{ my: 3, typography: 'body2' }}>
         <Stack direction="row">
           <Box sx={{ width: 160, color: 'text.secondary' }}>{t('serialNumber')}</Box>
-          <Box sx={{ typography: 'subtitle2' }}>{carDetails?.odometer}</Box>
+          <Box sx={{ typography: 'subtitle2' }}>{carDetails?.odometer || '-'}</Box>
         </Stack>
 
         <Stack direction="row">
@@ -70,7 +70,7 @@ export default function OrderDetailsItems({
               variant="soft"
               color={carDetails?.status?.key === 'available' ? 'success' : 'default'}
             >
-              {carDetails?.status?.translations?.[0]?.name}
+              {carDetails?.status?.translations?.name}
             </Label>
           </Box>
         </Stack>
@@ -108,10 +108,8 @@ export default function OrderDetailsItems({
             }}
           >
             <ListItemText
-              primary={carDetails?.model?.name}
-              secondary={
-                carDetails?.model?.company?.name + ` (${carDetails?.model?.company?.country?.name})`
-              }
+              primary={carDetails?.model?.translations?.name}
+              secondary={carDetails?.model?.company?.translations?.name}
               primaryTypographyProps={{
                 typography: 'body2',
               }}

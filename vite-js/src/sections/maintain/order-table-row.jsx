@@ -23,6 +23,7 @@ import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import { useTranslate } from 'src/locales';
 
 // ----------------------------------------------------------------------
 
@@ -54,6 +55,8 @@ export default function OrderTableRow({
 
   const popover = usePopover();
 
+  const { t } = useTranslate();
+
   const renderPrimary = (
     <TableRow hover selected={selected}>
       <TableCell>
@@ -78,9 +81,9 @@ export default function OrderTableRow({
         <Label
           variant="soft"
           color={
-            (status?.translations?.name === 'completed' && 'success') ||
-            (status?.translations?.name === 'pending' && 'warning') ||
-            (status?.translations?.name === 'cancelled' && 'error') ||
+            (status?.key === 'repaired' && 'success') ||
+            (status?.key === 'pending' && 'warning') ||
+            (status?.key === 'cancelled' && 'error') ||
             'default'
           }
         >

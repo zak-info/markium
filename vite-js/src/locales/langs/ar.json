@@ -37,6 +37,7 @@
   "available": "متاح",
   "rented": "مؤجر",
   "underProcessing": "تحت التجهيز",
+  "pending": "جاري العمل",
   "maintain": "صيانه",
   "blank": "فارغ",
   "order": "طلب",
@@ -174,5 +175,7 @@
   "maintanceResponsible": "مسؤول الصيانة",
   "addToMaintenance": "إضافة إلى الصيانة",
   "manitainClassification": "تصنيف الصيانة",
-  "expectedMaintainDays": "عدد أيام الصيانة المتوقعة"
+  "expectedMaintainDays": "عدد أيام الصيانة المتوقعة",
+  "under_maintenance": "في طور الصيانة",
+  "repaired": "تم إصلاحه"
 }

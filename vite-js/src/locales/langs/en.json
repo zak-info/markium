@@ -117,5 +117,7 @@
   "remainingDate": "Remaining Date",
   "maintanceResponsible": "Maintenance Responsible",
   "addToMaintenance": "Add To Maintenance",
-  "expectedMaintainDays": "Number of expected maintenance days"
+  "expectedMaintainDays": "Number of expected maintenance days",
+  "under_maintenance": "Under Maintenance",
+  "repaired": "Repaired"
 }

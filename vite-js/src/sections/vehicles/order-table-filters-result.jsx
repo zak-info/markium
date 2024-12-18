@@ -6,6 +6,7 @@ import Chip from '@mui/material/Chip';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
+import { useTranslate } from 'src/locales';
 
 import Iconify from 'src/components/iconify';
 import { shortDateLabel } from 'src/components/custom-date-range-picker';
@@ -36,6 +37,8 @@ export default function OrderTableFiltersResult({
     onFilters('endDate', null);
   }, [onFilters]);
 
+  const { t } = useTranslate();
+
   return (
     <Stack spacing={1.5} {...other}>
       <Box sx={{ typography: 'body2' }}>
@@ -48,7 +51,7 @@ export default function OrderTableFiltersResult({
       <Stack flexGrow={1} spacing={1} direction="row" flexWrap="wrap" alignItems="center">
         {filters.status !== 'all' && (
           <Block label="Status:">
-            <Chip size="small" label={filters.status} onDelete={handleRemoveStatus} />
+            <Chip size="small" label={t(filters.status)} onDelete={handleRemoveStatus} />
           </Block>
         )}
 

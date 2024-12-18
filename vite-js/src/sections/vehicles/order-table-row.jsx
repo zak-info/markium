@@ -35,7 +35,7 @@ export default function OrderTableRow({
   onEditRow,
 }) {
   const {
-    company,
+    color,
     car_model_id,
     status,
     model,
@@ -71,13 +71,13 @@ export default function OrderTableRow({
             },
           }}
         >
-          {model?.company?.name}
+          {model?.company?.translations?.name}
         </Box>
       </TableCell>
 
-      <TableCell>{model?.name}</TableCell>
+      <TableCell>{model?.translations?.name}</TableCell>
 
-      <TableCell align="center"> {plat_number} </TableCell>
+      <TableCell> {plat_number} </TableCell>
 
       <TableCell>
         <ListItemText
@@ -90,6 +90,7 @@ export default function OrderTableRow({
           }}
         />
       </TableCell>
+      <TableCell> {color?.translations?.name} </TableCell>
 
       <TableCell>
         <Label
@@ -97,7 +98,7 @@ export default function OrderTableRow({
           color={
             (status?.key === 'available' && 'success') ||
             (status?.key === 'pending' && 'warning') ||
-            (status?.key === 'cancelled' && 'error') ||
+            (status?.key === 'under_maintenance' && 'error') ||
             'default'
           }
         >

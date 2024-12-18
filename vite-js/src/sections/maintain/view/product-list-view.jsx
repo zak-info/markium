@@ -77,10 +77,9 @@ export default function OrderListView() {
 
   const STATUS_OPTIONS = [
     { value: 'all', label: t('all') },
-    { value: 'completed', label: t('available') },
-    { value: 'pending', label: t('underProcessing') },
-    { value: 'refunded', label: t('rented') },
-    { value: 'cancelled', label: t('maintain') },
+    { value: 'repaired', label: t('repaired') },
+    { value: 'pending', label: t('pending') },
+    { value: 'under_maintenance', label: t('under_maintenance') },
   ];
 
   const table = useTable({ defaultOrderBy: 'orderNumber' });
@@ -237,14 +236,14 @@ export default function OrderListView() {
                       ((tab.value === 'all' || tab.value === filters.status) && 'filled') || 'soft'
                     }
                     color={
-                      (tab.value === 'completed' && 'success') ||
+                      (tab.value === 'repaired' && 'success') ||
                       (tab.value === 'pending' && 'warning') ||
-                      (tab.value === 'cancelled' && 'error') ||
+                      (tab.value === 'under_maintenance' && 'error') ||
                       'default'
                     }
                   >
-                    {['completed', 'pending', 'cancelled', 'refunded'].includes(tab.value)
-                      ? tableData.filter((user) => user.status === tab.value).length
+                    {['repaired', 'pending', 'under_maintenance', 'refunded'].includes(tab.value)
+                      ? tableData.filter((user) => user.status?.key === tab.value).length
                       : tableData.length}
                   </Label>
                 }

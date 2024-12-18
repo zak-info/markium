@@ -58,7 +58,7 @@ export default function OrderDetailsToolbar({
                   'default'
                 }
               >
-                {status?.translations?.[0]?.name}
+                {status?.translations?.name}
               </Label>
             </Stack>
 

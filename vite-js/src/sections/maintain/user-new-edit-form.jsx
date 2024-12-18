@@ -181,7 +181,7 @@ export default function UserNewEditForm({ currentUser }) {
                 <Divider sx={{ borderStyle: 'dashed' }} />
                 {data?.state?.map((option) => (
                   <MenuItem key={option?.name} value={option?.id}>
-                    {option?.name}
+                    {option?.translations?.name}
                   </MenuItem>
                 ))}
               </RHFSelect>

@@ -81,21 +81,19 @@ export default function OrderDetailsInfo({ carDetails, delivery, payment, shippi
           <Box component="span" sx={{ color: 'text.secondary', width: 120, flexShrink: 0 }}>
             {t('typeOfLicense')}
           </Box>
-          {carDetails?.license_type?.name}
+          {carDetails?.license_type?.name || '-'}
         </Stack>
         <Stack direction="row" alignItems="center">
           <Box component="span" sx={{ color: 'text.secondary', width: 120, flexShrink: 0 }}>
             {t('workSite')}
           </Box>
-          {carDetails?.state?.translations?.[0]?.name}
+          {carDetails?.state?.translations?.name}
         </Stack>
         <Stack direction="row" alignItems="center">
           <Box component="span" sx={{ color: 'text.secondary', width: 120, flexShrink: 0 }}>
             {t('depreciation')}
           </Box>
-          <Link underline="always" color="inherit">
-            {carDetails?.depreciation}
-          </Link>
+          <Link color="inherit">{carDetails?.depreciation || '-'}</Link>
         </Stack>
       </Stack>
     </>

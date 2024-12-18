@@ -67,6 +67,7 @@ export default function OrderListView() {
     { id: 'name', label: t('model'), width: 140 },
     { id: 'createdAt', label: t('plateNumber'), width: 140 },
     { id: 'totalQuantity', label: t('manufacturingYear'), width: 120 },
+    { id: 'color', label: t('vehcileColor'), width: 120 },
     { id: 'totalAmount', label: t('vehicleCondition'), width: 140 },
     { id: 'status', label: t('driver'), width: 110 },
     { id: 'status2', label: t('contract'), width: 110 },
@@ -76,9 +77,9 @@ export default function OrderListView() {
   const STATUS_OPTIONS = [
     { value: 'all', label: t('all') },
     { value: 'available', label: t('available') },
-    { value: 'pending', label: t('underProcessing') },
-    { value: 'refunded', label: t('rented') },
-    { value: 'cancelled', label: t('maintain') },
+    { value: 'underProcessing', label: t('underProcessing') },
+    { value: 'rented', label: t('rented') },
+    { value: 'under_maintenance', label: t('under_maintenance') },
   ];
 
   const table = useTable({ defaultOrderBy: 'orderNumber' });
@@ -230,12 +231,14 @@ export default function OrderListView() {
                     }
                     color={
                       (tab.value === 'available' && 'success') ||
-                      (tab.value === 'pending' && 'warning') ||
-                      (tab.value === 'cancelled' && 'error') ||
+                      (tab.value === 'underProcessing' && 'warning') ||
+                      (tab.value === 'under_maintenance' && 'error') ||
                       'default'
                     }
                   >
-                    {['available', 'pending', 'cancelled', 'refunded'].includes(tab.value)
+                    {['available', 'underProcessing', 'under_maintenance', 'rented'].includes(
+                      tab.value
+                    )
                       ? car.filter((user) => user.status?.key === tab.value).length
                       : car.length}
                   </Label>

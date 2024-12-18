@@ -22,6 +22,7 @@ import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import { Typography } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -97,14 +98,19 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
 
   const renderSecondary = (
     <TableRow>
-      <TableCell sx={{ p: 0, border: 'none' }} colSpan={8}>
+      <TableCell sx={{ p: 0, border: 'none' }} colSpan={12}>
         <Collapse
           in={collapse.value}
           timeout="auto"
           unmountOnExit
           sx={{ bgcolor: 'background.neutral' }}
         >
-          <Stack component={Paper} sx={{ m: 1.5 }}></Stack>
+          <Stack component={Paper} sx={{ m: 1.5, p: 2 }}>
+            <Typography>sssssss</Typography>
+            <Typography>sssssss</Typography>
+            <Typography>sssssss</Typography>
+            <Typography>sssssss</Typography>
+          </Stack>
         </Collapse>
       </TableCell>
     </TableRow>
@@ -114,6 +120,7 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
     <>
       {renderPrimary}
 
+      {renderSecondary}
       <CustomPopover
         open={popover.open}
         onClose={popover.onClose}
