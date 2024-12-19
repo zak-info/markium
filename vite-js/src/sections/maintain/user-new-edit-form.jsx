@@ -56,10 +56,7 @@ export default function UserNewEditForm({ currentUser }) {
 
     type: Yup.string().required('Type is required'),
 
-    car_plat_number: Yup.string()
-      .required('Car plate number is required')
-      .matches(/^\d+$/, 'Car plate number must be numeric'), // Assuming car plate number is numeric only
-
+    car_plat_number: Yup.string().required('Car plate number is required'),
     entry_date: Yup.date().required('Entry date is required'), // Validates that the entry date is not in the future
     cause: Yup.string()
       .required('Cause is required')

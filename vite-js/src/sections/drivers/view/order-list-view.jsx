@@ -45,6 +45,8 @@ import OrderTableToolbar from '../order-table-toolbar';
 import OrderTableFiltersResult from '../order-table-filters-result';
 import { useTranslate } from 'src/locales';
 
+import { useGetDrivers } from 'src/api/drivers';
+
 // ----------------------------------------------------------------------
 
 const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...ORDER_STATUS_OPTIONS];
@@ -61,6 +63,8 @@ const defaultFilters = {
 export default function OrderListView() {
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslate();
+
+  const { drivers } = useGetDrivers();
 
   const TABLE_HEAD = [
     { id: 'orderNumber', label: t('driverName'), width: 116 },

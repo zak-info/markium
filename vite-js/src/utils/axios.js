@@ -1,5 +1,4 @@
 import axios from 'axios';
-
 import { HOST_API } from 'src/config-global';
 
 // ----------------------------------------------------------------------
@@ -8,10 +7,15 @@ const axiosInstance = axios.create({ baseURL: HOST_API });
 
 axiosInstance.interceptors.response.use(
   (res) => res,
-  (error) => Promise.reject((error.response && error.response.data) || 'Something went wrong')
+  (error) => {
+    // Check for 401 status and redirect to login
+    if (error.response?.status === 401) {
+      // Assuming you're using React Router v6
+      window.location.href = '/auth/jwt/login'; // Replace with your login route
+    }
+    return Promise.reject((error.response && error.response.data) || 'Something went wrong');
+  }
 );
-
-export default axiosInstance;
 
 // Add a request interceptor
 axiosInstance.interceptors.request.use(
@@ -30,11 +34,13 @@ axiosInstance.interceptors.request.use(
 
 // ----------------------------------------------------------------------
 
+export default axiosInstance;
+
+// ----------------------------------------------------------------------
+
 export const fetcher = async (args) => {
   const [url, config] = Array.isArray(args) ? args : [args];
-
   const res = await axiosInstance.get(url, { ...config });
-
   return res.data;
 };
 
@@ -68,7 +74,6 @@ export const endpoints = {
     details: '/api/product/details',
     search: '/api/product/search',
   },
-
   utils: { values: '/values' },
   company: {
     list: '/company',
@@ -76,9 +81,11 @@ export const endpoints = {
   maintenance: {
     list: '/maintenance',
   },
-
   cars: {
     list: '/car',
-    under_maintainance: '/car/under_maintainance',
+    under_maintainance: '/maintenance/pending',
+  },
+  drivers: {
+    list: '/driver',
   },
 };
