@@ -32,3 +32,18 @@ export function useGetDrivers() {
 
   return memoizedValue;
 }
+
+// ----------------------------------------------------------------------
+
+export async function addNewDriver(body) {
+  const URL = endpoints.drivers.list;
+
+  return await axios.post(URL, body);
+}
+// ----------------------------------------------------------------------
+
+export async function deleteDriver(id) {
+  const URL = endpoints.drivers.list + '/' + id;
+
+  return await axios.delete(URL);
+}

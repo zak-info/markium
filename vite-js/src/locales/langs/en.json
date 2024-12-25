@@ -119,5 +119,17 @@
   "addToMaintenance": "Add To Maintenance",
   "expectedMaintainDays": "Number of expected maintenance days",
   "under_maintenance": "Under Maintenance",
-  "repaired": "Repaired"
+  "repaired": "Repaired",
+  "nationality": "Nationality",
+  "name": "Name",
+  "residence_permit_number": "Residence Permit Number",
+  "location": "Location",
+  "license_number": "License Number",
+  "salary": "Salary",
+  "end_of_service_bonus": "End of Service Bonus",
+  "additional_salary": "Additional Salary",
+  "start_date": "Start Date",
+  "hourly_rate": "Hourly Rate",
+  "custody": "Custody",
+  "loan": "Loan"
 }

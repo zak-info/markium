@@ -45,7 +45,7 @@ import OrderTableToolbar from '../order-table-toolbar';
 import OrderTableFiltersResult from '../order-table-filters-result';
 import { useTranslate } from 'src/locales';
 
-import { useGetDrivers } from 'src/api/drivers';
+import { useGetDrivers, deleteDriver } from 'src/api/drivers';
 
 // ----------------------------------------------------------------------
 
@@ -64,7 +64,7 @@ export default function OrderListView() {
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslate();
 
-  const { drivers } = useGetDrivers();
+  const { drivers, mutate } = useGetDrivers();
 
   const TABLE_HEAD = [
     { id: 'orderNumber', label: t('driverName'), width: 116 },
@@ -83,7 +83,7 @@ export default function OrderListView() {
 
   const confirm = useBoolean();
 
-  const [tableData, setTableData] = useState(_orders);
+  const [tableData, setTableData] = useState(drivers);
 
   const [filters, setFilters] = useState(defaultFilters);
 
@@ -125,13 +125,15 @@ export default function OrderListView() {
 
   const handleDeleteRow = useCallback(
     (id) => {
-      const deleteRow = tableData.filter((row) => row.id !== id);
+      deleteDriver(id)
+        .then(() => {
+          enqueueSnackbar('Delete success!');
 
-      enqueueSnackbar('Delete success!');
-
-      setTableData(deleteRow);
-
-      table.onUpdatePageDeleteRow(dataInPage.length);
+          mutate();
+        })
+        .catch(() => {
+          enqueueSnackbar('Delete success!', { variant: 'error' });
+        });
     },
     [dataInPage.length, enqueueSnackbar, table, tableData]
   );

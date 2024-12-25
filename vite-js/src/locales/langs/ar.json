@@ -1,6 +1,7 @@
 {
   "app": "تطبيق",
   "job": "وظيفة",
+  "name": "الاسم",
   "user": "مستخدم",
   "list": "قائمة",
   "edit": "تعديل",
@@ -132,7 +133,7 @@
   "covenant": "العهد",
   "clientsList": "قائمة العملار",
   "predecessor": "السلف",
-  "phone": "الجوال",
+  "phone": "رقم الجوال",
   "addNewDriver": "إضافة سائق جديد",
   "clientName": "اسم العميل",
   "addNewClient": "إضافة عميل جديد",
@@ -177,5 +178,17 @@
   "manitainClassification": "تصنيف الصيانة",
   "expectedMaintainDays": "عدد أيام الصيانة المتوقعة",
   "under_maintenance": "في طور الصيانة",
-  "repaired": "تم إصلاحه"
+  "repaired": "تم إصلاحه",
+  "nationality": "الجنسية",
+  "nationality_id": "رقم الهوية الوطنية",
+  "residence_permit_number": "رقم تصريح الإقامة",
+  "location": " الموقع",
+  "license_number": "رقم الرخصة",
+  "end_of_service_bonus": "مكافأة نهاية الخدمة",
+  "additional_salary": "الراتب الإضافي",
+  "start_date": "تاريخ البداية",
+  "hourly_rate": "الأجر بالساعة",
+  "custody": "كفالة",
+  "loan": "القرض",
+  "employer": " صاحب العمل"
 }
