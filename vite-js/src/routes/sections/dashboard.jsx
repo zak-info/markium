@@ -70,6 +70,8 @@ const CurrentInMaintainListView = lazy(
 const DriversDetailsPage = lazy(() => import('src/pages/dashboard/drivers/details'));
 const DriversListPage = lazy(() => import('src/pages/dashboard/drivers/list'));
 const DriversCreatePage = lazy(() => import('src/pages/dashboard/drivers/new'));
+const DriversSalaryPage = lazy(() => import('src/pages/dashboard/drivers/sallery'));
+const DriversEditPage = lazy(() => import('src/pages/dashboard/drivers/edit'));
 const AlertsDriversCreatePage = lazy(() => import('src/pages/dashboard/drivers/alerts'));
 
 // Clients
@@ -192,7 +194,10 @@ export const dashboardRoutes = [
         children: [
           { element: <DriversListPage />, index: true },
           { path: 'list', element: <DriversListPage /> },
+          { path: 'salary', element: <DriversSalaryPage /> },
           { path: ':id', element: <DriversDetailsPage /> },
+          { path: ':id/edit', element: <DriversEditPage /> },
+
           { path: 'new', element: <DriversCreatePage /> },
           { path: 'alerts', element: <AlertsDriversCreatePage /> },
         ],

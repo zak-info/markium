@@ -153,6 +153,8 @@ export const paths = {
       alerts: `${ROOTS.DASHBOARD}/drivers/alerts`,
       new: `${ROOTS.DASHBOARD}/drivers/new`,
       details: (id) => `${ROOTS.DASHBOARD}/drivers/${id}`,
+      edit: (id) => `${ROOTS.DASHBOARD}/drivers/${id}/edit`,
+      salary: `${ROOTS.DASHBOARD}/drivers/salary`,
     },
 
     documents: {

@@ -47,3 +47,10 @@ export async function deleteDriver(id) {
 
   return await axios.delete(URL);
 }
+// ----------------------------------------------------------------------
+
+export async function editDriver(id, body) {
+  const URL = endpoints.drivers.list + '/' + id;
+
+  return await axios.update(URL, body);
+}

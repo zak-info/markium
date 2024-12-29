@@ -22,30 +22,25 @@ import { useRouter } from 'src/routes/hooks';
 
 import { fData } from 'src/utils/format-number';
 
-import { countries } from 'src/assets/data';
-
 import { useSnackbar } from 'src/components/snackbar';
-import FormProvider, {
-  RHFSwitch,
-  RHFTextField,
-  RHFUploadAvatar,
-  RHFSelect,
-} from 'src/components/hook-form';
+import FormProvider, { RHFTextField, RHFSelect } from 'src/components/hook-form';
 
 import { useTranslate } from 'src/locales';
 
-import { addNewDriver } from 'src/api/drivers';
+import { addNewDriver, editDriver } from 'src/api/drivers';
 
 import { useValues } from 'src/api/utils';
+import { useGetCar } from 'src/api/car';
 
 // ----------------------------------------------------------------------
 
-export default function UserNewEditForm({ currentUser }) {
+export default function UserNewEditForm({ currentDriver }) {
   const router = useRouter();
 
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslate();
   const { data } = useValues();
+  const { car } = useGetCar();
 
   const validationSchema = Yup.object({
     name: Yup.string().required('Name is required'),
@@ -53,9 +48,7 @@ export default function UserNewEditForm({ currentUser }) {
       .required('Nationality ID is required')
       .typeError('Nationality ID must be a number'),
     residence_permit_number: Yup.string().required('Residence permit number is required'),
-    location_id: Yup.number()
-      .required('Location ID is required')
-      .typeError('Location ID must be a number'),
+
     license_number: Yup.string().required('License number is required'),
     salary: Yup.number().required('Salary is required').typeError('Salary must be a number'),
     end_of_service_bonus: Yup.number()
@@ -75,33 +68,30 @@ export default function UserNewEditForm({ currentUser }) {
       .typeError('Hourly rate must be a number'),
     custody: Yup.number().required('Custody is required').typeError('Custody must be a number'),
     loan: Yup.number().required('Loan is required').typeError('Loan must be a number'),
-    employer_id: Yup.number()
-      .required('Employer ID is required')
-      .typeError('Employer ID must be a number'),
+
     car_id: Yup.number().required('Car ID is required').typeError('Car ID must be a number'),
     state_id: Yup.number().required('State ID is required'),
   });
 
   const defaultValues = useMemo(
     () => ({
-      name: currentUser?.name || '',
-      nationality_id: currentUser?.nationality_id || null,
-      residence_permit_number: currentUser?.residence_permit_number || '',
-      location_id: currentUser?.location_id || null,
-      license_number: currentUser?.license_number || '',
-      salary: currentUser?.salary || null,
-      end_of_service_bonus: currentUser?.end_of_service_bonus || null,
-      additional_salary: currentUser?.additional_salary || null,
-      phone_number: currentUser?.phone_number || '',
-      start_date: currentUser?.start_date || '',
-      hourly_rate: currentUser?.hourly_rate || null,
-      custody: currentUser?.custody || null,
-      loan: currentUser?.loan || null,
-      employer_id: currentUser?.employer_id || null,
-      car_id: currentUser?.car_id || null,
-      state_id: currentUser?.car_id || null,
+      name: currentDriver?.name || '',
+      nationality_id: currentDriver?.nationality?.id || null,
+      residence_permit_number: currentDriver?.residence_permit_number || '',
+
+      license_number: currentDriver?.license_number || '',
+      salary: currentDriver?.salary || null,
+      end_of_service_bonus: currentDriver?.end_of_service_bonus || null,
+      additional_salary: currentDriver?.additional_salary || null,
+      phone_number: currentDriver?.phone_number || '',
+      start_date: currentDriver?.start_date || '',
+      hourly_rate: currentDriver?.hourly_rate || null,
+      custody: currentDriver?.custody || null,
+      loan: currentDriver?.loan || null,
+      car_id: currentDriver?.car_id || null,
+      state_id: currentDriver?.state?.id || null,
     }),
-    [currentUser]
+    [currentDriver]
   );
 
   const methods = useForm({
@@ -115,7 +105,7 @@ export default function UserNewEditForm({ currentUser }) {
     control,
     setValue,
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, errors },
   } = methods;
 
   const values = watch();
@@ -123,13 +113,17 @@ export default function UserNewEditForm({ currentUser }) {
   const onSubmit = handleSubmit(async (data) => {
     try {
       const body = data;
-      body.start_date = format(data.start_date, 'yyyy-mm-dd');
+      body.start_date = format(data.start_date, 'yyyy-MM-dd');
 
-      await addNewDriver(body);
+      if (currentDriver?.id) {
+        await editDriver(currentDriver?.id, body);
+      } else {
+        await addNewDriver(body);
+      }
 
       reset();
 
-      enqueueSnackbar(currentUser ? 'Update success!' : 'Create success!');
+      enqueueSnackbar(currentDriver ? 'Update success!' : 'Create success!');
 
       router.push(paths.dashboard.drivers.root);
     } catch (error) {
@@ -152,13 +146,12 @@ export default function UserNewEditForm({ currentUser }) {
     [setValue]
   );
 
-  const options = ['نيسان', 'تويتا'];
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>
       <Grid container spacing={3}>
         {/* <Grid xs={12} md={4}>
           <Card sx={{ pt: 10, pb: 5, px: 3 }}>
-            {currentUser && (
+            {currentDriver && (
               <Label
                 color={
                   (values.status === 'active' && 'success') ||
@@ -194,7 +187,7 @@ export default function UserNewEditForm({ currentUser }) {
               />
             </Box>
 
-            {currentUser && (
+            {currentDriver && (
               <FormControlLabel
                 labelPlacement="start"
                 control={
@@ -242,7 +235,7 @@ export default function UserNewEditForm({ currentUser }) {
               sx={{ mx: 0, width: 1, justifyContent: 'space-between' }}
             />
 
-            {currentUser && (
+            {currentDriver && (
               <Stack justifyContent="center" alignItems="center" sx={{ mt: 3 }}>
                 <Button variant="soft" color="error">
                   Delete User
@@ -266,13 +259,20 @@ export default function UserNewEditForm({ currentUser }) {
               <RHFTextField name="name" label={t('name')} />
 
               {/* Nationality ID */}
-              <RHFTextField name="nationality_id" label={t('nationality')} type="number" />
+
+              <RHFSelect name="nationality_id" label={t('nationality')}>
+                <Divider sx={{ borderStyle: 'dashed' }} />
+                {data?.nationality?.map((option) => (
+                  <MenuItem key={option?.id} value={option?.id}>
+                    {option?.translations?.name}
+                  </MenuItem>
+                ))}
+              </RHFSelect>
 
               {/* Residence Permit Number */}
               <RHFTextField name="residence_permit_number" label={t('residence_permit_number')} />
 
               {/* Location ID */}
-              <RHFTextField name="location_id" label={t('location')} type="number" />
 
               {/* License Number */}
               <RHFTextField name="license_number" label={t('license_number')} />
@@ -296,7 +296,7 @@ export default function UserNewEditForm({ currentUser }) {
               {/* Start Date */}
               <DatePicker
                 label={t('start_date')}
-                value={currentUser?.start_date || new Date()}
+                value={currentDriver?.start_date ? new Date(currentDriver?.start_date) : new Date()}
                 onChange={(date) => setValue('start_date', date)}
                 slotProps={{
                   textField: {
@@ -314,9 +314,6 @@ export default function UserNewEditForm({ currentUser }) {
               {/* Loan */}
               <RHFTextField name="loan" label={t('loan')} type="number" />
 
-              {/* Employer ID */}
-              <RHFTextField name="employer_id" label={t('employer')} type="number" />
-
               <RHFSelect name="state_id" label={t('workSite')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
                 {data?.state?.map((option) => (
@@ -327,12 +324,20 @@ export default function UserNewEditForm({ currentUser }) {
               </RHFSelect>
 
               {/* Car ID */}
-              <RHFTextField name="car_id" label={t('vehicle')} type="number" />
+
+              <RHFSelect name="car_id" label={t('vehicle')}>
+                <Divider sx={{ borderStyle: 'dashed' }} />
+                {car?.map((option) => (
+                  <MenuItem key={option?.id} value={option?.id}>
+                    {option?.model?.company?.translations?.name} ({option?.plat_number})
+                  </MenuItem>
+                ))}
+              </RHFSelect>
             </Box>
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                {!currentUser ? t('addNewDriver') : t('saveChange')}
+                {!currentDriver ? t('addNewDriver') : t('saveChange')}
               </LoadingButton>
             </Stack>
           </Card>
@@ -343,5 +348,5 @@ export default function UserNewEditForm({ currentUser }) {
 }
 
 UserNewEditForm.propTypes = {
-  currentUser: PropTypes.object,
+  currentDriver: PropTypes.object,
 };

@@ -134,7 +134,7 @@ export function useNavData() {
             children: [
               { title: t('driversList'), path: paths.dashboard.drivers.root },
               { title: t('alerts'), path: paths.dashboard.drivers.alerts },
-              { title: t('salaries'), path: paths.dashboard.drivers.root },
+              { title: t('salaries'), path: paths.dashboard.drivers.salary },
               // {
               //   title: t('details'),
               //   path: paths.dashboard.product.demo.details,

@@ -22,10 +22,18 @@ import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import { useTranslate } from 'src/locales';
 
 // ----------------------------------------------------------------------
 
-export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteRow }) {
+export default function OrderTableRow({
+  handleEditRow,
+  row,
+  selected,
+  onViewRow,
+  onSelectRow,
+  onDeleteRow,
+}) {
   const {
     items,
     license_number,
@@ -35,11 +43,12 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
     state_id,
     customer,
     totalQuantity,
-    subTotal,
+    state,
   } = row;
 
   const confirm = useBoolean();
 
+  const { t } = useTranslate();
   const collapse = useBoolean();
 
   const popover = usePopover();
@@ -68,7 +77,7 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
 
       <TableCell>{phone_number}</TableCell>
 
-      <TableCell>{state_id}</TableCell>
+      <TableCell>{state?.translations?.name}</TableCell>
       <TableCell>
         <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
           <Iconify icon="eva:more-vertical-fill" />
@@ -149,9 +158,17 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
           sx={{ color: 'error.main' }}
         >
           <Iconify icon="solar:trash-bin-trash-bold" />
-          Delete
+          {t('delete')}
         </MenuItem>
-
+        <MenuItem
+          onClick={() => {
+            handleEditRow();
+            popover.onClose();
+          }}
+        >
+          <Iconify icon="solar:pen-bold" />
+          {t('edit')}
+        </MenuItem>
         <MenuItem
           onClick={() => {
             onViewRow();
@@ -159,7 +176,7 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
           }}
         >
           <Iconify icon="solar:eye-bold" />
-          View
+          {t('view')}
         </MenuItem>
       </CustomPopover>
 

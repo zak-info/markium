@@ -11,11 +11,14 @@ import { formHelperTextClasses } from '@mui/material/FormHelperText';
 
 import Iconify from 'src/components/iconify';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import { useTranslate } from 'src/locales';
 
 // ----------------------------------------------------------------------
 
 export default function OrderTableToolbar({ filters, onFilters, dateError }) {
   const popover = usePopover();
+
+  const { t } = useTranslate();
 
   const handleFilterName = useCallback(
     (event) => {
@@ -91,7 +94,7 @@ export default function OrderTableToolbar({ filters, onFilters, dateError }) {
             fullWidth
             value={filters.name}
             onChange={handleFilterName}
-            placeholder="Search customer or order number..."
+            placeholder={t('search') + '...'}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -100,10 +103,6 @@ export default function OrderTableToolbar({ filters, onFilters, dateError }) {
               ),
             }}
           />
-
-          <IconButton onClick={popover.onOpen}>
-            <Iconify icon="eva:more-vertical-fill" />
-          </IconButton>
         </Stack>
       </Stack>
 
