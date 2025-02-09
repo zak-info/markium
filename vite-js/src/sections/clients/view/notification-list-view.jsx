@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
@@ -44,6 +44,10 @@ import OrderTableRow from '../notification-table-row';
 import OrderTableToolbar from '../notification-table-toolbar';
 import OrderTableFiltersResult from '../notification-table-filters-result';
 import { useTranslate } from 'src/locales';
+import { useGetClaimLogs } from 'src/api/claim-logs';
+import { useGetClients } from 'src/api/client';
+import { useGetContracts } from 'src/api/contract';
+import { useGetClaim } from 'src/api/claim';
 
 // ----------------------------------------------------------------------
 
@@ -63,12 +67,12 @@ export default function OrderListView() {
   const { t } = useTranslate();
 
   const TABLE_HEAD = [
-    { id: 'orderNumber', label: t('contractNo'), width: 116 },
-    { id: 'totalAmount2', label: t('contactDate'), width: 140 },
-    { id: 'totalAmount', label: t('amount'), width: 140 },
-    { id: 'totalAmount2', label: t('status'), width: 140 },
-    { id: 'theRest', label: t('client'), width: 140 },
-    { id: 'totalAmount2', label: t('phone'), width: 140 },
+    { id: 'client', label: t('client'), width: 116 },
+    { id: 'contactDate', label: t('contactDate'), width: 140 },
+    { id: 'note_en', label: t('note'), width: 140 },
+    { id: 'action', label: t('action'), width: 140 },
+    { id: 'created_at', label: t('created_at'), width: 140 },
+    // { id: 'totalAmount2', label: t('phone'), width: 140 },
 
     { id: '', width: 88 },
   ];
@@ -81,7 +85,15 @@ export default function OrderListView() {
 
   const confirm = useBoolean();
 
-  const [tableData, setTableData] = useState(_orders);
+  const {logs} = useGetClaimLogs()
+  const {clients} = useGetClients()
+  const {contracts} = useGetContracts()
+  const {claims} = useGetClaim()
+
+  const [tableData, setTableData] = useState(logs);
+  useEffect(()=>{
+    setTableData(logs);
+  },[logs])
 
   const [filters, setFilters] = useState(defaultFilters);
 
@@ -172,51 +184,18 @@ export default function OrderListView() {
               href: paths.dashboard.root,
             },
             {
-              name: t('clients'),
+              name: t('Claims'),
               href: paths.dashboard.clients.root,
             },
             { name: t('alerts') },
           ]}
+          
           sx={{
             mb: { xs: 3, md: 5 },
           }}
         />
 
         <Card>
-          {/* <Tabs
-            value={filters.status}
-            onChange={handleFilterStatus}
-            sx={{
-              px: 2.5,
-              boxShadow: (theme) => `inset 0 -2px 0 0 ${alpha(theme.palette.grey[500], 0.08)}`,
-            }}
-          >
-            {STATUS_OPTIONS.map((tab) => (
-              <Tab
-                key={tab.value}
-                iconPosition="end"
-                value={tab.value}
-                label={tab.label}
-                icon={
-                  <Label
-                    variant={
-                      ((tab.value === 'all' || tab.value === filters.status) && 'filled') || 'soft'
-                    }
-                    color={
-                      (tab.value === 'completed' && 'success') ||
-                      (tab.value === 'pending' && 'warning') ||
-                      (tab.value === 'cancelled' && 'error') ||
-                      'default'
-                    }
-                  >
-                    {['completed', 'pending', 'cancelled', 'refunded'].includes(tab.value)
-                      ? tableData.filter((user) => user.status === tab.value).length
-                      : tableData.length}
-                  </Label>
-                }
-              />
-            ))}
-          </Tabs> */}
 
           <OrderTableToolbar
             filters={filters}
@@ -284,6 +263,8 @@ export default function OrderListView() {
                       <OrderTableRow
                         key={row.id}
                         row={row}
+                        client={clients.find(item => item.id == row?.user_id)}
+                        contract={contracts.find(item => item.id == claims?.find(c => c.id == row?.claim_id)?.contract_id)}
                         selected={table.selected.includes(row.id)}
                         onSelectRow={() => table.onSelectRow(row.id)}
                         onDeleteRow={() => handleDeleteRow(row.id)}

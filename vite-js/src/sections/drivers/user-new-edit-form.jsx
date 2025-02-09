@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
 import PropTypes from 'prop-types';
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { format, getTime, formatDistanceToNow } from 'date-fns';
@@ -42,6 +42,8 @@ export default function UserNewEditForm({ currentDriver }) {
   const { data } = useValues();
   const { car } = useGetCar();
 
+
+
   const validationSchema = Yup.object({
     name: Yup.string().required('Name is required'),
     nationality_id: Yup.number()
@@ -49,27 +51,27 @@ export default function UserNewEditForm({ currentDriver }) {
       .typeError('Nationality ID must be a number'),
     residence_permit_number: Yup.string().required('Residence permit number is required'),
 
-    license_number: Yup.string().required('License number is required'),
+    // license_number: Yup.string().required('License number is required'),
     salary: Yup.number().required('Salary is required').typeError('Salary must be a number'),
-    end_of_service_bonus: Yup.number()
-      .required('End of service bonus is required')
-      .typeError('End of service bonus must be a number'),
-    additional_salary: Yup.number()
-      .required('Additional salary is required')
-      .typeError('Additional salary must be a number'),
+    // end_of_service_bonus: Yup.number()
+    //   .required('End of service bonus is required')
+    //   .typeError('End of service bonus must be a number'),
+    // additional_salary: Yup.number()
+    //   .required('Additional salary is required')
+    //   .typeError('Additional salary must be a number'),
     phone_number: Yup.string()
       .required('Phone number is required')
       .matches(/^\d+$/, 'Phone number must be a valid numeric value'),
     start_date: Yup.date()
       .required('Start date is required')
       .typeError('Start date must be a valid date'),
-    hourly_rate: Yup.number()
-      .required('Hourly rate is required')
-      .typeError('Hourly rate must be a number'),
-    custody: Yup.number().required('Custody is required').typeError('Custody must be a number'),
-    loan: Yup.number().required('Loan is required').typeError('Loan must be a number'),
+    // hourly_rate: Yup.number()
+    //   .required('Hourly rate is required')
+    //   .typeError('Hourly rate must be a number'),
+    // custody: Yup.number().required('Custody is required').typeError('Custody must be a number'),
+    // loan: Yup.number().required('Loan is required').typeError('Loan must be a number'),
 
-    car_id: Yup.number().required('Car ID is required').typeError('Car ID must be a number'),
+    // car_id: Yup.number().required('Car ID is required').typeError('Car ID must be a number'),
     state_id: Yup.number().required('State ID is required'),
   });
 
@@ -79,16 +81,16 @@ export default function UserNewEditForm({ currentDriver }) {
       nationality_id: currentDriver?.nationality?.id || null,
       residence_permit_number: currentDriver?.residence_permit_number || '',
 
-      license_number: currentDriver?.license_number || '',
+      // license_number: currentDriver?.license_number || '',
       salary: currentDriver?.salary || null,
-      end_of_service_bonus: currentDriver?.end_of_service_bonus || null,
-      additional_salary: currentDriver?.additional_salary || null,
+      // end_of_service_bonus: currentDriver?.end_of_service_bonus || null,
+      // additional_salary: currentDriver?.additional_salary || null,
       phone_number: currentDriver?.phone_number || '',
       start_date: currentDriver?.start_date || '',
-      hourly_rate: currentDriver?.hourly_rate || null,
-      custody: currentDriver?.custody || null,
-      loan: currentDriver?.loan || null,
-      car_id: currentDriver?.car_id || null,
+      // hourly_rate: currentDriver?.hourly_rate || null,
+      // custody: currentDriver?.custody || null,
+      // loan: currentDriver?.loan || null,
+      // car_id: currentDriver?.car_id || null,
       state_id: currentDriver?.state?.id || null,
     }),
     [currentDriver]
@@ -110,24 +112,51 @@ export default function UserNewEditForm({ currentDriver }) {
 
   const values = watch();
 
+  useEffect(() => {
+    // if (currentDriver?.id && currentDriver?.car) {
+    //   const selectedCar = car?.find(
+    //     (option) =>
+    //       option?.id == 1
+    //   );
+    //   // If selectedCar is found, set the car_id value
+    //   if (selectedCar) {
+    //     setValue('car_id', selectedCar.id); // Set the selected car's ID to car_id
+    //   }
+    // }
+    console.log("currentDriver : ",currentDriver);
+
+  }, [car, setValue]);
+
   const onSubmit = handleSubmit(async (data) => {
     try {
+      console.log("lest edit driver");
       const body = data;
       body.start_date = format(data.start_date, 'yyyy-MM-dd');
-
       if (currentDriver?.id) {
-        await editDriver(currentDriver?.id, body);
+        delete body.license_number
+        delete body.residence_permit_number
+
+        console.log("lets edit : ", body);
+        const res = await editDriver(currentDriver?.id, body);
+        console.log("res : ", res);
       } else {
+        console.log("lets create ");
         await addNewDriver(body);
       }
 
       reset();
 
-      enqueueSnackbar(currentDriver ? 'Update success!' : 'Create success!');
+      enqueueSnackbar(currentDriver?.id ? 'Update success!' : 'Create success!');
 
       router.push(paths.dashboard.drivers.root);
     } catch (error) {
       console.error(error);
+      Object.values(error?.data).forEach(array => {
+        array.forEach(text => {
+          enqueueSnackbar(text, { variant: 'error' });
+        });
+      });
+
     }
   });
 
@@ -149,101 +178,6 @@ export default function UserNewEditForm({ currentDriver }) {
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>
       <Grid container spacing={3}>
-        {/* <Grid xs={12} md={4}>
-          <Card sx={{ pt: 10, pb: 5, px: 3 }}>
-            {currentDriver && (
-              <Label
-                color={
-                  (values.status === 'active' && 'success') ||
-                  (values.status === 'banned' && 'error') ||
-                  'warning'
-                }
-                sx={{ position: 'absolute', top: 24, right: 24 }}
-              >
-                {values.status}
-              </Label>
-            )}
-
-            <Box sx={{ mb: 5 }}>
-              <RHFUploadAvatar
-                name="avatarUrl"
-                maxSize={3145728}
-                onDrop={handleDrop}
-                helperText={
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      mt: 3,
-                      mx: 'auto',
-                      display: 'block',
-                      textAlign: 'center',
-                      color: 'text.disabled',
-                    }}
-                  >
-                    Allowed *.jpeg, *.jpg, *.png, *.gif
-                    <br /> max size of {fData(3145728)}
-                  </Typography>
-                }
-              />
-            </Box>
-
-            {currentDriver && (
-              <FormControlLabel
-                labelPlacement="start"
-                control={
-                  <Controller
-                    name="status"
-                    control={control}
-                    render={({ field }) => (
-                      <Switch
-                        {...field}
-                        checked={field.value !== 'active'}
-                        onChange={(event) =>
-                          field.onChange(event.target.checked ? 'banned' : 'active')
-                        }
-                      />
-                    )}
-                  />
-                }
-                label={
-                  <>
-                    <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
-                      Banned
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                      Apply disable account
-                    </Typography>
-                  </>
-                }
-                sx={{ mx: 0, mb: 3, width: 1, justifyContent: 'space-between' }}
-              />
-            )}
-
-            <RHFSwitch
-              name="isVerified"
-              labelPlacement="start"
-              label={
-                <>
-                  <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
-                    Email Verified
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                    Disabling this will automatically send the user a verification email
-                  </Typography>
-                </>
-              }
-              sx={{ mx: 0, width: 1, justifyContent: 'space-between' }}
-            />
-
-            {currentDriver && (
-              <Stack justifyContent="center" alignItems="center" sx={{ mt: 3 }}>
-                <Button variant="soft" color="error">
-                  Delete User
-                </Button>
-              </Stack>
-            )}
-          </Card>
-        </Grid> */}
         <Grid xs={12} md={8}>
           <Card sx={{ p: 3 }}>
             <Box
@@ -262,33 +196,29 @@ export default function UserNewEditForm({ currentDriver }) {
 
               <RHFSelect name="nationality_id" label={t('nationality')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
-                {data?.nationality?.map((option) => (
+                {data?.nationalities?.map((option) => (
                   <MenuItem key={option?.id} value={option?.id}>
-                    {option?.translations?.name}
+                    {option?.translations[0]?.name}
                   </MenuItem>
                 ))}
               </RHFSelect>
 
               {/* Residence Permit Number */}
-              <RHFTextField name="residence_permit_number" label={t('residence_permit_number')} />
+              <RHFTextField disabled={currentDriver?.id ? true : false} name="residence_permit_number" label={t('residence_permit_number')} />
 
               {/* Location ID */}
 
               {/* License Number */}
-              <RHFTextField name="license_number" label={t('license_number')} />
+              {/* <RHFTextField disabled={currentDriver?.id ? true : false} name="license_number" label={t('license_number')} /> */}
 
               {/* Salary */}
               <RHFTextField name="salary" label={t('salary')} type="number" />
 
               {/* End of Service Bonus */}
-              <RHFTextField
-                name="end_of_service_bonus"
-                label={t('end_of_service_bonus')}
-                type="number"
-              />
+              {/* <RHFTextField name="end_of_service_bonus" label={t('end_of_service_bonus')} type="number"/> */}
 
               {/* Additional Salary */}
-              <RHFTextField name="additional_salary" label={t('additional_salary')} type="number" />
+              {/* <RHFTextField name="additional_salary" label={t('additional_salary')} type="number" /> */}
 
               {/* Phone Number */}
               <RHFTextField name="phone_number" label={t('phone')} />
@@ -296,8 +226,9 @@ export default function UserNewEditForm({ currentDriver }) {
               {/* Start Date */}
               <DatePicker
                 label={t('start_date')}
-                value={currentDriver?.start_date ? new Date(currentDriver?.start_date) : new Date()}
+                value={currentDriver?.start_date ? new Date(currentDriver?.start_date) : values?.start_date ? new Date(values?.start_date) : new Date()}
                 onChange={(date) => setValue('start_date', date)}
+
                 slotProps={{
                   textField: {
                     fullWidth: true,
@@ -306,33 +237,35 @@ export default function UserNewEditForm({ currentDriver }) {
               />
 
               {/* Hourly Rate */}
-              <RHFTextField name="hourly_rate" label={t('hourly_rate')} type="number" />
+              {/* <RHFTextField name="hourly_rate" label={t('hourly_rate')} type="number" /> */}
 
               {/* Custody */}
-              <RHFTextField name="custody" label={t('custody')} type="number" />
+              {/* <RHFTextField name="custody" label={t('custody')} type="number" /> */}
 
               {/* Loan */}
-              <RHFTextField name="loan" label={t('loan')} type="number" />
+              {/* <RHFTextField name="loan" label={t('loan')} type="number" /> */}
 
               <RHFSelect name="state_id" label={t('workSite')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
-                {data?.state?.map((option) => (
+                {data?.states?.map((option) => (
                   <MenuItem key={option?.name} value={option?.id}>
-                    {option?.translations?.name}
+                    {option?.translations[0]?.name}
                   </MenuItem>
                 ))}
               </RHFSelect>
 
               {/* Car ID */}
 
-              <RHFSelect name="car_id" label={t('vehicle')}>
+              {/* <RHFSelect name="car_id" label={t('vehicle')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
                 {car?.map((option) => (
                   <MenuItem key={option?.id} value={option?.id}>
                     {option?.model?.company?.translations?.name} ({option?.plat_number})
                   </MenuItem>
                 ))}
-              </RHFSelect>
+              </RHFSelect> */}
+
+              
             </Box>
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>

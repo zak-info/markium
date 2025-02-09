@@ -51,6 +51,26 @@ export async function deleteDriver(id) {
 
 export async function editDriver(id, body) {
   const URL = endpoints.drivers.list + '/' + id;
+  // const URL = endpoints.cars.list + '/' + id;
 
-  return await axios.update(URL, body);
+  return await axios.put(URL, body);
+}
+
+export function useGetDetailedDriver(id) {
+  const URL = endpoints.drivers.list + '/' + id;
+  const { data, isLoading, error, isValidating } = useSWR(URL,fetcher);
+
+  const memoizedValue = useMemo(
+    () => ({
+      driver: data?.data || {},
+      driverLoading: isLoading,
+      driverError: error,
+      driverValidating: isValidating,
+      driverEmpty: !isLoading && !data?.data.length,
+    }),
+    [data, error, isLoading, isValidating]
+  );
+
+
+  return memoizedValue;
 }

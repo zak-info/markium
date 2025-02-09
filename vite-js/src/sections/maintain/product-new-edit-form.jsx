@@ -44,7 +44,7 @@ import FormProvider, {
 
 // ----------------------------------------------------------------------
 
-export default function ProductNewEditForm({ currentProduct }) {
+export default function ProductNewEditForm({ currentMentainance }) {
   const router = useRouter();
 
   const mdUp = useResponsive('up', 'md');
@@ -74,26 +74,26 @@ export default function ProductNewEditForm({ currentProduct }) {
 
   const defaultValues = useMemo(
     () => ({
-      name: currentProduct?.name || '',
-      description: currentProduct?.description || '',
-      subDescription: currentProduct?.subDescription || '',
-      images: currentProduct?.images || [],
+      name: currentMentainance?.name || '',
+      description: currentMentainance?.description || '',
+      subDescription: currentMentainance?.subDescription || '',
+      images: currentMentainance?.images || [],
       //
-      code: currentProduct?.code || '',
-      sku: currentProduct?.sku || '',
-      price: currentProduct?.price || 0,
-      quantity: currentProduct?.quantity || 0,
-      priceSale: currentProduct?.priceSale || 0,
-      tags: currentProduct?.tags || [],
-      taxes: currentProduct?.taxes || 0,
-      gender: currentProduct?.gender || '',
-      category: currentProduct?.category || '',
-      colors: currentProduct?.colors || [],
-      sizes: currentProduct?.sizes || [],
-      newLabel: currentProduct?.newLabel || { enabled: false, content: '' },
-      saleLabel: currentProduct?.saleLabel || { enabled: false, content: '' },
+      code: currentMentainance?.code || '',
+      sku: currentMentainance?.sku || '',
+      price: currentMentainance?.price || 0,
+      quantity: currentMentainance?.quantity || 0,
+      priceSale: currentMentainance?.priceSale || 0,
+      tags: currentMentainance?.tags || [],
+      taxes: currentMentainance?.taxes || 0,
+      gender: currentMentainance?.gender || '',
+      category: currentMentainance?.category || '',
+      colors: currentMentainance?.colors || [],
+      sizes: currentMentainance?.sizes || [],
+      newLabel: currentMentainance?.newLabel || { enabled: false, content: '' },
+      saleLabel: currentMentainance?.saleLabel || { enabled: false, content: '' },
     }),
-    [currentProduct]
+    [currentMentainance]
   );
 
   const methods = useForm({
@@ -111,25 +111,63 @@ export default function ProductNewEditForm({ currentProduct }) {
 
   const values = watch();
 
-  useEffect(() => {
-    if (currentProduct) {
-      reset(defaultValues);
-    }
-  }, [currentProduct, defaultValues, reset]);
+  // useEffect(() => {
+  //   if (currentMentainance) {
+  //     reset(defaultValues);
+  //   }
+  // }, [currentMentainance, defaultValues, reset]);
 
   useEffect(() => {
-    if (includeTaxes) {
-      setValue('taxes', 0);
-    } else {
-      setValue('taxes', currentProduct?.taxes || 0);
+    if (currentMentainance?.id ) {
+      const selectedColor = data?.colors?.find(
+        (option) =>
+          option?.id == currentMentainance?.color?.id
+      );
+      if (selectedColor) {
+        setValue('color_id', selectedColor.id); 
+      }
+
+      const selectedCarCompany = data?.car_companies?.find(
+        (option) => option?.id == currentMentainance?.model?.company?.id
+      );
+      if (selectedCarCompany) {
+        setValue('car_company_id', selectedCarCompany?.id);
+      }
+      const selectedCarModel = data?.car_companies?.find(item=> item?.id == currentMentainance?.model?.company?.id)?.models?.find(
+        (option) => option?.id == currentMentainance?.model?.id
+      );
+      if (selectedCarModel) {
+        setValue('car_model_id', selectedCarModel?.id);
+      }
+      const selectedSpec = data?.specs?.find(
+        (option) => option?.id == currentMentainance?.spec?.id
+      );
+      if (selectedSpec) {
+        setValue('spec_id', selectedSpec?.id);
+      }
+      const selectedLicenseType = data?.license_types?.find(
+        (option) => option?.id == currentMentainance?.license_type?.id
+      );
+      if (selectedLicenseType) {
+        setValue('license_type_id', selectedLicenseType?.id);
+      }
+      const selectedState = data?.states?.find(
+        (option) => option?.id == currentMentainance?.state?.id
+      );
+      if (selectedState) {
+        setValue('state_id', selectedState?.id);
+      }
+
     }
-  }, [currentProduct?.taxes, includeTaxes, setValue]);
+   
+  }, [currentMentainance, setValue]);
+
 
   const onSubmit = handleSubmit(async (data) => {
     try {
       await new Promise((resolve) => setTimeout(resolve, 500));
       reset();
-      enqueueSnackbar(currentProduct ? 'Update success!' : 'Create success!');
+      enqueueSnackbar(currentMentainance ? 'Update success!' : 'Create success!');
       router.push(paths.dashboard.product.root);
       console.info('DATA', data);
     } catch (error) {
@@ -426,7 +464,7 @@ export default function ProductNewEditForm({ currentProduct }) {
         />
 
         <LoadingButton type="submit" variant="contained" size="large" loading={isSubmitting}>
-          {!currentProduct ? 'Create Product' : 'Save Changes'}
+          {!currentMentainance ? 'Create Product' : 'Save Changes'}
         </LoadingButton>
       </Grid>
     </>
@@ -448,5 +486,5 @@ export default function ProductNewEditForm({ currentProduct }) {
 }
 
 ProductNewEditForm.propTypes = {
-  currentProduct: PropTypes.object,
+  currentMentainance: PropTypes.object,
 };

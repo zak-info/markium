@@ -43,11 +43,12 @@ import OrderTableFiltersResult from '../order-table-filters-result';
 import { useTranslate } from 'src/locales';
 import { RouterLink } from 'src/routes/components';
 
-import { useGetCar, deleteCar } from 'src/api/car';
+import { useGetCar, deleteCar, AddCarToMentainance } from 'src/api/car';
 // ----------------------------------------------------------------------
 
 const defaultFilters = {
-  name: '',
+  plat_number: '',
+  production_year:"",
   status: 'all',
   startDate: null,
   endDate: null,
@@ -63,14 +64,15 @@ export default function OrderListView() {
   const { car, mutate } = useGetCar();
 
   const TABLE_HEAD = [
-    { id: 'orderNumber', label: t('company'), width: 116 },
-    { id: 'name', label: t('model'), width: 140 },
-    { id: 'createdAt', label: t('plateNumber'), width: 140 },
-    { id: 'totalQuantity', label: t('manufacturingYear'), width: 120 },
-    { id: 'color', label: t('vehcileColor'), width: 120 },
-    { id: 'totalAmount', label: t('vehicleCondition'), width: 140 },
-    { id: 'status', label: t('driver'), width: 110 },
-    { id: 'status2', label: t('contract'), width: 110 },
+    // { id: 'orderNumber', label: t('company'), width: 116 },
+    { id: 'model', label: t('model'), width: 120 },
+    { id: 'plateNumber', label: t('plateNumber'), width: 120 },
+    { id: 'manuYear', label: t('manuYear'), width: 90 },
+    // { id: 'color', label: t('vehcileColor'), width: 120 },
+    { id: 'vehicleCondition', label: t('vehicleCondition'), width: 140 },
+    { id: 'driver', label: t('driver'), width: 100 },
+    { id: 'contract', label: t('contract'), width: 100 },
+    { id: 'actions', label: t('actions'), width: 90 },
     { id: '', width: 88 },
   ];
 
@@ -111,13 +113,13 @@ export default function OrderListView() {
   const denseHeight = table.dense ? 56 : 56 + 20;
 
   const canReset =
-    !!filters.name || filters.status !== 'all' || (!!filters.startDate && !!filters.endDate);
+    !!filters.plat_number 
 
   const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
 
   const handleFilters = useCallback(
     (name, value) => {
-      table.onResetPage();
+      // table.onResetPage();
       setFilters((prevState) => ({
         ...prevState,
         [name]: value,
@@ -143,6 +145,20 @@ export default function OrderListView() {
     },
     [dataInPage.length, enqueueSnackbar, table, tableData]
   );
+  const handleAddCarToMentainance = useCallback(
+    async (id) => {
+      const result =await AddCarToMentainance(id)
+        .then(() => {
+          enqueueSnackbar('Operation success!');
+          mutate();
+        })
+        .catch((err) => {
+          enqueueSnackbar(err?.message, { variant: 'error' });
+        });
+        console.log("result : ",result);
+    },
+    [dataInPage.length, enqueueSnackbar, table, tableData]
+  );
 
   const handleDeleteRows = useCallback(() => {
     const deleteRows = tableData.filter((row) => !table.selected.includes(row.id));
@@ -160,6 +176,12 @@ export default function OrderListView() {
   const handleViewRow = useCallback(
     (id) => {
       router.push(paths.dashboard.vehicle.details(id));
+    },
+    [router]
+  );
+  const handleViewDriverRow = useCallback(
+    (id) => {
+      router.push(paths.dashboard.drivers.details(id));
     },
     [router]
   );
@@ -250,7 +272,6 @@ export default function OrderListView() {
           <OrderTableToolbar
             filters={filters}
             onFilters={handleFilters}
-            //
             dateError={dateError}
           />
 
@@ -317,7 +338,9 @@ export default function OrderListView() {
                         onSelectRow={() => table.onSelectRow(row.id)}
                         onDeleteRow={() => handleDeleteRow(row.id)}
                         onViewRow={() => handleViewRow(row.id)}
+                        onDriverViewRow={()=>handleViewDriverRow(row?.driver?.id)}
                         onEditRow={() => handleEditRow(row.id)}
+                        onAddCarToMentainance={()=>handleAddCarToMentainance(row.id)}
                       />
                     ))}
 
@@ -351,7 +374,7 @@ export default function OrderListView() {
         title="Delete"
         content={
           <>
-            Are you sure want to delete <strong> {table.selected.length} </strong> items?
+            Are you sure want to delete <strong> {table?.selected?.length} </strong> items?
           </>
         }
         action={
@@ -360,7 +383,7 @@ export default function OrderListView() {
             color="error"
             onClick={() => {
               handleDeleteRows();
-              confirm.onFalse();
+              confirm?.onFalse();
             }}
           >
             Delete
@@ -374,7 +397,7 @@ export default function OrderListView() {
 // ----------------------------------------------------------------------
 
 function applyFilter({ inputData, comparator, filters, dateError }) {
-  const { status, name, startDate, endDate } = filters;
+  const {plat_number,production_year} = filters;
 
   const stabilizedThis = inputData.map((el, index) => [el, index]);
 
@@ -386,21 +409,30 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
 
   inputData = stabilizedThis.map((el) => el[0]);
 
-  if (name) {
-    inputData = inputData.filter(
-      (order) => order.company.name.toLowerCase().indexOf(name.toLowerCase()) !== -1
+  if (plat_number) {
+    const searchTerm = plat_number?.toLowerCase();
+    inputData = inputData.filter(order => 
+      order?.plat_number?.toLowerCase()?.includes(searchTerm) ||
+      order?.color?.translations?.name?.toLowerCase()?.includes(searchTerm) ||
+      order?.model?.translations?.name?.toLowerCase()?.includes(searchTerm) ||
+      order?.model?.company?.translations?.name?.toLowerCase()?.includes(searchTerm) ||
+      order?.production_year?.includes(searchTerm)
     );
   }
+  // if (production_year) {
+  //   const searchTerm = production_year;
+  //   inputData = inputData.filter(order => 
+  //     order?.production_year?.includes(searchTerm)
+  //   );
+  // }
+  
 
-  if (status !== 'all') {
-    inputData = inputData.filter((order) => order.status?.key === status);
-  }
 
-  if (!dateError) {
-    if (startDate && endDate) {
-      inputData = inputData.filter((order) => isBetween(order.createdAt, startDate, endDate));
-    }
-  }
+  // if (!dateError) {
+  //   if (startDate && endDate) {
+  //     inputData = inputData.filter((order) => isBetween(order.createdAt, startDate, endDate));
+  //   }
+  // }
 
   return inputData;
 }

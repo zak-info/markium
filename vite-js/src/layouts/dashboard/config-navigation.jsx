@@ -164,6 +164,12 @@ export function useNavData() {
         subheader: t(t('other_cases')),
         items: [
           {
+            title: t('settings'),
+            path: paths.dashboard.settings.root,
+            icon: ICONS.analytics,
+            roles: ['admin', 'manager'],
+          },
+          {
             title: t('reports'),
             path: paths.dashboard.permission,
             icon: ICONS.blog,

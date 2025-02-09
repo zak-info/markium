@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
 import PropTypes from 'prop-types';
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
@@ -32,49 +32,43 @@ import FormProvider, {
 } from 'src/components/hook-form';
 
 import { useTranslate } from 'src/locales';
+import { useValues } from 'src/api/utils';
+import SimpleAutocomplete from 'src/components/hook-form/rhf-simple-autocomplete';
+import { createClient, editClient } from 'src/api/client';
+import Iconify from 'src/components/iconify';
+import { Table, TableBody, TableCell, TableRow } from '@mui/material';
+import { TableHeadCustom } from 'src/components/table';
 
 // ----------------------------------------------------------------------
 
-export default function UserNewEditForm({ currentUser }) {
+export default function UserNewEditForm({ currentClient }) {
   const router = useRouter();
 
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslate();
+  const { data } = useValues()
 
   const NewUserSchema = Yup.object().shape({
     name: Yup.string().required('Name is required'),
-    email: Yup.string().required('Email is required').email('Email must be a valid email address'),
-    phoneNumber: Yup.string().required('Phone number is required'),
-    address: Yup.string().required('Address is required'),
-    country: Yup.string().required('Country is required'),
-    company: Yup.string().required('Company is required'),
-    state: Yup.string().required('State is required'),
-    city: Yup.string().required('City is required'),
-    role: Yup.string().required('Role is required'),
-    zipCode: Yup.string().required('Zip code is required'),
-    avatarUrl: Yup.mixed().nullable().required('Avatar is required'),
-    // not required
-    status: Yup.string(),
-    isVerified: Yup.boolean(),
+    commercial_registration_number: Yup.string().required('Name is required'),
+    tax_number: Yup.number(),
+    location_id: Yup.number(),
+    neighborhood_id: Yup.number(),
+    // rep_name: Yup.string(),
+    // rep_contact_number: Yup.string(),
   });
 
   const defaultValues = useMemo(
     () => ({
-      name: currentUser?.name || '',
-      city: currentUser?.city || '',
-      role: currentUser?.role || '',
-      email: currentUser?.email || '',
-      state: currentUser?.state || '',
-      status: currentUser?.status || '',
-      address: currentUser?.address || '',
-      country: currentUser?.country || '',
-      zipCode: currentUser?.zipCode || '',
-      company: currentUser?.company || '',
-      avatarUrl: currentUser?.avatarUrl || null,
-      phoneNumber: currentUser?.phoneNumber || '',
-      isVerified: currentUser?.isVerified || true,
+      name: currentClient?.name || '',
+      commercial_registration_number: currentClient?.commercial_registration_number || '',
+      tax_number: currentClient?.tax_number || '',
+      location_id: currentClient?.location_id || '',
+      neighborhood_id: currentClient?.neighborhood_id || '',
+      // rep_name: currentClient?.rep_name || '',
+      // rep_contact_number: currentClient?.rep_contact_number || '',
     }),
-    [currentUser]
+    [currentClient]
   );
 
   const methods = useForm({
@@ -93,14 +87,51 @@ export default function UserNewEditForm({ currentUser }) {
 
   const values = watch();
 
+
+  useEffect(() => {
+    console.log("currentClient :",currentClient);
+    if (currentClient?.id) {
+      setValue("name",currentClient?.name)
+      setValue("tax_number",currentClient?.tax_number)
+      setValue("commercial_registration_number",currentClient?.commercial_registration_number)
+      setValue("state_id",currentClient?.state_id)
+      setValue("neighborhood_id",currentClient?.neighborhood_id)
+      setRepresentors(currentClient?.representors)
+      // const state = data?.states?.find(
+      //   (option) =>
+      //     option?.id == currentClient?.state_id
+      // );
+      // if (state) {
+      //   setValue('state_id', selectedColor.id);
+      // }
+    }
+  }, [data, setValue]);
+
+
+  const [representors, setRepresentors] = useState([])
+  const handleAddRepresentor = () => {
+    setRepresentors(!!representors ? [...representors, { id: representors?.length > 0 ? representors[representors.length - 1].id + 1 : 1, name: values.rep_name, contact_number: values.rep_contact_number }]:[ { id:1, name: values.rep_name, contact_number: values.rep_contact_number }])
+    setValue("rep_name", "")
+    setValue("rep_contact_number", "")
+
+  }
+  const handleRemoveRepresentor = (name) => {
+    setRepresentors([...representors?.filter(item => item.name != name)])
+  }
+
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      reset();
-      enqueueSnackbar(currentUser ? 'Update success!' : 'Create success!');
-      router.push(paths.dashboard.user.list);
-      console.info('DATA', data);
+      // await new Promise((resolve) => setTimeout(resolve, 500));
+      // reset();
+      const response = currentClient?.id ? await editClient(currentClient?.id, { ...data, representors }) : await createClient({ ...data, representors });
+      enqueueSnackbar(currentClient ? 'Update success!' : 'Create success!');
+      router.push(paths.dashboard.clients.root);
     } catch (error) {
+      Object.values(error?.data).forEach(array => {
+        array.forEach(text => {
+          enqueueSnackbar(text, { variant: 'error' });
+        });
+      });
       console.error(error);
     }
   });
@@ -124,102 +155,6 @@ export default function UserNewEditForm({ currentUser }) {
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>
       <Grid container spacing={3}>
-        {/* <Grid xs={12} md={4}>
-          <Card sx={{ pt: 10, pb: 5, px: 3 }}>
-            {currentUser && (
-              <Label
-                color={
-                  (values.status === 'active' && 'success') ||
-                  (values.status === 'banned' && 'error') ||
-                  'warning'
-                }
-                sx={{ position: 'absolute', top: 24, right: 24 }}
-              >
-                {values.status}
-              </Label>
-            )}
-
-            <Box sx={{ mb: 5 }}>
-              <RHFUploadAvatar
-                name="avatarUrl"
-                maxSize={3145728}
-                onDrop={handleDrop}
-                helperText={
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      mt: 3,
-                      mx: 'auto',
-                      display: 'block',
-                      textAlign: 'center',
-                      color: 'text.disabled',
-                    }}
-                  >
-                    Allowed *.jpeg, *.jpg, *.png, *.gif
-                    <br /> max size of {fData(3145728)}
-                  </Typography>
-                }
-              />
-            </Box>
-
-            {currentUser && (
-              <FormControlLabel
-                labelPlacement="start"
-                control={
-                  <Controller
-                    name="status"
-                    control={control}
-                    render={({ field }) => (
-                      <Switch
-                        {...field}
-                        checked={field.value !== 'active'}
-                        onChange={(event) =>
-                          field.onChange(event.target.checked ? 'banned' : 'active')
-                        }
-                      />
-                    )}
-                  />
-                }
-                label={
-                  <>
-                    <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
-                      Banned
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                      Apply disable account
-                    </Typography>
-                  </>
-                }
-                sx={{ mx: 0, mb: 3, width: 1, justifyContent: 'space-between' }}
-              />
-            )}
-
-            <RHFSwitch
-              name="isVerified"
-              labelPlacement="start"
-              label={
-                <>
-                  <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
-                    Email Verified
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                    Disabling this will automatically send the user a verification email
-                  </Typography>
-                </>
-              }
-              sx={{ mx: 0, width: 1, justifyContent: 'space-between' }}
-            />
-
-            {currentUser && (
-              <Stack justifyContent="center" alignItems="center" sx={{ mt: 3 }}>
-                <Button variant="soft" color="error">
-                  Delete User
-                </Button>
-              </Stack>
-            )}
-          </Card>
-        </Grid> */}
-
         <Grid xs={12} md={8}>
           <Card sx={{ p: 3 }}>
             <Box
@@ -231,63 +166,72 @@ export default function UserNewEditForm({ currentUser }) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <RHFAutocomplete
-                name="name"
-                label={t('clientName')}
-                options={options}
-                getOptionLabel={(option) => option}
+              <RHFTextField required name="name" label={t('name')} />
+              <RHFTextField required name="tax_number" label={t('tax_number')} />
+              <RHFTextField required name="commercial_registration_number" label={t('commercial_registration_number')} />
+              <SimpleAutocomplete
+                name="location_id"
+                label={t('state')}
+                options={data?.states}
+                getOptionLabel={(option) => option?.key}
+                placeholder='choose state'
               />
-
-              <RHFAutocomplete
-                name="name"
-                label={t('tax')}
-                options={options}
-                getOptionLabel={(option) => option}
+              <SimpleAutocomplete
+                name="neighborhood_id"
+                label={t('neighborhood')}
+                options={data?.neighborhoods}
+                getOptionLabel={(option) => option?.translations[0]?.name}
+                placeholder='choose neighborhood'
               />
-
-              <DatePicker
-                label={t('region')}
-                value={new Date()}
-                onChange={(e) => console.log('ssss')}
-                slotProps={{
-                  textField: {
-                    fullWidth: true,
-                  },
-                }}
-              />
-
-              <RHFTextField name="email" label={t('cost')} />
-
-              <RHFAutocomplete
-                name="name"
-                label={t('district')}
-                options={options}
-                getOptionLabel={(option) => option}
-              />
-              <RHFTextField
-                name="name"
-                label={t('phone')}
-                options={options}
-                getOptionLabel={(option) => option}
-              />
-              <RHFTextField name="state" label={t('acterName')} />
-
-              {/* <RHFAutocomplete
-                name="country"
-                type="country"
-                label={t('manufacturingYear')}
-                fullWidth
-                options={countries.map((option) => option.label)}
-                getOptionLabel={(option) => option}
-              /> */}
             </Box>
+
+
+            <div style={{ marginTop: '30px', border: "1px solid gray", padding: "15px", borderRadius: '10px' }}>
+              <Label >Add Representor</Label>
+
+
+              {representors?.map((row, index) => (
+                <Box key={index} rowGap={3} columnGap={3} alignItems={"center"} display="grid" gridTemplateColumns={{ xs: 'repeat(3, 1fr)', sm: 'repeat(3, 1fr)', }} sx={{ marginTop: "10px" }}>
+                  <Label >{row?.name}</Label>
+                  <Label >{row?.contact_number}</Label>
+                  <Iconify onClick={() => handleRemoveRepresentor(row?.name)} icon="solar:trash-bin-trash-bold" />
+                </Box>
+              ))}
+
+
+
+              <Box
+                rowGap={3}
+                columnGap={2}
+                display="grid"
+                gridTemplateColumns={{
+                  xs: 'repeat(1, 1fr)',
+                  sm: 'repeat(3, 1fr)',
+                }}
+                sx={{ marginTop: "30px" }}
+              >
+                <RHFTextField name="rep_name" label={t('rep_name')} />
+                <RHFTextField name="rep_contact_number" label={t('rep_contact_number')} />
+                {/* <button type="button" variant="contained">
+                  {!currentClient ? t('add representor') : 'Save Changes'}
+                </button> */}
+                <LoadingButton type="button" onClick={handleAddRepresentor} variant="contained" loading={false}>
+                  add rep
+                </LoadingButton>
+              </Box>
+
+            </div>
+
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                {!currentUser ? t('addNewDocument') : 'Save Changes'}
+                {!currentClient ? t('addNewClient') : 'Save Changes'}
               </LoadingButton>
             </Stack>
+
+
           </Card>
+
         </Grid>
       </Grid>
     </FormProvider>
@@ -295,5 +239,53 @@ export default function UserNewEditForm({ currentUser }) {
 }
 
 UserNewEditForm.propTypes = {
-  currentUser: PropTypes.object,
+  currentClient: PropTypes.object,
+};
+
+
+
+function AppNewInvoiceRow({ row }) {
+
+
+  return (
+    <>
+      <TableRow>
+        <TableCell>{row?.name}</TableCell>
+        <TableCell>{row?.contact_number}</TableCell>
+        <TableCell>-</TableCell>
+      </TableRow>
+      {/* <CustomPopover
+        open={popover.open}
+        onClose={popover.onClose}
+        arrow="right-top"
+        sx={{ width: 160 }}
+      >
+        <MenuItem onClick={handleDownload}>
+          <Iconify icon="eva:cloud-download-fill" />
+          Download
+        </MenuItem>
+
+        <MenuItem onClick={handlePrint}>
+          <Iconify icon="solar:printer-minimalistic-bold" />
+          Print
+        </MenuItem>
+
+        <MenuItem onClick={handleShare}>
+          <Iconify icon="solar:share-bold" />
+          Share
+        </MenuItem>
+
+        <Divider sx={{ borderStyle: 'dashed' }} />
+
+        <MenuItem onClick={handleDelete} sx={{ color: 'error.main' }}>
+          <Iconify icon="solar:trash-bin-trash-bold" />
+          Delete
+        </MenuItem>
+      </CustomPopover> */}
+    </>
+  );
+}
+
+AppNewInvoiceRow.propTypes = {
+  row: PropTypes.object,
 };

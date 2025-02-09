@@ -5,11 +5,9 @@ import axios, { fetcher, endpoints } from 'src/utils/axios';
 
 // ----------------------------------------------------------------------
 
-export function useGetClauses(carId) {
-  const URL = endpoints.clauses.list + '/' + carId + '/clauses';
-
+export function useGetClauses(id) {
+  const URL = endpoints.clauses.list(id) ;
   const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher);
-
   const memoizedValue = useMemo(
     () => ({
       clauses: data?.data || [],
@@ -23,4 +21,9 @@ export function useGetClauses(carId) {
   );
 
   return memoizedValue;
+}
+
+export async function addNewClause(body) {
+  const URL = endpoints.clauses.add;
+  return await axios.post(URL, body);
 }

@@ -42,6 +42,8 @@ export default function ProfileCover({ name, avatarUrl, role, coverUrl }) {
             width: { xs: 64, md: 128 },
             height: { xs: 64, md: 128 },
             border: `solid 2px ${theme.palette.common.white}`,
+            fontSize:"4rem",
+            fontWeight:'bold'            
           }}
         >
           {name?.charAt(0).toUpperCase()}

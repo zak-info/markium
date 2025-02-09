@@ -20,9 +20,13 @@ export default function OrderTableToolbar({ filters, onFilters, dateError }) {
 
   const { t } = useTranslate();
 
-  const handleFilterName = useCallback(
+  const handleFilterPlat_number = useCallback(
     (event) => {
-      onFilters('name', event.target.value);
+      onFilters('plat_number', event.target.value);
+      // onFilters('company', event.target.value);
+      // onFilters('model', event.target.value);
+      // onFilters('color', event.target.value);
+      onFilters('production_year', event.target.value);
     },
     [onFilters]
   );
@@ -93,7 +97,7 @@ export default function OrderTableToolbar({ filters, onFilters, dateError }) {
           <TextField
             fullWidth
             value={filters.name}
-            onChange={handleFilterName}
+            onChange={handleFilterPlat_number}
             placeholder={t('search') + '...'}
             InputProps={{
               startAdornment: (

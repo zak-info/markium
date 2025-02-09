@@ -25,8 +25,8 @@ import CustomPopover, { usePopover } from 'src/components/custom-popover';
 
 // ----------------------------------------------------------------------
 
-export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteRow }) {
-  const { items, status, orderNumber, createdAt, customer, totalQuantity, subTotal } = row;
+export default function OrderTableRow({ row, client, selected, onViewRow, onSelectRow, onDeleteRow }) {
+  const { clauses, status, orderNumber, createdAt, customer, totalQuantity, subTotal } = row;
 
   const confirm = useBoolean();
 
@@ -50,14 +50,14 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
             },
           }}
         >
-          {orderNumber}
+          {client?.name}
         </Box>
       </TableCell>
 
       <TableCell>
         <ListItemText
-          primary={fDate(createdAt)}
-          secondary={fTime(createdAt)}
+          primary={fDate(row?.created_at)}
+          secondary={fTime(row?.created_at)}
           primaryTypographyProps={{ typography: 'body2', noWrap: true }}
           secondaryTypographyProps={{
             mt: 0.5,
@@ -66,38 +66,33 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
           }}
         />
       </TableCell>
-
-      <TableCell>
-        <ListItemText
-          primary={fDate(createdAt)}
-          secondary={fTime(createdAt)}
-          primaryTypographyProps={{ typography: 'body2', noWrap: true }}
-          secondaryTypographyProps={{
-            mt: 0.5,
-            component: 'span',
-            typography: 'caption',
-          }}
-        />
-      </TableCell>
-
-      <TableCell align="center"> {totalQuantity} </TableCell>
-
-      <TableCell> {fCurrency(subTotal)} </TableCell>
-
+      <TableCell align="start"> {row?.net} RS</TableCell>
       <TableCell>
         <Label
           variant="soft"
           color={
-            (status === 'completed' && 'success') ||
-            (status === 'pending' && 'warning') ||
-            (status === 'cancelled' && 'error') ||
+            (row?.payment_method === 'cash' && 'success') ||
+            (row?.payment_method === 'versement' && 'warning') ||
+            (row?.payment_method === 'bill' && 'error') ||
             'default'
           }
         >
-          {status}
+          {row?.payment_method}
         </Label>
       </TableCell>
-      <TableCell> {fCurrency(subTotal)} </TableCell>
+      <TableCell>
+        <ListItemText
+          primary={"remaining " + row?.remaining_unclaimed_amount}
+          secondary={"paid   " + row?.paid_amount}
+          primaryTypographyProps={{ typography: 'body2', noWrap: true }}
+          secondaryTypographyProps={{
+            mt: 0.5,
+            component: 'span',
+            typography: 'caption',
+          }}
+        />
+      </TableCell>
+
     </TableRow>
   );
 
@@ -111,7 +106,7 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
           sx={{ bgcolor: 'background.neutral' }}
         >
           <Stack component={Paper} sx={{ m: 1.5 }}>
-            {items.map((item) => (
+            {clauses.map((item) => (
               <Stack
                 key={item.id}
                 direction="row"

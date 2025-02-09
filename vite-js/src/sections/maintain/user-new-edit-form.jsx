@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
 import PropTypes, { number } from 'prop-types';
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
@@ -35,14 +35,20 @@ import FormProvider, {
 import { useTranslate } from 'src/locales';
 import { useValues } from 'src/api/utils';
 
-import { createMaintenance } from 'src/api/maintainance';
+import { createMaintenance, editMaintenance } from 'src/api/maintainance';
 import { fDate } from 'src/utils/format-time';
+import { useGetCar } from 'src/api/car';
+import { ListItemText } from '@mui/material';
+import { format } from 'date-fns';
+import CarsAutocomplete from 'src/components/hook-form/rhf-CarsAutocomplete';
+import { useSearchParams } from 'react-router-dom';
 
 // ----------------------------------------------------------------------
 
-export default function UserNewEditForm({ currentUser }) {
+export default function UserNewEditForm({ currentMentainance }) {
   const router = useRouter();
-
+  const [searchParams] = useSearchParams();
+  const { car } = useGetCar()
   const { data } = useValues();
 
   const { enqueueSnackbar } = useSnackbar();
@@ -56,26 +62,25 @@ export default function UserNewEditForm({ currentUser }) {
 
     type: Yup.string().required('Type is required'),
 
-    car_plat_number: Yup.string().required('Car plate number is required'),
+    car_id: Yup.number().required('Car is required'),
     entry_date: Yup.date().required('Entry date is required'), // Validates that the entry date is not in the future
     cause: Yup.string()
-      .required('Cause is required')
       .min(3, 'Cause must be at least 3 characters long'), // Validates that cause has a minimum length of 3
+    // .required('Cause is required')
 
     exit_date: Yup.date().nullable(), // Allowing an empty string for exit date (since it's not required)
     // Exit date validation for the future
   });
-
   const defaultValues = useMemo(
     () => ({
       state_id: null, // default value for state_id
-      car_plat_number: '', // default value for car plate number
+      car_id: '', // default value for car plate number
       type: '', // default value for car plate number
       entry_date: null, // default value for entry date
       cause: '', // default value for cause
       exit_date: null, // default value for exit date (empty string)
     }),
-    [currentUser]
+    [currentMentainance]
   );
   const methods = useForm({
     resolver: yupResolver(NewUserSchema),
@@ -93,13 +98,34 @@ export default function UserNewEditForm({ currentUser }) {
 
   const values = watch();
 
+  useEffect(() => {
+    if (currentMentainance?.id) {
+      setValue('car_plat_number', currentMentainance?.car?.plat_number);
+      setValue('type', currentMentainance?.type);
+      setValue('cause', currentMentainance?.cause);
+      setValue('entry_date', currentMentainance?.entry_date ? new Date(currentMentainance?.entry_date) : new Date());
+      setValue('exit_date', currentMentainance?.exit_date ? new Date(currentMentainance?.exit_date) : new Date());
+      setValue('state_id', currentMentainance?.state?.id);
+    }
+    
+    // const car_id = searchParams.get("car_id");
+    // if (car_id) {
+    //   // setValue('car_id', car?.find(item => item.id == car_id)?.id);
+    //   setValue('car_id',car_id,{ shouldValidate: true });
+    // }
+  }, [currentMentainance, setValue]);
+
+
+
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await createMaintenance(values);
-      reset();
-      enqueueSnackbar(currentUser ? 'Update success!' : 'Create success!');
+      let body = data
+      body.entry_date = format(new Date(data.entry_date), 'yyyy-MM-dd')
+      body.exit_date = format(new Date(data.exit_date), 'yyyy-MM-dd')
+      const response = currentMentainance?.id ? await editMaintenance(currentMentainance?.id, body) : await createMaintenance(body);
+      enqueueSnackbar(currentMentainance ? 'Update success!' : 'Create success!');
       router.push(paths.dashboard.maintenance.root);
-      console.info('DATA', data);
+      console.info('DATA', body);
     } catch (error) {
       console.error(error);
     }
@@ -125,9 +151,8 @@ export default function UserNewEditForm({ currentUser }) {
       value: 'urgent',
       label: 'طارئ',
     },
-
     {
-      label: 'اعتيادي',
+      label: 'دوري',
       value: 'normal',
     },
   ];
@@ -145,11 +170,30 @@ export default function UserNewEditForm({ currentUser }) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <RHFTextField required name="car_plat_number" label={t('plateNumber')} />
+              {/* <RHFTextField required name="car_plat_number" label={t('plateNumber')} /> */}
+
+              {/* <RHFSelect required name="car_plat_number" label={t('car_plat_number')}>
+                <Divider sx={{ borderStyle: 'dashed' }} />
+                {car?.map((item) => (
+                  <MenuItem key={item?.plat_number} value={item.plat_number}>
+                    <ListItemText
+                      primary={item?.plat_number}
+                      secondary={item?.model?.company?.translations?.name}
+                      primaryTypographyProps={{ typography: 'body2', noWrap: true }}
+                      secondaryTypographyProps={{
+                        mt: 0.5,
+                        component: 'span',
+                        typography: 'caption',
+                      }}
+                    />
+                  </MenuItem>
+                ))}
+              </RHFSelect> */}
+              <CarsAutocomplete required options={car} name="car_id" label={t('car')} placeholder='filter with plat_number' car_id={searchParams.get("car_id")} />
 
               <DatePicker
                 label={t('entryDate')}
-                value={values.entry_date ? new Date(values.entry_date) : null}
+                value={values.entry_date ? new Date(values.entry_date) : new Date()}
                 required
                 name="entry_date"
                 onChange={(newValue) => setValue('entry_date', fDate(newValue, 'yyyy-MM-dd'))}
@@ -158,12 +202,11 @@ export default function UserNewEditForm({ currentUser }) {
                     fullWidth: true,
                   },
                 }}
-                minDate={new Date()}
               />
 
               <DatePicker
                 label={t('exitDate')}
-                value={values.exit_date ? new Date(values.exit_date) : null}
+                value={values.exit_date ? new Date(values.exit_date) : new Date()}
                 name="exit_date"
                 onChange={(newValue) => setValue('exit_date', fDate(newValue, 'yyyy-MM-dd'))}
                 slotProps={{
@@ -176,14 +219,14 @@ export default function UserNewEditForm({ currentUser }) {
 
               <RHFSelect required name="state_id" label={t('workSite')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
-                {data?.state?.map((option) => (
-                  <MenuItem key={option?.name} value={option?.id}>
-                    {option?.translations?.name}
+                {data?.states?.map((option) => (
+                  <MenuItem key={option?.id} value={option?.id}>
+                    {option?.translations[0]?.name}
                   </MenuItem>
                 ))}
               </RHFSelect>
 
-              <RHFTextField required name="cause" label={t('malfunction')} />
+              <RHFTextField required name="cause" label={t('cause')} />
 
               <RHFSelect required name="type" label={t('maintainType')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
@@ -206,7 +249,7 @@ export default function UserNewEditForm({ currentUser }) {
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                {!currentUser ? t('addNewMaintain') : 'Save Changes'}
+                {!currentMentainance ? t('addNewMaintain') : 'Save Changes'}
               </LoadingButton>
             </Stack>
           </Card>
@@ -217,5 +260,5 @@ export default function UserNewEditForm({ currentUser }) {
 }
 
 UserNewEditForm.propTypes = {
-  currentUser: PropTypes.object,
+  currentMentainance: PropTypes.object,
 };

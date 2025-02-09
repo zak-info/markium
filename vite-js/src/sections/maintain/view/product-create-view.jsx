@@ -7,13 +7,19 @@ import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 
 import UserNewEditForm from '../user-new-edit-form.jsx';
 import { useTranslate } from 'src/locales';
+import { useGetMaintenance } from 'src/api/maintainance.js';
 
 // ----------------------------------------------------------------------
 
-export default function UserCreateView() {
+export default function UserCreateView({ id }) {
   const settings = useSettingsContext();
 
   const { t } = useTranslate();
+
+  const { maintenance,mutate } = useGetMaintenance();
+
+  const currentMentainance = maintenance?.find((i) => i.id == id);
+
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
@@ -35,7 +41,7 @@ export default function UserCreateView() {
         }}
       />
 
-      <UserNewEditForm />
+      <UserNewEditForm currentMentainance={currentMentainance} />
     </Container>
   );
 }

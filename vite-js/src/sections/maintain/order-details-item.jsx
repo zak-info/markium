@@ -25,6 +25,8 @@ export default function OrderDetailsItems({
   discount,
   subTotal,
   totalAmount,
+  currentMentainance,
+  currentCar
 }) {
   const { t } = useTranslation();
 
@@ -40,18 +42,18 @@ export default function OrderDetailsItems({
       <Stack spacing={2} sx={{ my: 3, typography: 'body2' }}>
         <Stack direction="row">
           <Box sx={{ width: 160, color: 'text.secondary' }}>{t('maintainDate')}</Box>
-          <Box sx={{ typography: 'subtitle2' }}>23444vf</Box>
+          <Box sx={{ typography: 'subtitle2' }}>{new Date(currentMentainance?.created_at).toDateString()}</Box>
         </Stack>
 
         <Stack direction="row">
           <Box sx={{ width: 160, color: 'text.secondary' }}>{t('maintainType')}</Box>
-          <Box sx={{ typography: 'subtitle2' }}>23444vf</Box>
+          <Box sx={{ typography: 'subtitle2' }}>{currentMentainance?.type || "-----------" }</Box>
         </Stack>
 
-        <Stack direction="row">
+        {/* <Stack direction="row">
           <Box sx={{ width: 160, color: 'text.secondary' }}>{t('vehcileColor')}</Box>
           <Box sx={{ typography: 'subtitle2' }}>23444vf</Box>
-        </Stack>
+        </Stack> */}
       </Stack>
 
       <Divider orientation="vertical" flexItem />
@@ -59,30 +61,30 @@ export default function OrderDetailsItems({
       <Stack spacing={2} sx={{ my: 3, typography: 'body2' }}>
         <Stack direction="row">
           <Box sx={{ width: 160, color: 'text.secondary' }}>{t('entryDate')}</Box>
-          <Box sx={{ typography: 'subtitle2' }}>23444vf</Box>
+          <Box sx={{ typography: 'subtitle2' }}>{new Date(currentMentainance?.entry_date).toDateString()}</Box>
         </Stack>
 
         <Stack direction="row">
-          <Box sx={{ width: 160, color: 'text.secondary' }}>{t('numberOfMaintenanceDays')}</Box>
+          <Box sx={{ width: 160, color: 'text.secondary' }}>{t('DD days')}</Box>
           <Box
             sx={{
               ...(shipping && { color: 'error.main' }),
             }}
           >
             <Label variant="soft" color={'default'}>
-              4{' '}
+              {currentMentainance?.remaining_days}
             </Label>
           </Box>
         </Stack>
 
-        <Stack direction="row">
+        {/* <Stack direction="row">
           <Box sx={{ width: 160, color: 'text.secondary' }}>{t('driver')}</Box>
           <Box sx={{ typography: 'subtitle2' }}>23444vf</Box>
-        </Stack>
+        </Stack> */}
 
         <Stack direction="row">
-          <Box sx={{ width: 160, color: 'text.secondary' }}>{t('malfunction')}</Box>
-          <Box sx={{ typography: 'subtitle2' }}>2</Box>
+          <Box sx={{ width: 160, color: 'text.secondary' }}>{t('cause')}</Box>
+          <Box sx={{ typography: 'subtitle2' }}>{currentMentainance?.cause}</Box>
         </Stack>
       </Stack>
     </Stack>
@@ -90,7 +92,7 @@ export default function OrderDetailsItems({
 
   return (
     <Card>
-      <CardHeader title={t('vehicleDetails')} />
+      <CardHeader title={t('Details')} />
 
       <Stack
         sx={{
@@ -108,8 +110,8 @@ export default function OrderDetailsItems({
             }}
           >
             <ListItemText
-              primary={'  نيسان (كامري) 1990'}
-              secondary={'(234) ABD'}
+              primary={currentCar?.model?.translations?.name+" - ("+currentCar?.model?.company?.translations?.name+")"}
+              secondary={currentCar?.plat_number}
               primaryTypographyProps={{
                 typography: 'body2',
               }}

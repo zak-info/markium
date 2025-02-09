@@ -25,8 +25,8 @@ import CustomPopover, { usePopover } from 'src/components/custom-popover';
 
 // ----------------------------------------------------------------------
 
-export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteRow }) {
-  const { items, status, orderNumber, createdAt, customer, totalQuantity, subTotal } = row;
+export default function OrderTableRow({ row,contract,client, selected, onViewRow, onSelectRow, onDeleteRow }) {
+  const { status } = row;
 
   const confirm = useBoolean();
 
@@ -40,9 +40,13 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
         <Checkbox checked={selected} onClick={onSelectRow} />
       </TableCell>
 
-      <TableCell>{orderNumber}</TableCell>
+      <TableCell>{client}</TableCell>
+      <TableCell>{row?.amount}</TableCell>
+      <TableCell>{fDate(row?.paiment_date)}</TableCell>
+      <TableCell>{row?.status?.name}</TableCell>
+      <TableCell>{row?.status?.wait_to_switch + " "+row?.status?.unit}</TableCell>
 
-      <TableCell>
+      {/* <TableCell>
         <ListItemText
           primary={fDate(createdAt)}
           secondary={fTime(createdAt)}
@@ -84,7 +88,7 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
         >
           {status}
         </Label>
-      </TableCell>
+      </TableCell> */}
     </TableRow>
   );
 
@@ -98,7 +102,7 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
           sx={{ bgcolor: 'background.neutral' }}
         >
           <Stack component={Paper} sx={{ m: 1.5 }}>
-            {items.map((item) => (
+            {/* {items?.map((item) => (
               <Stack
                 key={item.id}
                 direction="row"
@@ -133,7 +137,7 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
 
                 <Box sx={{ width: 110, textAlign: 'right' }}>{fCurrency(item.price)}</Box>
               </Stack>
-            ))}
+            ))} */}
           </Stack>
         </Collapse>
       </TableCell>

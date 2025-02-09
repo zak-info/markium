@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 
 import Fab from '@mui/material/Fab';
@@ -23,11 +23,21 @@ import Iconify from 'src/components/iconify';
 import ProfilePostItem from './profile-post-item';
 import { _appInvoices } from 'src/_mock';
 import { useTranslation } from 'react-i18next';
+import { fDate } from 'src/utils/format-time';
+import AppNewInvoice2 from './app-new-invoice2';
+import ClaimNewEditForm from './claim-new-edit-form';
+import { useGetClaim } from 'src/api/claim';
 
 // ----------------------------------------------------------------------
 
-export default function ProfileHome({ info, posts }) {
+export default function ProfileHome({ info, posts, contract, client, location }) {
   const fileRef = useRef(null);
+
+  const { claims } = useGetClaim(contract?.id);
+  const [tableData, setTableData] = useState(claims?.filter(item => item.contract_id == contract?.id))
+  useEffect(() => {
+    setTableData(claims?.filter(item => item.contract_id == contract?.id))
+  }, [claims])
 
   const { t } = useTranslation();
 
@@ -61,99 +71,124 @@ export default function ProfileHome({ info, posts }) {
   );
 
   const renderAbout = (
-    <Card>
-      <CardHeader title={t('contracts')} />
+    <Grid xs={12} md={12}>
+      <Card>
+        <CardHeader title={t('contract details')} />
 
-      <Stack spacing={2} sx={{ p: 3 }}>
-        <Box sx={{ typography: 'body2' }}>{info.quote}</Box>
+        <Stack spacing={2} sx={{ p: 3 }}>
+          {/* <Box sx={{ typography: 'body2' }}>{info.quote}</Box> */}
 
-        <Stack direction="row" spacing={2}>
-          <Iconify icon="mingcute:location-fill" width={24} />
+          <Stack direction="row" spacing={2}>
+            <Iconify icon="mingcute:coin-fill" width={24} />
 
-          <Box sx={{ typography: 'body2' }}>
-            {`Live at `}
-            <Link variant="subtitle2" color="inherit">
-              {info.country}
-            </Link>
-          </Box>
+            <Box sx={{ typography: 'body2' }}>
+              {`net `}
+              <Link variant="subtitle2" color="inherit">
+                {contract?.net} RS
+              </Link>
+            </Box>
+          </Stack>
+          <Stack direction="row" spacing={2}>
+            <Iconify icon="mingcute:coin-fill" width={24} />
+
+            <Box sx={{ typography: 'body2' }}>
+              {`paid `}
+              <Link variant="subtitle2" color="inherit">
+                {contract?.paid_amount} RS
+              </Link>
+            </Box>
+          </Stack>
+          <Stack direction="row" spacing={2}>
+            <Iconify icon="mingcute:coin-fill" width={24} />
+
+            <Box sx={{ typography: 'body2' }}>
+              {`unclaimed `}
+              <Link variant="subtitle2" color="inherit">
+                {contract?.remaining_unclaimed_amount} RS
+              </Link>
+            </Box>
+          </Stack>
+
+          <Stack direction="row" sx={{ typography: 'body2' }}>
+            <Iconify icon="heroicons-solid:calendar" width={24} sx={{ mr: 2 }} />
+            {fDate(contract?.created_at)}
+          </Stack>
+
+          <Stack direction="row" spacing={2}>
+            <Iconify icon="ic:round-business-center" width={24} />
+
+            <Box sx={{ typography: 'body2' }}>
+              {/* {` `} */}
+              <Link variant="subtitle2" color="inherit">
+                {contract?.clauses?.length} clause{contract?.clauses?.length > 1 ? "s" : null}
+              </Link>
+            </Box>
+          </Stack>
         </Stack>
-
-        <Stack direction="row" sx={{ typography: 'body2' }}>
-          <Iconify icon="fluent:mail-24-filled" width={24} sx={{ mr: 2 }} />
-          {info.email}
-        </Stack>
-
-        <Stack direction="row" spacing={2}>
-          <Iconify icon="ic:round-business-center" width={24} />
-
-          <Box sx={{ typography: 'body2' }}>
-            {info.role} {`at `}
-            <Link variant="subtitle2" color="inherit">
-              {info.company}
-            </Link>
-          </Box>
-        </Stack>
-
-        <Stack direction="row" spacing={2}>
-          <Iconify icon="ic:round-business-center" width={24} />
-
-          <Box sx={{ typography: 'body2' }}>
-            {`Studied at `}
-            <Link variant="subtitle2" color="inherit">
-              {info.school}
-            </Link>
-          </Box>
-        </Stack>
-      </Stack>
-    </Card>
+      </Card>
+    </Grid>
   );
 
   const renderAbout2 = (
-    <Card>
-      <CardHeader title={t('client')} />
+    <Grid xs={12} md={12}>
+      <Card sx={{ width: '100%' }}>
+        <CardHeader title={t('client')} />
 
-      <Stack spacing={2} sx={{ p: 3 }}>
-        <Box sx={{ typography: 'body2' }}>{info.quote}</Box>
+        <Stack spacing={2} sx={{ p: 3 }}>
+          {/* <Box sx={{ typography: 'body2' }}>{info.quote}</Box> */}
 
-        <Stack direction="row" spacing={2}>
-          <Iconify icon="mingcute:location-fill" width={24} />
+          <Stack direction="row" spacing={2}>
+            <Iconify icon="solar:user-bold-duotone" width={24} />
 
-          <Box sx={{ typography: 'body2' }}>
-            {`Live at `}
-            <Link variant="subtitle2" color="inherit">
-              {info.country}
-            </Link>
-          </Box>
+            <Box sx={{ typography: 'body2' }}>
+              <Link variant="subtitle2" color="inherit">
+                {client?.name}
+              </Link>
+            </Box>
+          </Stack>
+
+          <Stack direction="row" sx={{ typography: 'body2' }}>
+            <Iconify icon="solar:devices-bold-duotone" width={24} sx={{ mr: 2 }} />
+            {client?.phone_number || "no phone number found"}
+          </Stack>
+
+          <Stack direction="row" spacing={2}>
+            <Iconify icon="solar:map-point-wave-bold-duotone" width={24} />
+
+            <Box sx={{ typography: 'body2' }}>
+              <Link variant="subtitle2" color="inherit">
+                {location?.translations[0]?.name}
+              </Link>
+            </Box>
+          </Stack>
+
+          <Stack direction="row" spacing={2}>
+            {/* <Iconify icon="solar:map-point-wave-bold-duotone" width={24} /> */}
+            --
+
+            <Box sx={{ typography: 'body2' }}>
+              <Link variant="subtitle2" color="inherit">
+                {/* {location?.translations[0]?.name} */}
+                --
+              </Link>
+            </Box>
+          </Stack>
+
+          <Stack direction="row" spacing={2}>
+            {/* <Iconify icon="solar:map-point-wave-bold-duotone" width={24} /> */}
+            --
+
+            <Box sx={{ typography: 'body2' }}>
+              <Link variant="subtitle2" color="inherit">
+                {/* {location?.translations[0]?.name} */}
+                --
+              </Link>
+            </Box>
+          </Stack>
+
         </Stack>
-
-        <Stack direction="row" sx={{ typography: 'body2' }}>
-          <Iconify icon="fluent:mail-24-filled" width={24} sx={{ mr: 2 }} />
-          {info.email}
-        </Stack>
-
-        <Stack direction="row" spacing={2}>
-          <Iconify icon="ic:round-business-center" width={24} />
-
-          <Box sx={{ typography: 'body2' }}>
-            {info.role} {`at `}
-            <Link variant="subtitle2" color="inherit">
-              {info.company}
-            </Link>
-          </Box>
-        </Stack>
-
-        <Stack direction="row" spacing={2}>
-          <Iconify icon="ic:round-business-center" width={24} />
-
-          <Box sx={{ typography: 'body2' }}>
-            {`Studied at `}
-            <Link variant="subtitle2" color="inherit">
-              {info.school}
-            </Link>
-          </Box>
-        </Stack>
-      </Stack>
-    </Card>
+      </Card>
+    </Grid>
   );
 
   const renderPostInput = (
@@ -226,40 +261,65 @@ export default function ProfileHome({ info, posts }) {
   return (
     <Grid container spacing={3}>
       <Grid xs={12} md={12}>
-        <Stack spacing={3} flexDirection="row">
+        {/* <Stack spacing={3} flexDirection="row"> */}
+        <Box
+          rowGap={3}
+          columnGap={2}
+          display="grid"
+          gridTemplateColumns={{
+            xs: 'repeat(1, 1fr)',
+            sm: 'repeat(2, 1fr)',
+          }}
+        >
           {renderAbout}
 
           {renderAbout2}
-        </Stack>
-      </Grid>
+        </Box>
+        {/* </Stack> */}
 
-      <Grid xs={6} md={6}>
+      </Grid>
+      {/* <Box
+        rowGap={4}
+        columnGap={2}
+        display="grid"
+        gridTemplateColumns={{
+          xs: 'repeat(1, 1fr)',
+          sm: 'repeat(2, 1fr)',
+        }}
+      > */}
+
+      <Grid xs={12} md={6}>
         <AppNewInvoice
           title={t('contractItems')}
-          tableData={_appInvoices}
+          tableData={contract?.clauses}
           tableLabels={[
-            { id: 'id', label: 'Invoice ID' },
-            { id: 'category', label: 'Category' },
-            { id: 'price', label: 'Price' },
-            { id: 'status', label: 'Status' },
+            { id: 'clausable', label: 'Clausable' },
+            { id: 'cost', label: 'Cost' },
+            { id: 'duration', label: 'Duration' },
+            { id: 'total', label: 'Total' },
             { id: '' },
           ]}
         />
       </Grid>
 
-      <Grid xs={6} md={6}>
-        <AppNewInvoice
+      <Grid xs={12} md={6}>
+        <ClaimNewEditForm setTableData={setTableData} contract_id={contract?.id} />
+        <AppNewInvoice2
+
+          tableData={tableData}
+          sx={{ mt: "10px" }}
           title={t('claims')}
-          tableData={_appInvoices}
+          contract_id={contract?.id}
           tableLabels={[
-            { id: 'id', label: 'Invoice ID' },
-            { id: 'category', label: 'Category' },
-            { id: 'price', label: 'Price' },
+            { id: 'Amount', label: 'Amount' },
+            { id: 'Create_at', label: 'Create At' },
+            { id: 'Payment', label: 'Payment At' },
             { id: 'status', label: 'Status' },
             { id: '' },
           ]}
         />
       </Grid>
+      {/* </Box> */}
     </Grid>
   );
 }

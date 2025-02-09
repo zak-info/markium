@@ -22,11 +22,12 @@ import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import { t } from 'i18next';
 
 // ----------------------------------------------------------------------
 
 export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteRow }) {
-  const { items, status, orderNumber, createdAt, customer, totalQuantity, subTotal } = row;
+  const { items, status, orderNumber, action, created_at, note_en, updated_at, createdAt, customer, totalQuantity, subTotal } = row;
 
   const confirm = useBoolean();
 
@@ -40,8 +41,8 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
         <Checkbox checked={selected} onClick={onSelectRow} />
       </TableCell>
 
-      <TableCell>
-        {/* <Box
+      {/* <TableCell>
+        <Box
           onClick={onViewRow}
           sx={{
             cursor: 'pointer',
@@ -49,43 +50,29 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
               textDecoration: 'underline',
             },
           }}
-        > */}
+        >
         {orderNumber}
-        {/* </Box> */}
-      </TableCell>
+        </Box>
+      </TableCell> */}
 
-      <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-        <Avatar alt={customer.name} src={customer.avatarUrl} sx={{ mr: 2 }} />
-
+      {/* <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
+        <Avatar alt={customer?.name} src={customer?.avatarUrl} sx={{ mr: 2 }} />
         <ListItemText
-          primary={customer.name}
-          secondary={customer.email}
+          primary={customer?.name}
+          secondary={customer?.email}
           primaryTypographyProps={{ typography: 'body2' }}
           secondaryTypographyProps={{
             component: 'span',
             color: 'text.disabled',
           }}
         />
-      </TableCell>
+      </TableCell> */}
 
-      <TableCell>Tesla </TableCell>
-
-      <Label
-        variant="soft"
-        color={
-          (status === 'completed' && 'success') ||
-          (status === 'pending' && 'warning') ||
-          (status === 'cancelled' && 'error') ||
-          'default'
-        }
-      >
-        {status}
-      </Label>
-
+      {/* <TableCell>Tesla </TableCell> */}
       <TableCell>
         <ListItemText
-          primary={fDate(createdAt)}
-          secondary={fTime(createdAt)}
+          primary={fDate(created_at)}
+          secondary={fTime(created_at)}
           primaryTypographyProps={{ typography: 'body2', noWrap: true }}
           secondaryTypographyProps={{
             mt: 0.5,
@@ -94,10 +81,26 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
           }}
         />
       </TableCell>
+      <TableCell>
+        <Label
+          variant="soft"
+          color={
+            (action === 'create' && 'success') ||
+            (action === 'update' && 'warning') ||
+            (action === 'cancelled' && 'error') ||
+            'default'
+          }
+        >
+          {action}
+        </Label>
+      </TableCell>
 
-      <TableCell> {fCurrency(subTotal)} </TableCell>
 
-      <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
+
+      {/* <TableCell> {fCurrency(subTotal)} </TableCell> */}
+      <TableCell> {note_en} </TableCell>
+
+      <TableCell align="end" sx={{ px: 1, whiteSpace: 'nowrap' }}>
         <IconButton
           color={collapse.value ? 'inherit' : 'default'}
           onClick={collapse.onToggle}
@@ -127,43 +130,47 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
           sx={{ bgcolor: 'background.neutral' }}
         >
           <Stack component={Paper} sx={{ m: 1.5 }}>
-            {items.map((item) => (
-              <Stack
-                key={item.id}
-                direction="row"
-                alignItems="center"
-                sx={{
-                  p: (theme) => theme.spacing(1.5, 2, 1.5, 1.5),
-                  '&:not(:last-of-type)': {
-                    borderBottom: (theme) => `solid 2px ${theme.palette.background.neutral}`,
-                  },
-                }}
-              >
-                <Avatar
-                  src={item.coverUrl}
-                  variant="rounded"
-                  sx={{ width: 48, height: 48, mr: 2 }}
-                />
-
-                <ListItemText
-                  primary={item.name}
-                  secondary={item.sku}
-                  primaryTypographyProps={{
-                    typography: 'body2',
+            {
+              row?.new_values ? Object.entries(row?.new_values).map(([key, value]) => (
+                <Stack
+                  key={"1"}
+                  direction="row"
+                  alignItems="center"
+                  sx={{
+                    p: (theme) => theme.spacing(1.5, 2, 1.5, 1.5),
+                    '&:not(:last-of-type)': {
+                      borderBottom: (theme) => `solid 2px ${theme.palette.background.neutral}`,
+                    },
                   }}
-                  secondaryTypographyProps={{
-                    component: 'span',
-                    color: 'text.disabled',
-                    mt: 0.5,
+                >
+                  <Box sx={{ width: 160, color: 'text.secondary' }}>{t(key)}</Box>
+                  <Box sx={{ typography: 'subtitle2' }}>{value}</Box>
+                </Stack>
+              ))
+                : null
+            }
+            {
+              row?.old_values ? Object.entries(row?.old_values).map(([key, value]) => (
+                <Stack
+                  key={"1"}
+                  direction="row"
+                  alignItems="center"
+                  sx={{
+                    p: (theme) => theme.spacing(1.5, 2, 1.5, 1.5),
+                    '&:not(:last-of-type)': {
+                      borderBottom: (theme) => `solid 2px ${theme.palette.background.neutral}`,
+                    },
                   }}
-                />
-
-                <Box>x{item.quantity}</Box>
-
-                <Box sx={{ width: 110, textAlign: 'right' }}>{fCurrency(item.price)}</Box>
-              </Stack>
-            ))}
+                >
+                  <Box sx={{ width: 160, color: 'text.secondary' }}>{t(key)}</Box>
+                  <Box sx={{ typography: 'subtitle2' }}>{value}</Box>
+                </Stack>
+              ))
+                :
+                null
+            }
           </Stack>
+
         </Collapse>
       </TableCell>
     </TableRow>

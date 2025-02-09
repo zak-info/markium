@@ -94,7 +94,7 @@ export default function OrderTableToolbar({ filters, onFilters, dateError }) {
             fullWidth
             value={filters.name}
             onChange={handleFilterName}
-            placeholder={t('search') + '...'}
+            placeholder={t('search2') + '...'}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">

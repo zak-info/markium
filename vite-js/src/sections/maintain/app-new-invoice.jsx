@@ -20,10 +20,16 @@ import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 import { TableHeadCustom } from 'src/components/table';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import { ListItemText } from '@mui/material';
+import { toNumber } from 'lodash';
+import { useValues } from 'src/api/utils';
+import UserNewEditForm from 'src/sections/clause/user-new-edit-form';
+
 
 // ----------------------------------------------------------------------
 
-export default function AppNewInvoice({ title, subheader, tableData, tableLabels, ...other }) {
+export default function AppNewInvoice({ title,maintenance_id, subheader, tableData,setTableData, tableLabels, ...other }) {
+  const { data } = useValues()
   return (
     <Card {...other}>
       <CardHeader title={title} subheader={subheader} sx={{ mb: 3 }} />
@@ -35,10 +41,14 @@ export default function AppNewInvoice({ title, subheader, tableData, tableLabels
 
             <TableBody>
               {tableData.map((row) => (
-                <AppNewInvoiceRow key={row.id} row={row} />
+                <AppNewInvoiceRow
+                  maintenance_spec={data?.maintenance_specifications?.find(item => item.id == row?.related_id)?.name}
+                  key={row.id}
+                  row={row} />
               ))}
             </TableBody>
           </Table>
+          <UserNewEditForm maintenance_id={maintenance_id} setTableData={setTableData} />
         </Scrollbar>
       </TableContainer>
 
@@ -66,7 +76,7 @@ AppNewInvoice.propTypes = {
 
 // ----------------------------------------------------------------------
 
-function AppNewInvoiceRow({ row }) {
+function AppNewInvoiceRow({ row, maintenance_spec }) {
   const popover = usePopover();
 
   const handleDownload = () => {
@@ -92,13 +102,38 @@ function AppNewInvoiceRow({ row }) {
   return (
     <>
       <TableRow>
-        <TableCell>{row.invoiceNumber}</TableCell>
-
-        <TableCell>{row.category}</TableCell>
-
-        <TableCell>{fCurrency(row.price)}</TableCell>
-
         <TableCell>
+          <ListItemText
+            primary={!!row?.is_periodic ? "periodic" : "non periodic"}
+            secondary={maintenance_spec}
+            primaryTypographyProps={{ typography: 'body2', noWrap: true }}
+            secondaryTypographyProps={{
+              mt: 0.5,
+              component: 'span',
+              typography: 'caption',
+            }}
+          />
+
+        </TableCell>
+        <TableCell>{row?.cost + " RS"}</TableCell>
+        <TableCell>
+          <ListItemText
+            primary={row?.quantity + " " + row?.unit}
+            secondary={ " piece_status : " +row?.piece_status}
+            primaryTypographyProps={{ typography: 'body2', noWrap: true }}
+            secondaryTypographyProps={{
+              mt: 0.5,
+              component: 'span',
+              typography: 'caption',
+            }}
+          />
+        </TableCell>
+        <TableCell>{toNumber(row?.cost) * row?.quantity + ".00 RS"}</TableCell>
+        {/* <TableCell>{row?.category}</TableCell> */}
+
+
+
+        {/* <TableCell>
           <Label
             variant="soft"
             color={
@@ -109,7 +144,7 @@ function AppNewInvoiceRow({ row }) {
           >
             {row.status}
           </Label>
-        </TableCell>
+        </TableCell> */}
 
         <TableCell align="right" sx={{ pr: 1 }}>
           <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
@@ -124,7 +159,7 @@ function AppNewInvoiceRow({ row }) {
         arrow="right-top"
         sx={{ width: 160 }}
       >
-        <MenuItem onClick={handleDownload}>
+        {/* <MenuItem onClick={handleDownload}>
           <Iconify icon="eva:cloud-download-fill" />
           Download
         </MenuItem>
@@ -137,7 +172,7 @@ function AppNewInvoiceRow({ row }) {
         <MenuItem onClick={handleShare}>
           <Iconify icon="solar:share-bold" />
           Share
-        </MenuItem>
+        </MenuItem> */}
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 
@@ -152,4 +187,5 @@ function AppNewInvoiceRow({ row }) {
 
 AppNewInvoiceRow.propTypes = {
   row: PropTypes.object,
+  maintenance_spec: PropTypes.string,
 };

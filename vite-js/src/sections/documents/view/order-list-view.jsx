@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
@@ -44,16 +44,20 @@ import OrderTableRow from '../order-table-row';
 import OrderTableToolbar from '../order-table-toolbar';
 import OrderTableFiltersResult from '../order-table-filters-result';
 import { useTranslate } from 'src/locales';
+import { useGetDocuments } from 'src/api/document';
+import { useValues } from 'src/api/utils';
+import { useGetCar } from 'src/api/car';
+import { useGetDrivers } from 'src/api/drivers';
 
 // ----------------------------------------------------------------------
 
 const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...ORDER_STATUS_OPTIONS];
 
 const defaultFilters = {
-  name: '',
-  status: 'all',
-  startDate: null,
-  endDate: null,
+  // attachment_name_id: '',
+  // // status: 'all',
+  // expiry_date: null,
+  // release_date: null,
 };
 
 // ----------------------------------------------------------------------
@@ -63,15 +67,15 @@ export default function OrderListView() {
   const { t } = useTranslate();
 
   const TABLE_HEAD = [
-    { id: 'orderNumber', label: t('vehicle'), width: 116 },
-    { id: 'totalAmount2', label: t('documentType'), width: 140 },
-    { id: 'totalAmount', label: t('date'), width: 140 },
-    { id: 'totalAmount2', label: t('cost'), width: 140 },
-    { id: 'theRest', label: t('theRest'), width: 140 },
-    { id: 'totalAmount2', label: t('alert'), width: 140 },
-    { id: 'totalAmount2', label: t('workSite'), width: 140 },
-
-    { id: 'totalAmount2', label: t('tenantName'), width: 140 },
+    // { id: 'orderNumber', label: t('vehicle'), width: 116 },
+    { id: 'attachment_name_id', label: t('attachment_name'), width: 50 },
+    { id: 'attachment_type_id', label: t('attachment_type'), width: 50 },
+    { id: 'RD & ED', label: t('RD & ED'), width: 140 },
+    { id: 'attachable', label: t('Attachable'), width: 140 },
+    { id: 'document_duration_days', label: t('DDD'), width: 50 },
+    // { id: 'status', label: t('status'), width: 140 },
+    // { id: 'totalAmount2', label: t('workSite'), width: 140 },
+    // { id: 'totalAmount2', label: t('tenantName'), width: 140 },
 
     { id: '', width: 88 },
   ];
@@ -84,17 +88,29 @@ export default function OrderListView() {
 
   const confirm = useBoolean();
 
-  const [tableData, setTableData] = useState(_orders);
+  
+  const { car } = useGetCar()
+  const { drivers } = useGetDrivers()
+  const { data } = useValues();
 
-  const [filters, setFilters] = useState(defaultFilters);
+  const { documents, mutate } = useGetDocuments()
+  console.log("documents : ", documents);
+  
+  const [tableData, setTableData] = useState(documents);
+  useEffect(() => {
+    setTableData(documents);
+  }, [documents]);
+  const [filters, setFilters] = useState({});
 
-  const dateError = isAfter(filters.startDate, filters.endDate);
+  // const dateError = isAfter(filters.release_date, filters.expiry_date);
+  const dateError = null;
 
   const dataFiltered = applyFilter({
     inputData: tableData,
     comparator: getComparator(table.order, table.orderBy),
     filters,
     dateError,
+    data,
   });
 
   const dataInPage = dataFiltered.slice(
@@ -105,7 +121,7 @@ export default function OrderListView() {
   const denseHeight = table.dense ? 56 : 56 + 20;
 
   const canReset =
-    !!filters.name || filters.status !== 'all' || (!!filters.startDate && !!filters.endDate);
+    !!filters.attachment_name_id || filters.status !== 'all' || (!!filters.release_date && !!filters.expiry_date);
 
   const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
 
@@ -129,7 +145,7 @@ export default function OrderListView() {
       const deleteRow = tableData.filter((row) => row.id !== id);
 
       enqueueSnackbar('Delete success!');
-
+      mutate();
       setTableData(deleteRow);
 
       table.onUpdatePageDeleteRow(dataInPage.length);
@@ -141,9 +157,7 @@ export default function OrderListView() {
     const deleteRows = tableData.filter((row) => !table.selected.includes(row.id));
 
     enqueueSnackbar('Delete success!');
-
     setTableData(deleteRows);
-
     table.onUpdatePageDeleteRows({
       totalRowsInPage: dataInPage.length,
       totalRowsFiltered: dataFiltered.length,
@@ -156,6 +170,12 @@ export default function OrderListView() {
     },
     [router]
   );
+  // const handleEditRow = useCallback(
+  //   (id) => {
+  //     router.push(paths.dashboard.order.edit(id));
+  //   },
+  //   [router]
+  // );
 
   const handleFilterStatus = useCallback(
     (event, newValue) => {
@@ -196,47 +216,7 @@ export default function OrderListView() {
         />
 
         <Card>
-          {/* <Tabs
-            value={filters.status}
-            onChange={handleFilterStatus}
-            sx={{
-              px: 2.5,
-              boxShadow: (theme) => `inset 0 -2px 0 0 ${alpha(theme.palette.grey[500], 0.08)}`,
-            }}
-          >
-            {STATUS_OPTIONS.map((tab) => (
-              <Tab
-                key={tab.value}
-                iconPosition="end"
-                value={tab.value}
-                label={tab.label}
-                icon={
-                  <Label
-                    variant={
-                      ((tab.value === 'all' || tab.value === filters.status) && 'filled') || 'soft'
-                    }
-                    color={
-                      (tab.value === 'completed' && 'success') ||
-                      (tab.value === 'pending' && 'warning') ||
-                      (tab.value === 'cancelled' && 'error') ||
-                      'default'
-                    }
-                  >
-                    {['completed', 'pending', 'cancelled', 'refunded'].includes(tab.value)
-                      ? tableData.filter((user) => user.status === tab.value).length
-                      : tableData.length}
-                  </Label>
-                }
-              />
-            ))}
-          </Tabs> */}
-
-          <OrderTableToolbar
-            filters={filters}
-            onFilters={handleFilters}
-            //
-            dateError={dateError}
-          />
+          <OrderTableToolbar filters={filters} onFilters={handleFilters} dateError={dateError} />
 
           {canReset && (
             <OrderTableFiltersResult
@@ -297,8 +277,13 @@ export default function OrderListView() {
                       <OrderTableRow
                         key={row.id}
                         row={row}
+                        attachment_name={data?.attachmenat_names?.find(item => item.id == row?.attachment_name_id)?.translations[0]?.name}
+                        attachment_type={data?.attachment_types?.find(item => item.id == row?.attachment_type_id)?.translations[0]?.name}
+                        attachable_primary={row?.attachable_type == "car" ? car?.find(item => item.id == row.attachable_id)?.model?.company?.translations?.name : drivers?.find(item => item?.id == row?.attachable_id)?.name}
+                        attachable_second={row?.attachable_type == "car" ? car?.find(item => item.id == row.attachable_id)?.plat_number : drivers?.find(item => item?.id == row?.attachable_id)?.phone}
                         selected={table.selected.includes(row.id)}
                         onSelectRow={() => table.onSelectRow(row.id)}
+                        // onEditRow={() => handleEditRow(row.id)}
                         onDeleteRow={() => handleDeleteRow(row.id)}
                         onViewRow={() => handleViewRow(row.id)}
                       />
@@ -356,8 +341,8 @@ export default function OrderListView() {
 
 // ----------------------------------------------------------------------
 
-function applyFilter({ inputData, comparator, filters, dateError }) {
-  const { status, name, startDate, endDate } = filters;
+function applyFilter({ inputData, comparator, filters, dateError,data }) {
+  const { status, attachment_name_id, release_date, expiry_date } = filters;
 
   const stabilizedThis = inputData.map((el, index) => [el, index]);
 
@@ -369,12 +354,24 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
 
   inputData = stabilizedThis.map((el) => el[0]);
 
-  if (name) {
+  if (attachment_name_id) {
     inputData = inputData.filter(
-      (order) =>
-        order.orderNumber.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.customer.name.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.customer.email.toLowerCase().indexOf(name.toLowerCase()) !== -1
+      (item) =>
+        // item.attachment_name_id.toString().toLowerCase().includes(attachment_name_id.toLowerCase())
+      data?.attachmenat_names?.find(i => i?.id == item?.attachment_name_id)?.translations[0]?.name.toLowerCase().includes(attachment_name_id.toLowerCase())
+    );
+  }
+  if (release_date) {
+    inputData = inputData.filter(
+      (item) =>
+        new Date(item.release_date).toLocaleDateString().toLowerCase().includes(new Date(release_date).toLocaleDateString().toLowerCase())
+    );
+  }
+  if (expiry_date) {
+    inputData = inputData.filter(
+      (item) =>
+        //  item.expiry_date.toLowerCase().includes(expiry_date.toLowerCase())
+        new Date(item.expiry_date).toLocaleDateString().toLowerCase().includes(new Date(expiry_date).toLocaleDateString().toLowerCase())
     );
   }
 
@@ -382,11 +379,11 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
     inputData = inputData.filter((order) => order.status === status);
   }
 
-  if (!dateError) {
-    if (startDate && endDate) {
-      inputData = inputData.filter((order) => isBetween(order.createdAt, startDate, endDate));
-    }
-  }
+  // if (!dateError) {
+  //   if (release_date && expiry_date) {
+  //     inputData = inputData.filter((order) => isBetween(order.createdAt, release_date, expiry_date));
+  //   }
+  // }
 
   return inputData;
 }

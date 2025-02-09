@@ -7,8 +7,6 @@ import Tabs, { tabsClasses } from '@mui/material/Tabs';
 
 import { paths } from 'src/routes/paths';
 
-import { useMockedUser } from 'src/hooks/use-mocked-user';
-
 import { _userAbout, _userFeeds, _userFriends, _userGallery, _userFollowers } from 'src/_mock';
 
 import Iconify from 'src/components/iconify';
@@ -21,6 +19,7 @@ import ProfileFriends from '../profile-friends';
 import ProfileGallery from '../profile-gallery';
 import ProfileFollowers from '../profile-followers';
 import { useTranslation } from 'react-i18next';
+import { useGetDetailedDriver } from 'src/api/drivers';
 
 // ----------------------------------------------------------------------
 
@@ -49,10 +48,11 @@ const TABS = [
 
 // ----------------------------------------------------------------------
 
-export default function UserProfileView() {
+export default function UserProfileView({id}) {
   const settings = useSettingsContext();
-
-  const { user } = useMockedUser();
+  console.log("id driver : ",id);
+  const { driver } = useGetDetailedDriver(id);
+  console.log("driver  : ",driver);
 
   const { t } = useTranslation();
 
@@ -75,7 +75,7 @@ export default function UserProfileView() {
         links={[
           { name: t('dashboard'), href: paths.dashboard.root },
           { name: t('drivers'), href: paths.dashboard.drivers.root },
-          { name: user?.displayName },
+          { name: driver?.name },
         ]}
         sx={{
           mb: { xs: 3, md: 5 },
@@ -89,9 +89,10 @@ export default function UserProfileView() {
         }}
       >
         <ProfileCover
-          role={_userAbout.role}
-          name={user?.displayName}
-          avatarUrl={user?.photoURL}
+          name={driver.name}
+          // name={driver?.name}
+          role={driver?.phone_number}
+          avatarUrl={driver?.photoURL}
           coverUrl={_userAbout.coverUrl}
         />
 
@@ -119,9 +120,9 @@ export default function UserProfileView() {
         </Tabs> */}
       </Card>
 
-      {currentTab === 'profile' && <ProfileHome info={_userAbout} posts={_userFeeds} />}
+      {currentTab === 'profile' && <ProfileHome driver2={driver} driver={driver} posts={_userFeeds} />}
 
-      {currentTab === 'followers' && <ProfileFollowers followers={_userFollowers} />}
+      {/* {currentTab === 'followers' && <ProfileFollowers followers={_userFollowers} />} */}
 
       {/* {currentTab === 'friends' && (
         <ProfileFriends

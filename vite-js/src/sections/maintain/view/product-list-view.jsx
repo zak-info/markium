@@ -46,6 +46,9 @@ import { useTranslate } from 'src/locales';
 import { RouterLink } from 'src/routes/components';
 
 import { useGetMaintenance, deleteMaintenance } from 'src/api/maintainance';
+import { useGetCar } from 'src/api/car';
+import { useValues } from 'src/api/utils';
+import { useGetDrivers } from 'src/api/drivers';
 
 // ----------------------------------------------------------------------
 
@@ -66,36 +69,53 @@ export default function OrderListView() {
   const TABLE_HEAD = [
     { id: 'plateNumber', label: t('plateNumber'), width: 116 },
 
-    { id: 'orderNumber', label: t('vehicle'), width: 144 },
+    // { id: 'orderNumber', label: t('vehicle'), width: 144 },
     { id: 'workSite', label: t('workSite'), width: 144 },
-    { id: 'maintainType', label: t('maintainType'), width: 144 },
-    { id: 'tenantName', label: t('tenantName'), width: 144 },
+    { id: 'remaining_days', label: t('remainingDays'), width: 144 },
+    // { id: 'tenantName', label: t('tenantName'), width: 144 },
     { id: 'maintainStatus', label: t('maintainStatus'), width: 140 },
     { id: 'driver', label: t('driver'), width: 140 },
-    { id: '', width: 88 },
+    { id: 'actions',label: t('actions'), width: 140 },
   ];
 
   const STATUS_OPTIONS = [
     { value: 'all', label: t('all') },
-    { value: 'repaired', label: t('repaired') },
     { value: 'pending', label: t('pending') },
-    { value: 'under_maintenance', label: t('under_maintenance') },
+    { value: 'completed', label: t('completed') },
+    // { value: 'under_maintenance', label: t('under_maintenance') },
+    // { value: 'plat_number', label: t('plat_number') },
+    
   ];
 
   const table = useTable({ defaultOrderBy: 'orderNumber' });
 
   const settings = useSettingsContext();
-
   const router = useRouter();
-
   const confirm = useBoolean();
+
+
+  const { car } = useGetCar()
+  const { drivers } = useGetDrivers()
+  const { data } = useValues();
 
   const { maintenance, mutate } = useGetMaintenance();
 
   const [tableData, setTableData] = useState([]);
 
+  // exit_date,
+  // status,
+  // maintenance_manager,
+  // car_model,
+  // cause,
+  // driver_phone_number,
+  // plat_number,
+  // car,
+  // state,
+  // occupant_name,
+  // type,
+
   useEffect(() => {
-    setTableData(maintenance);
+    setTableData([...maintenance]);
   }, [maintenance]);
 
   const [filters, setFilters] = useState(defaultFilters);
@@ -165,7 +185,7 @@ export default function OrderListView() {
 
   const handleViewRow = useCallback(
     (id) => {
-      router.push(paths.dashboard.vehicle.details(id));
+      router.push(paths.dashboard.maintenance.details(id));
     },
     [router]
   );
@@ -179,7 +199,7 @@ export default function OrderListView() {
 
   const handleFilterStatus = useCallback(
     (event, newValue) => {
-      handleFilters('status', newValue);
+      handleFilters('plat_number', newValue);
     },
     [handleFilters]
   );
@@ -236,13 +256,13 @@ export default function OrderListView() {
                       ((tab.value === 'all' || tab.value === filters.status) && 'filled') || 'soft'
                     }
                     color={
-                      (tab.value === 'repaired' && 'success') ||
+                      (tab.value === 'completed' && 'success') ||
                       (tab.value === 'pending' && 'warning') ||
-                      (tab.value === 'under_maintenance' && 'error') ||
+                      // (tab.value === 'damaged' && 'error') ||
                       'default'
                     }
                   >
-                    {['repaired', 'pending', 'under_maintenance', 'refunded'].includes(tab.value)
+                    {['completed', 'pending'].includes(tab.value)
                       ? tableData.filter((user) => user.status?.key === tab.value).length
                       : tableData.length}
                   </Label>
@@ -298,13 +318,13 @@ export default function OrderListView() {
                   headLabel={TABLE_HEAD}
                   rowCount={dataFiltered.length}
                   numSelected={table.selected.length}
-                  // onSort={table.onSort}
-                  // onSelectAllRows={(checked) =>
-                  //   table.onSelectAllRows(
-                  //     checked,
-                  //     dataFiltered.map((row) => row.id)
-                  //   )
-                  // }
+                // onSort={table.onSort}
+                // onSelectAllRows={(checked) =>
+                //   table.onSelectAllRows(
+                //     checked,
+                //     dataFiltered.map((row) => row.id)
+                //   )
+                // }
                 />
 
                 <TableBody>
@@ -317,6 +337,9 @@ export default function OrderListView() {
                       <OrderTableRow
                         key={row.id}
                         row={row}
+                        car_model={car?.find(item => item?.model?.id == row?.car?.car_model_id)?.model?.translations?.name}
+                        work_site={data?.states?.find(item => item?.id == row?.state_id)?.translations[0]?.name}
+                        driver={drivers?.find(item=> item.id == row?.car?.driver_id) || {name:"no driver selected",phone:"...."} }
                         selected={table.selected.includes(row.id)}
                         onSelectRow={() => table.onSelectRow(row.id)}
                         onDeleteRow={() => handleDeleteRow(row.id)}
@@ -378,7 +401,7 @@ export default function OrderListView() {
 // ----------------------------------------------------------------------
 
 function applyFilter({ inputData, comparator, filters, dateError }) {
-  const { status, name, startDate, endDate } = filters;
+  const { status, name, startDate, endDate,plat_number } = filters;
 
   // const stabilizedThis = inputData.map((el, index) => [el, index]);
 
@@ -395,6 +418,12 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
       (order) =>
         order.company?.name?.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
         order.car?.plat_number?.toLowerCase().indexOf(name.toLowerCase()) !== -1
+    );
+  }
+  if (plat_number) {
+    inputData = inputData.filter(
+      (order) =>
+        order.car?.plat_number?.toLowerCase().includes(plat_number.toLowerCase()) 
     );
   }
 

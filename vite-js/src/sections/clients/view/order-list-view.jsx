@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
@@ -44,6 +44,8 @@ import OrderTableRow from '../order-table-row';
 import OrderTableToolbar from '../order-table-toolbar';
 import OrderTableFiltersResult from '../order-table-filters-result';
 import { useTranslate } from 'src/locales';
+import { useGetClients } from 'src/api/client';
+import { useValues } from 'src/api/utils';
 
 // ----------------------------------------------------------------------
 
@@ -63,17 +65,17 @@ export default function OrderListView() {
   const { t } = useTranslate();
 
   const TABLE_HEAD = [
-    { id: 'orderNumber', label: t('clientName'), width: 116 },
-    { id: 'totalAmount2', label: t('tax'), width: 140 },
-    { id: 'totalAmount', label: t('region'), width: 140 },
-    { id: 'totalAmount2', label: t('district'), width: 140 },
-    { id: 'theRest', label: t('phone'), width: 140 },
-    { id: 'totalAmount2', label: t('acterName'), width: 140 },
+    { id: 'clientName', label: t('clientName'), width: 116 },
+    // { id: 'state', label: t('state'), width: 140 },
+    { id: 'neighborhood_id', label: t('neighborhood'), width: 140 },
+    { id: 'company_id', label: t('tax number'), width: 140 },
+    // { id: 'theRest', label: t('phone'), width: 140 },
+    { id: 'crn', label: t('C R N'), width: 140 },
 
     { id: '', width: 88 },
   ];
 
-  const table = useTable({ defaultOrderBy: 'orderNumber' });
+  const table = useTable({ defaultOrderBy: 'tax' });
 
   const settings = useSettingsContext();
 
@@ -81,7 +83,14 @@ export default function OrderListView() {
 
   const confirm = useBoolean();
 
-  const [tableData, setTableData] = useState(_orders);
+  const {clients} = useGetClients()
+  const {data} = useValues()
+  
+  const [tableData, setTableData] = useState(clients);
+
+  useEffect(()=>{
+    setTableData(clients)
+  },[clients])
 
   const [filters, setFilters] = useState(defaultFilters);
 
@@ -154,6 +163,13 @@ export default function OrderListView() {
     [router]
   );
 
+  const handleEditRow = useCallback(
+    (id) => {
+      router.push(paths.dashboard.clients.edit(id));
+    },
+    [router]
+  );
+
   const handleFilterStatus = useCallback(
     (event, newValue) => {
       handleFilters('status', newValue);
@@ -193,41 +209,6 @@ export default function OrderListView() {
         />
 
         <Card>
-          {/* <Tabs
-            value={filters.status}
-            onChange={handleFilterStatus}
-            sx={{
-              px: 2.5,
-              boxShadow: (theme) => `inset 0 -2px 0 0 ${alpha(theme.palette.grey[500], 0.08)}`,
-            }}
-          >
-            {STATUS_OPTIONS.map((tab) => (
-              <Tab
-                key={tab.value}
-                iconPosition="end"
-                value={tab.value}
-                label={tab.label}
-                icon={
-                  <Label
-                    variant={
-                      ((tab.value === 'all' || tab.value === filters.status) && 'filled') || 'soft'
-                    }
-                    color={
-                      (tab.value === 'completed' && 'success') ||
-                      (tab.value === 'pending' && 'warning') ||
-                      (tab.value === 'cancelled' && 'error') ||
-                      'default'
-                    }
-                  >
-                    {['completed', 'pending', 'cancelled', 'refunded'].includes(tab.value)
-                      ? tableData.filter((user) => user.status === tab.value).length
-                      : tableData.length}
-                  </Label>
-                }
-              />
-            ))}
-          </Tabs> */}
-
           <OrderTableToolbar
             filters={filters}
             onFilters={handleFilters}
@@ -286,14 +267,16 @@ export default function OrderListView() {
 
                 <TableBody>
                   {dataFiltered
-                    .slice(
+                    ?.slice(
                       table.page * table.rowsPerPage,
                       table.page * table.rowsPerPage + table.rowsPerPage
                     )
-                    .map((row) => (
+                    ?.map((row) => (
                       <OrderTableRow
+                        location={data?.neighborhoods?.find(item => item.id == row?.neighborhood_id)?.translations[0]?.name}
                         key={row.id}
                         row={row}
+                        onEditRow={()=>handleEditRow(row?.id)}
                         selected={table.selected.includes(row.id)}
                         onSelectRow={() => table.onSelectRow(row.id)}
                         onDeleteRow={() => handleDeleteRow(row.id)}
@@ -369,9 +352,9 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
   if (name) {
     inputData = inputData.filter(
       (order) =>
-        order.orderNumber.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.customer.name.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.customer.email.toLowerCase().indexOf(name.toLowerCase()) !== -1
+        order.name.toLowerCase().includes(name.toLowerCase()) ||
+        order.tax_number.toLowerCase().includes(name.toLowerCase()) ||
+        order.commercial_registration_number.toLowerCase().includes(name.toLowerCase()) 
     );
   }
 

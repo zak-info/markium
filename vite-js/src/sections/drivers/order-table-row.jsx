@@ -29,14 +29,16 @@ import { useTranslate } from 'src/locales';
 export default function OrderTableRow({
   handleEditRow,
   row,
+  carModel,
   selected,
   onViewRow,
   onSelectRow,
   onDeleteRow,
+  onViewCar,
 }) {
   const {
     items,
-    license_number,
+    residence_permit_number,
     phone_number,
     status,
     name,
@@ -69,15 +71,49 @@ export default function OrderTableRow({
             },
           }}
         >
-          {name}
+          <ListItemText
+            primary={name}
+            secondary={phone_number}
+            primaryTypographyProps={{ typography: 'body2', noWrap: true }}
+            secondaryTypographyProps={{
+              mt: 0.5,
+              component: 'span',
+              typography: 'caption',
+            }}
+          />
         </Box>
       </TableCell>
 
-      <TableCell>{license_number}</TableCell>
+      <TableCell>{residence_permit_number}</TableCell>
 
-      <TableCell>{phone_number}</TableCell>
+      {/* <TableCell>{phone_number}</TableCell> */}
 
-      <TableCell>{state?.translations?.name}</TableCell>
+      <TableCell>{state?.key}</TableCell>
+      <TableCell>
+      {!!row?.car?.id ?
+        <Box
+          onClick={onViewCar}
+          sx={{
+            cursor: 'pointer',
+            '&:hover': {
+              textDecoration: 'underline',
+            },
+          }}
+        >
+          <ListItemText
+            primary={carModel?.translations[0]?.name}
+            secondary={row?.car?.plat_number}
+            primaryTypographyProps={{ typography: 'body2', noWrap: true }}
+            secondaryTypographyProps={{
+              mt: 0.5,
+              component: 'span',
+              typography: 'caption',
+            }}
+          />
+        </Box>
+        : "-"
+      }
+      </TableCell>
       <TableCell>
         <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
           <Iconify icon="eva:more-vertical-fill" />

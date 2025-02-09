@@ -27,54 +27,57 @@ import { useSnackbar } from 'src/components/snackbar';
 import FormProvider, {
   RHFSwitch,
   RHFTextField,
-  RHFUploadAvatar,
-  RHFAutocomplete,
+  RHFSelect,
+  RHFUpload,
+
 } from 'src/components/hook-form';
 
 import { useTranslate } from 'src/locales';
+import { createDocument, editDocument } from 'src/api/document';
+import { Divider, ListItemText, MenuItem } from '@mui/material';
+import RHFFileInput from 'src/components/hook-form/rhf-input-field';
+import { useValues } from 'src/api/utils';
+import { useGetCar } from 'src/api/car';
+import { useGetDrivers } from 'src/api/drivers';
+import { format } from 'date-fns';
+import RHFTextarea from 'src/components/hook-form/RHFTextarea';
+import CarsAutocomplete from 'src/components/hook-form/rhf-CarsAutocomplete';
+import SimpleAutocomplete from 'src/components/hook-form/rhf-simple-autocomplete';
+import FileThumbnail from 'src/components/file-thumbnail';
 
 // ----------------------------------------------------------------------
 
-export default function UserNewEditForm({ currentUser }) {
+export default function UserNewEditForm({ currentDocument }) {
   const router = useRouter();
 
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslate();
+  const { data } = useValues();
+
 
   const NewUserSchema = Yup.object().shape({
-    name: Yup.string().required('Name is required'),
-    email: Yup.string().required('Email is required').email('Email must be a valid email address'),
-    phoneNumber: Yup.string().required('Phone number is required'),
-    address: Yup.string().required('Address is required'),
-    country: Yup.string().required('Country is required'),
-    company: Yup.string().required('Company is required'),
-    state: Yup.string().required('State is required'),
-    city: Yup.string().required('City is required'),
-    role: Yup.string().required('Role is required'),
-    zipCode: Yup.string().required('Zip code is required'),
-    avatarUrl: Yup.mixed().nullable().required('Avatar is required'),
-    // not required
-    status: Yup.string(),
-    isVerified: Yup.boolean(),
+    attachment_name_id: Yup.string().required('Name is required'),
+    attachment_type_id: Yup.string().required('type id is required'),
+    attachable_id: Yup.string().required('attachable_id is required'),
+    attachable_type: Yup.string().required('Address is required'),
+    // document_duration_days: Yup.string().required('document_duration_days is required'),
+    expiry_date: Yup.string().required('expiry_date is required'),
+    release_date: Yup.string().required('release_date is required'),
+    // note_en: Yup.string(),
+    note: Yup.string(),
   });
 
   const defaultValues = useMemo(
     () => ({
-      name: currentUser?.name || '',
-      city: currentUser?.city || '',
-      role: currentUser?.role || '',
-      email: currentUser?.email || '',
-      state: currentUser?.state || '',
-      status: currentUser?.status || '',
-      address: currentUser?.address || '',
-      country: currentUser?.country || '',
-      zipCode: currentUser?.zipCode || '',
-      company: currentUser?.company || '',
-      avatarUrl: currentUser?.avatarUrl || null,
-      phoneNumber: currentUser?.phoneNumber || '',
-      isVerified: currentUser?.isVerified || true,
+      attachment_name_id: currentDocument?.attachment_name_id || '',
+      attachment_type_id: currentDocument?.attachment_type_id || '',
+      attachable_id: currentDocument?.attachable_id || '',
+      attachable_type: currentDocument?.attachable_type || '',
+      // document_duration_days: currentDocument?.document_duration_days || '',
+      expiry_date: currentDocument?.expiry_date || '',
+      release_date: currentDocument?.release_date || '',
     }),
-    [currentUser]
+    [currentDocument]
   );
 
   const methods = useForm({
@@ -88,20 +91,58 @@ export default function UserNewEditForm({ currentUser }) {
     control,
     setValue,
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, errors },
   } = methods;
 
   const values = watch();
+  const { car } = useGetCar()
+  const { drivers } = useGetDrivers()
+  const attachableType = watch("attachable_type");
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      // await new Promise((resolve) => setTimeout(resolve, 500));
+      // console.log("lets add document");
+      // attachment_name_id: currentDocument?.attachment_name_id || '',
+      // attachment_type_id: currentDocument?.attachment_type_id || '',
+      // attachable_id: currentDocument?.attachable_id || '',
+      // attachable_type: currentDocument?.attachable_type || '',
+      // document_duration_days: currentDocument?.document_duration_days || '',
+      // expiry_date: currentDocument?.expiry_date || '',
+      // release_date: currentDocument?.release_date || '',
+
+
+      const formData = new FormData();
+      formData.append("attachment", data.attachment);
+      formData.append("invoice", data.invoice);
+      formData.append("release_date", format(new Date(data.release_date), 'yyyy-MM-dd'));
+      formData.append("expiry_date", format(new Date(data.expiry_date), 'yyyy-MM-dd'));
+      formData.append("attachment_name_id", data?.attachment_name_id);
+      formData.append("attachment_type_id", data?.attachment_type_id);
+      formData.append("attachable_id", data?.attachable_id);
+      formData.append("attachable_type", data?.attachable_type);
+      // formData.append("document_duration_days", data?.document_duration_days);
+      // formData.append("duration_unity", data?.duration_unity);
+      formData.append("note", data?.note);
+
+
+      // const body = data;
+      console.info('DATA is  : ', data);
+      // body.release_date = format(new Date(data.release_date), 'yyyy-MM-dd');
+      // body.expiry_date = format(new Date(data.expiry_date), 'yyyy-MM-dd');
+      const response = currentDocument?.id ? await editDocument(currentDocument?.id, formData) : await createDocument(formData);
+
+      enqueueSnackbar(currentDocument ? 'Update success!' : 'Create success!');
+      router.push(paths.dashboard.documents.root);
       reset();
-      enqueueSnackbar(currentUser ? 'Update success!' : 'Create success!');
-      router.push(paths.dashboard.user.list);
-      console.info('DATA', data);
     } catch (error) {
       console.error(error);
+      Object.values(error?.data).forEach(array => {
+        array.forEach(text => {
+          enqueueSnackbar(text, { variant: 'error' });
+        });
+      });
     }
   });
 
@@ -124,102 +165,6 @@ export default function UserNewEditForm({ currentUser }) {
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>
       <Grid container spacing={3}>
-        {/* <Grid xs={12} md={4}>
-          <Card sx={{ pt: 10, pb: 5, px: 3 }}>
-            {currentUser && (
-              <Label
-                color={
-                  (values.status === 'active' && 'success') ||
-                  (values.status === 'banned' && 'error') ||
-                  'warning'
-                }
-                sx={{ position: 'absolute', top: 24, right: 24 }}
-              >
-                {values.status}
-              </Label>
-            )}
-
-            <Box sx={{ mb: 5 }}>
-              <RHFUploadAvatar
-                name="avatarUrl"
-                maxSize={3145728}
-                onDrop={handleDrop}
-                helperText={
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      mt: 3,
-                      mx: 'auto',
-                      display: 'block',
-                      textAlign: 'center',
-                      color: 'text.disabled',
-                    }}
-                  >
-                    Allowed *.jpeg, *.jpg, *.png, *.gif
-                    <br /> max size of {fData(3145728)}
-                  </Typography>
-                }
-              />
-            </Box>
-
-            {currentUser && (
-              <FormControlLabel
-                labelPlacement="start"
-                control={
-                  <Controller
-                    name="status"
-                    control={control}
-                    render={({ field }) => (
-                      <Switch
-                        {...field}
-                        checked={field.value !== 'active'}
-                        onChange={(event) =>
-                          field.onChange(event.target.checked ? 'banned' : 'active')
-                        }
-                      />
-                    )}
-                  />
-                }
-                label={
-                  <>
-                    <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
-                      Banned
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                      Apply disable account
-                    </Typography>
-                  </>
-                }
-                sx={{ mx: 0, mb: 3, width: 1, justifyContent: 'space-between' }}
-              />
-            )}
-
-            <RHFSwitch
-              name="isVerified"
-              labelPlacement="start"
-              label={
-                <>
-                  <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
-                    Email Verified
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                    Disabling this will automatically send the user a verification email
-                  </Typography>
-                </>
-              }
-              sx={{ mx: 0, width: 1, justifyContent: 'space-between' }}
-            />
-
-            {currentUser && (
-              <Stack justifyContent="center" alignItems="center" sx={{ mt: 3 }}>
-                <Button variant="soft" color="error">
-                  Delete User
-                </Button>
-              </Stack>
-            )}
-          </Card>
-        </Grid> */}
-
         <Grid xs={12} md={8}>
           <Card sx={{ p: 3 }}>
             <Box
@@ -231,62 +176,122 @@ export default function UserNewEditForm({ currentUser }) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <RHFAutocomplete
-                name="name"
-                label={t('company')}
-                options={options}
-                getOptionLabel={(option) => option}
-              />
 
-              <RHFAutocomplete
-                name="name"
-                label={t('documentType')}
-                options={options}
-                getOptionLabel={(option) => option}
-              />
+
+              <RHFSelect required name="attachable_type" label={t('attachableType')}>
+                <Divider sx={{ borderStyle: 'dashed' }} />
+                {[{ name: "car", id: 1 }, { name: "driver", id: 2 }]?.map((type) => (
+                  <MenuItem key={type?.id} value={type.name}>
+                    {type?.name}
+                  </MenuItem>
+                ))}
+              </RHFSelect>
+              {/* <RHFSelect disabled={!attachableType} required name="attachable_id" label={t('attachable')}>
+                <Divider sx={{ borderStyle: 'dashed' }} />
+                {(values.attachable_type == "car" ? [...car] : [...drivers])?.map((item) => (
+                  <MenuItem key={item?.id} value={item.id}>
+                    {
+                      values.attachable_type == "car" ?
+                        <ListItemText
+                          primary={item?.plat_number}
+                          secondary={item?.model?.company?.translations?.name}
+                          primaryTypographyProps={{ typography: 'body2', noWrap: true }}
+                          secondaryTypographyProps={{
+                            mt: 0.5,
+                            component: 'span',
+                            typography: 'caption',
+                          }}
+                        />
+                        :
+                        item?.name
+                    }
+                  </MenuItem>
+                ))}
+              </RHFSelect> */}
+              {/* disabled={!attachableType} */}
+              {
+                values.attachable_type == "car" ?
+                  <CarsAutocomplete required options={car} name="attachable_id" label={t('attachable')} placeholder='filter with plat_number' />
+                  : values.attachable_type == "driver" ?
+                    <SimpleAutocomplete required options={drivers} name="attachable_id" label={t('attachable')} placeholder='filter with plat_number' />
+                    :
+                    <RHFSelect disabled={!attachableType} required name="attachable_id" label={t('attachable')}>
+                      <Divider sx={{ borderStyle: 'dashed' }} />
+                      <MenuItem value={"1"}>
+                        name
+                      </MenuItem>
+                    </RHFSelect>
+              }
+
+              <RHFSelect required name="attachment_type_id" label={t('DocumentType')}>
+                <Divider sx={{ borderStyle: 'dashed' }} />
+                {data?.attachment_types?.map((type) => (
+                  <MenuItem key={type?.id} value={type.id}>
+                    {type?.translations[0]?.name || type.key}
+                  </MenuItem>
+                ))}
+              </RHFSelect>
+              <RHFSelect required name="attachment_name_id" label={t('DocumentName')}>
+                <Divider sx={{ borderStyle: 'dashed' }} />
+                {data?.attachmenat_names?.map((item) => (
+                  <MenuItem key={item?.id} value={item.id}>
+                    {item?.translations[0]?.name || item.key}
+                  </MenuItem>
+                ))}
+              </RHFSelect>
 
               <DatePicker
-                label={t('date')}
-                value={new Date()}
-                onChange={(e) => console.log('ssss')}
+                required
+                name="release_date"
+                label={t('release_date')}
+                value={currentDocument?.release_date ? new Date(currentDocument?.release_date) : values?.release_date ? new Date(values?.release_date) : new Date()}
+                onChange={(date) => setValue('release_date', date)}
                 slotProps={{
                   textField: {
                     fullWidth: true,
                   },
                 }}
               />
-
-              <RHFTextField name="email" label={t('cost')} />
-
-              <RHFAutocomplete
-                name="name"
-                label={t('workSite')}
-                options={options}
-                getOptionLabel={(option) => option}
+              <DatePicker
+                required
+                name="expiry_date"
+                label={t('expiry_date')}
+                value={currentDocument?.expiry_date ? new Date(currentDocument?.expiry_date) : values?.expiry_date ? new Date(values?.expiry_date) : new Date()}
+                onChange={(date) => setValue('expiry_date', date)}
+                slotProps={{
+                  textField: {
+                    fullWidth: true,
+                  },
+                }}
               />
-              <RHFTextField
-                name="name"
-                label={t('billImage')}
-                options={options}
-                getOptionLabel={(option) => option}
-              />
-              <RHFTextField name="state" label={t('notes')} />
-              <RHFTextField name="state" label={t('documentDuration')} />
-              <RHFTextField name="state" label={t('documentImage')} />
+              {/* <div style={{ display: "flex", gap: "4px" }}>
+                <RHFTextField required type={"number"} sx={{ width: "60%" }} name="document_duration_days" label={t('documentDurationDays')} />
+                <RHFSelect required name="duration_unity" label={t('unity')} sx={{ width: "40%" }} >
+                  <Divider sx={{ borderStyle: 'dashed' }} />
+                  {[{ name: "day", id: 1 }, { name: "month", id: 2 }, { name: "year", id: 3 }]?.map((item) => (
+                    <MenuItem key={item?.id} value={item.id}>
+                      {item?.name}
+                    </MenuItem>
+                  ))}
+                </RHFSelect>
+              </div> */}
 
-              {/* <RHFAutocomplete
-                name="country"
-                type="country"
-                label={t('manufacturingYear')}
-                fullWidth
-                options={countries.map((option) => option.label)}
-                getOptionLabel={(option) => option}
-              /> */}
+
+              <RHFTextarea name="note" label={t('note')} />
+              {/* <RHFTextField required name="note_en" label={t('note_en')} /> */}
+              <p style={{ color: "gray" }}>.</p>
+
+              
+
+              <RHFUpload name="attachment" lable={"Upload Document "} />
+              <RHFUpload name="invoice" lable={"Upload Invoice File"} />
+
             </Box>
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                {!currentUser ? t('addNewDocument') : 'Save Changes'}
+                {!currentDocument ? t('addNewDocument') : 'Save Changes'}
+                {/* {t('addNewDocument')} */}
               </LoadingButton>
             </Stack>
           </Card>
@@ -297,5 +302,9 @@ export default function UserNewEditForm({ currentUser }) {
 }
 
 UserNewEditForm.propTypes = {
-  currentUser: PropTypes.object,
+  currentDocument: PropTypes.object,
 };
+
+
+
+

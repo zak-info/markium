@@ -5,6 +5,7 @@ import { AuthGuard } from 'src/auth/guard';
 import DashboardLayout from 'src/layouts/dashboard';
 
 import { LoadingScreen } from 'src/components/loading-screen';
+import ContractCreatePage from 'src/pages/dashboard/clients/contracts-new';
 
 // ----------------------------------------------------------------------
 
@@ -23,6 +24,11 @@ const ProductEditPage = lazy(() => import('src/pages/dashboard/product/edit'));
 // ORDER
 const OrderListPage = lazy(() => import('src/pages/dashboard/order/list'));
 const OrderDetailsPage = lazy(() => import('src/pages/dashboard/order/details'));
+// ORDER
+const MainSpecListPage = lazy(() => import('src/pages/dashboard/settings/claims'));
+const ClaimCreatePage = lazy(() => import('src/pages/dashboard/clients/claims-new'));
+const MainSpecCreatePage = lazy(() => import('src/pages/dashboard/settings/claims-new'));
+const MainSpecEditPage = lazy(() => import('src/pages/dashboard/settings/edit'));
 // INVOICE
 const InvoiceListPage = lazy(() => import('src/pages/dashboard/invoice/list'));
 const InvoiceDetailsPage = lazy(() => import('src/pages/dashboard/invoice/details'));
@@ -48,6 +54,7 @@ const InputsListPage = lazy(() => import('src/pages/dashboard/vehicle/inputs&cos
 const VehiclePage = lazy(() => import('src/pages/dashboard/vehicle/details'));
 const VehiclesCreatePage = lazy(() => import('src/pages/dashboard/vehicle/new'));
 const VehiclesEditPage = lazy(() => import('src/pages/dashboard/vehicle/edit'));
+const PMListPage = lazy(() => import('src/pages/dashboard/periodic-maintenance/list'));
 
 // Maintains
 const MaintainListPage = lazy(() => import('src/pages/dashboard/maintain/list'));
@@ -58,9 +65,19 @@ const NotificationsMaintainListPage = lazy(
 );
 const MaintainDetailsPage = lazy(() => import('src/pages/dashboard/maintain/details'));
 
+// Maintains
+// const MaintainListPage = lazy(() => import('src/pages/dashboard/maintain/list'));
+const ClauseNewPage = lazy(() => import('src/pages/dashboard/clause/new'));
+const ClauseEditPage = lazy(() => import('src/pages/dashboard/clause/edit'));
+// const NotificationsMaintainListPage = lazy(
+//   () => import('src/pages/dashboard/maintain/notifications')
+// );
+// const MaintainDetailsPage = lazy(() => import('src/pages/dashboard/maintain/details'));
+
 // Documents
 const DocumentsListPage = lazy(() => import('src/pages/dashboard/documents/list'));
 const DocumentsNewPage = lazy(() => import('src/pages/dashboard/documents/new'));
+const DocumentsEditPage = lazy(() => import('src/pages/dashboard/documents/edit'));
 const NotificationDocumentsListView = lazy(() => import('src/pages/dashboard/documents/alerts'));
 const CurrentInMaintainListView = lazy(
   () => import('src/pages/dashboard/maintain/currentInMaintain')
@@ -80,6 +97,7 @@ const ClientsDetailsPage = lazy(() => import('src/pages/dashboard/clients/client
 const ContractsListPage = lazy(() => import('src/pages/dashboard/clients/contracts'));
 const ClaimsListPage = lazy(() => import('src/pages/dashboard/clients/claims'));
 const ClientsCreatePage = lazy(() => import('src/pages/dashboard/clients/new'));
+const ClientEditPage = lazy(() => import('src/pages/dashboard/clients/edit'));
 const AlertsClientsListPage = lazy(() => import('src/pages/dashboard/clients/alerts'));
 
 const ContractsDetailsPage = lazy(() => import('src/pages/dashboard/clients/contracts-details'));
@@ -162,6 +180,7 @@ export const dashboardRoutes = [
           { path: ':id', element: <VehiclePage /> },
           { path: 'new', element: <VehiclesCreatePage /> },
           { path: ':id/edit', element: <VehiclesEditPage /> },
+          { path: ':id/pm', element: <PMListPage /> },
         ],
       },
       {
@@ -174,6 +193,7 @@ export const dashboardRoutes = [
           { path: 'notifications', element: <NotificationsMaintainListPage /> },
 
           { path: ':id/edit', element: <MaintainEditPage /> },
+          { path: ':id/clause', element: <ClauseNewPage /> },
 
           { path: 'current-in-maintenance', element: <CurrentInMaintainListView /> },
         ],
@@ -186,6 +206,7 @@ export const dashboardRoutes = [
           { path: 'list', element: <DocumentsListPage /> },
           { path: ':id', element: <VehiclePage /> },
           { path: 'new', element: <DocumentsNewPage /> },
+          { path: 'edit', element: <DocumentsEditPage /> },
           { path: 'alerts', element: <NotificationDocumentsListView /> },
         ],
       },
@@ -209,10 +230,13 @@ export const dashboardRoutes = [
           { element: <ClientsListPage />, index: true },
           { path: 'list', element: <ClientsListPage /> },
           { path: 'new', element: <ClientsCreatePage /> },
+          { path: ':id/edit', element: <ClientEditPage /> },
           { path: 'contracts', element: <ContractsListPage /> },
-          { path: 'claims', element: <ClaimsListPage /> },
-          { path: 'alerts', element: <AlertsClientsListPage /> },
+          { path: 'contracts/new', element: <ContractCreatePage /> },
           { path: 'contracts/:id', element: <ContractsDetailsPage /> },
+          { path: 'claims', element: <ClaimsListPage /> },
+          { path: 'claims/new', element: <ClaimCreatePage /> },
+          { path: 'alerts', element: <AlertsClientsListPage /> },
           { path: ':id', element: <ClientsDetailsPage /> },
         ],
       },
@@ -223,6 +247,14 @@ export const dashboardRoutes = [
           { element: <OrderListPage />, index: true },
           { path: 'list', element: <OrderListPage /> },
           { path: ':id', element: <OrderDetailsPage /> },
+        ],
+      },
+      {
+        path: 'settings',
+        children: [
+          { element: <MainSpecListPage />, index: true },
+          { path: 'new', element: <MainSpecCreatePage /> },
+          { path: ':id/edit', element: <MainSpecEditPage /> },
         ],
       },
 

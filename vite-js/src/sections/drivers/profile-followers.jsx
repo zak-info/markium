@@ -75,7 +75,7 @@ function FollowerItem({ follower, selected, onSelected }) {
     >
       <Avatar alt={name} src={avatarUrl} sx={{ width: 48, height: 48, mr: 2 }} />
 
-      <ListItemText
+      {/* <ListItemText
         primary={name}
         secondary={
           <>
@@ -109,7 +109,7 @@ function FollowerItem({ follower, selected, onSelected }) {
         sx={{ flexShrink: 0, ml: 1.5 }}
       >
         {selected ? 'Followed' : 'Follow'}
-      </Button>
+      </Button> */}
     </Card>
   );
 }

@@ -56,7 +56,9 @@ export const endpoints = {
     register: '/api/auth/register',
   },
   clauses: {
-    list: '/contract',
+    list:(id)=> `/maintenance/${id}/clauses`,
+    add:`/maintenance/clauses`,
+
   },
   mail: {
     list: '/api/mail/list',
@@ -80,11 +82,40 @@ export const endpoints = {
   },
   maintenance: {
     list: '/maintenance',
+    specs:"/maintenance/specifications",
+    logs:"/maintenance/logs",
   },
   cars: {
     list: '/car',
-    under_maintainance: '/maintenance/pending',
+    logs: '/car/logs',
+    attach: '/car/driver/attach',
+    detach: '/car/driver/detach',
+    under_maintainance: '/car/under_maintainance',
+    pm:(id)=> `/car/${id}/maintenance/periodic`,
   },
+  clients: {
+    list: '/client',
+    client:(id)=> `/client/`+id
+  },
+  contracts: {
+    list: '/contract',
+    claims:(id)=>`/contract/${id}/claims`,
+    logs:"/contract/claims/logs"
+  },
+  claims: {
+    list: '/contract/1/claims',
+    new:"/contract/claims",
+    logs:"/contract/claims/logs"
+  },
+  settings: {
+    mainspecs: '/maintenance/specifications',
+    new:"/contract/claims",
+    logs:"/contract/claims/logs"
+  },
+  documents: {
+    list: '/attachments',
+  },
+
   drivers: {
     list: '/driver',
   },

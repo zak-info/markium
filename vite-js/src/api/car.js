@@ -25,6 +25,28 @@ export function useGetCar() {
   return memoizedValue;
 }
 
+
+export function useGetCarLogs() {
+  const URL = endpoints.cars.logs;
+
+  const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher);
+
+  const memoizedValue = useMemo(
+    () => ({
+      carLogs: data?.data || [],
+      carLoading: isLoading,
+      carError: error,
+      carValidating: isValidating,
+      carEmpty: !isLoading && !data?.data?.length,
+      mutate,
+    }),
+    [data, error, isLoading, isValidating]
+  );
+  console.log(memoizedValue);
+
+  return memoizedValue;
+}
+
 // ----------------------------------------------------------------------
 
 export function useGetCarUnderMaintenance() {
@@ -60,7 +82,7 @@ export function useGetBreakDown(id) {
       breakdownLoading: isLoading,
       breakdownError: error,
       breakdownValidating: isValidating,
-      breakdownEmpty: !isLoading && !data?.data.length,
+      breakdownEmpty: !isLoading && !data?.data?.length,
       mutate,
     }),
     [data, error, isLoading, isValidating]
@@ -82,7 +104,28 @@ export function useGetCarMaintenance(id) {
       maintenanceLoading: isLoading,
       maintenanceError: error,
       maintenanceValidating: isValidating,
-      maintenanceEmpty: !isLoading && !data?.data.length,
+      maintenanceEmpty: !isLoading && !data?.data?.length,
+      mutate,
+    }),
+    [data, error, isLoading, isValidating]
+  );
+
+  return memoizedValue;
+}
+
+
+export function useGetCarPeriodicMaintenance(id) {
+  const URL = endpoints.cars.pm(id);
+
+  const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher);
+
+  const memoizedValue = useMemo(
+    () => ({
+      maintenance: data?.data || [],
+      maintenanceLoading: isLoading,
+      maintenanceError: error,
+      maintenanceValidating: isValidating,
+      maintenanceEmpty: !isLoading && !data?.data?.length,
       mutate,
     }),
     [data, error, isLoading, isValidating]
@@ -141,6 +184,16 @@ export async function createCar(body) {
 
   return await axios.post(URL, body);
 }
+export async function attacheCarToDriver(body) {
+  const URL = endpoints.cars.attach;
+
+  return await axios.post(URL, body);
+}
+export async function detacheCarToDriver(body) {
+  const URL = endpoints.cars.detach;
+
+  return await axios.post(URL, body);
+}
 
 // ----------------------------------------------------------------------
 
@@ -156,4 +209,9 @@ export async function deleteCar(id) {
   const URL = endpoints.cars.list + '/' + id;
 
   return await axios.delete(URL);
+}
+export async function AddCarToMentainance(id) {
+  const URL = endpoints.cars.list + '/' + id+"/under_maintainance";
+
+  return await axios.post(URL);
 }

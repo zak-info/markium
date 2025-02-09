@@ -10,8 +10,7 @@ export function useGetPosts() {
 
   const { data, isLoading, error, isValidating } = useSWR(URL, fetcher);
 
-  const memoizedValue = useMemo(
-    () => ({
+  const memoizedValue = useMemo(() => ({
       posts: data?.posts || [],
       postsLoading: isLoading,
       postsError: error,

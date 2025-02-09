@@ -6,7 +6,7 @@ import Image from '../image';
 
 // ----------------------------------------------------------------------
 
-export default function SingleFilePreview({ imgUrl = '' }) {
+export default function SingleFilePreview({ imgUrl = '',filename }) {
   return (
     <Box
       sx={{
@@ -18,6 +18,7 @@ export default function SingleFilePreview({ imgUrl = '' }) {
         position: 'absolute',
       }}
     >
+     <h2>{filename}</h2>
       <Image
         alt="file preview"
         src={imgUrl}
@@ -27,6 +28,7 @@ export default function SingleFilePreview({ imgUrl = '' }) {
           borderRadius: 1,
         }}
       />
+     
     </Box>
   );
 }

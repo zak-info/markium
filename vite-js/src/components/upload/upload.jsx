@@ -14,6 +14,8 @@ import Iconify from '../iconify';
 import MultiFilePreview from './preview-multi-file';
 import RejectionFiles from './errors-rejection-files';
 import SingleFilePreview from './preview-single-file';
+import SingleFilePreview2 from './preview-single-file2';
+import { useRef } from 'react';
 
 // ----------------------------------------------------------------------
 
@@ -21,8 +23,11 @@ export default function Upload({
   disabled,
   multiple = false,
   error,
+  name,
   helperText,
   //
+  lable,
+  field,
   file,
   onDelete,
   //
@@ -41,18 +46,36 @@ export default function Upload({
   });
 
   const hasFile = !!file && !multiple;
+  console.log("fily is  : ", file?.name);
+
+
+  const inputRef = useRef(null);
+  const handleReset = () => {
+    const fileInput = document.getElementById("input_fl_name");
+    if (fileInput) {
+      fileInput.click();
+    }
+  };
+  const handleClick = () => {
+    const fileInput = document.getElementById("input_fl_name");
+    if (fileInput) {
+      fileInput.reset();
+    }
+  };
+
 
   const hasFiles = !!files && multiple && !!files.length;
+  console.log("filys are  : ", files);
 
   const hasError = isDragReject || !!error;
 
   const renderPlaceholder = (
     <Stack spacing={3} alignItems="center" justifyContent="center" flexWrap="wrap">
-      <UploadIllustration sx={{ width: 1, maxWidth: 200 }} />
+      {/* <UploadIllustration sx={{ width: 1, maxWidth: 200 }} /> */}
       <Stack spacing={1} sx={{ textAlign: 'center' }}>
-        <Typography variant="h6">Drop or Select file</Typography>
+        <Typography variant="h6">{lable || "Drop or Select file"}</Typography>
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          Drop files here or click
+          {/* Drop files here or click */}
           <Box
             component="span"
             sx={{
@@ -63,14 +86,14 @@ export default function Upload({
           >
             browse
           </Box>
-          thorough your machine
+          {/* thorough your machine */}
         </Typography>
       </Stack>
     </Stack>
   );
 
   const renderSinglePreview = (
-    <SingleFilePreview imgUrl={typeof file === 'string' ? file : file?.preview} />
+    <SingleFilePreview imgUrl={typeof file === 'string' ? file : file?.name} filename={file?.name} />
   );
 
   const removeSinglePreview = hasFile && onDelete && (
@@ -154,12 +177,23 @@ export default function Upload({
           }),
         }}
       >
-        <input {...getInputProps()} />
+        <input {...getInputProps()} id='input_fl_name' name={name}
+          onChange={(e) => {
+            field.onChange(e.target.files[0]);
+          }}
+          onReset={(e)=>{
+            field?.removeSinglePreview
+          }}
+        />
 
         {hasFile ? renderSinglePreview : renderPlaceholder}
       </Box>
 
-      {removeSinglePreview}
+      {/* {removeSinglePreview} */}
+      {/* <Stack sx={{mt:1,display:"flex",flexDirection:'row',gap:"4px"}} >
+        <Iconify onClick={() => handleClick} icon="solar:trash-bin-trash-bold" />
+        <Iconify onClick={() => handleReset} icon="solar:trash-bin-trash-bold" />
+      </Stack> */}
 
       {helperText && helperText}
 
@@ -174,6 +208,7 @@ Upload.propTypes = {
   disabled: PropTypes.object,
   error: PropTypes.bool,
   file: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+  name: PropTypes.string,
   files: PropTypes.array,
   helperText: PropTypes.object,
   multiple: PropTypes.bool,

@@ -66,18 +66,19 @@ export default function NotificationsListView() {
   const { t } = useTranslate();
 
   const TABLE_HEAD = [
-    { id: 'plateNumber', label: t('plateNumber'), width: 116 },
-    { id: 'orderNumber', label: t('vehicle'), width: 116 },
+    { id: 'plateNumber', label: t('plateNumber'), width: 140 },
+    // { id: 'vehicle', label: t('vehicle'), width: 116 },
     { id: 'entryDate', label: t('entryDate'), width: 140 },
-    { id: 'manitainClassification', label: t('manitainClassification'), width: 140 },
-    { id: 'expectedMaintainDays', label: t('expectedMaintainDays') },
-    { id: 'theRest', label: t('theRest') },
+    // { id: 'manitainClassification', label: t('manitainClassification'), width: 140 },
+    { id: 'expectedMaintainDays', label: t('expected_period') },
+    // { id: 'theRest', label: t('theRest') },
 
     { id: 'malfunction', label: t('malfunction'), width: 140 },
     { id: 'totalAmount', label: t('workSite'), width: 140 },
+    { id: 'actions', label: t('actions'), width: 140 },
 
-    { id: 'tenantName', label: t('tenantName'), width: 140 },
-    { id: 'driver', label: t('driver'), width: 140 },
+    // { id: 'tenantName', label: t('state'), width: 140 },
+    // { id: 'driver', label: t('driver'), width: 140 },
 
     { id: '', width: 88 },
   ];
@@ -171,6 +172,12 @@ export default function NotificationsListView() {
   const handleViewRow = useCallback(
     (id) => {
       router.push(paths.dashboard.maintenance.details(id));
+    },
+    [router]
+  );
+  const handleEditRow = useCallback(
+    (id) => {
+      router.push(paths.dashboard.maintenance.new+"?car_id=1");
     },
     [router]
   );
@@ -318,6 +325,7 @@ export default function NotificationsListView() {
                         selected={table.selected.includes(row.id)}
                         onSelectRow={() => table.onSelectRow(row.id)}
                         onDeleteRow={() => handleDeleteRow(row.id)}
+                        onEditRow={()=>handleEditRow(row.id)}
                         onViewRow={() => handleViewRow(row.id)}
                       />
                     ))}

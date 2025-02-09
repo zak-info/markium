@@ -142,7 +142,8 @@ export const paths = {
       notifications: `${ROOTS.DASHBOARD}/maintenance/notifications`,
       new: `${ROOTS.DASHBOARD}/maintenance/new`,
       edit: (id) => `${ROOTS.DASHBOARD}/maintenance/${id}/edit`,
-
+      newClause: (idMaintenance) => `${ROOTS.DASHBOARD}/maintenance/${idMaintenance}/clause`,
+      editClause: (idMaintenance,idClause) => `${ROOTS.DASHBOARD}/maintenance/${idMaintenance}/clause/${idClause}/edit`,
       details: (id) => `${ROOTS.DASHBOARD}/maintenance/${id}`,
 
       currentInMaintenance: `${ROOTS.DASHBOARD}/maintenance/current-in-maintenance`,
@@ -161,6 +162,7 @@ export const paths = {
       root: `${ROOTS.DASHBOARD}/documents`,
       alerts: `${ROOTS.DASHBOARD}/documents/alerts`,
       new: `${ROOTS.DASHBOARD}/documents/new`,
+      edit: (id) => `${ROOTS.DASHBOARD}/documents/${id}/edit`,
     },
     clients: {
       root: `${ROOTS.DASHBOARD}/clients`,
@@ -168,6 +170,7 @@ export const paths = {
       claims: `${ROOTS.DASHBOARD}/clients/claims`,
       contracts: `${ROOTS.DASHBOARD}/clients/contracts`,
       new: `${ROOTS.DASHBOARD}/clients/new`,
+      edit:(id)=> `${ROOTS.DASHBOARD}/clients/${id}/edit`,
       details: (id) => `${ROOTS.DASHBOARD}/clients/${id}`,
       contractsDetails: (id) => `${ROOTS.DASHBOARD}/clients/contracts/${id}`,
     },
@@ -175,6 +178,11 @@ export const paths = {
     log: {
       root: `${ROOTS.DASHBOARD}/log`,
       list: `${ROOTS.DASHBOARD}/log/list`,
+    },
+    settings: {
+      root: `${ROOTS.DASHBOARD}/settings`,
+      new: `${ROOTS.DASHBOARD}/settings/new`,
+      edit: (id)=>`${ROOTS.DASHBOARD}/settings/${id}/edit`,
     },
     vehicle: {
       root: `${ROOTS.DASHBOARD}/vehicle`,
@@ -187,6 +195,8 @@ export const paths = {
         edit: `${ROOTS.DASHBOARD}/vehicle/${MOCK_ID}/edit`,
       },
       inputs: `${ROOTS.DASHBOARD}/vehicle/inputs`,
+      pm: (id) => `${ROOTS.DASHBOARD}/vehicle/${id}/pm`,
+      addpm: (id) => `${ROOTS.DASHBOARD}/vehicle/${id}/pm/new`,
     },
 
     company: {

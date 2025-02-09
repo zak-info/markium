@@ -19,21 +19,21 @@ export default function OrderTableToolbar({ filters, onFilters, dateError }) {
 
   const handleFilterName = useCallback(
     (event) => {
-      onFilters('name', event.target.value);
+      onFilters('attachment_name_id', event.target.value);
     },
     [onFilters]
   );
 
   const handleFilterStartDate = useCallback(
     (newValue) => {
-      onFilters('startDate', newValue);
+      onFilters('release_date', newValue);
     },
     [onFilters]
   );
 
   const handleFilterEndDate = useCallback(
     (newValue) => {
-      onFilters('endDate', newValue);
+      onFilters('expiry_date', newValue);
     },
     [onFilters]
   );
@@ -53,8 +53,8 @@ export default function OrderTableToolbar({ filters, onFilters, dateError }) {
         }}
       >
         <DatePicker
-          label="Start date"
-          value={filters.startDate}
+          label="Release date"
+          value={filters.release_date}
           onChange={handleFilterStartDate}
           slotProps={{
             textField: {
@@ -67,8 +67,8 @@ export default function OrderTableToolbar({ filters, onFilters, dateError }) {
         />
 
         <DatePicker
-          label="End date"
-          value={filters.endDate}
+          label="Expiry Date"
+          value={filters.expiry_date}
           onChange={handleFilterEndDate}
           slotProps={{
             textField: {

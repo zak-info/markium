@@ -26,7 +26,7 @@ import { Typography } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
-export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteRow }) {
+export default function OrderTableRow({ row, selected, onViewRow,onEditRow, onSelectRow, onDeleteRow }) {
   const { model, status, plat_number, createdAt, state, totalQuantity, subTotal } = row;
 
   const confirm = useBoolean();
@@ -38,7 +38,7 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
   const renderPrimary = (
     <TableRow hover selected={selected}>
       <TableCell>
-        <Box
+        {/* <Box
           onClick={onViewRow}
           sx={{
             cursor: 'pointer',
@@ -48,10 +48,21 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
           }}
         >
           {plat_number}
-        </Box>
+        </Box> */}
+        <ListItemText
+          onClick={onViewRow}
+          sx={{
+            cursor: 'pointer',
+            '&:hover': {
+              textDecoration: 'underline',
+            },
+          }}
+          primary={plat_number}
+          secondary={model?.company?.translations?.name}
+        />
       </TableCell>
 
-      <TableCell> {model?.company?.name} </TableCell>
+      {/* <TableCell> {model?.company?.name} </TableCell> */}
 
       <TableCell>
         {/* <ListItemText
@@ -67,17 +78,17 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
         -
       </TableCell>
 
-      <TableCell align="center"> - </TableCell>
-      <TableCell align="center">- </TableCell>
+      {/* <TableCell align="center"> - </TableCell> */}
+      {/* <TableCell align="center">- </TableCell> */}
       <TableCell align="center"> - </TableCell>
       <TableCell align="center"> - </TableCell>
       <TableCell align="center"> {state?.translations?.name} </TableCell>
-      <TableCell align="center"> - </TableCell>
+      {/* <TableCell align="center"> - </TableCell> */}
 
-      <TableCell>-</TableCell>
+      {/* <TableCell>-</TableCell> */}
 
       <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
-        <IconButton
+        {/* <IconButton
           color={collapse.value ? 'inherit' : 'default'}
           onClick={collapse.onToggle}
           sx={{
@@ -87,7 +98,7 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
           }}
         >
           <Iconify icon="eva:arrow-ios-downward-fill" />
-        </IconButton>
+        </IconButton> */}
 
         <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
           <Iconify icon="eva:more-vertical-fill" />
@@ -125,8 +136,28 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
         open={popover.open}
         onClose={popover.onClose}
         arrow="right-top"
-        sx={{ width: 140 }}
+        sx={{ width: 200 }}
       >
+        <MenuItem
+          onClick={() => {
+            onEditRow();
+            popover.onClose();
+          }}
+        >
+          <Iconify icon="solar:pen-bold" />
+          create maintenance
+        </MenuItem>
+
+        {/* <MenuItem
+          onClick={() => {
+            onViewRow();
+            popover.onClose();
+          }}
+        >
+          <Iconify icon="solar:eye-bold" />
+          View
+        </MenuItem> */}
+
         <MenuItem
           onClick={() => {
             confirm.onTrue();
@@ -138,15 +169,7 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
           Delete
         </MenuItem>
 
-        <MenuItem
-          onClick={() => {
-            onViewRow();
-            popover.onClose();
-          }}
-        >
-          <Iconify icon="solar:eye-bold" />
-          View
-        </MenuItem>
+
       </CustomPopover>
 
       <ConfirmDialog

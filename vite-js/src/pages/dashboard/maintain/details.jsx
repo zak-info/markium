@@ -17,7 +17,7 @@ export default function ProductDetailsPage() {
         <title> Dashboard: Product Details</title>
       </Helmet>
 
-      <ProductDetailsView id={`${id}`} />
+      <ProductDetailsView id={id} />
     </>
   );
 }

@@ -7,6 +7,7 @@ import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 
 import UserNewEditForm from '../user-new-edit-form';
 import { useTranslate } from 'src/locales';
+import { useValues } from 'src/api/utils';
 
 // ----------------------------------------------------------------------
 
@@ -14,6 +15,8 @@ export default function UserCreateView() {
   const settings = useSettingsContext();
 
   const { t } = useTranslate();
+
+    const { data } = useValues();
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>

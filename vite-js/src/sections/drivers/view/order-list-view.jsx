@@ -46,6 +46,7 @@ import OrderTableFiltersResult from '../order-table-filters-result';
 import { useTranslate } from 'src/locales';
 
 import { useGetDrivers, deleteDriver } from 'src/api/drivers';
+import { useValues } from 'src/api/utils';
 
 // ----------------------------------------------------------------------
 
@@ -65,12 +66,14 @@ export default function OrderListView() {
   const { t } = useTranslate();
 
   const { drivers, mutate } = useGetDrivers();
+  const {data} = useValues()
+  console.log("drivers : ",drivers);
 
   const TABLE_HEAD = [
-    { id: 'orderNumber', label: t('driverName'), width: 116 },
-    { id: 'totalAmount2', label: t('lisenceNo'), width: 140 },
-    { id: 'totalAmount', label: t('phone'), width: 140 },
+    { id: 'orderNumber', label: t('driver'), width: 116 },
+    { id: 'totalAmount2', label: t('residencePermitNumber'), width: 140 },
     { id: 'totalAmount2', label: t('workSite'), width: 140 },
+    { id: 'attached_to ', label: t('attached to'), width: 140 },
 
     { id: '', width: 88 },
   ];
@@ -157,6 +160,12 @@ export default function OrderListView() {
   const handleViewRow = useCallback(
     (id) => {
       router.push(paths.dashboard.drivers.details(id));
+    },
+    [router]
+  );
+  const handleViewCar = useCallback(
+    (id) => {
+      router.push(paths.dashboard.vehicle.details(id));
     },
     [router]
   );
@@ -301,11 +310,13 @@ export default function OrderListView() {
                       <OrderTableRow
                         key={row.id}
                         row={row}
+                        carModel={data?.car_companies?.flatMap(item => item.models).find(model => model.id == row?.car?.car_model_id)}
                         selected={table.selected.includes(row.id)}
                         onSelectRow={() => table.onSelectRow(row.id)}
                         onDeleteRow={() => handleDeleteRow(row.id)}
                         handleEditRow={() => handleEditRow(row.id)}
                         onViewRow={() => handleViewRow(row.id)}
+                        onViewCar={() => handleViewCar(row?.car?.id)}
                       />
                     ))}
 
@@ -376,7 +387,10 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
 
   if (name) {
     inputData = inputData.filter(
-      (order) => order.name.toLowerCase().indexOf(name.toLowerCase()) !== -1
+      (order) => 
+        order.name.toLowerCase().includes(name.toLowerCase())  ||
+        order.residence_permit_number.includes(name) ||
+        order.phone_number.includes(name) !== -1 
     );
   }
 

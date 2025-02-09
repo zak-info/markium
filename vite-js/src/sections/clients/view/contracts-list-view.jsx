@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
@@ -44,6 +44,8 @@ import OrderTableRow from '../contracts-table-row';
 import OrderTableToolbar from '../contracts-table-toolbar';
 import OrderTableFiltersResult from '../contracts-table-filters-result';
 import { useTranslate } from 'src/locales';
+import { useGetClients } from 'src/api/client';
+import { useGetContracts } from 'src/api/contract';
 
 // ----------------------------------------------------------------------
 
@@ -63,18 +65,19 @@ export default function OrderListView() {
   const { t } = useTranslate();
 
   const TABLE_HEAD = [
-    { id: 'orderNumber', label: t('contractNo'), width: 116 },
-    { id: 'totalAmount2', label: t('contractDate'), width: 140 },
-    { id: 'totalAmount', label: t('client'), width: 140 },
-    { id: 'totalAmount2', label: t('payingOff'), width: 140 },
-    { id: 'theRest', label: t('phone'), width: 140 },
-    { id: 'totalAmount2', label: t('acterName'), width: 140 },
-    { id: 'totalAmount2', label: t('city'), width: 140 },
+    { id: 'client', label: t('client'), width: 116 },
+    { id: 'contractDate', label: t('contractDate'), width: 140 },
+    { id: 'net', label: t('net'), width: 140 },
+    { id: 'payment_method', label: t('payment_method'), width: 140 },
+    { id: 'payments', label: t('payments'), width: 160 },
+    // { id: 'theRest', label: t('phone'), width: 140 },
+    // { id: 'totalAmount2', label: t('acterName'), width: 140 },
+    // { id: 'totalAmount2', label: t('city'), width: 140 },
 
     { id: '', width: 88 },
   ];
 
-  const table = useTable({ defaultOrderBy: 'orderNumber' });
+  const table = useTable({ defaultOrderBy: 'client' });
 
   const settings = useSettingsContext();
 
@@ -82,7 +85,13 @@ export default function OrderListView() {
 
   const confirm = useBoolean();
 
-  const [tableData, setTableData] = useState(_orders);
+  const {clients} = useGetClients()
+  const {contracts} = useGetContracts()
+
+  const [tableData, setTableData] = useState(contracts);
+  useEffect(()=>{
+    setTableData(contracts)
+  },[contracts])
 
   const [filters, setFilters] = useState(defaultFilters);
 
@@ -93,6 +102,7 @@ export default function OrderListView() {
     comparator: getComparator(table.order, table.orderBy),
     filters,
     dateError,
+    clients
   });
 
   const dataInPage = dataFiltered.slice(
@@ -181,7 +191,7 @@ export default function OrderListView() {
           action={
             <Button
               component={RouterLink}
-              href={paths.dashboard.clients.new}
+              href={paths.dashboard.clients.contracts+"/new"}
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
             >
@@ -194,41 +204,6 @@ export default function OrderListView() {
         />
 
         <Card>
-          {/* <Tabs
-            value={filters.status}
-            onChange={handleFilterStatus}
-            sx={{
-              px: 2.5,
-              boxShadow: (theme) => `inset 0 -2px 0 0 ${alpha(theme.palette.grey[500], 0.08)}`,
-            }}
-          >
-            {STATUS_OPTIONS.map((tab) => (
-              <Tab
-                key={tab.value}
-                iconPosition="end"
-                value={tab.value}
-                label={tab.label}
-                icon={
-                  <Label
-                    variant={
-                      ((tab.value === 'all' || tab.value === filters.status) && 'filled') || 'soft'
-                    }
-                    color={
-                      (tab.value === 'completed' && 'success') ||
-                      (tab.value === 'pending' && 'warning') ||
-                      (tab.value === 'cancelled' && 'error') ||
-                      'default'
-                    }
-                  >
-                    {['completed', 'pending', 'cancelled', 'refunded'].includes(tab.value)
-                      ? tableData.filter((user) => user.status === tab.value).length
-                      : tableData.length}
-                  </Label>
-                }
-              />
-            ))}
-          </Tabs> */}
-
           <OrderTableToolbar
             filters={filters}
             onFilters={handleFilters}
@@ -294,6 +269,7 @@ export default function OrderListView() {
                     .map((row) => (
                       <OrderTableRow
                         key={row.id}
+                        client={clients?.find(item => item.id == row?.client_id)}
                         row={row}
                         selected={table.selected.includes(row.id)}
                         onSelectRow={() => table.onSelectRow(row.id)}
@@ -354,7 +330,7 @@ export default function OrderListView() {
 
 // ----------------------------------------------------------------------
 
-function applyFilter({ inputData, comparator, filters, dateError }) {
+function applyFilter({ inputData, comparator, filters, dateError,clients }) {
   const { status, name, startDate, endDate } = filters;
 
   const stabilizedThis = inputData.map((el, index) => [el, index]);
@@ -370,9 +346,9 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
   if (name) {
     inputData = inputData.filter(
       (order) =>
-        order.orderNumber.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.customer.name.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.customer.email.toLowerCase().indexOf(name.toLowerCase()) !== -1
+        clients?.find(item => item.id == order?.client_id)?.name?.toLowerCase()?.includes(name.toLowerCase()) ||
+        order?.payment_method?.toLowerCase()?.includes(name.toLowerCase())||
+        order?.paid_amount?.toString()?.includes(name)
     );
   }
 

@@ -94,7 +94,7 @@ export default function OrderDetailsInfo({ customer, delivery, payment, shipping
             {t('depreciation')}
           </Box>
           <Link underline="always" color="inherit">
-            {delivery.trackingNumber}
+            {delivery?.trackingNumber}
           </Link>
         </Stack>
       </Stack>
@@ -116,14 +116,14 @@ export default function OrderDetailsInfo({ customer, delivery, payment, shipping
           <Box component="span" sx={{ color: 'text.secondary', width: 120, flexShrink: 0 }}>
             Address
           </Box>
-          {shippingAddress.fullAddress}
+          {shippingAddress?.fullAddress}
         </Stack>
 
         <Stack direction="row">
           <Box component="span" sx={{ color: 'text.secondary', width: 120, flexShrink: 0 }}>
             Phone number
           </Box>
-          {shippingAddress.phoneNumber}
+          {shippingAddress?.phoneNumber}
         </Stack>
       </Stack>
     </>
@@ -144,7 +144,7 @@ export default function OrderDetailsInfo({ customer, delivery, payment, shipping
           Phone number
         </Box>
 
-        {payment.cardNumber}
+        {payment?.cardNumber}
         <Iconify icon="logos:mastercard" width={24} sx={{ ml: 0.5 }} />
       </Stack>
     </>

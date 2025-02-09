@@ -14,6 +14,7 @@ import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import { useTranslation } from 'react-i18next';
+import { paths } from 'src/routes/paths';
 
 // ----------------------------------------------------------------------
 
@@ -24,6 +25,7 @@ export default function OrderDetailsToolbar({
   orderNumber,
   statusOptions,
   onChangeStatus,
+  idMaintenance
 }) {
   const popover = usePopover();
 
@@ -49,17 +51,9 @@ export default function OrderDetailsToolbar({
                 {' '}
                 {t('maintenance')} {orderNumber}{' '}
               </Typography>
-              <Label
-                variant="soft"
-                color={
-                  (status === 'completed' && 'success') ||
-                  (status === 'pending' && 'warning') ||
-                  (status === 'cancelled' && 'error') ||
-                  'default'
-                }
-              >
+              {/* <Label variant="soft" color={status == "completed" ? "success" : status == "pending" ? "warning" : status == "cancelled" ? "error" :"default"}>
                 {status}
-              </Label>
+              </Label> */}
             </Stack>
 
             <Typography variant="body2" sx={{ color: 'text.disabled' }}>
@@ -75,7 +69,7 @@ export default function OrderDetailsToolbar({
           alignItems="center"
           justifyContent="flex-end"
         >
-          <Button
+          {/* <Button
             color="inherit"
             variant="outlined"
             endIcon={<Iconify icon="eva:arrow-ios-downward-fill" />}
@@ -83,7 +77,7 @@ export default function OrderDetailsToolbar({
             sx={{ textTransform: 'capitalize' }}
           >
             {status}
-          </Button>
+          </Button> */}
 
           <Button
             color="inherit"
@@ -92,10 +86,14 @@ export default function OrderDetailsToolbar({
           >
             Print
           </Button>
-
-          <Button color="inherit" variant="contained" startIcon={<Iconify icon="solar:pen-bold" />}>
-            Edit
-          </Button>
+            <Button
+              component={RouterLink}
+              href={paths.dashboard.maintenance.newClause(idMaintenance)}
+              variant="contained"
+              startIcon={<Iconify icon="mingcute:add-line" />}
+            >
+              {t('AddMaintenanceElement')}
+            </Button>
         </Stack>
       </Stack>
 

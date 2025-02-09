@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
@@ -44,6 +44,7 @@ import OrderTableToolbar from '../notification-table-toolbar';
 import OrderTableFiltersResult from '../notifications-tabel-filters-result';
 import { useTranslate } from 'src/locales';
 import { RouterLink } from 'src/routes/components';
+import { useGetMaintenanceLogs } from 'src/api/maintainance';
 
 // ----------------------------------------------------------------------
 
@@ -66,14 +67,12 @@ export default function NotificationsListView() {
 
     { id: 'orderNumber', label: t('vehicle'), width: 116 },
     { id: 'manitainClassification', label: t('manitainClassification'), width: 140 },
-    { id: 'maintainType', label: t('maintainType') },
-
+    { id: 'maintainType', label: t('maintainType')},
     { id: 'name', label: t('theRest'), width: 140 },
     { id: 'createdAt', label: t('alert'), width: 140 },
     { id: 'workSite', label: t('workSite'), width: 140 },
     { id: 'tenantName', label: t('tenantName'), width: 140 },
     { id: 'driver', label: t('driver') },
-
     { id: '', width: 88 },
   ];
 
@@ -92,8 +91,12 @@ export default function NotificationsListView() {
   const router = useRouter();
 
   const confirm = useBoolean();
+  const {logs} = useGetMaintenanceLogs()
 
-  const [tableData, setTableData] = useState(_orders);
+  const [tableData, setTableData] = useState(logs);
+  useEffect(()=>{
+  // setTableData(logs)  
+  },[logs])
 
   const [filters, setFilters] = useState(defaultFilters);
 

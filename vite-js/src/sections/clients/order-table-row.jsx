@@ -22,10 +22,11 @@ import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import { t } from 'i18next';
 
 // ----------------------------------------------------------------------
 
-export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteRow }) {
+export default function OrderTableRow({ row, location, selected, onViewRow, onSelectRow, onDeleteRow, onEditRow }) {
   const { items, status, orderNumber, createdAt, customer, totalQuantity, subTotal } = row;
 
   const confirm = useBoolean();
@@ -50,52 +51,29 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
             },
           }}
         >
-          {orderNumber}
+          {row?.name}
         </Box>
       </TableCell>
-
-      <TableCell>
-        <ListItemText
-          primary={fDate(createdAt)}
-          secondary={fTime(createdAt)}
-          primaryTypographyProps={{ typography: 'body2', noWrap: true }}
-          secondaryTypographyProps={{
-            mt: 0.5,
-            component: 'span',
-            typography: 'caption',
+      {/* <TableCell>{row?.state_id}</TableCell> */}
+      <TableCell>{location}</TableCell>
+      <TableCell>{row?.company_id}</TableCell>
+      <TableCell>{row?.commercial_registration_number}</TableCell>
+      <TableCell align="start" sx={{ px: 1, whiteSpace: 'nowrap' }}>
+        {/* <IconButton
+          color={collapse.value ? 'inherit' : 'default'}
+          onClick={collapse.onToggle}
+          sx={{
+            ...(collapse.value && {
+              bgcolor: 'action.hover',
+            }),
           }}
-        />
-      </TableCell>
-
-      <TableCell>
-        <ListItemText
-          primary={fDate(createdAt)}
-          secondary={fTime(createdAt)}
-          primaryTypographyProps={{ typography: 'body2', noWrap: true }}
-          secondaryTypographyProps={{
-            mt: 0.5,
-            component: 'span',
-            typography: 'caption',
-          }}
-        />
-      </TableCell>
-
-      <TableCell align="center"> {totalQuantity} </TableCell>
-
-      <TableCell> {fCurrency(subTotal)} </TableCell>
-
-      <TableCell>
-        <Label
-          variant="soft"
-          color={
-            (status === 'completed' && 'success') ||
-            (status === 'pending' && 'warning') ||
-            (status === 'cancelled' && 'error') ||
-            'default'
-          }
         >
-          {status}
-        </Label>
+          <Iconify icon="eva:arrow-ios-downward-fill" />
+        </IconButton> */}
+
+        <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
+          <Iconify icon="eva:more-vertical-fill" />
+        </IconButton>
       </TableCell>
     </TableRow>
   );
@@ -110,7 +88,7 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
           sx={{ bgcolor: 'background.neutral' }}
         >
           <Stack component={Paper} sx={{ m: 1.5 }}>
-            {items.map((item) => (
+            {items?.map((item) => (
               <Stack
                 key={item.id}
                 direction="row"
@@ -156,14 +134,27 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
     <>
       {renderPrimary}
 
-      {renderSecondary}
+      {/* {renderSecondary} */}
 
       <CustomPopover
         open={popover.open}
         onClose={popover.onClose}
         arrow="right-top"
-        sx={{ width: 140 }}
+        sx={{ width: 200 }}
       >
+
+        <MenuItem
+          onClick={() => {
+            onEditRow();
+            popover.onClose();
+          }}
+        >
+          <Iconify icon="solar:pen-bold" />
+          {t('edit')}
+        </MenuItem>
+
+
+
         <MenuItem
           onClick={() => {
             confirm.onTrue();
@@ -172,28 +163,46 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
           sx={{ color: 'error.main' }}
         >
           <Iconify icon="solar:trash-bin-trash-bold" />
-          Delete
+          {t('delete')}
         </MenuItem>
 
-        <MenuItem
+
+        {/* <MenuItem
           onClick={() => {
             onViewRow();
             popover.onClose();
           }}
         >
           <Iconify icon="solar:eye-bold" />
-          View
-        </MenuItem>
+          {t('view')}
+        </MenuItem> */}
+
+        {/* <MenuItem
+          onClick={() => {
+            onAddCarToMentainance();
+            popover.onClose();
+          }}
+        >
+          <Iconify icon="map:car-repair" />
+          {t('addToMaintenance')}
+        </MenuItem> */}
       </CustomPopover>
 
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Delete"
-        content="Are you sure want to delete?"
+        title={t('delete')}
+        content={t('deleteConfirm')}
         action={
-          <Button variant="contained" color="error" onClick={onDeleteRow}>
-            Delete
+          <Button
+            variant="contained"
+            color="error"
+            onClick={() => {
+              onDeleteRow();
+              confirm.onFalse();
+            }}
+          >
+            {t('delete')}
           </Button>
         }
       />

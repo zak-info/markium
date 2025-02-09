@@ -91,7 +91,7 @@ export default function ProductDetailsSummary({
         onAddCart?.({
           ...data,
           colors: [values.colors],
-          subTotal: data.price * data.quantity,
+          subTotal: data?.price * data?.quantity,
         });
       }
       onGotoStep?.(0);

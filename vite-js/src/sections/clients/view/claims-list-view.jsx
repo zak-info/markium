@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
@@ -44,6 +44,9 @@ import OrderTableRow from '../claims-table-row';
 import OrderTableToolbar from '../claims-table-toolbar';
 import OrderTableFiltersResult from '../claims-table-filters-result';
 import { useTranslate } from 'src/locales';
+import { useGetClaim } from 'src/api/claim';
+import { useGetClients } from 'src/api/client';
+import { useGetContracts } from 'src/api/contract';
 
 // ----------------------------------------------------------------------
 
@@ -63,12 +66,12 @@ export default function OrderListView() {
   const { t } = useTranslate();
 
   const TABLE_HEAD = [
-    { id: 'orderNumber', label: t('contractNo'), width: 116 },
-    { id: 'totalAmount2', label: t('contactDate'), width: 140 },
-    { id: 'totalAmount', label: t('amount'), width: 140 },
-    { id: 'totalAmount2', label: t('status'), width: 140 },
-    { id: 'theRest', label: t('client'), width: 140 },
-    { id: 'totalAmount2', label: t('phone'), width: 140 },
+    { id: 'client', label: t('client'), width: 140 },
+    { id: 'key2', label: t('key2'), width: 140 },
+    { id: 'key3', label: t('key3'), width: 140 },
+    { id: 'key4', label: t('key4'), width: 140 },
+    { id: 'key5', label: t('key5'), width: 140 },
+    { id: 'key6', label: t('key6'), width: 140 },
 
     { id: '', width: 88 },
   ];
@@ -81,7 +84,14 @@ export default function OrderListView() {
 
   const confirm = useBoolean();
 
-  const [tableData, setTableData] = useState(_orders);
+  const { claims } = useGetClaim()
+  const { clients } = useGetClients()
+  const { contracts } = useGetContracts()
+
+  const [tableData, setTableData] = useState(claims);
+  useEffect(() => {
+    setTableData(claims)
+  }, [claims])
 
   const [filters, setFilters] = useState(defaultFilters);
 
@@ -180,11 +190,11 @@ export default function OrderListView() {
           action={
             <Button
               component={RouterLink}
-              href={paths.dashboard.clients.new}
+              href={paths.dashboard.clients.claims+"/new"}
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
             >
-              {t('addNewDocument')}
+              {t('addNewClaim')}
             </Button>
           }
           sx={{
@@ -294,6 +304,8 @@ export default function OrderListView() {
                       <OrderTableRow
                         key={row.id}
                         row={row}
+                        contract={contracts?.find(item => item.id == row?.contract_id)}
+                        client={clients.find(client => client.id == contracts?.find(item => item.id == row?.contract_id)?.id)?.name}
                         selected={table.selected.includes(row.id)}
                         onSelectRow={() => table.onSelectRow(row.id)}
                         onDeleteRow={() => handleDeleteRow(row.id)}

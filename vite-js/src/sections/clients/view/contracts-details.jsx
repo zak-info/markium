@@ -18,6 +18,9 @@ import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import ProfileHome from '../profile-home-contracts';
 import ProfileCover from '../profile-cover-contracts';
 import { useTranslation } from 'react-i18next';
+import { useGetContract } from 'src/api/contract';
+import { useGetClient } from 'src/api/client';
+import { useValues } from 'src/api/utils';
 
 // ----------------------------------------------------------------------
 
@@ -46,10 +49,16 @@ const TABS = [
 
 // ----------------------------------------------------------------------
 
-export default function UserProfileView() {
+export default function UserProfileView({id}) {
   const settings = useSettingsContext();
 
   const { user } = useMockedUser();
+
+  const {contract} = useGetContract(id);
+  const {client} = useGetClient(contract?.client_id);
+  const {data} = useValues();
+
+  
 
   const { t } = useTranslation();
 
@@ -72,14 +81,14 @@ export default function UserProfileView() {
         links={[
           { name: t('dashboard'), href: paths.dashboard.root },
           { name: t('contracts'), href: paths.dashboard.clients.contracts },
-          { name: user?.displayName },
+          { name: "contractPage"},
         ]}
         sx={{
           mb: { xs: 3, md: 5 },
         }}
       />
 
-      {currentTab === 'profile' && <ProfileHome info={_userAbout} posts={_userFeeds} />}
+      {currentTab === 'profile' && <ProfileHome info={_userAbout} contract={contract} client={client} location={data?.neighborhoods?.find(item => item?.id==client?.neighborhood_id)} posts={_userFeeds} />}
 
       {currentTab === 'followers' && <ProfileFollowers followers={_userFollowers} />}
 

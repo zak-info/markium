@@ -23,6 +23,7 @@ import Iconify from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import { useTranslate } from 'src/locales';
+import { Link } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -33,6 +34,8 @@ export default function OrderTableRow({
   onSelectRow,
   onDeleteRow,
   onEditRow,
+  onDriverViewRow,
+  onAddCarToMentainance,
 }) {
   const {
     color,
@@ -60,8 +63,7 @@ export default function OrderTableRow({
       <TableCell padding="checkbox">
         <Checkbox checked={selected} onClick={onSelectRow} />
       </TableCell>
-
-      <TableCell>
+      {/* <TableCell>
         <Box
           onClick={onViewRow}
           sx={{
@@ -73,9 +75,32 @@ export default function OrderTableRow({
         >
           {model?.company?.translations?.name}
         </Box>
-      </TableCell>
+      </TableCell> */}
 
-      <TableCell>{model?.translations?.name}</TableCell>
+      {/* <TableCell>{model?.id}</TableCell> */}
+      {/* <TableCell>{model?.translations?.name}</TableCell> */}
+      <TableCell>
+        <Box
+          onClick={onViewRow}
+          sx={{
+            cursor: 'pointer',
+            '&:hover': {
+              textDecoration: 'underline',
+            },
+          }}
+        >
+          <ListItemText
+            primary={model?.translations?.name}
+            secondary={model?.company?.translations?.name}
+            primaryTypographyProps={{ typography: 'body2', noWrap: true }}
+            secondaryTypographyProps={{
+              mt: 0.5,
+              component: 'span',
+              typography: 'caption',
+            }}
+          />
+        </Box>
+      </TableCell>
 
       <TableCell> {plat_number} </TableCell>
 
@@ -90,7 +115,7 @@ export default function OrderTableRow({
           }}
         />
       </TableCell>
-      <TableCell> {color?.translations?.name} </TableCell>
+      {/* <TableCell> {color?.translations?.name} </TableCell> */}
 
       <TableCell>
         <Label
@@ -105,9 +130,27 @@ export default function OrderTableRow({
           {status?.translations?.name}
         </Label>
       </TableCell>
-      <TableCell align="center"> - </TableCell>
+      {/*  */}
+      <TableCell align="center">
+        {
+          row?.driver?.id ?
+            <Box
+              onClick={onDriverViewRow}
+              sx={{
+                cursor: 'pointer',
+                '&:hover': {
+                  textDecoration: 'underline',
+                },
+              }}
+            >
+              {row?.driver?.name}
+            </Box>
+            :
+            "-"
+        }
+      </TableCell>
 
-      <TableCell>- </TableCell>
+      <TableCell align="center" >- </TableCell>
 
       <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
         {/* <IconButton
@@ -191,7 +234,7 @@ export default function OrderTableRow({
         open={popover.open}
         onClose={popover.onClose}
         arrow="right-top"
-        sx={{ width: 180 }}
+        sx={{ width: 200 }}
       >
         <MenuItem
           onClick={() => {
@@ -226,7 +269,7 @@ export default function OrderTableRow({
 
         <MenuItem
           onClick={() => {
-            onViewRow();
+            onAddCarToMentainance();
             popover.onClose();
           }}
         >
@@ -246,7 +289,6 @@ export default function OrderTableRow({
             color="error"
             onClick={() => {
               onDeleteRow();
-
               confirm.onFalse();
             }}
           >

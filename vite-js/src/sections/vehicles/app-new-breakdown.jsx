@@ -21,22 +21,27 @@ import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 import { TableHeadCustom } from 'src/components/table';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import { useValues } from 'src/api/utils';
+import { Link } from 'react-router-dom';
+import { STORAGE_API } from 'src/config-global';
+import { useEffect } from 'react';
 
 // ----------------------------------------------------------------------
 
 export default function AppNewInvoice({ title, subheader, tableData, tableLabels, ...other }) {
+  const { data } = useValues()
   return (
     <Card {...other}>
       <CardHeader title={title} subheader={subheader} sx={{ mb: 3 }} />
 
       <TableContainer sx={{ overflow: 'unset' }}>
         <Scrollbar>
-          <Table sx={{ minWidth: 550 }}>
+          <Table sx={{}}>
             <TableHeadCustom headLabel={tableLabels} />
 
             <TableBody>
-              {tableData.map((row) => (
-                <AppNewInvoiceRow key={row.id} row={row} />
+              {tableData?.map((row) => (
+                <AppNewInvoiceRow attachement_name={data?.attachmenat_names?.find(item => item.id == row.attachment_name_id)?.translations[0]?.name} key={row.id} row={row} />
               ))}
             </TableBody>
           </Table>
@@ -67,8 +72,13 @@ AppNewInvoice.propTypes = {
 
 // ----------------------------------------------------------------------
 
-function AppNewInvoiceRow({ row }) {
+function AppNewInvoiceRow({ row, attachement_name }) {
   const popover = usePopover();
+
+  useEffect(() => {
+    console.log(STORAGE_API + "/" + row?.attachment_path);
+    console.log(STORAGE_API + "/" + row?.invoice_path);
+  }, [])
 
   const handleDownload = () => {
     popover.onClose();
@@ -93,11 +103,12 @@ function AppNewInvoiceRow({ row }) {
   return (
     <>
       <TableRow>
-        <TableCell>{row.name}</TableCell>
+        <TableCell>{attachement_name}</TableCell>
 
-        <TableCell>{row.count}</TableCell>
+        <TableCell> <a href={STORAGE_API + "/" + row?.attachment_path} target='_blank' ><Label variant="soft" color="success">View</Label></a></TableCell>
+        <TableCell><a href={STORAGE_API + "/" + row?.invoice_path} target='_blank' ><Label variant="soft" color="success">View</Label></a></TableCell>
 
-        <TableCell>{fCurrency(row.cost) || '-'}</TableCell>
+        {/* <TableCell>{fCurrency(row.cost) || '-'}</TableCell> */}
         {/* 
         <TableCell align="right" sx={{ pr: 1 }}>
           <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>

@@ -25,7 +25,7 @@ import CustomPopover, { usePopover } from 'src/components/custom-popover';
 
 // ----------------------------------------------------------------------
 
-export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteRow }) {
+export default function OrderTableRow({ row ,contract,client, selected, onViewRow, onSelectRow, onDeleteRow }) {
   const { items, status, orderNumber, createdAt, customer, totalQuantity, subTotal } = row;
 
   const confirm = useBoolean();
@@ -40,49 +40,24 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
         <Checkbox checked={selected} onClick={onSelectRow} />
       </TableCell>
 
-      <TableCell>{orderNumber}</TableCell>
+      <TableCell>{client?.name}</TableCell>
+      <TableCell>{fDate(contract?.created_at)}</TableCell>
+      <TableCell>{row?.note_en}</TableCell>
 
-      <TableCell>
-        <ListItemText
-          primary={fDate(createdAt)}
-          secondary={fTime(createdAt)}
-          primaryTypographyProps={{ typography: 'body2', noWrap: true }}
-          secondaryTypographyProps={{
-            mt: 0.5,
-            component: 'span',
-            typography: 'caption',
-          }}
-        />
-      </TableCell>
-
-      <TableCell>
-        <ListItemText
-          primary={fDate(createdAt)}
-          secondary={fTime(createdAt)}
-          primaryTypographyProps={{ typography: 'body2', noWrap: true }}
-          secondaryTypographyProps={{
-            mt: 0.5,
-            component: 'span',
-            typography: 'caption',
-          }}
-        />
-      </TableCell>
       <TableCell>
         <Label
           variant="soft"
           color={
-            (status === 'completed' && 'success') ||
-            (status === 'pending' && 'warning') ||
-            (status === 'cancelled' && 'error') ||
+            (row?.action === 'create' && 'success') ||
+            (row.action  === 'pending' && 'warning') ||
+            (row.action  === 'cancelled' && 'error') ||
             'default'
           }
         >
-          {status}
+          {row.action }
         </Label>
       </TableCell>
-      <TableCell align="center"> {totalQuantity} </TableCell>
-
-      <TableCell> {fCurrency(subTotal)} </TableCell>
+      <TableCell>{fDate(row?.created_at)}</TableCell>
     </TableRow>
   );
 
@@ -96,7 +71,7 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
           sx={{ bgcolor: 'background.neutral' }}
         >
           <Stack component={Paper} sx={{ m: 1.5 }}>
-            {items.map((item) => (
+            {/* {items.map((item) => (
               <Stack
                 key={item.id}
                 direction="row"
@@ -131,7 +106,7 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
 
                 <Box sx={{ width: 110, textAlign: 'right' }}>{fCurrency(item.price)}</Box>
               </Stack>
-            ))}
+            ))} */}
           </Stack>
         </Collapse>
       </TableCell>

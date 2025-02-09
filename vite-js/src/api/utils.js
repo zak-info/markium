@@ -16,7 +16,7 @@ export function useValues() {
       dataLoading: isLoading,
       dataError: error,
       dataValidating: isValidating,
-      dataEmpty: !isLoading && !data?.data.length,
+      dataEmpty: !isLoading && !data?.data?.length,
     }),
     [data?.data, error, isLoading, isValidating]
   );

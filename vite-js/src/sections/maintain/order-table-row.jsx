@@ -24,11 +24,15 @@ import Iconify from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import { useTranslate } from 'src/locales';
+import { Link } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
 export default function OrderTableRow({
   row,
+  car_model,
+  work_site,
+  driver,
   selected,
   onViewRow,
   onSelectRow,
@@ -39,7 +43,8 @@ export default function OrderTableRow({
     exit_date,
     status,
     maintenance_manager,
-    car_model,
+    remaining_days,
+    // car_model,
     cause,
     driver_phone_number,
     plat_number,
@@ -60,6 +65,7 @@ export default function OrderTableRow({
   const renderPrimary = (
     <TableRow hover selected={selected}>
       <TableCell>
+      <Link href={"/dashboard/vehicle/"+car?.id}>
         <ListItemText
           onClick={onViewRow}
           sx={{
@@ -68,14 +74,15 @@ export default function OrderTableRow({
               textDecoration: 'underline',
             },
           }}
-          primary={plat_number}
+          primary={car_model}
           secondary={car?.plat_number}
         />
+      </Link>
       </TableCell>
-      <TableCell>{car_model}</TableCell>
-      <TableCell>{state?.translations?.name}</TableCell>
-      <TableCell>{type?.translations?.name}</TableCell>
-      <TableCell>{occupant_name}</TableCell>
+      {/* <TableCell>{car_model}</TableCell> */}
+      <TableCell>{state?.translations[0]?.name}</TableCell>
+      <TableCell>{remaining_days}</TableCell>
+      {/* <TableCell>{occupant_name}</TableCell> */}
 
       <TableCell>
         <Label
@@ -87,12 +94,25 @@ export default function OrderTableRow({
             'default'
           }
         >
-          {status?.translations?.name}
+          {/* {status?.translations[0]?.name} */}
+          {status?.key}
         </Label>
       </TableCell>
-      <TableCell> {driver_phone_number || '-'} </TableCell>
+      {/* <TableCell> {driver_phone_number || '-'} </TableCell> */}
+      <TableCell>
+        <ListItemText
+          primary={driver?.name}
+          secondary={driver?.phone}
+          primaryTypographyProps={{ typography: 'body2', noWrap: true }}
+          secondaryTypographyProps={{
+            mt: 0.5,
+            component: 'span',
+            typography: 'caption',
+          }}
+        />
+      </TableCell>
 
-      <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
+      <TableCell align="center" sx={{ px: 1, whiteSpace: 'nowrap' }}>
         {/* <IconButton
           color={collapse.value ? 'inherit' : 'default'}
           onClick={collapse.onToggle}

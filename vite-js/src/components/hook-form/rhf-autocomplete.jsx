@@ -12,11 +12,9 @@ import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
-export default function RHFAutocomplete({ name, label, type, helperText, placeholder, ...other }) {
+export default function RHFAutocomplete({ name, label,country, type, helperText, placeholder, ...other }) {
   const { control, setValue } = useFormContext();
-
   const { multiple } = other;
-
   return (
     <Controller
       name={name}
@@ -31,12 +29,10 @@ export default function RHFAutocomplete({ name, label, type, helperText, placeho
               disableCloseOnSelect={multiple}
               onChange={(event, newValue) => setValue(name, newValue, { shouldValidate: true })}
               renderOption={(props, option) => {
-                const country = getCountry(option);
-
-                if (!country.label) {
+                // const country = getCountry(option);
+                if (!country.name) {
                   return null;
                 }
-
                 return (
                   <li {...props} key={country.label}>
                     <Iconify

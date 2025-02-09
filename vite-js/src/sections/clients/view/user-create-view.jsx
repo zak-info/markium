@@ -14,20 +14,21 @@ export default function UserCreateView() {
   const settings = useSettingsContext();
   const { t } = useTranslate();
 
+
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
       <CustomBreadcrumbs
-        heading={t('addNewDriver')}
+        heading={t('addNewClient')}
         links={[
           {
             name: t('dashboard'),
             href: paths.dashboard.root,
           },
           {
-            name: t('driversList'),
+            name: t('ClientsList'),
             href: paths.dashboard.clients.root,
           },
-          { name: t('addNewDriver') },
+          { name: t('addNewClient') },
         ]}
         sx={{
           mb: { xs: 3, md: 5 },

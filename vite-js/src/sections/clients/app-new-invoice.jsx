@@ -20,22 +20,29 @@ import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 import { TableHeadCustom } from 'src/components/table';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import { useGetCar } from 'src/api/car';
+import { useGetDrivers } from 'src/api/drivers';
+import { ListItemText } from '@mui/material';
+import { useRouter } from 'src/routes/hooks';
+import { paths } from 'src/routes/paths';
 
 // ----------------------------------------------------------------------
 
 export default function AppNewInvoice({ title, subheader, tableData, tableLabels, ...other }) {
+  const { car } = useGetCar();
+  const { drivers } = useGetDrivers();
   return (
     <Card {...other}>
       <CardHeader title={title} subheader={subheader} sx={{ mb: 3 }} />
 
       <TableContainer sx={{ overflow: 'unset' }}>
         <Scrollbar>
-          <Table sx={{ minWidth: 680 }}>
+          <Table sx={{ }}>
             <TableHeadCustom headLabel={tableLabels} />
 
             <TableBody>
-              {tableData.map((row) => (
-                <AppNewInvoiceRow key={row.id} row={row} />
+              {tableData?.map((row) => (
+                <AppNewInvoiceRow key={row.id} row={row} clausable={row?.clauseable_type == "car" ? car?.find(item => item?.id == row?.clauseable_id) : drivers?.find(item => item?.id == row?.clauseable_id)} />
               ))}
             </TableBody>
           </Table>
@@ -66,8 +73,9 @@ AppNewInvoice.propTypes = {
 
 // ----------------------------------------------------------------------
 
-function AppNewInvoiceRow({ row }) {
+function AppNewInvoiceRow({ row, clausable }) {
   const popover = usePopover();
+  const router = useRouter();
 
   const handleDownload = () => {
     popover.onClose();
@@ -88,27 +96,48 @@ function AppNewInvoiceRow({ row }) {
     popover.onClose();
     console.info('DELETE', row.id);
   };
+  const handleViewClausable = () => {
+    console.log(row);
+    if(row?.clauseable_type == "car"){
+      router.push(paths.dashboard.vehicle.details(row?.clauseable_id));
+    }else{
+      router.push(paths.dashboard.drivers.details(row?.clauseable_id));
+    }
+    console.info('DELETE', row.id);
+  };
 
   return (
     <>
       <TableRow>
-        <TableCell>{row.invoiceNumber}</TableCell>
+        <TableCell>
+          <Box
+            onClick={handleViewClausable}
+            sx={{
+              cursor: 'pointer',
+              '&:hover': {
+                textDecoration: 'underline',
+              },
+            }}
+          >
+            <ListItemText
+              primary={row?.clauseable_type == "car" ? clausable?.model?.translations?.name : clausable?.name}
+              secondary={row?.clauseable_type == "car" ? clausable?.plat_number : clausable?.phone_number}
+              primaryTypographyProps={{ typography: 'body2', noWrap: true }}
+              secondaryTypographyProps={{
+                mt: 0.5,
+                component: 'span',
+                typography: 'caption',
+              }}
+            />
+          </Box>
+        </TableCell>
 
-        <TableCell>{row.category}</TableCell>
+        <TableCell>{row?.cost}.00</TableCell>
 
-        <TableCell>{fCurrency(row.price)}</TableCell>
+        <TableCell>{row?.duration} {row?.duration > 1 ? "months":"month"}</TableCell>
 
         <TableCell>
-          <Label
-            variant="soft"
-            color={
-              (row.status === 'progress' && 'warning') ||
-              (row.status === 'out of date' && 'error') ||
-              'success'
-            }
-          >
-            {row.status}
-          </Label>
+            {row?.cost * row?.duration}.00
         </TableCell>
 
         <TableCell align="right" sx={{ pr: 1 }}>

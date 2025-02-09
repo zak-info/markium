@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
 import PropTypes from 'prop-types';
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
@@ -41,6 +41,7 @@ import { useValues } from 'src/api/utils';
 
 export default function UserNewEditForm({ currentCar }) {
   const router = useRouter();
+  console.log("currentCar : ", currentCar);
 
   const { company } = useGetCompany();
 
@@ -97,6 +98,7 @@ export default function UserNewEditForm({ currentCar }) {
     [currentCar]
   );
 
+
   const methods = useForm({
     resolver: yupResolver(NewUserSchema),
     defaultValues,
@@ -111,116 +113,75 @@ export default function UserNewEditForm({ currentCar }) {
     formState: { isSubmitting, errors },
   } = methods;
 
+
+  const selectedCompanyId = watch('car_company_id');
+
+  const values = watch();
+
+  useEffect(() => {
+    if (currentCar?.id) {
+      const selectedColor = data?.colors?.find(
+        (option) =>
+          option?.id == currentCar?.color?.id
+      );
+      if (selectedColor) {
+        setValue('color_id', selectedColor.id);
+      }
+
+      const selectedCarCompany = data?.car_companies?.find(
+        (option) => option?.id == currentCar?.model?.company?.id
+      );
+      if (selectedCarCompany) {
+        setValue('car_company_id', selectedCarCompany?.id);
+      }
+      const selectedCarModel = data?.car_companies?.find(item => item?.id == currentCar?.model?.company?.id)?.models?.find(
+        (option) => option?.id == currentCar?.model?.id
+      );
+      if (selectedCarModel) {
+        setValue('car_model_id', selectedCarModel?.id);
+      }
+      const selectedSpec = data?.specs?.find(
+        (option) => option?.id == currentCar?.spec?.id
+      );
+      if (selectedSpec) {
+        setValue('spec_id', selectedSpec?.id);
+      }
+      const selectedLicenseType = data?.license_types?.find(
+        (option) => option?.id == currentCar?.license_type?.id
+      );
+      if (selectedLicenseType) {
+        setValue('license_type_id', selectedLicenseType?.id);
+      }
+      const selectedState = data?.states?.find(
+        (option) => option?.id == currentCar?.state?.id
+      );
+      if (selectedState) {
+        setValue('state_id', selectedState?.id);
+      }
+
+    }
+  }, [data, setValue]);
+
+
   const onSubmit = handleSubmit(async (data) => {
     try {
       const response = currentCar?.id ? await editCar(currentCar?.id, data) : await createCar(data);
-      enqueueSnackbar(response?.data?.message);
-
+      enqueueSnackbar(currentCar?.id ? "Update Success!!!" : "Insertion Success!!!");
       router.push(paths.dashboard.vehicle.root);
+      reset();
     } catch (error) {
       console.error(error);
+      Object.values(error?.data).forEach(array => {
+        array.forEach(text => {
+          enqueueSnackbar(text, { variant: 'error' });
+        });
+      });
     }
   });
 
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>
       <Grid container spacing={3}>
-        {/* <Grid xs={12} md={4}>
-          <Card sx={{ pt: 10, pb: 5, px: 3 }}>
-            {currentCar && (
-              <Label
-                color={
-                  (values.status === 'active' && 'success') ||
-                  (values.status === 'banned' && 'error') ||
-                  'warning'
-                }
-                sx={{ position: 'absolute', top: 24, right: 24 }}
-              >
-                {values.status}
-              </Label>
-            )}
-
-            <Box sx={{ mb: 5 }}>
-              <RHFUploadAvatar
-                name="avatarUrl"
-                maxSize={3145728}
-                onDrop={handleDrop}
-                helperText={
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      mt: 3,
-                      mx: 'auto',
-                      display: 'block',
-                      textAlign: 'center',
-                      color: 'text.disabled',
-                    }}
-                  >
-                    Allowed *.jpeg, *.jpg, *.png, *.gif
-                    <br /> max size of {fData(3145728)}
-                  </Typography>
-                }
-              />
-            </Box>
-
-            {currentCar && (
-              <FormControlLabel
-                labelPlacement="start"
-                control={
-                  <Controller
-                    name="status"
-                    control={control}
-                    render={({ field }) => (
-                      <Switch
-                        {...field}
-                        checked={field.value !== 'active'}
-                        onChange={(event) =>
-                          field.onChange(event.target.checked ? 'banned' : 'active')
-                        }
-                      />
-                    )}
-                  />
-                }
-                label={
-                  <>
-                    <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
-                      Banned
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                      Apply disable account
-                    </Typography>
-                  </>
-                }
-                sx={{ mx: 0, mb: 3, width: 1, justifyContent: 'space-between' }}
-              />
-            )}
-
-            <RHFSwitch
-              name="isVerified"
-              labelPlacement="start"
-              label={
-                <>
-                  <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
-                    Email Verified
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                    Disabling this will automatically send the user a verification email
-                  </Typography>
-                </>
-              }
-              sx={{ mx: 0, width: 1, justifyContent: 'space-between' }}
-            />
-
-            {currentCar && (
-              <Stack justifyContent="center" alignItems="center" sx={{ mt: 3 }}>
-                <Button variant="soft" color="error">
-                  Delete User
-                </Button>
-              </Stack>
-            )}
-          </Card>
-        </Grid> */}
-
         <Grid xs={12} md={8}>
           <Card sx={{ p: 3 }}>
             <Box
@@ -232,24 +193,47 @@ export default function UserNewEditForm({ currentCar }) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <RHFSelect required name="car_company_id" label={t('company')}>
+              {/* <RHFSelect required name="car_company_id" label={t('company')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
-                {company.map((option) => (
-                  <MenuItem key={option.value} value={option?.id}>
-                    {option?.name}
+                {data?.car_companies?.map((option) => (
+                  <MenuItem key={option?.id} value={option?.id}>
+                    {option?.translations?.name}
+                  </MenuItem>
+                ))}
+              </RHFSelect> */}
+
+              <RHFSelect required name="car_company_id" label={t('Company')}>
+                <Divider sx={{ borderStyle: 'dashed' }} />
+                {data?.car_companies?.map((company) => (
+                  <MenuItem key={company?.id} value={company.id}>
+                    {company?.translations?.name || company.key}
                   </MenuItem>
                 ))}
               </RHFSelect>
+
               <RHFTextField required name="production_year" label={t('manufacturingYear')} />
 
-              <RHFSelect required name="car_model_id" label={t('model')}>
+
+              <RHFSelect required name="car_model_id" label={t('Model')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
-                {data?.car_model?.map((option) => (
-                  <MenuItem key={option.name} value={option?.id}>
-                    {option?.name}
+                {data?.car_companies?.find(item => item?.id == selectedCompanyId)?.models?.map((model) => (
+                  <MenuItem key={model.id} value={model.id}>
+                    {model.translations?.name || model.key}
                   </MenuItem>
                 ))}
               </RHFSelect>
+
+
+
+              {/* <RHFSelect required name="car_model_id" label={t('model')}>
+                <Divider sx={{ borderStyle: 'dashed' }} />
+                {data?.car_model?.map((option) => (
+                  <MenuItem key={option?.translations?.name} value={option?.id}>
+                    {option?.translations?.name}
+                  </MenuItem>
+                ))}
+              </RHFSelect> */}
+
               <RHFTextField required name="plat_number" label={t('plateNumber')} />
 
               <RHFTextField required name="chassis_number" label={t('structureNo')} />
@@ -263,49 +247,40 @@ export default function UserNewEditForm({ currentCar }) {
                 name="passengers_capacity"
                 label={t('numberOfPassengers')}
               />
-              <RHFSelect required name="color_id" label={t('vehcileColor')}>
+              <RHFSelect required name="color_id" label={t('vehcileColor')} >
                 <Divider sx={{ borderStyle: 'dashed' }} />
-                {data?.color?.map((option) => (
-                  <MenuItem key={option?.translations?.[0]?.name} value={option?.id}>
-                    {option?.translations?.[0]?.name}
+                {data?.colors?.map((option) => (
+                  <MenuItem key={option?.id} value={option?.id}>
+                    {option?.translations[0]?.name}
                   </MenuItem>
                 ))}
               </RHFSelect>
 
               <RHFSelect required name="spec_id" label={t('specifications')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
-                {data?.spec?.map((option) => (
-                  <MenuItem key={option?.name} value={option?.id}>
+                {data?.specs?.map((option) => (
+                  <MenuItem key={option?.id} value={option?.id}>
                     {option?.name}
                   </MenuItem>
                 ))}
               </RHFSelect>
               <RHFSelect required name="license_type_id" label={t('typeOfLicense')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
-                {data?.license_type?.map((option) => (
-                  <MenuItem key={option?.name} value={option?.id}>
-                    {option?.name}
+                {data?.license_types?.map((option) => (
+                  <MenuItem key={option?.id} value={option?.id}>
+                    {option?.translations[0]?.name}
                   </MenuItem>
                 ))}
               </RHFSelect>
 
               <RHFSelect required name="state_id" label={t('workSite')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
-                {data?.state?.map((option) => (
-                  <MenuItem key={option?.name} value={option?.id}>
-                    {option?.name}
+                {data?.states?.map((option) => (
+                  <MenuItem key={option?.id} value={option?.id}>
+                    {option?.translations[0]?.name}
                   </MenuItem>
                 ))}
               </RHFSelect>
-
-              {/* <RHFAutocomplete
-                name="country"
-                type="country"
-                label={t('manufacturingYear')}
-                fullWidth
-                options={countries.map((option) => option.label)}
-                getOptionLabel={(option) => option}
-              /> */}
             </Box>
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>
@@ -323,3 +298,5 @@ export default function UserNewEditForm({ currentCar }) {
 UserNewEditForm.propTypes = {
   currentCar: PropTypes.object,
 };
+
+

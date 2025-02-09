@@ -35,7 +35,7 @@ export default function ProductEditView({ id }) {
         }}
       />
 
-      <ProductNewEditForm currentProduct={currentProduct} />
+      <ProductNewEditForm currentMentainance={currentProduct} />
     </Container>
   );
 }

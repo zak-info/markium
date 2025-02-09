@@ -21,6 +21,7 @@ import Scrollbar from 'src/components/scrollbar';
 import { TableHeadCustom } from 'src/components/table';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import { fDate } from 'src/utils/format-time';
+import { ListItemText } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -93,10 +94,22 @@ function AppNewInvoiceRow({ row }) {
   return (
     <>
       <TableRow>
-        <TableCell>{row.id}</TableCell>
+        {/* <TableCell>{row.id}</TableCell> */}
 
         <TableCell>{row.cause}</TableCell>
-        <TableCell>{fDate(row.created_at)}</TableCell>
+        {/* <TableCell>{fDate(row.created_at)}</TableCell> */}
+        <TableCell>
+          <ListItemText
+            primary={fDate(row?.entry_date)}
+            secondary={fDate(row?.exit_date)}
+            primaryTypographyProps={{ typography: 'body2', noWrap: true }}
+            secondaryTypographyProps={{
+              mt: 0.5,
+              component: 'span',
+              typography: 'caption',
+            }}
+          />
+        </TableCell>
         <TableCell>{fCurrency(row.cost) || '-'}</TableCell>
 
         {/* <TableCell align="right" sx={{ pr: 1 }}>
