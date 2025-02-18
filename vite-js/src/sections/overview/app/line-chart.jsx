@@ -39,11 +39,17 @@ export default function AppCurrentDownload({ title, subheader, chart, ...other }
     colors,
     labels: series.map((i) => i.label),
     stroke: { colors: [theme.palette.background.paper] },
-    legend: {
+    legend: {  // ✅ Merged `legend` object
+      show: true,
+      showForSingleSeries: true,
+      customLegendItems: ['Actual', 'Mac', 'Windows'],
       offsetY: 0,
       floating: true,
       position: 'bottom',
       horizontalAlign: 'center',
+      markers: {
+        fillColors: ['#00E396', '#775DD0'],
+      },
     },
     tooltip: {
       fillSeriesColor: false,
@@ -54,20 +60,8 @@ export default function AppCurrentDownload({ title, subheader, chart, ...other }
         },
       },
     },
-
     chart: {
       type: 'bar',
-    },
-    legend: {
-      show: true,
-      showForSingleSeries: true,
-      customLegendItems: ['Actual', 'Mac', 'Windows'],
-      horizontalAlign: 'center',
-      floating: true,
-
-      markers: {
-        fillColors: ['#00E396', '#775DD0'],
-      },
     },
     plotOptions: {
       bar: {
@@ -76,7 +70,7 @@ export default function AppCurrentDownload({ title, subheader, chart, ...other }
     },
     ...options,
   });
-
+  
   const options2 = {
     chart: {
       type: 'bar',
