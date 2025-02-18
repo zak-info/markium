@@ -60,7 +60,7 @@ export default function UserNewEditForm({ currentMentainance }) {
       .positive('State ID must be a positive number')
       .integer('State ID must be an integer'),
 
-    type: Yup.string().required('Type is required'),
+    maintainance_type: Yup.string().required('Type is required'),
 
     car_id: Yup.number().required('Car is required'),
     entry_date: Yup.date().required('Entry date is required'), // Validates that the entry date is not in the future
@@ -75,10 +75,10 @@ export default function UserNewEditForm({ currentMentainance }) {
     () => ({
       state_id: null, // default value for state_id
       car_id: '', // default value for car plate number
-      type: '', // default value for car plate number
-      entry_date: null, // default value for entry date
+      maintainance_type: '', // default value for car plate number
+      entry_date: new Date(), // default value for entry date
       cause: '', // default value for cause
-      exit_date: null, // default value for exit date (empty string)
+      exit_date: new Date(), // default value for exit date (empty string)
     }),
     [currentMentainance]
   );
@@ -101,7 +101,7 @@ export default function UserNewEditForm({ currentMentainance }) {
   useEffect(() => {
     if (currentMentainance?.id) {
       setValue('car_plat_number', currentMentainance?.car?.plat_number);
-      setValue('type', currentMentainance?.type);
+      setValue('maintainance_type', currentMentainance?.maintainance_type);
       setValue('cause', currentMentainance?.cause);
       setValue('entry_date', currentMentainance?.entry_date ? new Date(currentMentainance?.entry_date) : new Date());
       setValue('exit_date', currentMentainance?.exit_date ? new Date(currentMentainance?.exit_date) : new Date());
@@ -128,6 +128,11 @@ export default function UserNewEditForm({ currentMentainance }) {
       console.info('DATA', body);
     } catch (error) {
       console.error(error);
+      Object.values(error?.data).forEach(array => {
+        array.forEach(text => {
+          enqueueSnackbar(text, { variant: 'error' });
+        });
+      });
     }
   });
 
@@ -153,7 +158,7 @@ export default function UserNewEditForm({ currentMentainance }) {
     },
     {
       label: 'دوري',
-      value: 'normal',
+      value: 'periodic',
     },
   ];
   return (
@@ -189,7 +194,7 @@ export default function UserNewEditForm({ currentMentainance }) {
                   </MenuItem>
                 ))}
               </RHFSelect> */}
-              <CarsAutocomplete required options={car} name="car_id" label={t('car')} placeholder='filter with plat_number' car_id={searchParams.get("car_id")} />
+              <CarsAutocomplete required options={car} name="car_id" label={t('car')} placeholder='filter with plat_number' car_id={searchParams.get("car_id")} disabled={searchParams.get("car_id") ? true:false} />
 
               <DatePicker
                 label={t('entryDate')}
@@ -226,13 +231,13 @@ export default function UserNewEditForm({ currentMentainance }) {
                 ))}
               </RHFSelect>
 
-              <RHFTextField required name="cause" label={t('cause')} />
+              <RHFTextField required name="cause" label={t('note')} />
 
-              <RHFSelect required name="type" label={t('maintainType')}>
+              <RHFSelect required name="maintainance_type" label={t('maintainType')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
-                {maintainType?.map((option) => (
-                  <MenuItem key={option?.value} value={option?.value}>
-                    {option?.label}
+                {data?.maintenance_type_enum?.map((option) => (
+                  <MenuItem key={option?.key} value={option?.key}>
+                    {option?.translations[0]?.name}
                   </MenuItem>
                 ))}
               </RHFSelect>

@@ -25,7 +25,7 @@ import CustomPopover, { usePopover } from 'src/components/custom-popover';
 
 // ----------------------------------------------------------------------
 
-export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteRow }) {
+export default function OrderTableRow({ row, car,currentLang, selected, onViewRow, onSelectRow, onDeleteRow }) {
   const { items, status, orderNumber, createdAt, customer, totalQuantity, subTotal } = row;
 
   const confirm = useBoolean();
@@ -40,27 +40,10 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
         <Checkbox checked={selected} onClick={onSelectRow} />
       </TableCell>
 
-      <TableCell>{orderNumber}</TableCell>
-
-      <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-        {/* <Avatar alt={customer.name} src={customer.avatarUrl} sx={{ mr: 2 }} />
-
-        <ListItemText
-          primary={customer.name}
-          secondary={customer.email}
-          primaryTypographyProps={{ typography: 'body2' }}
-          secondaryTypographyProps={{
-            component: 'span',
-            color: 'text.disabled',
-          }}
-        /> */}
-        232fs
-      </TableCell>
-
       <TableCell>
         <ListItemText
-          primary={fDate(createdAt)}
-          secondary={fTime(createdAt)}
+          primary={car?.plat_number}
+          secondary={car?.model?.translations?.name + " " + car?.model?.company?.translations?.name}
           primaryTypographyProps={{ typography: 'body2', noWrap: true }}
           secondaryTypographyProps={{
             mt: 0.5,
@@ -68,12 +51,27 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
             typography: 'caption',
           }}
         />
+
       </TableCell>
+      <TableCell>
 
-      <TableCell align="center"> {totalQuantity} </TableCell>
-      <TableCell align="center"> {totalQuantity} </TableCell>
-
-      <TableCell> {fCurrency(subTotal)} </TableCell>
+        <Label
+          variant="soft"
+          color={
+            (row?.operation === 'debit' && 'warning') ||
+            (row?.operation === 'income' && 'success') ||
+            'default'
+          }
+        >
+          {row?.operation}
+        </Label>
+      </TableCell>
+      {/* <TableCell> {row?.operation}</TableCell> */}
+      <TableCell align="start"> {fDate(row?.created_at)} </TableCell>
+      <TableCell align="start"> {row?.amount} </TableCell>
+      <TableCell align="start">
+        <span dangerouslySetInnerHTML={{ __html: row["note_"+currentLang]?.replace(/#(\d+)/g, `<a href="/dashboard/${row?.operation == "debit" ? "maintenance":"clients/contracts"}/$1" style="color: #00A76F; text-decoration: underline;">#$1</a>`) }}></span>
+      </TableCell>
 
       <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
         <IconButton
@@ -88,9 +86,9 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
           <Iconify icon="eva:arrow-ios-downward-fill" />
         </IconButton>
 
-        <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
+        {/* <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
           <Iconify icon="eva:more-vertical-fill" />
-        </IconButton>
+        </IconButton> */}
       </TableCell>
     </TableRow>
   );
@@ -105,7 +103,7 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
           sx={{ bgcolor: 'background.neutral' }}
         >
           <Stack component={Paper} sx={{ m: 1.5 }}>
-            {items.map((item) => (
+            {items?.map((item) => (
               <Stack
                 key={item.id}
                 direction="row"

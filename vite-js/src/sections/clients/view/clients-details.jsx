@@ -21,6 +21,8 @@ import ProfileFriends from '../profile-friends';
 import ProfileGallery from '../profile-gallery';
 import ProfileFollowers from '../profile-followers';
 import { useTranslation } from 'react-i18next';
+import { useGetClient, useGetClients } from 'src/api/client';
+import { useValues } from 'src/api/utils';
 
 // ----------------------------------------------------------------------
 
@@ -49,12 +51,14 @@ const TABS = [
 
 // ----------------------------------------------------------------------
 
-export default function UserProfileView() {
+export default function UserProfileView({id}) {
   const settings = useSettingsContext();
 
   const { user } = useMockedUser();
 
   const { t } = useTranslation();
+  const {client} = useGetClient(id)
+  const {data} = useValues()
 
   const [searchFriends, setSearchFriends] = useState('');
 
@@ -71,11 +75,11 @@ export default function UserProfileView() {
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
       <CustomBreadcrumbs
-        heading={t('clients')}
+        heading={t('client')}
         links={[
           { name: t('dashboard'), href: paths.dashboard.root },
           { name: t('clients'), href: paths.dashboard.drivers.root },
-          { name: user?.displayName },
+          { name: client?.name },
         ]}
         sx={{
           mb: { xs: 3, md: 5 },
@@ -89,49 +93,17 @@ export default function UserProfileView() {
         }}
       >
         <ProfileCover
-          role={_userAbout.role}
-          name={user?.displayName}
+          role={data?.neighborhoods?.find(item => item?.id == client?.neighborhood_id)?.translations[0]?.name}
+          name={client?.name}
           avatarUrl={user?.photoURL}
           coverUrl={_userAbout.coverUrl}
         />
 
-        {/* <Tabs
-          value={currentTab}
-          onChange={handleChangeTab}
-          sx={{
-            width: 1,
-            bottom: 0,
-            zIndex: 9,
-            position: 'absolute',
-            bgcolor: 'background.paper',
-            [`& .${tabsClasses.flexContainer}`]: {
-              pr: { md: 3 },
-              justifyContent: {
-                sm: 'center',
-                md: 'flex-end',
-              },
-            },
-          }}
-        >
-          {TABS.map((tab) => (
-            <Tab key={tab.value} value={tab.value} icon={tab.icon} label={tab.label} />
-          ))}
-        </Tabs> */}
       </Card>
 
-      {currentTab === 'profile' && <ProfileHome info={_userAbout} posts={_userFeeds} />}
+      {currentTab === 'profile' && <ProfileHome info={client} posts={_userFeeds} />}
 
-      {currentTab === 'followers' && <ProfileFollowers followers={_userFollowers} />}
-
-      {/* {currentTab === 'friends' && (
-        <ProfileFriends
-          friends={_userFriends}
-          searchFriends={searchFriends}
-          onSearchFriends={handleSearchFriends}
-        />
-      )} */}
-
-      {/* {currentTab === 'gallery' && <ProfileGallery gallery={_userGallery} />} */}
-    </Container>
+      {/* {currentTab === 'followers' && <ProfileFollowers followers={_userFollowers} />} */}
+      </Container>
   );
 }

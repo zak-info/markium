@@ -22,10 +22,11 @@ import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import { t } from 'i18next';
 
 // ----------------------------------------------------------------------
 
-export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteRow }) {
+export default function OrderTableRow({ row,onCreateRow, car,action, selected, onViewRow, onSelectRow, onDeleteRow }) {
   const { items, status, orderNumber, createdAt, customer, totalQuantity, subTotal } = row;
 
   const confirm = useBoolean();
@@ -36,16 +37,11 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
 
   const renderPrimary = (
     <TableRow hover selected={selected}>
-      <TableCell>{orderNumber}</TableCell>
-
-      <TableCell> {fCurrency(subTotal)} </TableCell>
-      <TableCell>- </TableCell>
-      <TableCell>- </TableCell>
-
-      <TableCell>
+      {/* <TableCell>{car?.plat_number}</TableCell> */}
+      {/* <TableCell>
         <ListItemText
-          primary={fDate(createdAt)}
-          secondary={fTime(createdAt)}
+          primary={car?.model?.translations?.name}
+          secondary={car?.model?.company?.translations?.name}
           primaryTypographyProps={{ typography: 'body2', noWrap: true }}
           secondaryTypographyProps={{
             mt: 0.5,
@@ -53,27 +49,29 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
             typography: 'caption',
           }}
         />
-      </TableCell>
+      </TableCell> */}
 
-      <TableCell align="center"> {totalQuantity} </TableCell>
-      <TableCell align="center"> {totalQuantity} </TableCell>
-      <TableCell align="center"> {totalQuantity} </TableCell>
 
+      <TableCell> {row?.id} </TableCell>
+      <TableCell> {fDate(row?.created_at)} </TableCell>
+      <TableCell>{row?.new_values?.remaining_days || t("not_yet_selected")} {row?.new_values?.remaining_days ? "day" : ""}</TableCell>
+      <TableCell align="start">{row?.new_values?.maintenance_manager ? row?.new_values?.maintenance_manager[0]?.name : t("not_yet_selected")} </TableCell>
       <TableCell>
         <Label
           variant="soft"
           color={
-            (status === 'completed' && 'success') ||
-            (status === 'pending' && 'warning') ||
-            (status === 'cancelled' && 'error') ||
+            (row?.action == 'update' && 'primary') ||
+            (row?.action == 'create' && 'secondary') ||
+            (row?.action === 'action_required' && 'warning') ||
+            (row?.action === 'cancelled' && 'error') ||
             'default'
           }
         >
-          {status}
+          {action}
         </Label>
       </TableCell>
 
-      <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
+      <TableCell align="start" sx={{ px: 1 }}>
         <IconButton
           color={collapse.value ? 'inherit' : 'default'}
           onClick={collapse.onToggle}
@@ -93,7 +91,7 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
     </TableRow>
   );
 
-  const renderSecondary = (
+  const renderSecondary = (new_values) => (
     <TableRow>
       <TableCell sx={{ p: 0, border: 'none' }} colSpan={8}>
         <Collapse
@@ -103,42 +101,32 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
           sx={{ bgcolor: 'background.neutral' }}
         >
           <Stack component={Paper} sx={{ m: 1.5 }}>
-            {items.map((item) => (
-              <Stack
-                key={item.id}
-                direction="row"
-                alignItems="center"
-                sx={{
-                  p: (theme) => theme.spacing(1.5, 2, 1.5, 1.5),
-                  '&:not(:last-of-type)': {
-                    borderBottom: (theme) => `solid 2px ${theme.palette.background.neutral}`,
-                  },
-                }}
-              >
-                <Avatar
-                  src={item.coverUrl}
-                  variant="rounded"
-                  sx={{ width: 48, height: 48, mr: 2 }}
-                />
+            {/* {new_values ?
+              Object.entries(new_values)?.map(([key, value]) => (
 
-                <ListItemText
-                  primary={item.name}
-                  secondary={item.sku}
-                  primaryTypographyProps={{
-                    typography: 'body2',
-                  }}
-                  secondaryTypographyProps={{
-                    component: 'span',
-                    color: 'text.disabled',
-                    mt: 0.5,
-                  }}
-                />
+                typeof value === "object" && value !== null ?
 
-                <Box>x{item.quantity}</Box>
+                  renderSecondary(value)
 
-                <Box sx={{ width: 110, textAlign: 'right' }}>{fCurrency(item.price)}</Box>
-              </Stack>
-            ))}
+                  :
+                  <Stack
+                    key={key}
+                    direction="row"
+                    alignItems="center"
+                    sx={{
+                      p: (theme) => theme.spacing(1.5, 2, 1.5, 1.5),
+                      '&:not(:last-of-type)': {
+                        borderBottom: (theme) => `solid 2px ${theme.palette.background.neutral}`,
+                      },
+                    }}
+                  >
+                    <p>{key} : {value}</p>
+                  </Stack>
+
+              ))
+              : null
+            } */}
+
           </Stack>
         </Collapse>
       </TableCell>
@@ -149,15 +137,15 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
     <>
       {renderPrimary}
 
-      {renderSecondary}
+      {renderSecondary(row?.new_values)}
 
       <CustomPopover
         open={popover.open}
         onClose={popover.onClose}
         arrow="right-top"
-        sx={{ width: 140 }}
+        sx={{ width: 190 }}
       >
-        <MenuItem
+        {/* <MenuItem
           onClick={() => {
             confirm.onTrue();
             popover.onClose();
@@ -166,7 +154,21 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
         >
           <Iconify icon="solar:trash-bin-trash-bold" />
           Delete
-        </MenuItem>
+        </MenuItem> */}
+        {/* {
+          row?.action == 'action_required' && */}
+          <MenuItem
+            onClick={() => {
+              onCreateRow();
+              popover.onClose();
+            }}
+            disabled={row?.action !== 'action_required' || !row?.enabled}
+          >
+            <Iconify icon="duo-icons:add-circle" />
+            create maintenance
+          </MenuItem>
+        {/* } */}
+
 
         <MenuItem
           onClick={() => {

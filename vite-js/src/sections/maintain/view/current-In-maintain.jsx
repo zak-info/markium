@@ -70,11 +70,11 @@ export default function NotificationsListView() {
     // { id: 'vehicle', label: t('vehicle'), width: 116 },
     { id: 'entryDate', label: t('entryDate'), width: 140 },
     // { id: 'manitainClassification', label: t('manitainClassification'), width: 140 },
-    { id: 'expectedMaintainDays', label: t('expected_period') },
+    { id: 'expectedMaintainDays', label: t('expectedMaintainDays') },
     // { id: 'theRest', label: t('theRest') },
 
-    { id: 'malfunction', label: t('malfunction'), width: 140 },
     { id: 'totalAmount', label: t('workSite'), width: 140 },
+    { id: 'malfunction', label: t('status'), width: 140 },
     { id: 'actions', label: t('actions'), width: 140 },
 
     // { id: 'tenantName', label: t('state'), width: 140 },
@@ -177,7 +177,7 @@ export default function NotificationsListView() {
   );
   const handleEditRow = useCallback(
     (id) => {
-      router.push(paths.dashboard.maintenance.new+"?car_id=1");
+      router.push(paths.dashboard.maintenance.new+"?car_id="+id);
     },
     [router]
   );

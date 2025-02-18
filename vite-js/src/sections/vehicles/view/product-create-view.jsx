@@ -16,7 +16,6 @@ export default function UserCreateView() {
 
   const { t } = useTranslate();
 
-    const { data } = useValues();
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>

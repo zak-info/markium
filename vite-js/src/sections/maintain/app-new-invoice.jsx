@@ -102,7 +102,7 @@ function AppNewInvoiceRow({ row, maintenance_spec }) {
   return (
     <>
       <TableRow>
-        <TableCell>
+        {/* <TableCell>
           <ListItemText
             primary={!!row?.is_periodic ? "periodic" : "non periodic"}
             secondary={maintenance_spec}
@@ -113,10 +113,13 @@ function AppNewInvoiceRow({ row, maintenance_spec }) {
               typography: 'caption',
             }}
           />
-
-        </TableCell>
+        </TableCell> */}
+        <TableCell>{!!row?.is_periodic ? "periodic" : "non periodic"}</TableCell>
+        <TableCell>{maintenance_spec}</TableCell>
         <TableCell>{row?.cost + " RS"}</TableCell>
-        <TableCell>
+        <TableCell>{row?.quantity + " " + row?.unit}</TableCell>
+        <TableCell>{row?.piece_status}</TableCell>
+        {/* <TableCell>
           <ListItemText
             primary={row?.quantity + " " + row?.unit}
             secondary={ " piece_status : " +row?.piece_status}
@@ -127,8 +130,8 @@ function AppNewInvoiceRow({ row, maintenance_spec }) {
               typography: 'caption',
             }}
           />
-        </TableCell>
-        <TableCell>{toNumber(row?.cost) * row?.quantity + ".00 RS"}</TableCell>
+        </TableCell> */}
+        <TableCell align="left">{toNumber(row?.cost) * row?.quantity + ".00 RS"}</TableCell>
         {/* <TableCell>{row?.category}</TableCell> */}
 
 

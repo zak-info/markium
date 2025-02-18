@@ -33,6 +33,28 @@ export function useGetClaim(id) {
     return memoizedValue;
 }
 
+export function useGetAllClaim() {
+    const { data, isLoading, error, isValidating, mutate } = useSWR(
+        endpoints.contracts.allclaims,
+        fetcher,
+        options
+    );
+
+    const memoizedValue = useMemo(
+        () => ({
+            claims: data?.data || [],
+            claimsLoading: isLoading,
+            claimsError: error,
+            claimsValidating: isValidating,
+            claimsEmpty: !isLoading && !data?.data?.length,
+            mutate,
+        }),
+        [data, error, isLoading, isValidating]
+    );
+
+    return memoizedValue;
+}
+
 export async function createClaim(body) {
     const URL = endpoints.claims.new;
     return await axios.post(URL, body);

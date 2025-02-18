@@ -14,11 +14,11 @@ export default function SingleFilePreview({ imgUrl = '',filename }) {
         top: 0,
         left: 0,
         width: 1,
-        height: 1,
+        height: "auto",
         position: 'absolute',
       }}
     >
-     <h2>{filename}</h2>
+     <h2 style={{fontSize:"1rem"}}>{filename}</h2>
       <Image
         alt="file preview"
         src={imgUrl}
@@ -28,7 +28,6 @@ export default function SingleFilePreview({ imgUrl = '',filename }) {
           borderRadius: 1,
         }}
       />
-     
     </Box>
   );
 }

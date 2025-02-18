@@ -85,9 +85,9 @@ export default function CarDettachForm({ car_id,driver_id, currentClause }) {
 
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>
-      <Grid container spacing={3} >
-        <Grid xs={12} md={12}>
-          <Stack alignItems="flex-start" sx={{ mt: 1 }}>
+      <Grid container spacing={3} sx={{ width:"100%" }}>
+        <Grid xs={12} md={16}>
+          <Stack alignItems="flex-end" direction="row" >
             <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
               {t('Dettach driver')}
             </LoadingButton>

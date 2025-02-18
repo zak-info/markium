@@ -38,6 +38,7 @@ import { createClient, editClient } from 'src/api/client';
 import Iconify from 'src/components/iconify';
 import { Table, TableBody, TableCell, TableRow } from '@mui/material';
 import { TableHeadCustom } from 'src/components/table';
+import { set } from 'lodash';
 
 // ----------------------------------------------------------------------
 
@@ -89,13 +90,13 @@ export default function UserNewEditForm({ currentClient }) {
 
 
   useEffect(() => {
-    console.log("currentClient :",currentClient);
+    console.log("currentClient :", currentClient);
     if (currentClient?.id) {
-      setValue("name",currentClient?.name)
-      setValue("tax_number",currentClient?.tax_number)
-      setValue("commercial_registration_number",currentClient?.commercial_registration_number)
-      setValue("state_id",currentClient?.state_id)
-      setValue("neighborhood_id",currentClient?.neighborhood_id)
+      setValue("name", currentClient?.name)
+      setValue("tax_number", currentClient?.tax_number)
+      setValue("commercial_registration_number", currentClient?.commercial_registration_number)
+      setValue("state_id", currentClient?.state_id)
+      setValue("neighborhood_id", currentClient?.neighborhood_id)
       setRepresentors(currentClient?.representors)
       // const state = data?.states?.find(
       //   (option) =>
@@ -107,13 +108,29 @@ export default function UserNewEditForm({ currentClient }) {
     }
   }, [data, setValue]);
 
+  const [create, setCreate] = useState(true)
+  const [rep_id, setRip_id] = useState(null)
+
 
   const [representors, setRepresentors] = useState([])
   const handleAddRepresentor = () => {
-    setRepresentors(!!representors ? [...representors, { id: representors?.length > 0 ? representors[representors.length - 1].id + 1 : 1, name: values.rep_name, contact_number: values.rep_contact_number }]:[ { id:1, name: values.rep_name, contact_number: values.rep_contact_number }])
+    if (create) {
+      setRepresentors(!!representors ? [...representors, { id: representors?.length > 0 ? representors[representors.length - 1].id + 1 : 1, name: values.rep_name, contact_number: values.rep_contact_number }] : [{ id: 1, name: values.rep_name, contact_number: values.rep_contact_number }])
+    } else {
+      const updatedArray = representors.map(item =>
+        item.id == rep_id ? { ...item, name: values?.rep_name, contact_number: values?.rep_contact_number } : item
+      );
+      setRepresentors(updatedArray)
+    }
     setValue("rep_name", "")
     setValue("rep_contact_number", "")
 
+  }
+  const handleUpdateRepresentor = (rep) => {
+    setCreate(false);
+    setRip_id(rep?.id)
+    setValue("rep_name", rep?.name)
+    setValue("rep_contact_number", rep?.contact_number)
   }
   const handleRemoveRepresentor = (name) => {
     setRepresentors([...representors?.filter(item => item.name != name)])
@@ -136,22 +153,6 @@ export default function UserNewEditForm({ currentClient }) {
     }
   });
 
-  const handleDrop = useCallback(
-    (acceptedFiles) => {
-      const file = acceptedFiles[0];
-
-      const newFile = Object.assign(file, {
-        preview: URL.createObjectURL(file),
-      });
-
-      if (file) {
-        setValue('avatarUrl', newFile, { shouldValidate: true });
-      }
-    },
-    [setValue]
-  );
-
-  const options = ['نيسان', 'تويتا'];
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>
       <Grid container spacing={3}>
@@ -168,7 +169,7 @@ export default function UserNewEditForm({ currentClient }) {
             >
               <RHFTextField required name="name" label={t('name')} />
               <RHFTextField required name="tax_number" label={t('tax_number')} />
-              <RHFTextField required name="commercial_registration_number" label={t('commercial_registration_number')} />
+              <RHFTextField required name="commercial_registration_number" label={t('c_r_n')} />
               <SimpleAutocomplete
                 name="location_id"
                 label={t('state')}
@@ -178,7 +179,7 @@ export default function UserNewEditForm({ currentClient }) {
               />
               <SimpleAutocomplete
                 name="neighborhood_id"
-                label={t('neighborhood')}
+                label={t('location')}
                 options={data?.neighborhoods}
                 getOptionLabel={(option) => option?.translations[0]?.name}
                 placeholder='choose neighborhood'
@@ -194,12 +195,12 @@ export default function UserNewEditForm({ currentClient }) {
                 <Box key={index} rowGap={3} columnGap={3} alignItems={"center"} display="grid" gridTemplateColumns={{ xs: 'repeat(3, 1fr)', sm: 'repeat(3, 1fr)', }} sx={{ marginTop: "10px" }}>
                   <Label >{row?.name}</Label>
                   <Label >{row?.contact_number}</Label>
-                  <Iconify onClick={() => handleRemoveRepresentor(row?.name)} icon="solar:trash-bin-trash-bold" />
+                  <div style={{display: "flex",columnGap:"5px"}}>
+                    <Iconify onClick={() => handleRemoveRepresentor(row?.name)} icon="solar:trash-bin-trash-bold" />
+                    <Iconify onClick={() => handleUpdateRepresentor(row)} icon="fa:pencil-square-o" />
+                  </div>
                 </Box>
               ))}
-
-
-
               <Box
                 rowGap={3}
                 columnGap={2}

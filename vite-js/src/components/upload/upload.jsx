@@ -15,7 +15,8 @@ import MultiFilePreview from './preview-multi-file';
 import RejectionFiles from './errors-rejection-files';
 import SingleFilePreview from './preview-single-file';
 import SingleFilePreview2 from './preview-single-file2';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
+import { t } from 'i18next';
 
 // ----------------------------------------------------------------------
 
@@ -63,6 +64,8 @@ export default function Upload({
     }
   };
 
+  const [imagePreview, setImagePreview] = useState(null);
+
 
   const hasFiles = !!files && multiple && !!files.length;
   console.log("filys are  : ", files);
@@ -84,7 +87,7 @@ export default function Upload({
               textDecoration: 'underline',
             }}
           >
-            browse
+            {t("browse")}
           </Box>
           {/* thorough your machine */}
         </Typography>
@@ -93,7 +96,7 @@ export default function Upload({
   );
 
   const renderSinglePreview = (
-    <SingleFilePreview imgUrl={typeof file === 'string' ? file : file?.name} filename={file?.name} />
+    <SingleFilePreview imgUrl={imagePreview} filename={file?.name} />
   );
 
   const removeSinglePreview = hasFile && onDelete && (
@@ -154,6 +157,7 @@ export default function Upload({
           cursor: 'pointer',
           overflow: 'hidden',
           position: 'relative',
+          height: imagePreview ? "250px" : "auto",
           bgcolor: (theme) => alpha(theme.palette.grey[500], 0.08),
           border: (theme) => `1px dashed ${alpha(theme.palette.grey[500], 0.2)}`,
           transition: (theme) => theme.transitions.create(['opacity', 'padding']),
@@ -180,8 +184,10 @@ export default function Upload({
         <input {...getInputProps()} id='input_fl_name' name={name}
           onChange={(e) => {
             field.onChange(e.target.files[0]);
+            const fileUrl = URL.createObjectURL(e.target.files[0]);
+            setImagePreview(fileUrl);
           }}
-          onReset={(e)=>{
+          onReset={(e) => {
             field?.removeSinglePreview
           }}
         />

@@ -43,13 +43,14 @@ import OrderTableFiltersResult from '../order-table-filters-result';
 import { useTranslate } from 'src/locales';
 import { RouterLink } from 'src/routes/components';
 
-import { useGetCar, deleteCar, AddCarToMentainance } from 'src/api/car';
+import { useGetCar, deleteCar, AddCarToMentainance, markCarAsAvailable } from 'src/api/car';
+import { useValues } from 'src/api/utils';
 // ----------------------------------------------------------------------
 
 const defaultFilters = {
   plat_number: '',
-  production_year:"",
-  status: 'all',
+  production_year: "",
+  status: 'All',
   startDate: null,
   endDate: null,
 };
@@ -62,10 +63,11 @@ export default function OrderListView() {
   const { t } = useTranslate();
 
   const { car, mutate } = useGetCar();
+  const { data } = useValues()
 
   const TABLE_HEAD = [
     // { id: 'orderNumber', label: t('company'), width: 116 },
-    { id: 'model', label: t('model'), width: 120 },
+    { id: 'model', label: t('model'), width: 120, sorted: true },
     { id: 'plateNumber', label: t('plateNumber'), width: 120 },
     { id: 'manuYear', label: t('manuYear'), width: 90 },
     // { id: 'color', label: t('vehcileColor'), width: 120 },
@@ -113,7 +115,7 @@ export default function OrderListView() {
   const denseHeight = table.dense ? 56 : 56 + 20;
 
   const canReset =
-    !!filters.plat_number 
+    !!filters.plat_number
 
   const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
 
@@ -147,7 +149,7 @@ export default function OrderListView() {
   );
   const handleAddCarToMentainance = useCallback(
     async (id) => {
-      const result =await AddCarToMentainance(id)
+      const result = await AddCarToMentainance(id)
         .then(() => {
           enqueueSnackbar('Operation success!');
           mutate();
@@ -155,7 +157,21 @@ export default function OrderListView() {
         .catch((err) => {
           enqueueSnackbar(err?.message, { variant: 'error' });
         });
-        console.log("result : ",result);
+      console.log("result : ", result);
+    },
+    [dataInPage.length, enqueueSnackbar, table, tableData]
+  );
+  const handleMarkCarAsAvailable = useCallback(
+    async (id) => {
+      const result = await markCarAsAvailable(id)
+        .then(() => {
+          enqueueSnackbar('Operation success!');
+          mutate();
+        })
+        .catch((err) => {
+          enqueueSnackbar(err?.message, { variant: 'error' });
+        });
+      console.log("result : ", result);
     },
     [dataInPage.length, enqueueSnackbar, table, tableData]
   );
@@ -240,28 +256,42 @@ export default function OrderListView() {
               boxShadow: (theme) => `inset 0 -2px 0 0 ${alpha(theme.palette.grey[500], 0.08)}`,
             }}
           >
-            {STATUS_OPTIONS.map((tab) => (
+            <Tab
+              key={"all"}
+              iconPosition="end"
+              value={"All"}
+              label={"All"}
+              icon={
+                <Label
+                  variant={'soft'}
+                  color={'default'}
+                >
+                  {car.length}
+                </Label>
+              }
+            />
+            {data?.car_statuses?.map((tab) => (
               <Tab
-                key={tab.value}
+                key={tab.key}
                 iconPosition="end"
-                value={tab.value}
-                label={tab.label}
+                value={tab?.key}
+                label={tab?.translations[0]?.name}
                 icon={
                   <Label
                     variant={
-                      ((tab.value === 'all' || tab.value === filters.status) && 'filled') || 'soft'
+                      ((tab.key === 'all' || tab.key === filters.status) && 'filled') || 'soft'
                     }
                     color={
-                      (tab.value === 'available' && 'success') ||
-                      (tab.value === 'underProcessing' && 'warning') ||
-                      (tab.value === 'under_maintenance' && 'error') ||
+                      (tab.key === 'available' && 'success') ||
+                      (tab.key === 'underProcessing' && 'warning') ||
+                      (tab.key === 'under_maintenance' && 'error') ||
                       'default'
                     }
                   >
-                    {['available', 'underProcessing', 'under_maintenance', 'rented'].includes(
-                      tab.value
+                    {['available', 'under_preparation', 'under_maintenance', 'rented'].includes(
+                      tab.key
                     )
-                      ? car.filter((user) => user.status?.key === tab.value).length
+                      ? car.filter((user) => user.status?.key === tab.key).length
                       : car.length}
                   </Label>
                 }
@@ -338,9 +368,10 @@ export default function OrderListView() {
                         onSelectRow={() => table.onSelectRow(row.id)}
                         onDeleteRow={() => handleDeleteRow(row.id)}
                         onViewRow={() => handleViewRow(row.id)}
-                        onDriverViewRow={()=>handleViewDriverRow(row?.driver?.id)}
+                        onDriverViewRow={() => handleViewDriverRow(row?.driver?.id)}
                         onEditRow={() => handleEditRow(row.id)}
-                        onAddCarToMentainance={()=>handleAddCarToMentainance(row.id)}
+                        onAddCarToMentainance={() => handleAddCarToMentainance(row.id)}
+                        onMarkCarAsAvailable={() => handleMarkCarAsAvailable(row.id)}
                       />
                     ))}
 
@@ -397,7 +428,7 @@ export default function OrderListView() {
 // ----------------------------------------------------------------------
 
 function applyFilter({ inputData, comparator, filters, dateError }) {
-  const {plat_number,production_year} = filters;
+  const { status, plat_number, production_year } = filters;
 
   const stabilizedThis = inputData.map((el, index) => [el, index]);
 
@@ -411,7 +442,7 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
 
   if (plat_number) {
     const searchTerm = plat_number?.toLowerCase();
-    inputData = inputData.filter(order => 
+    inputData = inputData.filter(order =>
       order?.plat_number?.toLowerCase()?.includes(searchTerm) ||
       order?.color?.translations?.name?.toLowerCase()?.includes(searchTerm) ||
       order?.model?.translations?.name?.toLowerCase()?.includes(searchTerm) ||
@@ -419,13 +450,22 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
       order?.production_year?.includes(searchTerm)
     );
   }
+  if (status) {
+    if (status == "All") {
+      inputData = inputData;
+    } else {
+      inputData = inputData.filter(order =>
+        order?.status?.key?.includes(status)
+      );
+    }
+  }
   // if (production_year) {
   //   const searchTerm = production_year;
   //   inputData = inputData.filter(order => 
   //     order?.production_year?.includes(searchTerm)
   //   );
   // }
-  
+
 
 
   // if (!dateError) {

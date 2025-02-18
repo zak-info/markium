@@ -40,7 +40,7 @@ export default function AppNewInvoice({ title, subheader, tableData, tableLabels
 
             <TableBody>
               {tableData.map((row) => (
-                <AppNewInvoiceRow key={row.id} row={row}  />
+                <AppNewInvoiceRow key={row.id} row={row} maintenance={data?.maintenance_specifications?.find(item=>item?.id=="d")}  />
               ))}
             </TableBody>
           </Table>
@@ -98,7 +98,7 @@ function AppNewInvoiceRow({ row ,spec}) {
     <>
       <TableRow>
         {/* <TableCell>{row.id}</TableCell> */}
-        <TableCell>{row?.spec?.name}</TableCell>
+        <TableCell>{row?.name}</TableCell>
         {/* <TableCell>{fDate(row.created_at)}</TableCell> */}
         {/* <TableCell>
           <ListItemText
@@ -112,16 +112,15 @@ function AppNewInvoiceRow({ row ,spec}) {
             }}
           />
         </TableCell> */}
-        <TableCell>{row?.period_value + " " + row?.unit}</TableCell>
+        <TableCell>{row?.period_value + " " + row?.period_unit}</TableCell>
         <TableCell>
           <ListItemText
             primary={row?.last_value}
-            secondary={
-              Math.round(row?.remaining *row?.period_value) >= 0 ?
-              "remaining: "+Math.round(row?.remaining *row?.period_value)+" "+ row?.unit
-              :
-              "overreach: "+Math.round(row?.remaining *row?.period_value) * -1+" "+ row?.unit
-              }
+            secondary={row?.status_description}
+              // Math.round(row?.remaining *row?.period_value) >= 0 ?
+              // "remaining: "+Math.round(row?.remaining *row?.period_value)+" "+ row?.unit
+              // :
+              // "overreach: "+Math.round(row?.remaining *row?.period_value) * -1+" "+ row?.unit
             primaryTypographyProps={{ typography: 'body2', noWrap: true }}
             secondaryTypographyProps={{
               mt: 0.5,
@@ -130,7 +129,7 @@ function AppNewInvoiceRow({ row ,spec}) {
             }}
           />
         </TableCell>
-        <TableCell>{row?.status?.name}</TableCell>
+        <TableCell>{row?.status?.translations[0].name}</TableCell>
         {/* <TableCell align="right" sx={{ pr: 1 }}>
           <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
             <Iconify icon="eva:more-vertical-fill" />

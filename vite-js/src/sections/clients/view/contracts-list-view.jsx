@@ -46,6 +46,7 @@ import OrderTableFiltersResult from '../contracts-table-filters-result';
 import { useTranslate } from 'src/locales';
 import { useGetClients } from 'src/api/client';
 import { useGetContracts } from 'src/api/contract';
+import { useValues } from 'src/api/utils';
 
 // ----------------------------------------------------------------------
 
@@ -65,6 +66,7 @@ export default function OrderListView() {
   const { t } = useTranslate();
 
   const TABLE_HEAD = [
+    { id: 'ref', label: t('ref'), width: 116 },
     { id: 'client', label: t('client'), width: 116 },
     { id: 'contractDate', label: t('contractDate'), width: 140 },
     { id: 'net', label: t('net'), width: 140 },
@@ -87,6 +89,7 @@ export default function OrderListView() {
 
   const {clients} = useGetClients()
   const {contracts} = useGetContracts()
+  const {data} = useValues()
 
   const [tableData, setTableData] = useState(contracts);
   useEffect(()=>{
@@ -271,6 +274,7 @@ export default function OrderListView() {
                         key={row.id}
                         client={clients?.find(item => item.id == row?.client_id)}
                         row={row}
+                        payment_method={data?.payment_method_enum?.find(item => item?.key == row?.payment_method).translations[0]?.name}
                         selected={table.selected.includes(row.id)}
                         onSelectRow={() => table.onSelectRow(row.id)}
                         onDeleteRow={() => handleDeleteRow(row.id)}

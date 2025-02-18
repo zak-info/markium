@@ -131,20 +131,17 @@ function AppNewInvoiceRow({ row, clausable }) {
             />
           </Box>
         </TableCell>
-
         <TableCell>{row?.cost}.00</TableCell>
-
         <TableCell>{row?.duration} {row?.duration > 1 ? "months":"month"}</TableCell>
-
         <TableCell>
             {row?.cost * row?.duration}.00
         </TableCell>
 
-        <TableCell align="right" sx={{ pr: 1 }}>
+        {/* <TableCell align="right" sx={{ pr: 1 }}>
           <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
             <Iconify icon="eva:more-vertical-fill" />
           </IconButton>
-        </TableCell>
+        </TableCell> */}
       </TableRow>
 
       <CustomPopover

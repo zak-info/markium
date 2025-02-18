@@ -21,12 +21,19 @@ import AppNewInvoiceBreakdown from '../app-new-breakdown';
 import { _appAuthors, _appRelated, _appFeatured, _appInvoices, _appInstalled } from 'src/_mock';
 import { useTranslate } from 'src/locales';
 import { useGetCompanyByID, useGetBreakDown, useGetCarMaintenance } from 'src/api/car';
-import { margin, width } from '@mui/system';
+import { Box, height, margin, width } from '@mui/system';
 import { useGetDocuments } from 'src/api/document';
 import { useValues } from 'src/api/utils';
-import { Button } from '@mui/material';
+import { Button, Card, Tab, Tabs } from '@mui/material';
 import { RouterLink } from 'src/routes/components';
 import Iconify from 'src/components/iconify';
+import CarDocListView from '../CarDocTable/NotificationsListView';
+import CarMaintenancesListView from '../CarMaintenancesTable/NotificationsListView';
+import OrderDetailsInfo2 from '../order-details-info2';
+import OrderDetailsInfo3 from '../order-details-info3';
+import CarLogsListView from '../CarLogsTable/NotificationsListView';
+import CarPmListView from '../CarPmTable/NotificationsListView';
+import CarCostInputTable from '../CarCost&InputTable/NotificationsListView';
 
 // ----------------------------------------------------------------------
 
@@ -54,6 +61,12 @@ export default function OrderDetailsView({ id }) {
     setStatus(newValue);
   }, []);
 
+  const [section, setSection] = useState(0);
+
+  const handleTabChange = (event, newValue) => {
+    setSection(newValue);
+  };
+
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
       <OrderDetailsToolbar
@@ -64,31 +77,56 @@ export default function OrderDetailsView({ id }) {
         onChangeStatus={handleChangeStatus}
         statusOptions={ORDER_STATUS_OPTIONS}
       />
+      <Box
+        rowGap={3}
+        columnGap={3}
+        display="grid"
+        gridTemplateColumns={{
+          xs: 'repeat(1, 1fr)',
+          sm: 'repeat(1, 1fr)',
+        }}
+      >
 
-      <Grid container spacing={3}>
-        <Grid xs={12} md={8}>
-          <Stack spacing={3} direction={{ xs: 'column-reverse', md: 'column' }}>
-            <OrderDetailsItems
-              carDetails={carDetails}
-              items={currentOrder?.items}
-              taxes={currentOrder?.taxes}
-              shipping={currentOrder?.shipping}
-              discount={currentOrder?.discount}
-              subTotal={currentOrder?.subTotal}
-              totalAmount={currentOrder?.totalAmount}
-            />
-          </Stack>
-        </Grid>
-        <Grid xs={12} md={4}>
-          <div className='' style={{}}>
-            <OrderDetailsInfo
+        <Box
+          rowGap={3}
+          columnGap={3}
+          display="grid"
+          gridTemplateColumns={{
+            xs: 'repeat(1, 1fr)',
+            sm: 'repeat(3, 1fr)',
+          }}
+        >
+          <Grid xs={12} md={4}>
+            <Stack spacing={3} direction={{ xs: 'column-reverse', md: 'column' }}>
+              <OrderDetailsInfo2
+                carDetails={carDetails}
+                customer={currentOrder?.customer}
+                delivery={currentOrder?.delivery}
+                payment={currentOrder?.payment}
+                shippingAddress={currentOrder?.shippingAddress}
+              />
+            </Stack>
+          </Grid>
+          <Grid xs={12} md={4}  >
+            <Stack spacing={3} direction={{ xs: 'column-reverse', md: 'column' ,height:'100%'}}>
+              <OrderDetailsInfo
+                carDetails={carDetails}
+                customer={currentOrder?.customer}
+                delivery={currentOrder?.delivery}
+                payment={currentOrder?.payment}
+                shippingAddress={currentOrder?.shippingAddress}
+              />
+            </Stack>
+          </Grid>
+          <Grid xs={12} md={4}>
+            <OrderDetailsInfo3
               carDetails={carDetails}
               customer={currentOrder?.customer}
               delivery={currentOrder?.delivery}
               payment={currentOrder?.payment}
               shippingAddress={currentOrder?.shippingAddress}
             />
-            <AppNewInvoiceBreakdown
+            {/* <AppNewInvoiceBreakdown
               style={{ marginTop: "20px" }}
               title={t('Vehicul_Documents')}
               tableData={carDocuments}
@@ -98,39 +136,91 @@ export default function OrderDetailsView({ id }) {
                 { id: 'invoice', label: t('invoice') },
                 // { id: 'status', label: t('cost') },
               ]}
-            />
-          </div>
-        </Grid>
+            /> */}
+          </Grid>
+        </Box>
+        {/* <Grid container spacing={3} className='w-full flex flex-col pt-6 gap-4'> */}
+        <Card sx={{ p: 1 }}>
+          <Tabs
+            value={section}
+            onChange={handleTabChange}
+            aria-label="icon position tabs example"
+            textColor="primary"
+          >
+            <Tab  icon={<Iconify icon="duo-icons:settings" />} iconPosition="start" label={t("maintenance")} />
+            <Tab icon={<Iconify icon="lets-icons:file-dock-search-fill" />} iconPosition="start" label={t("documents")} />
+            <Tab icon={<Iconify icon="lets-icons:alarm-fill" />} iconPosition="start" label={t("alerts")} />
+            <Tab icon={<Iconify icon="lets-icons:refresh" />} iconPosition="start" label={t("periodic_maintenances")} />
+            <Tab icon={<Iconify icon="solar:dollar-line-duotone" />} iconPosition="start" label={t("costAndInput")} />
+          </Tabs>
+        </Card>
+        <Box
+          rowGap={3}
+          columnGap={3}
+          display="grid"
+          gridTemplateColumns={{
+            xs: 'repeat(1, 1fr)',
+            sm: 'repeat(1, 1fr)',
+          }}
+        >
+          <Box
+            rowGap={3}
+            columnGap={3}
+            display="grid"
+            gridTemplateColumns={{
+              xs: 'repeat(1, 1fr)',
+              sm: 'repeat(1, 1fr)',
+            }}
+          >
+            {
+              section == 0 ?
+                <Grid xs={12} md={6}>
+                  <CarMaintenancesListView id={id} />
+                </Grid>
+                : section == 2 ?
+                  <Grid xs={12} md={6}>
+                    <CarLogsListView id={id} />
+                  </Grid>
+                  : section == 1 ?
+                    <Grid xs={12} md={6}>
+                      <CarDocListView id={id} />
+                    </Grid>
+                    : section == 3 ?
+                      <Grid xs={12} md={6}>
+                        <Stack alignItems="flex-end" sx={{ mt: 3 }}>
+                          <Button
+                            component={RouterLink}
+                            href={paths.dashboard.vehicle.pm(id)}
+                            variant="contained"
+                            startIcon={<Iconify icon="mingcute:add-line" />}
+                          >
+                            {t('addNewPeriodicMaintenance')}
+                          </Button>
+                        </Stack>
+                        <CarPmListView id={id} />
+                      </Grid>
+                      : section == 4 ?
+                      <CarCostInputTable id={id} />
+                      :
+                      null
+            }
+          </Box>
+          {/* <Box
+            rowGap={3}
+            columnGap={3}
+            display="grid"
+            gridTemplateColumns={{
+              xs: 'repeat(1, 1fr)',
+              sm: 'repeat(1, 1fr)',
+            }}
+          >
 
-      </Grid>
-
-      <Grid container spacing={3} className='w-full flex flex-col pt-6 gap-4'>
-        <Grid xs={12} md={12}>
-          <Stack alignItems="flex-end" sx={{ mt: 3 }}>
-            <Button
-              component={RouterLink}
-              href={paths.dashboard.vehicle.pm(id)}
-              variant="contained"
-              startIcon={<Iconify icon="mingcute:add-line" />}
-            >
-              {t('addNewPeriodicMaintenance')}
-            </Button>
-          </Stack>
-          <AppNewInvoice
-            title={t('maintenanceItems')}
-            tableData={maintenance}
-            sx={{marginTop:"10px"}}
-            tableLabels={[
-              // { id: 'id', label: t('maintenanceNumber') },
-              { id: 'maintenanceName', label: t('maintenanceName') },
-              { id: 'note', label: t('note') },
-              { id: 'EnD_ExD', label: t('EnD_ExD') },
-              { id: 'status', label: t('cost') },
-            ]}
-          />
-        </Grid>
-        <Grid xs={12} md={12}>
-          {/* <AppNewInvoiceBreakdown
+           
+          </Box> */}
+        </Box>
+      </Box>
+      {/* <Grid xs={12} md={12}> */}
+      {/* <AppNewInvoiceBreakdown
             title={t('recurringFaults')}
             tableData={breakdown}
             tableLabels={[
@@ -139,8 +229,8 @@ export default function OrderDetailsView({ id }) {
               { id: 'status', label: t('cost') },
             ]}
           /> */}
-        </Grid>
-      </Grid>
+      {/* </Grid> */}
+      {/* </Grid> */}
     </Container>
   );
 }

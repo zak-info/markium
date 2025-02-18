@@ -106,8 +106,8 @@ export default function CarAttachForm({ car_id, currentClause }) {
   );
 
   return (
-    <FormProvider methods={methods} onSubmit={onSubmit}>
-      <Grid container spacing={3} >
+    <FormProvider methods={methods} onSubmit={onSubmit} >
+      <Grid container spacing={3} sx={{px:"10px"}}>
         <Grid xs={12} md={12}>
           <Card sx={{ py: 2 }}>
             <Box
@@ -121,14 +121,14 @@ export default function CarAttachForm({ car_id, currentClause }) {
             >
               <SimpleAutocomplete
                 name="driver_id"
-                label={t('driver')}
+                label={t('attache_driver')}
                 options={drivers}
                 getOptionLabel={(option) => option?.name}
-                placeholder='choose driver'
+                placeholder={t('attache_driver')}
               />
               <Stack alignItems="flex-start" sx={{ mt: 1 }}>
                 <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                  {!currentClause ? t('Attach driver') : t('saveChange')}
+                  {!currentClause ? t('attache_driver') : t('saveChange')}
                 </LoadingButton>
               </Stack>
             </Box>

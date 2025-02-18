@@ -60,8 +60,8 @@ export default function ClaimNewEditForm({ currentClause,setTableData,contract_i
   const defaultValues = useMemo(
     () => ({
       // contract_id: contract_id,
-      amount: currentClause?.last_value || 0,
-      paiment_date: currentClause?.piece_status || "",
+      amount: currentClause?.amount || 0,
+      paiment_date: currentClause?.paiment_date || new Date(),
     }),
     [currentClause]
   );
@@ -97,7 +97,7 @@ export default function ClaimNewEditForm({ currentClause,setTableData,contract_i
       reset();
       enqueueSnackbar(currentClause?.id ? 'Update success!' : 'Create success!');
       // router.push(paths.dashboard.clients.claims);
-      setTableData(prev=> prev?.length > 0 ? [...prev,{contract_id,...body}] : [{contract_id,...body,created_at:new Date(),status:{name:'created'}}])
+      setTableData(prev=> prev?.length > 0 ? [...prev,{contract_id,...body,created_at:new Date(),status:{translations:[{name:'created'}]}}] : [{contract_id,...body,created_at:new Date(),status:{translations:[{name:'created'}]}}])
     } catch (error) {
       console.error(error);
       Object.values(error?.data).forEach(array => {
@@ -147,7 +147,7 @@ export default function ClaimNewEditForm({ currentClause,setTableData,contract_i
               /> */}
               <RHFTextField name="amount" label={t('amount')} type={"number"} />
               <DatePicker
-                label={t('paiment date')}
+                label={t('paiment_date')}
                 value={values?.paiment_date ? new Date(values?.paiment_date) : new Date()}
                 required
                 name="paiment_date"
@@ -165,7 +165,7 @@ export default function ClaimNewEditForm({ currentClause,setTableData,contract_i
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                {!currentClause ? t('addNewClaim') : t('saveChange')}
+                {!currentClause ? t('add_new_claim') : t('save_change')}
               </LoadingButton>
             </Stack>
           </Card>

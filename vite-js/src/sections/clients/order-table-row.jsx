@@ -43,7 +43,7 @@ export default function OrderTableRow({ row, location, selected, onViewRow, onSe
 
       <TableCell>
         <Box
-          onClick={onViewRow}
+          onClick={()=>onViewRow(row?.id)}
           sx={{
             cursor: 'pointer',
             '&:hover': {
@@ -56,7 +56,7 @@ export default function OrderTableRow({ row, location, selected, onViewRow, onSe
       </TableCell>
       {/* <TableCell>{row?.state_id}</TableCell> */}
       <TableCell>{location}</TableCell>
-      <TableCell>{row?.company_id}</TableCell>
+      <TableCell>{row?.tax_number}</TableCell>
       <TableCell>{row?.commercial_registration_number}</TableCell>
       <TableCell align="start" sx={{ px: 1, whiteSpace: 'nowrap' }}>
         {/* <IconButton

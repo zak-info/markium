@@ -43,8 +43,9 @@ import OrderTableRow from '../order-table-row';
 import OrderTableToolbar from '../order-table-toolbar';
 import OrderTableFiltersResult from '../order-table-filters-result';
 import { useTranslation } from 'react-i18next';
-import { useGetCarLogs } from 'src/api/car';
+import { useGetCar, useGetCarLogs } from 'src/api/car';
 import { Grid } from '@mui/material';
+import { useValues } from 'src/api/utils';
 
 // ----------------------------------------------------------------------
 
@@ -68,6 +69,7 @@ export default function OrderListView() {
     // { id: 'orderNumber', label: t('plateNumber'), width: 116 },
     // { id: 'model', label: t('model'), width: 116 },
     // { id: 'company', label: t('company'), width: 116 },
+    { id: 'car', label: t('model'), width: 140 },
     { id: 'date', label: t('date'), width: 140 },
     { id: 'operation', label: t('operation'), width: 120, align: 'start' },
     { id: 'totalAmount', label: t('details'), width: 140 },
@@ -83,6 +85,8 @@ export default function OrderListView() {
 
   const confirm = useBoolean();
   const { carLogs, mutate } = useGetCarLogs();
+  const { car } = useGetCar();
+  const { data } = useValues();
 
   const [tableData, setTableData] = useState([...carLogs]);
   useEffect(() => {
@@ -96,6 +100,8 @@ export default function OrderListView() {
 
   const dataFiltered = applyFilter({
     inputData: tableData,
+    car:car,
+    data:data,
     comparator: getComparator(table.order, table.orderBy),
     filters,
     dateError,
@@ -256,6 +262,8 @@ export default function OrderListView() {
                         <OrderTableRow
                           key={row?.id}
                           row={row}
+                          car={car?.find(item => item.id == row?.car_id)}
+                          status={data?.car_log_action_enum?.find(item => item.key == row?.action)}
                           selected={table?.selected.includes(row.id)}
                           onSelectRow={() => table?.onSelectRow(row.id)}
                           onDeleteRow={() => handleDeleteRow(row.id)}
@@ -317,7 +325,7 @@ export default function OrderListView() {
 
 // ----------------------------------------------------------------------
 
-function applyFilter({ inputData, comparator, filters, dateError }) {
+function applyFilter({ inputData,car,data, comparator, filters, dateError }) {
   const { status, name, startDate, endDate } = filters;
 
   const stabilizedThis = inputData.map((el, index) => [el, index]);
@@ -331,23 +339,33 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
   inputData = stabilizedThis.map((el) => el[0]);
 
   if (name) {
-    inputData = inputData.filter(
-      (order) =>
-        order.orderNumber.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.customer.name.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.customer.email.toLowerCase().indexOf(name.toLowerCase()) !== -1
-    );
-  }
+    const lowerCaseName = name.toLowerCase();
+    
+    inputData = inputData.filter((order) => {
+        const carData = car?.find(item => item.id === order.car_id);
+        const status = data?.car_log_action_enum?.find(item => item.key == order?.action);
+        
+        if (!carData) return false;
+        
+        const platNumber = carData.plat_number?.toLowerCase() || "";
+        const modelName = carData.model?.translations?.name || "";
+        const companyName = carData.model?.company?.translations?.name || "";
+        const fullName = `${modelName} ${companyName}`.toLowerCase();
 
-  if (status !== 'all') {
-    inputData = inputData.filter((order) => order.status === status);
-  }
+        return platNumber.includes(lowerCaseName) || fullName.includes(lowerCaseName) || status?.translations[0]?.name.toLowerCase().includes(lowerCaseName);
+    });
+}
 
-  if (!dateError) {
-    if (startDate && endDate) {
-      inputData = inputData.filter((order) => isBetween(order.createdAt, startDate, endDate));
-    }
-  }
+
+  // if (status !== 'all') {
+  //   inputData = inputData.filter((order) => order.status === status);
+  // }
+
+  // if (!dateError) {
+  //   if (startDate && endDate) {
+  //     inputData = inputData.filter((order) => isBetween(order.createdAt, startDate, endDate));
+  //   }
+  // }
 
   return inputData;
 }

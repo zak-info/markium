@@ -74,8 +74,8 @@ export default function UserNewEditForm({ currentDocument }) {
       attachable_id: currentDocument?.attachable_id || '',
       attachable_type: currentDocument?.attachable_type || '',
       // document_duration_days: currentDocument?.document_duration_days || '',
-      expiry_date: currentDocument?.expiry_date || '',
-      release_date: currentDocument?.release_date || '',
+      expiry_date: currentDocument?.expiry_date || new Date(),
+      release_date: currentDocument?.release_date || new Date(),
     }),
     [currentDocument]
   );
@@ -161,7 +161,6 @@ export default function UserNewEditForm({ currentDocument }) {
     [setValue]
   );
 
-  const options = ['نيسان', 'تويتا'];
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>
       <Grid container spacing={3}>
@@ -178,7 +177,7 @@ export default function UserNewEditForm({ currentDocument }) {
             >
 
 
-              <RHFSelect required name="attachable_type" label={t('attachableType')}>
+              <RHFSelect required name="attachable_type" label={t('attachment_type')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
                 {[{ name: "car", id: 1 }, { name: "driver", id: 2 }]?.map((type) => (
                   <MenuItem key={type?.id} value={type.name}>
@@ -223,7 +222,7 @@ export default function UserNewEditForm({ currentDocument }) {
                     </RHFSelect>
               }
 
-              <RHFSelect required name="attachment_type_id" label={t('DocumentType')}>
+              <RHFSelect required name="attachment_type_id" label={t('document_type')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
                 {data?.attachment_types?.map((type) => (
                   <MenuItem key={type?.id} value={type.id}>
@@ -231,7 +230,7 @@ export default function UserNewEditForm({ currentDocument }) {
                   </MenuItem>
                 ))}
               </RHFSelect>
-              <RHFSelect required name="attachment_name_id" label={t('DocumentName')}>
+              <RHFSelect required name="attachment_name_id" label={t('document_name')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
                 {data?.attachmenat_names?.map((item) => (
                   <MenuItem key={item?.id} value={item.id}>
@@ -283,8 +282,8 @@ export default function UserNewEditForm({ currentDocument }) {
 
               
 
-              <RHFUpload name="attachment" lable={"Upload Document "} />
-              <RHFUpload name="invoice" lable={"Upload Invoice File"} />
+              <RHFUpload name="attachment" lable={t("upload_document")} />
+              <RHFUpload name="invoice" lable={t("upload_invoice_file")} />
 
             </Box>
 

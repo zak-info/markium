@@ -32,6 +32,27 @@ export function useGetMaintenance() {
 
   return memoizedValue;
 }
+export function useShowMaintenance(id) {
+  const { data, isLoading, error, isValidating, mutate } = useSWR(
+    endpoints.maintenance.list+"/"+id,
+    fetcher,
+    options
+  );
+
+  const memoizedValue = useMemo(
+    () => ({
+      maintenance: data?.data || [],
+      maintenanceLoading: isLoading,
+      maintenanceError: error,
+      maintenanceValidating: isValidating,
+      maintenanceEmpty: !isLoading && !data?.data.length,
+      mutate,
+    }),
+    [data, error, isLoading, isValidating]
+  );
+
+  return memoizedValue;
+}
 export function useGetMaintenanceSpecs() {
   const { data, isLoading, error, isValidating, mutate } = useSWR(
     endpoints.maintenance.specs,
@@ -81,6 +102,10 @@ export function useGetMaintenanceLogs() {
 export async function createMaintenance(body) {
   const URL = endpoints.maintenance.list;
 
+  return await axios.post(URL, body);
+}
+export async function markMaintenanceAsCompeleted(id,body) {
+  const URL = endpoints.maintenance.complete(id);
   return await axios.post(URL, body);
 }
 

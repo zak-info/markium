@@ -26,8 +26,8 @@ import { t } from 'i18next';
 
 // ----------------------------------------------------------------------
 
-export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, onDeleteRow }) {
-  const { items, status, orderNumber, action, created_at, note_en, updated_at, createdAt, customer, totalQuantity, subTotal } = row;
+export default function OrderTableRow({ row, car, status, selected, onViewRow, onSelectRow, onDeleteRow }) {
+  const { items, orderNumber, action, created_at, note_en, updated_at, createdAt, customer, totalQuantity, subTotal } = row;
 
   const confirm = useBoolean();
 
@@ -71,6 +71,18 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
       {/* <TableCell>Tesla </TableCell> */}
       <TableCell>
         <ListItemText
+          primary={car?.plat_number}
+          secondary={car?.model?.company?.translations?.name+" "+car?.model?.translations?.name}
+          primaryTypographyProps={{ typography: 'body2', noWrap: true }}
+          secondaryTypographyProps={{
+            mt: 0.5,
+            component: 'span',
+            typography: 'caption',
+          }}
+        />
+      </TableCell>
+      <TableCell>
+        <ListItemText
           primary={fDate(created_at)}
           secondary={fTime(created_at)}
           primaryTypographyProps={{ typography: 'body2', noWrap: true }}
@@ -85,13 +97,15 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
         <Label
           variant="soft"
           color={
-            (action === 'create' && 'success') ||
-            (action === 'update' && 'warning') ||
-            (action === 'cancelled' && 'error') ||
+            (status?.key === 'create' && 'default') ||
+            (status?.key === 'notification' && 'success') ||
+            (status?.key === 'update' && 'secondary') ||
+            (status?.key === 'status_switch' && 'warning') ||
+            (status?.key === 'cancelled' && 'error') ||
             'default'
           }
         >
-          {action}
+          {status?.translations[0]?.name}
         </Label>
       </TableCell>
 
@@ -113,9 +127,9 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
           <Iconify icon="eva:arrow-ios-downward-fill" />
         </IconButton>
 
-        <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
+        {/* <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
           <Iconify icon="eva:more-vertical-fill" />
-        </IconButton>
+        </IconButton> */}
       </TableCell>
     </TableRow>
   );
@@ -130,10 +144,24 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
           sx={{ bgcolor: 'background.neutral' }}
         >
           <Stack component={Paper} sx={{ m: 1.5 }}>
-            {
-              row?.new_values ? Object.entries(row?.new_values).map(([key, value]) => (
+            <Stack
+              key={"1"}
+              direction="row"
+              alignItems="center"
+              sx={{
+                p: (theme) => theme.spacing(1.5, 2, 1.5, 1.5),
+                '&:not(:last-of-type)': {
+                  borderBottom: (theme) => `solid 2px ${theme.palette.background.neutral}`,
+                },
+              }}
+            >
+              <Box sx={{ width: 160, color: 'text.secondary' }}>{t("note")}</Box>
+              <Box sx={{ typography: 'subtitle2' }}>{row?.note_en}</Box>
+            </Stack>
+            {row?.new_values ?
+              ["vin","created_at","plat_number","chassis_number","production_year","passengers_capacity"].map((item, index) => (
                 <Stack
-                  key={"1"}
+                  key={index}
                   direction="row"
                   alignItems="center"
                   sx={{
@@ -143,31 +171,12 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
                     },
                   }}
                 >
-                  <Box sx={{ width: 160, color: 'text.secondary' }}>{t(key)}</Box>
-                  <Box sx={{ typography: 'subtitle2' }}>{value}</Box>
+                  <Box sx={{ width: 160, color: 'text.secondary' }}>{t(item)}</Box>
+                  <Box sx={{ typography: 'subtitle2' }}>{row?.new_values[item]}</Box>
                 </Stack>
               ))
-                : null
-            }
-            {
-              row?.old_values ? Object.entries(row?.old_values).map(([key, value]) => (
-                <Stack
-                  key={"1"}
-                  direction="row"
-                  alignItems="center"
-                  sx={{
-                    p: (theme) => theme.spacing(1.5, 2, 1.5, 1.5),
-                    '&:not(:last-of-type)': {
-                      borderBottom: (theme) => `solid 2px ${theme.palette.background.neutral}`,
-                    },
-                  }}
-                >
-                  <Box sx={{ width: 160, color: 'text.secondary' }}>{t(key)}</Box>
-                  <Box sx={{ typography: 'subtitle2' }}>{value}</Box>
-                </Stack>
-              ))
-                :
-                null
+              :
+              null
             }
           </Stack>
 
@@ -182,7 +191,7 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
 
       {renderSecondary}
 
-      <CustomPopover
+      {/* <CustomPopover
         open={popover.open}
         onClose={popover.onClose}
         arrow="right-top"
@@ -208,7 +217,7 @@ export default function OrderTableRow({ row, selected, onViewRow, onSelectRow, o
           <Iconify icon="solar:eye-bold" />
           View
         </MenuItem>
-      </CustomPopover>
+      </CustomPopover> */}
 
       <ConfirmDialog
         open={confirm.value}

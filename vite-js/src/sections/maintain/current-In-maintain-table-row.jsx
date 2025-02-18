@@ -26,7 +26,7 @@ import { Typography } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
-export default function OrderTableRow({ row, selected, onViewRow,onEditRow, onSelectRow, onDeleteRow }) {
+export default function OrderTableRow({ row, selected, onViewRow, onEditRow, onSelectRow, onDeleteRow }) {
   const { model, status, plat_number, createdAt, state, totalQuantity, subTotal } = row;
 
   const confirm = useBoolean();
@@ -57,32 +57,34 @@ export default function OrderTableRow({ row, selected, onViewRow,onEditRow, onSe
               textDecoration: 'underline',
             },
           }}
-          primary={plat_number}
-          secondary={model?.company?.translations?.name}
+          primary={row?.car?.plat_number}
+          secondary={row?.car?.model?.company?.translations?.name}
         />
       </TableCell>
 
       {/* <TableCell> {model?.company?.name} </TableCell> */}
 
       <TableCell>
-        {/* <ListItemText
-          primary={fDate(createdAt)}
-          secondary={fTime(createdAt)}
-          primaryTypographyProps={{ typography: 'body2', noWrap: true }}
-          secondaryTypographyProps={{
-            mt: 0.5,
-            component: 'span',
-            typography: 'caption',
-          }}
-        /> */}
-        -
+        {row?.entry_date ? fDate(row?.entry_date) : '-'}
       </TableCell>
-
+      <TableCell align="center"> {row?.remaining_days ? row?.remaining_days : "-"} days </TableCell>
       {/* <TableCell align="center"> - </TableCell> */}
-      {/* <TableCell align="center">- </TableCell> */}
-      <TableCell align="center"> - </TableCell>
-      <TableCell align="center"> - </TableCell>
       <TableCell align="center"> {state?.translations?.name} </TableCell>
+      <TableCell>
+        <Label
+          variant="soft"
+          color={
+            (status?.key === 'completed' && 'success') ||
+            (status?.key === 'pending' && 'warning') ||
+            (status?.key === 'cancelled' && 'error') ||
+            'default'
+          }
+        >
+          {/* {status?.translations[0]?.name} */}
+          {status?.translations?.name}
+        </Label>
+      </TableCell>
+      {/* <TableCell align="center"> {status?.translations?.name} </TableCell> */}
       {/* <TableCell align="center"> - </TableCell> */}
 
       {/* <TableCell>-</TableCell> */}
@@ -100,9 +102,9 @@ export default function OrderTableRow({ row, selected, onViewRow,onEditRow, onSe
           <Iconify icon="eva:arrow-ios-downward-fill" />
         </IconButton> */}
 
-        <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
+        {/* <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
           <Iconify icon="eva:more-vertical-fill" />
-        </IconButton>
+        </IconButton> */}
       </TableCell>
     </TableRow>
   );

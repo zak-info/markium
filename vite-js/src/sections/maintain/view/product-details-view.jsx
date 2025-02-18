@@ -34,7 +34,7 @@ export default function OrderDetailsView({ id }) {
 
   const { maintenance, mutate } = useGetMaintenance();
   const { clauses } = useGetClauses(id)
-  const maintenanceClauses = clauses.filter(item => item.maintenance_id == id)
+  const maintenanceclauses = clauses.filter(item => item.maintenance_id == id)
   const [tableData, setTableData] = useState(clauses.filter(item => item.maintenance_id == id))
   useEffect(()=>{
     setTableData(clauses.filter(item => item.maintenance_id == id))
@@ -95,13 +95,15 @@ export default function OrderDetailsView({ id }) {
             sx={{ marginTop: "10px" }}
             title={t('maintenanceItems')}
             maintenance_id={id}
-            maintenanceClauses={maintenanceClauses}
+            maintenanceclauses={maintenanceclauses}
             tableData={tableData}
             setTableData={setTableData}
             tableLabels={[
-              { id: 'clause', label: 'clause' },
+              { id: 'type', label: 'clause type' },
+              { id: 'clause', label: 'clause ' },
               { id: 'cost', label: 'cost' },
               { id: 'qte', label: 'Qte' },
+              { id: 'piece_status', label: 'piece status' },
               // { id: 'piece_status', label: 'piece status' },
               { id: 'total', label: 'total' },
               // { id: 'status', label: 'Status' },

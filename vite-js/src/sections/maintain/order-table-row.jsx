@@ -23,8 +23,33 @@ import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
-import { useTranslate } from 'src/locales';
-import { Link } from '@mui/material';
+import { useLocales, useTranslate } from 'src/locales';
+import { Card, Link } from '@mui/material';
+
+import * as Yup from 'yup';
+import { useMemo, useCallback } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+
+
+import Switch from '@mui/material/Switch';
+import Grid from '@mui/material/Unstable_Grid2';
+import Typography from '@mui/material/Typography';
+import LoadingButton from '@mui/lab/LoadingButton';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+
+import { useSnackbar } from 'src/components/snackbar';
+import FormProvider, {
+  RHFUpload,
+
+} from 'src/components/hook-form';
+
+import RHFFileInput from 'src/components/hook-form/rhf-input-field';
+import FileThumbnail from 'src/components/file-thumbnail';
+import ContentDialog from 'src/components/custom-dialog/content-dialog';
+import { markMaintenanceAsCompeleted } from 'src/api/maintainance';
+
 
 // ----------------------------------------------------------------------
 
@@ -36,6 +61,7 @@ export default function OrderTableRow({
   selected,
   onViewRow,
   onSelectRow,
+  onMarkAsCompleted,
   onDeleteRow,
   onEditRow,
 }) {
@@ -55,8 +81,11 @@ export default function OrderTableRow({
   } = row;
 
   const confirm = useBoolean();
+  const completed = useBoolean();
 
   const collapse = useBoolean();
+  const {currentLang} = useLocales();
+  console.log("currecnt lang : ",currentLang);
 
   const popover = usePopover();
 
@@ -65,43 +94,43 @@ export default function OrderTableRow({
   const renderPrimary = (
     <TableRow hover selected={selected}>
       <TableCell>
-      <Link href={"/dashboard/vehicle/"+car?.id}>
-        <ListItemText
-          onClick={onViewRow}
-          sx={{
-            cursor: 'pointer',
-            '&:hover': {
-              textDecoration: 'underline',
-            },
-          }}
-          primary={car_model}
-          secondary={car?.plat_number}
-        />
-      </Link>
+        <Link href={"/dashboard/vehicle/" + car?.id}>
+          <ListItemText
+            onClick={onViewRow}
+            sx={{
+              cursor: 'pointer',
+              '&:hover': {
+                textDecoration: 'underline',
+              },
+            }}
+            primary={car_model}
+            secondary={car?.plat_number}
+          />
+        </Link>
       </TableCell>
       {/* <TableCell>{car_model}</TableCell> */}
       <TableCell>{state?.translations[0]?.name}</TableCell>
-      <TableCell>{remaining_days}</TableCell>
+      <TableCell>{remaining_days} days</TableCell>
       {/* <TableCell>{occupant_name}</TableCell> */}
 
       <TableCell>
         <Label
           variant="soft"
           color={
-            (status?.key === 'repaired' && 'success') ||
+            (status?.key === 'completed' && 'success') ||
             (status?.key === 'pending' && 'warning') ||
             (status?.key === 'cancelled' && 'error') ||
             'default'
           }
         >
           {/* {status?.translations[0]?.name} */}
-          {status?.key}
+          {status?.translations[0]?.name}
         </Label>
       </TableCell>
       {/* <TableCell> {driver_phone_number || '-'} </TableCell> */}
       <TableCell>
         <ListItemText
-          primary={driver?.name}
+          primary={driver?.name || t("not_yet_attached")}
           secondary={driver?.phone}
           primaryTypographyProps={{ typography: 'body2', noWrap: true }}
           secondaryTypographyProps={{
@@ -194,7 +223,7 @@ export default function OrderTableRow({
         open={popover.open}
         onClose={popover.onClose}
         arrow="right-top"
-        sx={{ width: 140 }}
+        sx={{ width: 190 }}
       >
         <MenuItem
           onClick={() => {
@@ -203,7 +232,7 @@ export default function OrderTableRow({
           }}
         >
           <Iconify icon="solar:eye-bold" />
-          View
+          {t("overview")}
         </MenuItem>
 
         <MenuItem
@@ -213,10 +242,23 @@ export default function OrderTableRow({
           }}
         >
           <Iconify icon="solar:pen-bold" />
-          Edit
+          {t("edit")}
         </MenuItem>
 
+        {status?.key === 'pending' ?
         <MenuItem
+          onClick={() => {
+            completed.onTrue();
+            popover.onClose();
+          }}
+        >
+          <Iconify icon="solar:pen-bold" />
+          {t("mark_as_completed")}
+        </MenuItem> 
+        : 
+        null }
+
+        {/* <MenuItem
           onClick={() => {
             confirm.onTrue();
             popover.onClose();
@@ -225,9 +267,17 @@ export default function OrderTableRow({
         >
           <Iconify icon="solar:trash-bin-trash-bold" />
           Delete
-        </MenuItem>
+        </MenuItem> */}
       </CustomPopover>
 
+      <ContentDialog
+        open={completed.value}
+        onClose={completed.onFalse}
+        title="Complete"
+        content={
+          <MarkAsCompletedForm maintenanceId={row?.id} close={() => completed?.onFalse()} />
+        }
+      />
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
@@ -257,3 +307,84 @@ OrderTableRow.propTypes = {
   onDeleteRow: PropTypes.func,
   onSelectRow: PropTypes.func,
 };
+
+
+export function MarkAsCompletedForm({ maintenanceId, close }) {
+  const { enqueueSnackbar } = useSnackbar();
+  const { t } = useTranslate();
+
+  const NewUserSchema = Yup.object().shape({
+    invoice: Yup.mixed().nullable()
+  });
+
+  const defaultValues = useMemo(
+    () => ({
+      invoice : ''
+    }),
+    []
+  );
+
+  const methods = useForm({
+    resolver: yupResolver(NewUserSchema),
+    defaultValues,
+  });
+
+  const {
+    reset,
+    watch,
+    control,
+    setValue,
+    handleSubmit,
+    formState: { isSubmitting, errors },
+  } = methods;
+
+  const onSubmit = handleSubmit(async (data) => {
+    console.log("hi there 1");
+    try {
+      console.log("hi there 2");
+      const formData = new FormData();
+      formData.append("invoice", data.invoice);
+      console.log("hi there 3");
+      const response = await markMaintenanceAsCompeleted(maintenanceId, formData)
+      console.log("hi there 4");
+      enqueueSnackbar('Update success!', { variant: 'success' });
+      close();
+      // router.push(paths.dashboard.documents.root);
+      // reset();
+    } catch (error) {
+      console.error(error);
+      Object.values(error?.data).forEach(array => {
+        array.forEach(text => {
+          enqueueSnackbar(text, { variant: 'error' });
+        });
+      });
+    }
+  });
+
+
+  return (
+    <FormProvider methods={methods} onSubmit={onSubmit}>
+      <Grid container spacing={3}>
+        <Grid xs={12} md={12}>
+          <Box
+            rowGap={3}
+            columnGap={2}
+            display="grid"
+            gridTemplateColumns={{
+              xs: 'repeat(1, 1fr)',
+              sm: 'repeat(1, 1fr)',
+            }}
+          >
+            <RHFUpload name="invoice" lable={"Upload Invoice File"} />
+
+          </Box>
+          <Stack alignItems="flex-end" sx={{ mt: 3 }}>
+            <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
+              confirm
+            </LoadingButton>
+          </Stack>
+        </Grid>
+      </Grid>
+    </FormProvider>
+  )
+}

@@ -166,7 +166,7 @@ export default function ContractNewEditForm({ currentUser }) {
                 placeholder='choose client'
               />
 
-              <RHFSelect required name="payment_method" label={t('payment method')}>
+              <RHFSelect required name="payment_method" label={t('payment_method')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
                 {[{ name: "deferred" }, { name: "cash" }]?.map((type) => (
                   <MenuItem key={type?.name} value={type.name}>
@@ -184,13 +184,14 @@ export default function ContractNewEditForm({ currentUser }) {
 
 
               {clauses.map((row, index) => (
-                <Box key={index} rowGap={3} columnGap={3} alignItems={"center"} display="grid" gridTemplateColumns={{ xs: 'repeat(5, 1fr)', sm: 'repeat(5, 1fr)', }} sx={{ marginTop: "10px" }}>
+                <Box key={index} rowGap={3} columnGap={3} alignItems={"center"} display="grid" gridTemplateColumns={{ xs: 'repeat(6, 1fr)', sm: 'repeat(6, 1fr)', }} sx={{ marginTop: "10px" }}>
                   <Label >
                     {row?.clauseable_type}
                   </Label>
                   <Label >{car.find(item => item.id == row?.clauseable_id).plat_number}</Label>
+                  <Label >{row?.cost + ".00"}</Label>
                   <Label >{row?.duration + " months"}</Label>
-                  <Label >{row?.cost + ".00 RS"}</Label>
+                  <Label >{row?.cost * row?.duration + ".00"}</Label>
                   <Iconify onClick={() => handleRemoveClause(row?.clauseable_id)} icon="solar:trash-bin-trash-bold" />
                 </Box>
               ))}
@@ -208,7 +209,7 @@ export default function ContractNewEditForm({ currentUser }) {
                 sx={{ marginTop: "30px" }}
               >
 
-                <RHFSelect name="clauseable_type" label={t('attachable type')}>
+                <RHFSelect name="clauseable_type" label={t('attachment_type')}>
                   <Divider sx={{ borderStyle: 'dashed' }} />
                   {[{ name: "car", id: 1 }, { name: "driver", id: 2 }]?.map((type) => (
                     <MenuItem key={type?.id} value={type.name}>

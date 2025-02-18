@@ -25,7 +25,7 @@ import CustomPopover, { usePopover } from 'src/components/custom-popover';
 
 // ----------------------------------------------------------------------
 
-export default function OrderTableRow({ row,contract,client, selected, onViewRow, onSelectRow, onDeleteRow }) {
+export default function OrderTableRow({ row, contract, client, selected, onViewRow, onSelectRow, onDeleteRow, onViewContract, onViewClient }) {
   const { status } = row;
 
   const confirm = useBoolean();
@@ -39,12 +39,35 @@ export default function OrderTableRow({ row,contract,client, selected, onViewRow
       <TableCell padding="checkbox">
         <Checkbox checked={selected} onClick={onSelectRow} />
       </TableCell>
-
-      <TableCell>{client}</TableCell>
+      <TableCell>
+        <Box
+          onClick={onViewContract}
+          sx={{
+            cursor: 'pointer',
+            '&:hover': {
+              textDecoration: 'underline',
+            },
+          }}
+        >
+          {contract?.ref}
+        </Box>
+      </TableCell>
+      <TableCell>
+        <Box
+          onClick={onViewClient}
+          sx={{
+            cursor: 'pointer',
+            '&:hover': {
+              textDecoration: 'underline',
+            },
+          }}
+        >
+          {client?.name}
+        </Box>
+      </TableCell>
       <TableCell>{row?.amount}</TableCell>
       <TableCell>{fDate(row?.paiment_date)}</TableCell>
-      <TableCell>{row?.status?.name}</TableCell>
-      <TableCell>{row?.status?.wait_to_switch + " "+row?.status?.unit}</TableCell>
+      <TableCell>{row?.status?.translations[0]?.name}</TableCell>
 
       {/* <TableCell>
         <ListItemText

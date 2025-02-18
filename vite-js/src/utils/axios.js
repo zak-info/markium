@@ -83,10 +83,12 @@ export const endpoints = {
   maintenance: {
     list: '/maintenance',
     specs:"/maintenance/specifications",
+    complete:(id)=>`/maintenance/${id}/complete`,
     logs:"/maintenance/logs",
   },
   cars: {
     list: '/car',
+    transactions: '/car/transactions',
     logs: '/car/logs',
     attach: '/car/driver/attach',
     detach: '/car/driver/detach',
@@ -100,6 +102,7 @@ export const endpoints = {
   contracts: {
     list: '/contract',
     claims:(id)=>`/contract/${id}/claims`,
+    allclaims:`/contract/claims/all`,
     logs:"/contract/claims/logs"
   },
   claims: {

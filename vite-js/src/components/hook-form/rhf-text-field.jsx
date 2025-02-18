@@ -26,8 +26,17 @@ export default function RHFTextField({ name, helperText, type, ...other }) {
             }
           }}
           error={!!error}
+
           helperText={error ? error?.message : helperText}
           {...other}
+          sx={{
+            "& .MuiInputBase-root": {
+              height: 50, // Change height here
+            },
+            "& .MuiInputBase-input": {
+              padding: "10px", // Adjust padding to center text properly
+            },
+          }}
         />
       )}
     />

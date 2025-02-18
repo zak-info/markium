@@ -35,6 +35,7 @@ import { addNewClause } from 'src/api/clauses';
 import { useGetMaintenanceSpecs } from 'src/api/maintainance';
 import RHFTextarea from 'src/components/hook-form/RHFTextarea';
 import { addNewPm } from 'src/api/pm';
+import { fDate } from 'src/utils/format-time';
 
 // ----------------------------------------------------------------------
 
@@ -83,13 +84,13 @@ export default function UserNewEditForm({ car_id, currentClause }) {
   const onSubmit = handleSubmit(async (data) => {
     try {
       const body = data;
-      console.log("data : " ,data);
-     
+      console.log("data : ", data);
+
       if (currentClause?.id) {
 
       } else {
         console.log("lets create :", car_id);
-        await addNewPm(car_id.id,{...body,odometer:'1234'});
+        await addNewPm(car_id.id, { ...body });
       }
       reset();
       enqueueSnackbar(currentClause?.id ? 'Update success!' : 'Create success!');
@@ -132,22 +133,41 @@ export default function UserNewEditForm({ car_id, currentClause }) {
             >
               <RHFSelect name="spec_id" label={t('periodic_maintenance_item')} sx={{ width: "100%" }}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
-                {data?.maintenance_specifications?.filter(item=>item?.is_periodic)?.map((option) => (
+                {data?.maintenance_specifications?.filter(item => item?.is_periodic)?.map((option) => (
                   <MenuItem key={option?.id} value={option?.id}>
                     {option?.name}
                   </MenuItem>
                 ))}
               </RHFSelect>
-              <RHFTextField name="period_value" label={t('period_value')} type={"number"} sx={{ width: "100%" }} />
               <RHFSelect name="period_unit" label={t('period_unit')} sx={{ width: "100%" }}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
-                {["km", "day"].map((option, index) => (
-                  <MenuItem key={index} value={option}>
-                    {option}
+                {data?.unit_enum?.map((option, index) => (
+                  <MenuItem key={index} value={option.key}>
+                    {option?.translations[0]?.name}
                   </MenuItem>
                 ))}
               </RHFSelect>
-              <RHFTextField name="last_value" label={t('last_value')} sx={{ width: "100%" }} />
+              <RHFTextField name="period_value" label={t('period_value')} type={"number"} sx={{ width: "100%" }} />
+              {
+                values?.period_unit == 'km' ?
+                  <RHFTextField name="last_value" label={t('last_value')} sx={{ width: "100%" }} />
+                  : values?.period_unit == 'month' ?
+                    <DatePicker
+                      label={t('last_value')}
+                      value={values.last_value ? new Date(values.last_value) : new Date()}
+                      name="last_value"
+                      onChange={(newValue) => setValue('last_value', fDate(newValue, 'yyyy-MM-dd'))}
+                      slotProps={{
+                        textField: {
+                          fullWidth: true,
+                        },
+                      }}
+                    // minDate={new Date()}
+                    />
+                    :
+                    <RHFTextField disabled={true} name="last_value" label={t('last_value')} sx={{ width: "100%" }} />
+
+              }
 
 
 
@@ -155,7 +175,7 @@ export default function UserNewEditForm({ car_id, currentClause }) {
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                {!currentClause ? t('addNewClause') : t('saveChange')}
+                {!currentClause ? t('addNewPeriodicMaintenance') : t('saveChange')}
               </LoadingButton>
             </Stack>
           </Card>

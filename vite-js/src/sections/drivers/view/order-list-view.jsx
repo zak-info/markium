@@ -71,9 +71,9 @@ export default function OrderListView() {
 
   const TABLE_HEAD = [
     { id: 'orderNumber', label: t('driver'), width: 116 },
-    { id: 'totalAmount2', label: t('residencePermitNumber'), width: 140 },
+    { id: 'totalAmount2', label: t('residence_permit_number'), width: 140 },
     { id: 'totalAmount2', label: t('workSite'), width: 140 },
-    { id: 'attached_to ', label: t('attached to'), width: 140 },
+    { id: 'attached_to ', label: t('car'), width: 140 },
 
     { id: '', width: 88 },
   ];
@@ -311,6 +311,7 @@ export default function OrderListView() {
                         key={row.id}
                         row={row}
                         carModel={data?.car_companies?.flatMap(item => item.models).find(model => model.id == row?.car?.car_model_id)}
+                        state={data?.states?.find(item => item?.id == row?.state?.id)?.translations[0]?.name}
                         selected={table.selected.includes(row.id)}
                         onSelectRow={() => table.onSelectRow(row.id)}
                         onDeleteRow={() => handleDeleteRow(row.id)}

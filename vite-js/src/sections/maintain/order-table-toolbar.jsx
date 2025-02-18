@@ -11,6 +11,7 @@ import { formHelperTextClasses } from '@mui/material/FormHelperText';
 
 import Iconify from 'src/components/iconify';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import { t } from 'i18next';
 
 // ----------------------------------------------------------------------
 
@@ -91,7 +92,7 @@ export default function OrderTableToolbar({ filters, onFilters, dateError }) {
             fullWidth
             value={filters.name}
             onChange={handleFilterName}
-            placeholder="Search..."
+            placeholder={t("search_by")+" "+t("plateNumber")+", "+t("state")}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -100,10 +101,10 @@ export default function OrderTableToolbar({ filters, onFilters, dateError }) {
               ),
             }}
           />
-
+{/* 
           <IconButton onClick={popover.onOpen}>
             <Iconify icon="eva:more-vertical-fill" />
-          </IconButton>
+          </IconButton> */}
         </Stack>
       </Stack>
 

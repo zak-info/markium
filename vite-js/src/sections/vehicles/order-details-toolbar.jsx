@@ -54,7 +54,8 @@ export default function OrderDetailsToolbar({
                 color={
                   (status?.key === 'available' && 'success') ||
                   (status?.key === 'pending' && 'warning') ||
-                  (status?.key === 'cancelled' && 'error') ||
+                  (status?.key === 'under_maintenance' && 'error') ||
+                  (status?.key === 'under_preparation' && 'secondary') ||
                   'default'
                 }
               >

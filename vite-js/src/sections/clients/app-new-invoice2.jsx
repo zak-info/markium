@@ -28,6 +28,7 @@ import { paths } from 'src/routes/paths';
 import { useGetClaim } from 'src/api/claim';
 import { useEffect, useState } from 'react';
 import { fDate } from 'src/utils/format-time';
+import { t } from 'i18next';
 
 // ----------------------------------------------------------------------
 
@@ -60,7 +61,7 @@ export default function AppNewInvoice2({ title, subheader,tableData,contract_id,
           color="inherit"
           endIcon={<Iconify icon="eva:arrow-ios-forward-fill" width={18} sx={{ ml: -0.5 }} />}
         >
-          View All
+          {t("view_all")}
         </Button>
       </Box>
     </Card>
@@ -76,7 +77,7 @@ AppNewInvoice2.propTypes = {
 
 // ----------------------------------------------------------------------
 
-function AppNewInvoiceRow({ row, clausable }) {
+function AppNewInvoiceRow({row,clausable}) {
   const popover = usePopover();
   const router = useRouter();
 
@@ -113,7 +114,7 @@ function AppNewInvoiceRow({ row, clausable }) {
     <>
       <TableRow>
         <TableCell>
-          {row?.amount} RS
+          {row?.amount}
         </TableCell>
 
         <TableCell>{fDate(row?.created_at)}</TableCell>
@@ -121,14 +122,14 @@ function AppNewInvoiceRow({ row, clausable }) {
         <TableCell>{fDate(row?.paiment_date)}</TableCell>
 
         <TableCell>
-            {row?.status?.name}
+            {row?.status?.translations[0]?.name}
         </TableCell>
 
-        <TableCell align="right" sx={{ pr: 1 }}>
+        {/* <TableCell align="right" sx={{ pr: 1 }}>
           <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
             <Iconify icon="eva:more-vertical-fill" />
           </IconButton>
-        </TableCell>
+        </TableCell> */}
       </TableRow>
 
       <CustomPopover

@@ -32,14 +32,14 @@ export default function OrderDetailsItems({
 
   const renderTotal = (
     <Stack
-      spacing={8}
+      spacing={4}
       justifyContent="space-between"
       direction="row"
       flexWrap="wrap"
       sx={{ my: 3, typography: 'body2' }}
       divider={<Divider />}
     >
-      <Stack spacing={2} sx={{ my: 3, typography: 'body2' }}>
+      <Stack spacing={1} sx={{ my: 1, typography: 'body2' }}>
         <Stack direction="row">
           <Box sx={{ width: 160, color: 'text.secondary' }}>{t('maintainDate')}</Box>
           <Box sx={{ typography: 'subtitle2' }}>{new Date(currentMentainance?.created_at).toDateString()}</Box>
@@ -58,7 +58,7 @@ export default function OrderDetailsItems({
 
       <Divider orientation="vertical" flexItem />
 
-      <Stack spacing={2} sx={{ my: 3, typography: 'body2' }}>
+      <Stack spacing={2} sx={{ my: 1, typography: 'body2' }}>
         <Stack direction="row">
           <Box sx={{ width: 160, color: 'text.secondary' }}>{t('entryDate')}</Box>
           <Box sx={{ typography: 'subtitle2' }}>{new Date(currentMentainance?.entry_date).toDateString()}</Box>
@@ -92,7 +92,7 @@ export default function OrderDetailsItems({
 
   return (
     <Card>
-      <CardHeader title={t('Details')} />
+      <CardHeader title={t('details')} />
 
       <Stack
         sx={{

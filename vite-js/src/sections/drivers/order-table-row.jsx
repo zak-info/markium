@@ -29,6 +29,7 @@ import { useTranslate } from 'src/locales';
 export default function OrderTableRow({
   handleEditRow,
   row,
+  state,
   carModel,
   selected,
   onViewRow,
@@ -45,7 +46,6 @@ export default function OrderTableRow({
     state_id,
     customer,
     totalQuantity,
-    state,
   } = row;
 
   const confirm = useBoolean();
@@ -88,7 +88,7 @@ export default function OrderTableRow({
 
       {/* <TableCell>{phone_number}</TableCell> */}
 
-      <TableCell>{state?.key}</TableCell>
+      <TableCell>{state}</TableCell>
       <TableCell>
       {!!row?.car?.id ?
         <Box

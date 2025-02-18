@@ -71,7 +71,7 @@ export default function OrderListView() {
 
     // { id: 'orderNumber', label: t('vehicle'), width: 144 },
     { id: 'workSite', label: t('workSite'), width: 144 },
-    { id: 'remaining_days', label: t('remainingDays'), width: 144 },
+    { id: 'remaining_days', label: t('remainingDate'), width: 144 },
     // { id: 'tenantName', label: t('tenantName'), width: 144 },
     { id: 'maintainStatus', label: t('maintainStatus'), width: 140 },
     { id: 'driver', label: t('driver'), width: 140 },
@@ -196,6 +196,12 @@ export default function OrderListView() {
     },
     [router]
   );
+  const handleMarkAsCompleted = useCallback(
+    (id) => {
+      router.push(paths.dashboard.maintenance.edit(id));
+    },
+    [router]
+  );
 
   const handleFilterStatus = useCallback(
     (event, newValue) => {
@@ -263,7 +269,7 @@ export default function OrderListView() {
                     }
                   >
                     {['completed', 'pending'].includes(tab.value)
-                      ? tableData.filter((user) => user.status?.key === tab.value).length
+                      ? tableData.filter((user) => user?.status?.key === tab.value).length
                       : tableData.length}
                   </Label>
                 }
@@ -339,11 +345,12 @@ export default function OrderListView() {
                         row={row}
                         car_model={car?.find(item => item?.model?.id == row?.car?.car_model_id)?.model?.translations?.name}
                         work_site={data?.states?.find(item => item?.id == row?.state_id)?.translations[0]?.name}
-                        driver={drivers?.find(item=> item.id == row?.car?.driver_id) || {name:"no driver selected",phone:"...."} }
+                        driver={drivers?.find(item=> item.id == row?.car?.driver_id) || {name:t("not_yet_attached"),phone:"...."} }
                         selected={table.selected.includes(row.id)}
                         onSelectRow={() => table.onSelectRow(row.id)}
                         onDeleteRow={() => handleDeleteRow(row.id)}
                         onEditRow={() => handleEditRow(row.id)}
+                        onMarkAsCompleted={() => handleMarkAsCompleted(row.id)}
                         onViewRow={() => handleViewRow(row.car.id)}
                       />
                     ))}
@@ -439,3 +446,4 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
 
   return inputData;
 }
+

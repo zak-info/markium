@@ -44,9 +44,10 @@ import OrderTableRow from '../claims-table-row';
 import OrderTableToolbar from '../claims-table-toolbar';
 import OrderTableFiltersResult from '../claims-table-filters-result';
 import { useTranslate } from 'src/locales';
-import { useGetClaim } from 'src/api/claim';
+import { useGetAllClaim, useGetClaim } from 'src/api/claim';
 import { useGetClients } from 'src/api/client';
 import { useGetContracts } from 'src/api/contract';
+import { useValues } from 'src/api/utils';
 
 // ----------------------------------------------------------------------
 
@@ -66,13 +67,11 @@ export default function OrderListView() {
   const { t } = useTranslate();
 
   const TABLE_HEAD = [
+    { id: 'contract', label: t('contract'), width: 140 },
     { id: 'client', label: t('client'), width: 140 },
-    { id: 'key2', label: t('key2'), width: 140 },
-    { id: 'key3', label: t('key3'), width: 140 },
-    { id: 'key4', label: t('key4'), width: 140 },
-    { id: 'key5', label: t('key5'), width: 140 },
-    { id: 'key6', label: t('key6'), width: 140 },
-
+    { id: 'amount', label: t('amount'), width: 140 },
+    { id: 'paiment_date', label: t('paiment_date'), width: 140 },
+    { id: 'status', label: t('status'), width: 140 },
     { id: '', width: 88 },
   ];
 
@@ -84,7 +83,8 @@ export default function OrderListView() {
 
   const confirm = useBoolean();
 
-  const { claims } = useGetClaim()
+  const { claims } = useGetAllClaim()
+  const { data } = useValues()
   const { clients } = useGetClients()
   const { contracts } = useGetContracts()
 
@@ -99,6 +99,8 @@ export default function OrderListView() {
 
   const dataFiltered = applyFilter({
     inputData: tableData,
+    contracts: contracts,
+    clients: clients,
     comparator: getComparator(table.order, table.orderBy),
     filters,
     dateError,
@@ -163,6 +165,18 @@ export default function OrderListView() {
     },
     [router]
   );
+  const handleViewContract = useCallback(
+    (id) => {
+      router.push(paths.dashboard.clients.contractsDetails(id));
+    },
+    [router]
+  );
+  const handleViewClient = useCallback(
+    (id) => {
+      router.push(paths.dashboard.clients.details(id));
+    },
+    [router]
+  );
 
   const handleFilterStatus = useCallback(
     (event, newValue) => {
@@ -190,7 +204,7 @@ export default function OrderListView() {
           action={
             <Button
               component={RouterLink}
-              href={paths.dashboard.clients.claims+"/new"}
+              href={paths.dashboard.clients.claims + "/new"}
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
             >
@@ -203,7 +217,7 @@ export default function OrderListView() {
         />
 
         <Card>
-          {/* <Tabs
+          <Tabs
             value={filters.status}
             onChange={handleFilterStatus}
             sx={{
@@ -211,32 +225,47 @@ export default function OrderListView() {
               boxShadow: (theme) => `inset 0 -2px 0 0 ${alpha(theme.palette.grey[500], 0.08)}`,
             }}
           >
-            {STATUS_OPTIONS.map((tab) => (
+            <Tab
+              key={"all"}
+              iconPosition="end"
+              value={"All"}
+              label={"All"}
+              icon={
+                <Label
+                  variant={'soft'}
+                  color={'default'}
+                >
+                  {claims.length}
+                </Label>
+              }
+            />
+            {data?.claim_notification_statuses?.map((tab) => (
               <Tab
-                key={tab.value}
+                key={tab.key}
                 iconPosition="end"
-                value={tab.value}
-                label={tab.label}
+                value={tab.key}
+                label={tab.translations[0].name}
                 icon={
                   <Label
                     variant={
-                      ((tab.value === 'all' || tab.value === filters.status) && 'filled') || 'soft'
+                      ((tab.key === 'all' || tab.key === filters.status) && 'filled') || 'soft'
                     }
                     color={
-                      (tab.value === 'completed' && 'success') ||
-                      (tab.value === 'pending' && 'warning') ||
-                      (tab.value === 'cancelled' && 'error') ||
+                      (tab.key === 'paid' && 'success') ||
+                      (tab.key === 'not_yet_claim' && 'secondary') ||
+                      (tab.value === 'overdue_claim' && 'warning') ||
+                      (tab.value === 'severely_overdue_claim' && 'error') ||
                       'default'
                     }
                   >
-                    {['completed', 'pending', 'cancelled', 'refunded'].includes(tab.value)
-                      ? tableData.filter((user) => user.status === tab.value).length
+                    {['paid_claim',"due_claim", 'not_yet_claim', 'overdue_claim', 'severely_overdue_claim'].includes(tab.key)
+                      ? tableData.filter((user) => user.status?.key == tab.key).length
                       : tableData.length}
                   </Label>
                 }
               />
             ))}
-          </Tabs> */}
+          </Tabs>
 
           <OrderTableToolbar
             filters={filters}
@@ -305,11 +334,13 @@ export default function OrderListView() {
                         key={row.id}
                         row={row}
                         contract={contracts?.find(item => item.id == row?.contract_id)}
-                        client={clients.find(client => client.id == contracts?.find(item => item.id == row?.contract_id)?.id)?.name}
+                        client={clients.find(client => client.id == contracts?.find(item => item.id == row?.contract_id)?.client_id)}
                         selected={table.selected.includes(row.id)}
                         onSelectRow={() => table.onSelectRow(row.id)}
                         onDeleteRow={() => handleDeleteRow(row.id)}
                         onViewRow={() => handleViewRow(row.id)}
+                        onViewContract={() => handleViewContract(row.contract_id)}
+                        onViewClient={() => handleViewClient(contracts?.find(item => item.id == row?.contract_id)?.client_id)}
                       />
                     ))}
 
@@ -365,7 +396,7 @@ export default function OrderListView() {
 
 // ----------------------------------------------------------------------
 
-function applyFilter({ inputData, comparator, filters, dateError }) {
+function applyFilter({ inputData, contracts, clients, comparator, filters, dateError }) {
   const { status, name, startDate, endDate } = filters;
 
   const stabilizedThis = inputData.map((el, index) => [el, index]);
@@ -377,13 +408,16 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
   });
 
   inputData = stabilizedThis.map((el) => el[0]);
+  // contract={contracts?.find(item => item.id == row?.contract_id)}
+  // client={clients.find(client => client.id == contracts?.find(item => item.id == row?.contract_id)?.client_id)}
 
   if (name) {
     inputData = inputData.filter(
       (order) =>
-        order.orderNumber.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.customer.name.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.customer.email.toLowerCase().indexOf(name.toLowerCase()) !== -1
+        contracts?.find(item => item.id == order?.contract_id)?.ref.toLowerCase().includes(name.toLowerCase()) ||
+        clients.find(client => client.id == contracts?.find(item => item.id == order?.contract_id)?.client_id)?.name.toLowerCase().includes(name.toLowerCase()) ||
+        order.paiment_date.toLowerCase().includes(name.toLowerCase()) ||
+        order.status?.translations[0]?.name.toLowerCase().includes(name.toLowerCase())
     );
   }
 

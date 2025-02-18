@@ -45,6 +45,8 @@ import OrderTableFiltersResult from '../notifications-tabel-filters-result';
 import { useTranslate } from 'src/locales';
 import { RouterLink } from 'src/routes/components';
 import { useGetMaintenanceLogs } from 'src/api/maintainance';
+import { useGetCar } from 'src/api/car';
+import { useValues } from 'src/api/utils';
 
 // ----------------------------------------------------------------------
 
@@ -63,16 +65,17 @@ export default function NotificationsListView() {
   const { t } = useTranslate();
 
   const TABLE_HEAD = [
-    { id: 'plateNumber', label: t('plateNumber'), width: 116 },
+    // { id: 'plateNumber', label: t('plateNumber'), width: 116 },
+    { id: 'id', label: t('id'), width: 40 },
 
-    { id: 'orderNumber', label: t('vehicle'), width: 116 },
-    { id: 'manitainClassification', label: t('manitainClassification'), width: 140 },
-    { id: 'maintainType', label: t('maintainType')},
-    { id: 'name', label: t('theRest'), width: 140 },
-    { id: 'createdAt', label: t('alert'), width: 140 },
-    { id: 'workSite', label: t('workSite'), width: 140 },
-    { id: 'tenantName', label: t('tenantName'), width: 140 },
-    { id: 'driver', label: t('driver') },
+    // { id: 'vehicle', label: t('vehicle'), width: 116 },
+    // { id: 'entry_date', label: t('entry date'), width: 120 },
+    { id: 'rem_days', label: t('date'), width: 140 },
+    { id: 'employee', label: t('employee'), width: 120 },
+    // { id: 'createdAt', label: t('alert'), width: 140 },
+    // { id: 'workSite', label: t('workSite'), width: 140 },
+    { id: 'status', label: t('status'), width: 80 },
+    // { id: 'driver', label: t('driver') },
     { id: '', width: 88 },
   ];
 
@@ -91,12 +94,14 @@ export default function NotificationsListView() {
   const router = useRouter();
 
   const confirm = useBoolean();
-  const {logs} = useGetMaintenanceLogs()
+  const { logs } = useGetMaintenanceLogs()
+  const { car } = useGetCar()
+  const { data } = useValues()
 
   const [tableData, setTableData] = useState(logs);
-  useEffect(()=>{
-  // setTableData(logs)  
-  },[logs])
+  useEffect(() => {
+    setTableData(logs)
+  }, [logs])
 
   const [filters, setFilters] = useState(defaultFilters);
 
@@ -104,6 +109,8 @@ export default function NotificationsListView() {
 
   const dataFiltered = applyFilter({
     inputData: tableData,
+    car: car,
+    data: data,
     comparator: getComparator(table.order, table.orderBy),
     filters,
     dateError,
@@ -169,6 +176,13 @@ export default function NotificationsListView() {
     [router]
   );
 
+  const handleEditRow = useCallback(
+    (id) => {
+      router.push(paths.dashboard.maintenance.new + "?car_id=" + id);
+    },
+    [router]
+  );
+
   const handleFilterStatus = useCallback(
     (event, newValue) => {
       handleFilters('status', newValue);
@@ -189,16 +203,6 @@ export default function NotificationsListView() {
             },
             { name: t('allNoti') },
           ]}
-          // action={
-          //   <Button
-          //     component={RouterLink}
-          //     href={paths.dashboard.maintenance.new}
-          //     variant="contained"
-          //     startIcon={<Iconify icon="mingcute:add-line" />}
-          //   >
-          //     {t('addMaintain')}
-          //   </Button>
-          // }
           sx={{
             mb: {
               xs: 3,
@@ -208,40 +212,6 @@ export default function NotificationsListView() {
         />
 
         <Card>
-          {/* <Tabs
-              value={filters.status}
-              onChange={handleFilterStatus}
-              sx={{
-                px: 2.5,
-                boxShadow: (theme) => `inset 0 -2px 0 0 ${alpha(theme.palette.grey[500], 0.08)}`,
-              }}
-            >
-              {STATUS_OPTIONS.map((tab) => (
-                <Tab
-                  key={tab.value}
-                  iconPosition="end"
-                  value={tab.value}
-                  label={tab.label}
-                  icon={
-                    <Label
-                      variant={
-                        ((tab.value === 'all' || tab.value === filters.status) && 'filled') || 'soft'
-                      }
-                      color={
-                        (tab.value === 'completed' && 'success') ||
-                        (tab.value === 'pending' && 'warning') ||
-                        (tab.value === 'cancelled' && 'error') ||
-                        'default'
-                      }
-                    >
-                      {['completed', 'pending', 'cancelled', 'refunded'].includes(tab.value)
-                        ? tableData.filter((user) => user.status === tab.value).length
-                        : tableData.length}
-                    </Label>
-                  }
-                />
-              ))}
-            </Tabs> */}
 
           <OrderTableToolbar
             filters={filters}
@@ -290,13 +260,13 @@ export default function NotificationsListView() {
                   headLabel={TABLE_HEAD}
                   rowCount={dataFiltered.length}
                   numSelected={table.selected.length}
-                  // onSort={table.onSort}
-                  // onSelectAllRows={(checked) =>
-                  //   table.onSelectAllRows(
-                  //     checked,
-                  //     dataFiltered.map((row) => row.id)
-                  //   )
-                  // }
+                // onSort={table.onSort}
+                // onSelectAllRows={(checked) =>
+                //   table.onSelectAllRows(
+                //     checked,
+                //     dataFiltered.map((row) => row.id)
+                //   )
+                // }
                 />
 
                 <TableBody>
@@ -309,10 +279,13 @@ export default function NotificationsListView() {
                       <OrderTableRow
                         key={row.id}
                         row={row}
+                        car={car?.find(item => item?.id == row?.data?.car_id || item?.id == row?.new_values?.car_id)}
+                        action={data?.maintenance_log_action_enum?.find(item => item?.key == row?.action)?.translations[0]?.name}
                         selected={table.selected.includes(row.id)}
                         onSelectRow={() => table.onSelectRow(row.id)}
                         onDeleteRow={() => handleDeleteRow(row.id)}
                         onViewRow={() => handleViewRow(row.id)}
+                        onCreateRow={() => handleEditRow(row.data?.car_id || row.new_values?.car_id)}
                       />
                     ))}
 
@@ -368,7 +341,7 @@ export default function NotificationsListView() {
 
 // ----------------------------------------------------------------------
 
-function applyFilter({ inputData, comparator, filters, dateError }) {
+function applyFilter({ inputData, car, data, comparator, filters, dateError }) {
   const { status, name, startDate, endDate } = filters;
 
   const stabilizedThis = inputData.map((el, index) => [el, index]);
@@ -384,9 +357,10 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
   if (name) {
     inputData = inputData.filter(
       (order) =>
-        order.orderNumber.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.customer.name.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        order.customer.email.toLowerCase().indexOf(name.toLowerCase()) !== -1
+        car?.find(item => item?.id == order?.data?.car_id)?.plat_number?.toLowerCase()?.includes(name.toLowerCase()) ||
+        car?.find(item => item?.id == order?.data?.car_id)?.model?.translations?.name?.toLowerCase()?.includes(name.toLowerCase()) ||
+        car?.find(item => item?.id == order?.data?.car_id)?.model?.company?.translations?.name?.toLowerCase()?.includes(name.toLowerCase()) ||
+        data?.maintenance_log_action_enum?.find(item => item?.key == order?.action)?.translations[0]?.name?.toLowerCase()?.includes(name.toLowerCase())
     );
   }
 

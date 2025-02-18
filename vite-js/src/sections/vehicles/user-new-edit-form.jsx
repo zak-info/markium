@@ -63,10 +63,9 @@ export default function UserNewEditForm({ currentCar }) {
       .required('Passenger capacity is required')
       .positive()
       .integer(),
-    odometer: Yup.number().nullable().positive(),
+    odometer: Yup.number().nullable().positive().required('odometer is required'),
     depreciation: Yup.number()
       .nullable()
-      .required()
       .min(0, 'Depreciation cannot be negative')
       .test('is-decimal', 'يجب أن يكون الاستهلاك رقم عشري مع حدين عشريين كحد أقصى', (value) =>
         (value + '').match(/^\d*\.{1}\d*$/)
@@ -202,7 +201,7 @@ export default function UserNewEditForm({ currentCar }) {
                 ))}
               </RHFSelect> */}
 
-              <RHFSelect required name="car_company_id" label={t('Company')}>
+              <RHFSelect required name="car_company_id" label={t('company')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
                 {data?.car_companies?.map((company) => (
                   <MenuItem key={company?.id} value={company.id}>
@@ -214,7 +213,7 @@ export default function UserNewEditForm({ currentCar }) {
               <RHFTextField required name="production_year" label={t('manufacturingYear')} />
 
 
-              <RHFSelect required name="car_model_id" label={t('Model')}>
+              <RHFSelect required name="car_model_id" label={t('model')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
                 {data?.car_companies?.find(item => item?.id == selectedCompanyId)?.models?.map((model) => (
                   <MenuItem key={model.id} value={model.id}>
@@ -239,7 +238,7 @@ export default function UserNewEditForm({ currentCar }) {
               <RHFTextField required name="chassis_number" label={t('structureNo')} />
 
               <RHFTextField required name="vin" label={t('serialNumber')} />
-              <RHFTextField name="odometer" label={t('odometer')} />
+              <RHFTextField required name="odometer" label={t('odometer')} />
               <RHFTextField name="depreciation" label={t('depreciation')} />
               <RHFTextField
                 type="number"
@@ -260,7 +259,7 @@ export default function UserNewEditForm({ currentCar }) {
                 <Divider sx={{ borderStyle: 'dashed' }} />
                 {data?.specs?.map((option) => (
                   <MenuItem key={option?.id} value={option?.id}>
-                    {option?.name}
+                    {option?.translations[0]?.name}
                   </MenuItem>
                 ))}
               </RHFSelect>

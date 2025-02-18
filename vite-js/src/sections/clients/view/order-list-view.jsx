@@ -67,10 +67,10 @@ export default function OrderListView() {
   const TABLE_HEAD = [
     { id: 'clientName', label: t('clientName'), width: 116 },
     // { id: 'state', label: t('state'), width: 140 },
-    { id: 'neighborhood_id', label: t('neighborhood'), width: 140 },
-    { id: 'company_id', label: t('tax number'), width: 140 },
+    { id: 'neighborhood_id', label: t('location'), width: 140 },
+    { id: 'company_id', label: t('tax_number'), width: 140 },
     // { id: 'theRest', label: t('phone'), width: 140 },
-    { id: 'crn', label: t('C R N'), width: 140 },
+    { id: 'crn', label: t('c_r_n'), width: 140 },
 
     { id: '', width: 88 },
   ];
@@ -98,6 +98,7 @@ export default function OrderListView() {
 
   const dataFiltered = applyFilter({
     inputData: tableData,
+    data:data,
     comparator: getComparator(table.order, table.orderBy),
     filters,
     dateError,
@@ -336,7 +337,7 @@ export default function OrderListView() {
 
 // ----------------------------------------------------------------------
 
-function applyFilter({ inputData, comparator, filters, dateError }) {
+function applyFilter({ inputData,data, comparator, filters, dateError }) {
   const { status, name, startDate, endDate } = filters;
 
   const stabilizedThis = inputData.map((el, index) => [el, index]);
@@ -354,6 +355,7 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
       (order) =>
         order.name.toLowerCase().includes(name.toLowerCase()) ||
         order.tax_number.toLowerCase().includes(name.toLowerCase()) ||
+        data?.neighborhoods?.find(item => item?.id == order?.neighborhood_id)?.translations[0]?.name?.toLowerCase()?.includes(name.toLowerCase())||
         order.commercial_registration_number.toLowerCase().includes(name.toLowerCase()) 
     );
   }

@@ -54,10 +54,10 @@ import { useGetDrivers } from 'src/api/drivers';
 const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...ORDER_STATUS_OPTIONS];
 
 const defaultFilters = {
-  // attachment_name_id: '',
-  // // status: 'all',
-  // expiry_date: null,
-  // release_date: null,
+  attachment_name_id: '',
+  status: 'all',
+  expiry_date: null,
+  release_date: null,
 };
 
 // ----------------------------------------------------------------------
@@ -70,8 +70,8 @@ export default function OrderListView() {
     // { id: 'orderNumber', label: t('vehicle'), width: 116 },
     { id: 'attachment_name_id', label: t('attachment_name'), width: 50 },
     { id: 'attachment_type_id', label: t('attachment_type'), width: 50 },
-    { id: 'RD & ED', label: t('RD & ED'), width: 140 },
-    { id: 'attachable', label: t('Attachable'), width: 140 },
+    { id: 'RD & ED', label: t('document_duration'), width: 140 },
+    { id: 'attachable', label: t('attachable'), width: 140 },
     { id: 'document_duration_days', label: t('DDD'), width: 50 },
     // { id: 'status', label: t('status'), width: 140 },
     // { id: 'totalAmount2', label: t('workSite'), width: 140 },
@@ -100,7 +100,7 @@ export default function OrderListView() {
   useEffect(() => {
     setTableData(documents);
   }, [documents]);
-  const [filters, setFilters] = useState({});
+  const [filters, setFilters] = useState(defaultFilters);
 
   // const dateError = isAfter(filters.release_date, filters.expiry_date);
   const dateError = null;
@@ -121,7 +121,7 @@ export default function OrderListView() {
   const denseHeight = table.dense ? 56 : 56 + 20;
 
   const canReset =
-    !!filters.attachment_name_id || filters.status !== 'all' || (!!filters.release_date && !!filters.expiry_date);
+    !!filters?.attachment_name_id || filters?.status !== 'all' || (!!filters?.release_date && !!filters?.expiry_date);
 
   const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
 
@@ -179,7 +179,7 @@ export default function OrderListView() {
 
   const handleFilterStatus = useCallback(
     (event, newValue) => {
-      handleFilters('status', newValue);
+      handleFilters('status', newValue );
     },
     [handleFilters]
   );
@@ -378,7 +378,6 @@ function applyFilter({ inputData, comparator, filters, dateError,data }) {
   if (status !== 'all') {
     inputData = inputData.filter((order) => order.status === status);
   }
-
   // if (!dateError) {
   //   if (release_date && expiry_date) {
   //     inputData = inputData.filter((order) => isBetween(order.createdAt, release_date, expiry_date));

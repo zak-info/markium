@@ -22,10 +22,11 @@ import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import { t } from 'i18next';
 
 // ----------------------------------------------------------------------
 
-export default function OrderTableRow({ row, client, selected, onViewRow, onSelectRow, onDeleteRow }) {
+export default function OrderTableRow({ row,payment_method, client, selected, onViewRow, onSelectRow, onDeleteRow }) {
   const { clauses, status, orderNumber, createdAt, customer, totalQuantity, subTotal } = row;
 
   const confirm = useBoolean();
@@ -50,12 +51,25 @@ export default function OrderTableRow({ row, client, selected, onViewRow, onSele
             },
           }}
         >
+          {row?.ref}
+        </Box>
+      </TableCell>
+      <TableCell>
+        <Box
+          onClick={onViewRow}
+          sx={{
+            cursor: 'pointer',
+            '&:hover': {
+              textDecoration: 'underline',
+            },
+          }}
+        >
           {client?.name}
         </Box>
       </TableCell>
 
       <TableCell>
-        <ListItemText
+        {/* <ListItemText
           primary={fDate(row?.created_at)}
           secondary={fTime(row?.created_at)}
           primaryTypographyProps={{ typography: 'body2', noWrap: true }}
@@ -64,26 +78,27 @@ export default function OrderTableRow({ row, client, selected, onViewRow, onSele
             component: 'span',
             typography: 'caption',
           }}
-        />
+        /> */}
+        {fDate(row?.created_at)}
       </TableCell>
-      <TableCell align="start"> {row?.net} RS</TableCell>
+      <TableCell align="start"> {row?.net}.00</TableCell>
       <TableCell>
         <Label
           variant="soft"
           color={
             (row?.payment_method === 'cash' && 'success') ||
-            (row?.payment_method === 'versement' && 'warning') ||
+            (row?.payment_method === 'deferred' && 'warning') ||
             (row?.payment_method === 'bill' && 'error') ||
             'default'
           }
         >
-          {row?.payment_method}
+          {payment_method}
         </Label>
       </TableCell>
       <TableCell>
         <ListItemText
-          primary={"remaining " + row?.remaining_unclaimed_amount}
-          secondary={"paid   " + row?.paid_amount}
+          primary={t("remaining") +" "+ row?.remaining_unclaimed_amount}
+          secondary={t("paid")+" " + row?.paid_amount}
           primaryTypographyProps={{ typography: 'body2', noWrap: true }}
           secondaryTypographyProps={{
             mt: 0.5,

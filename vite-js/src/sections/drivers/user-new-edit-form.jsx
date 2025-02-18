@@ -86,7 +86,7 @@ export default function UserNewEditForm({ currentDriver }) {
       // end_of_service_bonus: currentDriver?.end_of_service_bonus || null,
       // additional_salary: currentDriver?.additional_salary || null,
       phone_number: currentDriver?.phone_number || '',
-      start_date: currentDriver?.start_date || '',
+      start_date: currentDriver?.start_date || new Date(),
       // hourly_rate: currentDriver?.hourly_rate || null,
       // custody: currentDriver?.custody || null,
       // loan: currentDriver?.loan || null,

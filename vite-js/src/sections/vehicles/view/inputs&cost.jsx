@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
@@ -43,6 +43,8 @@ import OrderTableRow from '../input-table-row';
 // import OrderTableToolbar from '../order-table-toolbar';
 import OrderTableFiltersResult from '../inputs-table-filters-result';
 import { useTranslation } from 'react-i18next';
+import { useGetCar, useGetCarCostIput } from 'src/api/car';
+import { useLocales } from 'src/locales';
 
 // ----------------------------------------------------------------------
 
@@ -63,12 +65,11 @@ export default function OrderListView() {
   const { t } = useTranslation();
 
   const TABLE_HEAD = [
-    { id: 'orderNumber', label: t('plateNumber'), width: 116 },
-    { id: 'model', label: t('model'), width: 116 },
-    { id: 'company', label: t('company'), width: 116 },
-    { id: 'createdAt', label: t('transaction'), width: 140 },
-    { id: 'totalQuantity', label: t('date'), width: 120, align: 'center' },
-    { id: 'totalAmount', label: t('details'), width: 140 },
+    { id: 'model', label: t('model'), width: 146 },
+    { id: 'operation', label: t('operation'), width: 140 },
+    { id: 'date', label: t('date'), width: 140, align: 'start' },
+    { id: 'totalAmount', label: t('amount'), width: 120 },
+    { id: 'note', label: t('note'), width: 140 },
     { id: '', width: 88 },
   ];
 
@@ -79,8 +80,13 @@ export default function OrderListView() {
   const router = useRouter();
 
   const confirm = useBoolean();
-
-  const [tableData, setTableData] = useState(_orders);
+  const {currentLang} = useLocales()
+  const {cost_input} = useGetCarCostIput()
+  const {car} = useGetCar()
+  const [tableData, setTableData] = useState(cost_input);
+  useEffect(()=>{
+    setTableData(cost_input)
+  },[cost_input])
 
   const [filters, setFilters] = useState(defaultFilters);
 
@@ -283,6 +289,8 @@ export default function OrderListView() {
                       <OrderTableRow
                         key={row.id}
                         row={row}
+                        currentLang={currentLang.value}
+                        car={car?.find(item => item?.id == row?.car_id)}
                         selected={table.selected.includes(row.id)}
                         onSelectRow={() => table.onSelectRow(row.id)}
                         onDeleteRow={() => handleDeleteRow(row.id)}

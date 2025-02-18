@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 
 import Fab from '@mui/material/Fab';
@@ -23,6 +23,13 @@ import Iconify from 'src/components/iconify';
 import ProfilePostItem from './profile-post-item';
 import { _appInvoices } from 'src/_mock';
 import { useTranslation } from 'react-i18next';
+import { useValues } from 'src/api/utils';
+import { Tab, Tabs } from '@mui/material';
+import ClientContractsListView from './ClientContracts/NotificationsListView';
+import ClientRepresentorsListView from './ClientRepresentors/NotificationsListView';
+import { useGetContracts } from 'src/api/contract';
+import ClientClaimsListView from './ClientClaims/NotificationsListView';
+import { useGetAllClaim, useGetClaim } from 'src/api/claim';
 
 // ----------------------------------------------------------------------
 
@@ -30,6 +37,15 @@ export default function ProfileHome({ info, posts }) {
   const fileRef = useRef(null);
 
   const { t } = useTranslation();
+
+
+
+
+  const [section, setSection] = useState(0);
+
+  const handleTabChange = (event, newValue) => {
+    setSection(newValue);
+  };
 
   const handleAttach = () => {
     if (fileRef.current) {
@@ -44,14 +60,14 @@ export default function ProfileHome({ info, posts }) {
         divider={<Divider orientation="vertical" flexItem sx={{ borderStyle: 'dashed' }} />}
       >
         <Stack width={1}>
-          {fNumber(info.totalFollowers)}
+          {fNumber(info?.totalFollowers)}
           <Box component="span" sx={{ color: 'text.secondary', typography: 'body2' }}>
             Follower
           </Box>
         </Stack>
 
         <Stack width={1}>
-          {fNumber(info.totalFollowing)}
+          {fNumber(info?.totalFollowing)}
           <Box component="span" sx={{ color: 'text.secondary', typography: 'body2' }}>
             Following
           </Box>
@@ -59,152 +75,166 @@ export default function ProfileHome({ info, posts }) {
       </Stack>
     </Card>
   );
+  const { data } = useValues()
+  const {contracts} = useGetContracts()
+  const {claims} = useGetAllClaim()
+  const selected_contracts = contracts?.filter(item => item?.client_id == info?.id)
+  const selected_claims = claims.filter(item => selected_contracts.some(entry => entry.id == item?.contract_id));
+  
+
 
   const renderAbout = (
     <Card>
-      <CardHeader title={t('clients')} />
+      <CardHeader title={t('client')} />
 
       <Stack spacing={2} sx={{ p: 3 }}>
-        <Box sx={{ typography: 'body2' }}>{info.quote}</Box>
+        <Box sx={{ typography: 'body2' }}>{data?.neighborhoods?.find(item => item?.id == info?.neighborhood?.id)?.translations[0]?.name}</Box>
 
         <Stack direction="row" spacing={2}>
           <Iconify icon="mingcute:location-fill" width={24} />
 
           <Box sx={{ typography: 'body2' }}>
-            {`Live at `}
+            {t(`live_at`)}
             <Link variant="subtitle2" color="inherit">
-              {info.country}
-            </Link>
-          </Box>
-        </Stack>
-
-        <Stack direction="row" sx={{ typography: 'body2' }}>
-          <Iconify icon="fluent:mail-24-filled" width={24} sx={{ mr: 2 }} />
-          {info.email}
-        </Stack>
-
-        <Stack direction="row" spacing={2}>
-          <Iconify icon="ic:round-business-center" width={24} />
-
-          <Box sx={{ typography: 'body2' }}>
-            {info.role} {`at `}
-            <Link variant="subtitle2" color="inherit">
-              {info.company}
+              {data?.neighborhoods?.find(item => item?.id == info?.neighborhood_id)?.translations[0]?.name}
             </Link>
           </Box>
         </Stack>
 
         <Stack direction="row" spacing={2}>
-          <Iconify icon="ic:round-business-center" width={24} />
+          <Iconify icon="ic:round-business-center" width={48} />
 
           <Box sx={{ typography: 'body2' }}>
-            {`Studied at `}
+            {t(`tax_number`) + "  "}
             <Link variant="subtitle2" color="inherit">
-              {info.school}
+              {info?.tax_number}
             </Link>
           </Box>
         </Stack>
-      </Stack>
-    </Card>
-  );
+        <Stack direction="row" spacing={2}>
+          <Iconify icon="ic:round-business-center" width={48} />
 
-  const renderPostInput = (
-    <Card sx={{ p: 3 }}>
-      <InputBase
-        multiline
-        fullWidth
-        rows={4}
-        placeholder="Share what you are thinking here..."
-        sx={{
-          p: 2,
-          mb: 3,
-          borderRadius: 1,
-          border: (theme) => `solid 1px ${alpha(theme.palette.grey[500], 0.2)}`,
-        }}
-      />
-
-      <Stack direction="row" alignItems="center" justifyContent="space-between">
-        <Stack direction="row" spacing={1} alignItems="center" sx={{ color: 'text.secondary' }}>
-          <Fab size="small" color="inherit" variant="softExtended" onClick={handleAttach}>
-            <Iconify icon="solar:gallery-wide-bold" width={24} sx={{ color: 'success.main' }} />
-            Image/Video
-          </Fab>
-
-          <Fab size="small" color="inherit" variant="softExtended">
-            <Iconify icon="solar:videocamera-record-bold" width={24} sx={{ color: 'error.main' }} />
-            Streaming
-          </Fab>
+          <Box sx={{ typography: 'body2' }}>
+            {t(`commercial_registration_number`) + "  "}
+            <Link variant="subtitle2" color="inherit">
+              {info?.commercial_registration_number}
+            </Link>
+          </Box>
         </Stack>
 
-        <Button variant="contained">Post</Button>
-      </Stack>
 
-      <input ref={fileRef} type="file" style={{ display: 'none' }} />
+      </Stack>
     </Card>
   );
-
-  const renderSocials = (
+  const renderAbout2 = (
     <Card>
-      <CardHeader title="Social" />
+      <CardHeader title={t('info')} />
 
       <Stack spacing={2} sx={{ p: 3 }}>
-        {_socials.map((link) => (
-          <Stack
-            key={link.name}
-            spacing={2}
-            direction="row"
-            sx={{ wordBreak: 'break-all', typography: 'body2' }}
-          >
-            <Iconify
-              icon={link.icon}
-              width={24}
-              sx={{
-                flexShrink: 0,
-                color: link.color,
-              }}
-            />
-            <Link color="inherit">
-              {link.value === 'facebook' && info.socialLinks.facebook}
-              {link.value === 'instagram' && info.socialLinks.instagram}
-              {link.value === 'linkedin' && info.socialLinks.linkedin}
-              {link.value === 'twitter' && info.socialLinks.twitter}
+        <Box sx={{ typography: 'body2' }}>{info?.quote}</Box>
+
+
+        <Stack direction="row" spacing={2}>
+          <Iconify icon="ic:round-business-center" width={24} />
+
+          <Box sx={{ typography: 'body2' }}>
+            {t("representors") + "  "}
+            <Link variant="subtitle2" color="inherit">
+              {info?.representors?.length}
             </Link>
-          </Stack>
-        ))}
+          </Box>
+        </Stack>
+        <Stack direction="row" spacing={2}>
+          <Iconify icon="ic:round-business-center" width={24} />
+
+          <Box sx={{ typography: 'body2' }}>
+            {t("contracts") + "  "}
+            <Link variant="subtitle2" color="inherit">
+              {info?.contracts?.length}
+            </Link>
+          </Box>
+        </Stack>
+        <Stack direction="row" spacing={2}>
+          <Iconify icon="mingcute:coin-fill" width={24} />
+
+          <Box sx={{ typography: 'body2' }}>
+            {t("total_claims") + "  "}
+            <Link variant="subtitle2" color="inherit">
+              {info?.contracts?.length}
+            </Link>
+          </Box>
+        </Stack>
+        <Stack direction="row" spacing={2}>
+          <Iconify icon="mingcute:coin-fill" width={24} />
+
+          <Box sx={{ typography: 'body2' }}>
+            {t("unpaied_claims") + "  "}
+            <Link variant="subtitle2" color="inherit">
+              {info?.contracts?.length}
+            </Link>
+          </Box>
+        </Stack>
+
+
       </Stack>
     </Card>
   );
+
+
 
   return (
     <Grid container spacing={3}>
       <Grid xs={12} md={4}>
         <Stack spacing={3}>
-          {renderFollows}
-
           {renderAbout}
-
-          {renderSocials}
         </Stack>
       </Grid>
 
       <Grid xs={12} md={8}>
         <Stack spacing={3}>
-          {renderFollows}
-
-          {renderAbout}
-
-          <AppNewInvoice
-            title={'سجل العقود'}
-            tableData={_appInvoices}
-            tableLabels={[
-              { id: 'id', label: 'Invoice ID' },
-              { id: 'category', label: 'Category' },
-              { id: 'price', label: 'Price' },
-              { id: 'status', label: 'Status' },
-              { id: '' },
-            ]}
-          />
+          {renderAbout2}
         </Stack>
+      </Grid>
+      <Grid xs={12} md={16}>
+        <Card sx={{ p: 1 }}>
+          <Tabs
+            value={section}
+            onChange={handleTabChange}
+            aria-label="icon position tabs example"
+            textColor="primary"
+          >
+            <Tab icon={<Iconify icon="duo-icons:settings" />} iconPosition="start" label={t("representors")} />
+            <Tab icon={<Iconify icon="lets-icons:file-dock-search-fill" />} iconPosition="start" label={t("contracts")} />
+            <Tab icon={<Iconify icon="solar:dollar-line-duotone" />} iconPosition="start" label={t("claims")} />
+            <Tab icon={<Iconify icon="lets-icons:alarm-fill" />} iconPosition="start" label={t("alerts")} />
+            {/* <Tab icon={<Iconify icon="lets-icons:refresh" />} iconPosition="start" label={t("periodic_maintenances")} /> */}
+          </Tabs>
+        </Card>
+        <Box
+          rowGap={3}
+          columnGap={3}
+          display="grid"
+          gridTemplateColumns={{
+            xs: 'repeat(1, 1fr)',
+            sm: 'repeat(1, 1fr)',
+          }}
+        >
+          {
+            section == 0 ?
+              <Grid xs={12} md={12}>
+                <ClientRepresentorsListView id={info?.id} representors={info?.representors} />
+              </Grid>
+              :section == 1 ?
+              <ClientContractsListView id={info?.id} contracts={selected_contracts} />
+
+              :section == 2 ?
+              <ClientClaimsListView id={info?.id} claims={selected_claims} />
+
+              :
+              null
+          }
+
+        </Box>
       </Grid>
     </Grid>
   );

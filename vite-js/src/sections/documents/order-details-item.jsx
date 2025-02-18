@@ -73,7 +73,7 @@ export default function OrderDetailsItems({
   return (
     <Card>
       <CardHeader
-        title="Details"
+        title={t("details")}
         action={
           <IconButton>
             <Iconify icon="solar:pen-bold" />

@@ -30,21 +30,26 @@ import { useTranslate } from 'src/locales';
 import { addNewDriver, editDriver } from 'src/api/drivers';
 
 import { useValues } from 'src/api/utils';
-import { useGetCar } from 'src/api/car';
+import { useGetCar, useGetCarPeriodicMaintenance } from 'src/api/car';
 import { addNewClause } from 'src/api/clauses';
-import { useGetMaintenanceSpecs } from 'src/api/maintainance';
+import { useGetMaintenanceSpecs, useShowMaintenance } from 'src/api/maintainance';
 import RHFTextarea from 'src/components/hook-form/RHFTextarea';
 
 // ----------------------------------------------------------------------
 
-export default function UserNewEditForm({ maintenance_id, currentClause ,setTableData}) {
+export default function UserNewEditForm({ maintenance_id, currentClause, setTableData }) {
   const router = useRouter();
 
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslate();
   const { data } = useValues();
   const { car } = useGetCar();
+  console.log(" maintenance_id : ",maintenance_id);
   const { maintenance_specs } = useGetMaintenanceSpecs()
+  const { maintenance } = useShowMaintenance(maintenance_id)
+  console.log("maintenance :",maintenance);
+  const { maintenance: periodic_maintenance } = useGetCarPeriodicMaintenance(maintenance?.car_id);
+  console.log("periodic_maintenance :",periodic_maintenance);
   const validationSchema = Yup.object({
     cost: Yup.number().required('cost is required'),
     piece_status: Yup.string().required('piece_status is required'),
@@ -105,11 +110,11 @@ export default function UserNewEditForm({ maintenance_id, currentClause ,setTabl
       body.maintenance_id = Number(maintenance_id);
       if (body?.spec_or_period == "not-periodic") {
         body.spec_id = Number(body?.spec_id);
-        maintenace_spec = data?.maintenance_specifications?.find(item => item.id = Number(body?.spec_id) )
+        maintenace_spec = data?.maintenance_specifications?.find(item => item.id = Number(body?.spec_id))
         delete body?.period_maintenance_id
       } else {
         body.period_maintenance_id = Number(body?.period_maintenance_id);
-        maintenace_spec = data?.maintenance_specifications?.find(item => item.id = Number(body?.period_maintenance_id) )
+        maintenace_spec = data?.maintenance_specifications?.find(item => item.id = Number(body?.period_maintenance_id))
         delete body?.spec_id
       }
       delete body?.spec_or_period
@@ -132,7 +137,7 @@ export default function UserNewEditForm({ maintenance_id, currentClause ,setTabl
       enqueueSnackbar(currentClause?.id ? 'Update success!' : 'Create success!');
       // router.push(paths.dashboard.maintenance.details(maintenance_id));
       // router.reload();
-      setTableData(prev => [...prev,{is_periodic:maintenace_spec?.is_periodic,maintenance_spec:maintenace_spec?.name,cost:Number(body.cost),piece_status:body?.piece_status,quantity:body.quantity,unit:maintenace_spec?.unit}])
+      setTableData(prev => [...prev, { is_periodic: maintenace_spec?.is_periodic, maintenance_spec: maintenace_spec?.name, cost: Number(body.cost), piece_status: body?.piece_status, quantity: body.quantity, unit: maintenace_spec?.unit }])
     } catch (error) {
       console.error(error);
       enqueueSnackbar(error?.message ? error?.message : "Somthing Went Wrong", { variant: 'error' });
@@ -159,68 +164,78 @@ export default function UserNewEditForm({ maintenance_id, currentClause ,setTabl
     <FormProvider methods={methods} onSubmit={onSubmit}>
       <Grid container spacing={3} >
         <Grid xs={12} md={12}>
-          <Card sx={{ p: 3 }}>
+          <Card sx={{ p: 3, fontSize: '0.4rem' }}>
             <Box
               rowGap={3}
               columnGap={2}
               display="grid"
               gridTemplateColumns={{
                 xs: 'repeat(1, 1fr)',
-                sm: 'repeat(5, 1fr)',
+                sm: 'repeat(6, 1fr)',
               }}
             >
-              <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
-                <RHFSelect name="spec_or_period" label={t('type')}  >
-                  <Divider sx={{ borderStyle: 'dashed' }} />
-                  {[{ name: "periodic" }, { name: "not-periodic" }].map((option) => (
-                    <MenuItem key={option?.name} value={option?.name}>
-                      {option?.name}
-                    </MenuItem>
-                  ))}
-                </RHFSelect>
-                {
-                  values?.spec_or_period == "periodic" ?
-                    <RHFSelect type="number" name="period_maintenance_id" label={t('periodic')}>
-                      <Divider sx={{ borderStyle: 'dashed' }} />
-                      {maintenance_specs?.filter(item => !!item?.is_periodic)?.map((option) => (
-                        <MenuItem key={option?.id} value={option?.id}>
-                          {option?.name}
-                        </MenuItem>
-                      ))}
-                    </RHFSelect>
-                    :
-                    <RHFSelect type="number" name="spec_id" label={t('non-periodic')}>
-                      <Divider sx={{ borderStyle: 'dashed' }} />
-                      {maintenance_specs?.filter(item => !item?.is_periodic)?.map((option) => (
-                        <MenuItem key={option?.name} value={option?.id}>
-                          {option?.name}
-                        </MenuItem>
-                      ))}
-                    </RHFSelect>
-                }
-              </div>
+              {/* <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}> */}
+              <RHFSelect name="spec_or_period" label={t('type')}  >
+                <Divider sx={{ borderStyle: 'dashed' }} />
+                {[{ name: "periodic" }, { name: "not-periodic" }].map((option) => (
+                  <MenuItem key={option?.name} value={option?.name}>
+                    {option?.name}
+                  </MenuItem>
+                ))}
+              </RHFSelect>
+              {
+                values?.spec_or_period == "periodic" ?
+                  <RHFSelect type="number" name="period_maintenance_id" label={t('periodic')}>
+                    <Divider sx={{ borderStyle: 'dashed' }} />
+                    {periodic_maintenance?.map((option) => (
+                      <MenuItem key={option?.id} value={option?.id}>
+                        {option?.name}
+                      </MenuItem>
+                    ))}
+                  </RHFSelect>
+                  :
+                  <RHFSelect type="number" name="spec_id" label={t('non-periodic')}>
+                    <Divider sx={{ borderStyle: 'dashed' }} />
+                    {maintenance_specs?.filter(item => !item?.is_periodic)?.map((option) => (
+                      <MenuItem key={option?.name} value={option?.id}>
+                        {option?.name}
+                      </MenuItem>
+                    ))}
+                  </RHFSelect>
+              }
+              {/* </div> */}
               <RHFTextField name="cost" label={t('cost')} type={"number"} sx={{ width: "100%" }} />
-              <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
-                <RHFTextField name="quantity" label={t('quantity')} type={"number"} sx={{ width: "100%" }} />
-                <RHFSelect name="piece_status" label={t('piece_status')} sx={{ width: "100%" }}>
-                  <Divider sx={{ borderStyle: 'dashed' }} />
-                  {[{ name: "new" }, { name: "used" }, { name: "renewd" }].map((option) => (
-                    <MenuItem key={option?.name} value={option?.name}>
-                      {option?.name}
-                    </MenuItem>
-                  ))}
-                </RHFSelect>
-              </div>
-              <RHFTextField name="total" label={t('total')} type={"number"} sx={{ width: "100%" }} disabled value={values?.quantity*values?.cost} />
-
-              
+              {/* <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}> */}
+              <RHFTextField name="quantity" label={t('quantity')} type={"number"} sx={{ width: "100%" }} />
+              <RHFSelect name="piece_status" label={t('piece_status')} sx={{ width: "100%" }}>
+                <Divider sx={{ borderStyle: 'dashed' }} />
+                {[{ name: "new" }, { name: "used" }, { name: "renewd" }].map((option) => (
+                  <MenuItem key={option?.name} value={option?.name}>
+                    {option?.name}
+                  </MenuItem>
+                ))}
+              </RHFSelect>
+              {/* </div> */}
+              <RHFTextField name="total" label={t('total')} type={"number"} sx={{ width: "100%" }} disabled value={values?.quantity * values?.cost} />
 
 
 
 
-              <RHFTextarea name="note" label={t('note')} />
+
+
               {/* <RHFTextField name="note_en" label={t('note_en')} /> */}
 
+            </Box>
+            <Box
+              rowGap={3}
+              columnGap={2}
+              display="grid"
+              gridTemplateColumns={{
+                xs: 'repeat(1, 1fr)',
+                sm: 'repeat(2, 1fr)',
+              }}
+            >
+              <RHFTextarea name="note" label={t('note')} sx={{ mt: "10px" }} />
             </Box>
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>

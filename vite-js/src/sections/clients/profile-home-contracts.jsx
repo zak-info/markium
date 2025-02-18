@@ -27,6 +27,8 @@ import { fDate } from 'src/utils/format-time';
 import AppNewInvoice2 from './app-new-invoice2';
 import ClaimNewEditForm from './claim-new-edit-form';
 import { useGetClaim } from 'src/api/claim';
+import { Tab, Tabs } from '@mui/material';
+import ContractClaimsListView from './ContractClaimsTable/NotificationsListView';
 
 // ----------------------------------------------------------------------
 
@@ -46,34 +48,16 @@ export default function ProfileHome({ info, posts, contract, client, location })
       fileRef.current.click();
     }
   };
+  const [section, setSection] = useState(0);
 
-  const renderFollows = (
-    <Card sx={{ py: 3, textAlign: 'center', typography: 'h4' }}>
-      <Stack
-        direction="row"
-        divider={<Divider orientation="vertical" flexItem sx={{ borderStyle: 'dashed' }} />}
-      >
-        <Stack width={1}>
-          {fNumber(info.totalFollowers)}
-          <Box component="span" sx={{ color: 'text.secondary', typography: 'body2' }}>
-            Follower
-          </Box>
-        </Stack>
-
-        <Stack width={1}>
-          {fNumber(info.totalFollowing)}
-          <Box component="span" sx={{ color: 'text.secondary', typography: 'body2' }}>
-            Following
-          </Box>
-        </Stack>
-      </Stack>
-    </Card>
-  );
+  const handleTabChange = (event, newValue) => {
+    setSection(newValue);
+  };
 
   const renderAbout = (
     <Grid xs={12} md={12}>
       <Card>
-        <CardHeader title={t('contract details')} />
+        <CardHeader title={t('contract_details')} />
 
         <Stack spacing={2} sx={{ p: 3 }}>
           {/* <Box sx={{ typography: 'body2' }}>{info.quote}</Box> */}
@@ -82,9 +66,9 @@ export default function ProfileHome({ info, posts, contract, client, location })
             <Iconify icon="mingcute:coin-fill" width={24} />
 
             <Box sx={{ typography: 'body2' }}>
-              {`net `}
+              {t(`net`) + "  "}
               <Link variant="subtitle2" color="inherit">
-                {contract?.net} RS
+                {contract?.net}.00
               </Link>
             </Box>
           </Stack>
@@ -92,9 +76,9 @@ export default function ProfileHome({ info, posts, contract, client, location })
             <Iconify icon="mingcute:coin-fill" width={24} />
 
             <Box sx={{ typography: 'body2' }}>
-              {`paid `}
+              {t(`paid`) + "  "}
               <Link variant="subtitle2" color="inherit">
-                {contract?.paid_amount} RS
+                {contract?.paid_amount}.00
               </Link>
             </Box>
           </Stack>
@@ -102,25 +86,30 @@ export default function ProfileHome({ info, posts, contract, client, location })
             <Iconify icon="mingcute:coin-fill" width={24} />
 
             <Box sx={{ typography: 'body2' }}>
-              {`unclaimed `}
+              {t(`unclaimed`) + "  "}
               <Link variant="subtitle2" color="inherit">
-                {contract?.remaining_unclaimed_amount} RS
+                {contract?.remaining_unclaimed_amount}.00
               </Link>
             </Box>
           </Stack>
 
           <Stack direction="row" sx={{ typography: 'body2' }}>
             <Iconify icon="heroicons-solid:calendar" width={24} sx={{ mr: 2 }} />
-            {fDate(contract?.created_at)}
+            <Box sx={{ typography: 'body2' }}>
+              {t(`date`) + "  "}
+              <Link variant="subtitle2" color="inherit">
+              {fDate(contract?.created_at)}
+              </Link>
+            </Box>
           </Stack>
 
           <Stack direction="row" spacing={2}>
             <Iconify icon="ic:round-business-center" width={24} />
 
             <Box sx={{ typography: 'body2' }}>
-              {/* {` `} */}
+              {t(`clauses_number`)+"  "}
               <Link variant="subtitle2" color="inherit">
-                {contract?.clauses?.length} clause{contract?.clauses?.length > 1 ? "s" : null}
+                {contract?.clauses?.length}
               </Link>
             </Box>
           </Stack>
@@ -149,7 +138,7 @@ export default function ProfileHome({ info, posts, contract, client, location })
 
           <Stack direction="row" sx={{ typography: 'body2' }}>
             <Iconify icon="solar:devices-bold-duotone" width={24} sx={{ mr: 2 }} />
-            {client?.phone_number || "no phone number found"}
+            {client?.phone_number || t("no_phone_number_found")}
           </Stack>
 
           <Stack direction="row" spacing={2}>
@@ -191,72 +180,6 @@ export default function ProfileHome({ info, posts, contract, client, location })
     </Grid>
   );
 
-  const renderPostInput = (
-    <Card sx={{ p: 3 }}>
-      <InputBase
-        multiline
-        fullWidth
-        rows={4}
-        placeholder="Share what you are thinking here..."
-        sx={{
-          p: 2,
-          mb: 3,
-          borderRadius: 1,
-          border: (theme) => `solid 1px ${alpha(theme.palette.grey[500], 0.2)}`,
-        }}
-      />
-
-      <Stack direction="row" alignItems="center" justifyContent="space-between">
-        <Stack direction="row" spacing={1} alignItems="center" sx={{ color: 'text.secondary' }}>
-          <Fab size="small" color="inherit" variant="softExtended" onClick={handleAttach}>
-            <Iconify icon="solar:gallery-wide-bold" width={24} sx={{ color: 'success.main' }} />
-            Image/Video
-          </Fab>
-
-          <Fab size="small" color="inherit" variant="softExtended">
-            <Iconify icon="solar:videocamera-record-bold" width={24} sx={{ color: 'error.main' }} />
-            Streaming
-          </Fab>
-        </Stack>
-
-        <Button variant="contained">Post</Button>
-      </Stack>
-
-      <input ref={fileRef} type="file" style={{ display: 'none' }} />
-    </Card>
-  );
-
-  const renderSocials = (
-    <Card>
-      <CardHeader title="Social" />
-
-      <Stack spacing={2} sx={{ p: 3 }}>
-        {_socials.map((link) => (
-          <Stack
-            key={link.name}
-            spacing={2}
-            direction="row"
-            sx={{ wordBreak: 'break-all', typography: 'body2' }}
-          >
-            <Iconify
-              icon={link.icon}
-              width={24}
-              sx={{
-                flexShrink: 0,
-                color: link.color,
-              }}
-            />
-            <Link color="inherit">
-              {link.value === 'facebook' && info.socialLinks.facebook}
-              {link.value === 'instagram' && info.socialLinks.instagram}
-              {link.value === 'linkedin' && info.socialLinks.linkedin}
-              {link.value === 'twitter' && info.socialLinks.twitter}
-            </Link>
-          </Stack>
-        ))}
-      </Stack>
-    </Card>
-  );
 
   return (
     <Grid container spacing={3}>
@@ -278,18 +201,27 @@ export default function ProfileHome({ info, posts, contract, client, location })
         {/* </Stack> */}
 
       </Grid>
-      {/* <Box
-        rowGap={4}
-        columnGap={2}
-        display="grid"
-        gridTemplateColumns={{
-          xs: 'repeat(1, 1fr)',
-          sm: 'repeat(2, 1fr)',
-        }}
-      > */}
+      <Card sx={{ m: 2, px: 2, pt: 2, pb: 1 }}>
+        <Tabs
+          value={section}
+          onChange={handleTabChange}
+          aria-label="icon position tabs example"
+          textColor="primary"
+        >
+          <Tab icon={<Iconify icon="duo-icons:settings" />} iconPosition="start" label={t("contract_clauses")} />
+          <Tab icon={<Iconify icon="lets-icons:file-dock-search-fill" />} iconPosition="start" label={t("claims")} />
+          <Tab icon={<Iconify icon="lets-icons:alarm-fill" />} iconPosition="start" label={t("claims_logs")} />
+          {/* <Tab icon={<Iconify icon="lets-icons:alarm-fill" />} iconPosition="start" label="logs" />
+          <Tab icon={<Iconify icon="lets-icons:refresh" />} iconPosition="start" label="periodic maintenances" />
+          <Tab icon={<Iconify icon="solar:dollar-line-duotone" />} iconPosition="start" label="cost & inputs" /> */}
+        </Tabs>
+      </Card>
 
-      <Grid xs={12} md={6}>
-        <AppNewInvoice
+      {
+        section === 0 ?
+
+          <Grid xs={12} md={12}>
+            {/* <AppNewInvoice
           title={t('contractItems')}
           tableData={contract?.clauses}
           tableLabels={[
@@ -299,26 +231,30 @@ export default function ProfileHome({ info, posts, contract, client, location })
             { id: 'total', label: 'Total' },
             { id: '' },
           ]}
-        />
-      </Grid>
+        /> */}
+            {contract?.clauses ? <ContractClaimsListView claims={contract?.clauses} /> : null}
+          </Grid>
+          : section === 1 ?
+            <Grid xs={12} md={12}>
+              <ClaimNewEditForm setTableData={setTableData} contract_id={contract?.id} />
+              <AppNewInvoice2
 
-      <Grid xs={12} md={6}>
-        <ClaimNewEditForm setTableData={setTableData} contract_id={contract?.id} />
-        <AppNewInvoice2
+                tableData={tableData}
+                sx={{ mt: "10px" }}
+                title={t('claims')}
+                contract_id={contract?.id}
+                tableLabels={[
+                  { id: 'Amount', label: t('amount') },
+                  { id: 'Create_at', label: t('date') },
+                  { id: 'Payment', label: t('payment_at') },
+                  { id: 'status', label: t('status') },
+                  { id: '' },
+                ]}
+              />
+            </Grid>
+            : null
+      }
 
-          tableData={tableData}
-          sx={{ mt: "10px" }}
-          title={t('claims')}
-          contract_id={contract?.id}
-          tableLabels={[
-            { id: 'Amount', label: 'Amount' },
-            { id: 'Create_at', label: 'Create At' },
-            { id: 'Payment', label: 'Payment At' },
-            { id: 'status', label: 'Status' },
-            { id: '' },
-          ]}
-        />
-      </Grid>
       {/* </Box> */}
     </Grid>
   );

@@ -19,136 +19,57 @@ import Iconify from 'src/components/iconify';
 export default function OrderDetailsInfo({ carDetails, delivery, payment, shippingAddress }) {
   const { t } = useTranslation();
 
-  const renderCustomer = (
-    <>
-      <CardHeader title={t('documents')} />
-      <Stack direction="row" sx={{ p: 2 }} justifyContent="space-between">
-        <Stack spacing={0.5} alignItems="flex-start" sx={{ typography: 'body2' }}>
-          <Typography variant="subtitle2">بطاقة التشغيل</Typography>
-
-          <Box sx={{ color: 'text.secondary' }}>(2/15/2024 )</Box>
-        </Stack>
-
-        <IconButton>
-          <Iconify icon="bi:eye-fill" />
-        </IconButton>
-      </Stack>
-
-      <Stack direction="row" sx={{ px: 2 }} justifyContent="space-between">
-        <Stack spacing={0.5} alignItems="flex-start" sx={{ typography: 'body2' }}>
-          <Typography variant="subtitle2"> الاستمارة</Typography>
-
-          <Box sx={{ color: 'text.secondary' }}>(2/15/2024 )</Box>
-        </Stack>
-
-        <IconButton>
-          <Iconify icon="bi:eye-fill" />
-        </IconButton>
-      </Stack>
-
-      <Stack direction="row" sx={{ p: 2 }} justifyContent="space-between">
-        <Stack spacing={0.5} alignItems="flex-start" sx={{ typography: 'body2' }}>
-          <Typography variant="subtitle2"> التأمين</Typography>
-
-          <Box sx={{ color: 'text.secondary' }}>(2/15/2024 )</Box>
-        </Stack>
-
-        <IconButton>
-          <Iconify icon="bi:eye-fill" />
-        </IconButton>
-      </Stack>
-    </>
-  );
 
   const renderDelivery = (
     <>
-      <CardHeader
-        title={t('specifications')}
-        // action={
-        //   <IconButton>
-        //     <Iconify icon="solar:pen-bold" />
-        //   </IconButton>
-        // }
-      />
-      <Stack spacing={1.5} sx={{ p: 3, typography: 'body2' }}>
-        <Stack direction="row" alignItems="center">
-          <Box component="span" sx={{ color: 'text.secondary', width: 120, flexShrink: 0 }}>
-            {t('specifications')}
-          </Box>
-          {carDetails?.spec?.name}
+      <CardHeader title={t('specifications')}  />
+      <Stack spacing={1} sx={{ my: 2, typography: 'body2' }}>
+        <Stack direction="row" sx={{ px: "10px" }}>
+          <Box sx={{ width: 120, color: 'text.secondary' }}>{t('plateNumber')}</Box>
+          <Box sx={{ typography: 'subtitle2' }}>{carDetails?.plat_number}</Box>
         </Stack>
-        <Stack direction="row" alignItems="center">
-          <Box component="span" sx={{ color: 'text.secondary', width: 120, flexShrink: 0 }}>
-            {t('typeOfLicense')}
-          </Box>
-          {carDetails?.license_type?.translations?.name || '-'}
+
+        <Stack direction="row" sx={{ px: "10px" }}>
+          <Box sx={{ width: 120, color: 'text.secondary' }}>{t('structureNo')}</Box>
+          <Box sx={{ typography: 'subtitle2' }}>{carDetails?.chassis_number}</Box>
         </Stack>
-        <Stack direction="row" alignItems="center">
-          <Box component="span" sx={{ color: 'text.secondary', width: 120, flexShrink: 0 }}>
-            {t('workSite')}
-          </Box>
-          {carDetails?.state?.translations?.name}
+        <Stack direction="row" sx={{ px: "10px" }}>
+          <Box sx={{ width: 120, color: 'text.secondary' }}>{t('location')}</Box>
+          <Box sx={{ typography: 'subtitle2' }}>{carDetails?.state?.translations?.name}</Box>
         </Stack>
-        <Stack direction="row" alignItems="center">
-          <Box component="span" sx={{ color: 'text.secondary', width: 120, flexShrink: 0 }}>
-            {t('depreciation')}
-          </Box>
-          <Link color="inherit">{carDetails?.depreciation || '-'}</Link>
+        <Stack direction="row" sx={{ px: "10px" }}>
+          <Box sx={{ width: 120, color: 'text.secondary' }}>{t('')}</Box>
+          <Box sx={{ typography: 'subtitle2' }}></Box>
         </Stack>
+        <Stack direction="row" sx={{ px: "10px" }}>
+          <Box sx={{ width: 120, color: 'text.secondary' }}>{t('')}</Box>
+          <Box sx={{ typography: 'subtitle2' }}></Box>
+        </Stack>
+        <Stack direction="row" sx={{ px: "10px" }}>
+          <Box sx={{ width: 120, color: 'text.secondary' }}>{t('')}</Box>
+          <Box sx={{ typography: 'subtitle2' }}></Box>
+        </Stack>
+        <Stack direction="row" sx={{ px: "10px" }}>
+          <Box sx={{ width: 120, color: 'text.secondary' }}>{t('')}</Box>
+          <Box sx={{ typography: 'subtitle2' }}></Box>
+        </Stack>
+        <Stack direction="row" sx={{ px: "10px" }}>
+          <Box sx={{ width: 120, color: 'text.secondary' }}>{t('')}</Box>
+          <Box sx={{ typography: 'subtitle2' }}></Box>
+        </Stack>
+        <Stack direction="row" sx={{ px: "10px" }}>
+          <Box sx={{ width: 120, color: 'text.secondary' }}>{t('')}</Box>
+          <Box sx={{ typography: 'subtitle2' }}></Box>
+        </Stack>
+
       </Stack>
     </>
   );
 
-  const renderShipping = (
-    <>
-      <CardHeader
-        title="Shipping"
-        action={
-          <IconButton>
-            <Iconify icon="solar:pen-bold" />
-          </IconButton>
-        }
-      />
-      <Stack spacing={1.5} sx={{ p: 3, typography: 'body2' }}>
-        <Stack direction="row">
-          <Box component="span" sx={{ color: 'text.secondary', width: 120, flexShrink: 0 }}>
-            Address
-          </Box>
-          test
-        </Stack>
 
-        <Stack direction="row">
-          <Box component="span" sx={{ color: 'text.secondary', width: 120, flexShrink: 0 }}>
-            Phone number
-          </Box>
-          test{' '}
-        </Stack>
-      </Stack>
-    </>
-  );
-
-  const renderPayment = (
-    <>
-      <CardHeader
-        title="Payment"
-        action={
-          <IconButton>
-            <Iconify icon="solar:pen-bold" />
-          </IconButton>
-        }
-      />
-      <Stack direction="row" alignItems="center" sx={{ p: 3, typography: 'body2' }}>
-        <Box component="span" sx={{ color: 'text.secondary', flexGrow: 1 }}>
-          Phone number
-        </Box>
-        test
-        <Iconify icon="logos:mastercard" width={24} sx={{ ml: 0.5 }} />
-      </Stack>
-    </>
-  );
 
   return (
-    <Card>
+    <Card sx={{height: "100%"}}>
       {renderDelivery}
 
       {/* <Divider sx={{ borderStyle: 'dashed' }} />

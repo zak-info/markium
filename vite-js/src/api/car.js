@@ -113,6 +113,25 @@ export function useGetCarMaintenance(id) {
   return memoizedValue;
 }
 
+export function useGetCarCostIput() {
+  const URL = endpoints.cars.transactions;
+
+  const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher);
+
+  const memoizedValue = useMemo(
+    () => ({
+      cost_input: data?.data || [],
+      cost_inputLoading: isLoading,
+      cost_inputError: error,
+      cost_inputValidating: isValidating,
+      cost_inputEmpty: !isLoading && !data?.data?.length,
+      mutate,
+    }),
+    [data, error, isLoading, isValidating]
+  );
+
+  return memoizedValue;
+}
 
 export function useGetCarPeriodicMaintenance(id) {
   const URL = endpoints.cars.pm(id);
@@ -212,6 +231,11 @@ export async function deleteCar(id) {
 }
 export async function AddCarToMentainance(id) {
   const URL = endpoints.cars.list + '/' + id+"/under_maintainance";
+
+  return await axios.post(URL);
+}
+export async function markCarAsAvailable(id) {
+  const URL = endpoints.cars.list + '/' + id+"/available";
 
   return await axios.post(URL);
 }

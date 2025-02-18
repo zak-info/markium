@@ -36,6 +36,7 @@ export default function OrderTableRow({
   onEditRow,
   onDriverViewRow,
   onAddCarToMentainance,
+  onMarkCarAsAvailable,
 }) {
   const {
     color,
@@ -124,6 +125,7 @@ export default function OrderTableRow({
             (status?.key === 'available' && 'success') ||
             (status?.key === 'pending' && 'warning') ||
             (status?.key === 'under_maintenance' && 'error') ||
+            (status?.key === 'under_preparation' && 'secondary') ||
             'default'
           }
         >
@@ -275,6 +277,16 @@ export default function OrderTableRow({
         >
           <Iconify icon="map:car-repair" />
           {t('addToMaintenance')}
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            onMarkCarAsAvailable();
+            popover.onClose();
+          }}
+          disabled={status?.key !== 'under_preparation'}
+        >
+          <Iconify icon="solar:clipboard-check-bold-duotone" />
+          {t('markAsAvailable')}
         </MenuItem>
       </CustomPopover>
 
