@@ -121,7 +121,8 @@ export default function ContractNewEditForm({ currentUser }) {
       // await new Promise((resolve) => setTimeout(resolve, 500));
       // reset();
       console.log(data);
-      const response = currentUser?.id ? await editDocument(currentUser?.id, data) : await createContracts({ client_id: data?.client_id, payment_method: data?.payment_method, clauses });
+      delete data?.id;
+      const response = currentUser?.id ? await editDocument(currentUser?.id, data) : await createContracts({ client_id: data?.client_id, payment_method: data?.payment_method, clauses:clauses.map(({ id, ...rest }) => rest) });
       enqueueSnackbar(currentUser ? 'Update success!' : 'Create success!');
       router.push(paths.dashboard.clients.contracts);
     } catch (error) {
@@ -238,7 +239,7 @@ export default function ContractNewEditForm({ currentUser }) {
                       </RHFSelect>
                 }
                 <RHFTextField name="duration" label={t('duration')} />
-                <RHFTextField name="cost" label={t('cost')} />
+                <RHFTextField name="cost" label={t('cost')} type={"number"} />
                 <DatePicker
                   required
                   name="starting_from"
