@@ -46,6 +46,7 @@ import { useTranslation } from 'react-i18next';
 import { useGetCar, useGetCarLogs } from 'src/api/car';
 import { Grid } from '@mui/material';
 import { useValues } from 'src/api/utils';
+import { useLocales } from 'src/locales';
 
 // ----------------------------------------------------------------------
 
@@ -82,6 +83,7 @@ export default function OrderListView() {
   const settings = useSettingsContext();
 
   const router = useRouter();
+  const {currentLang} = useLocales()
 
   const confirm = useBoolean();
   const { carLogs, mutate } = useGetCarLogs();
@@ -263,6 +265,7 @@ export default function OrderListView() {
                           key={row?.id}
                           row={row}
                           car={car?.find(item => item.id == row?.car_id)}
+                          currentLang={currentLang?.value}
                           status={data?.car_log_action_enum?.find(item => item.key == row?.action)}
                           selected={table?.selected.includes(row.id)}
                           onSelectRow={() => table?.onSelectRow(row.id)}

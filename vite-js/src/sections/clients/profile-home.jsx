@@ -76,11 +76,11 @@ export default function ProfileHome({ info, posts }) {
     </Card>
   );
   const { data } = useValues()
-  const {contracts} = useGetContracts()
-  const {claims} = useGetAllClaim()
+  const { contracts } = useGetContracts()
+  const { claims } = useGetAllClaim()
   const selected_contracts = contracts?.filter(item => item?.client_id == info?.id)
   const selected_claims = claims.filter(item => selected_contracts.some(entry => entry.id == item?.contract_id));
-  
+
 
 
   const renderAbout = (
@@ -91,10 +91,18 @@ export default function ProfileHome({ info, posts }) {
         <Box sx={{ typography: 'body2' }}>{data?.neighborhoods?.find(item => item?.id == info?.neighborhood?.id)?.translations[0]?.name}</Box>
 
         <Stack direction="row" spacing={2}>
-          <Iconify icon="mingcute:location-fill" width={24} />
-
+          <Iconify icon="duo-icons:user" width={24} />
           <Box sx={{ typography: 'body2' }}>
-            {t(`live_at`)}
+            {/* {t(`live_at`)} */}
+            <Link variant="subtitle2" color="inherit">
+              {info?.name}
+            </Link>
+          </Box>
+        </Stack>
+        <Stack direction="row" spacing={2}>
+          <Iconify icon="mingcute:location-fill" width={24} />
+          <Box sx={{ typography: 'body2' }}>
+            {/* {t(`live_at`)} */}
             <Link variant="subtitle2" color="inherit">
               {data?.neighborhoods?.find(item => item?.id == info?.neighborhood_id)?.translations[0]?.name}
             </Link>
@@ -106,6 +114,7 @@ export default function ProfileHome({ info, posts }) {
 
           <Box sx={{ typography: 'body2' }}>
             {t(`tax_number`) + "  "}
+            <br />
             <Link variant="subtitle2" color="inherit">
               {info?.tax_number}
             </Link>
@@ -115,7 +124,8 @@ export default function ProfileHome({ info, posts }) {
           <Iconify icon="ic:round-business-center" width={48} />
 
           <Box sx={{ typography: 'body2' }}>
-            {t(`commercial_registration_number`) + "  "}
+            {t(`c_r_n`) + "  "}
+            <br />
             <Link variant="subtitle2" color="inherit">
               {info?.commercial_registration_number}
             </Link>
@@ -136,7 +146,6 @@ export default function ProfileHome({ info, posts }) {
 
         <Stack direction="row" spacing={2}>
           <Iconify icon="ic:round-business-center" width={24} />
-
           <Box sx={{ typography: 'body2' }}>
             {t("representors") + "  "}
             <Link variant="subtitle2" color="inherit">
@@ -150,7 +159,7 @@ export default function ProfileHome({ info, posts }) {
           <Box sx={{ typography: 'body2' }}>
             {t("contracts") + "  "}
             <Link variant="subtitle2" color="inherit">
-              {info?.contracts?.length}
+              {info?.contracts?.length ? info?.contracts?.length : 0}
             </Link>
           </Box>
         </Stack>
@@ -160,7 +169,7 @@ export default function ProfileHome({ info, posts }) {
           <Box sx={{ typography: 'body2' }}>
             {t("total_claims") + "  "}
             <Link variant="subtitle2" color="inherit">
-              {info?.contracts?.length}
+              {info?.contracts?.length || 0}
             </Link>
           </Box>
         </Stack>
@@ -170,7 +179,7 @@ export default function ProfileHome({ info, posts }) {
           <Box sx={{ typography: 'body2' }}>
             {t("unpaied_claims") + "  "}
             <Link variant="subtitle2" color="inherit">
-              {info?.contracts?.length}
+              {info?.contracts?.length || 0}
             </Link>
           </Box>
         </Stack>
@@ -224,14 +233,14 @@ export default function ProfileHome({ info, posts }) {
               <Grid xs={12} md={12}>
                 <ClientRepresentorsListView id={info?.id} representors={info?.representors} />
               </Grid>
-              :section == 1 ?
-              <ClientContractsListView id={info?.id} contracts={selected_contracts} />
+              : section == 1 ?
+                <ClientContractsListView id={info?.id} contracts={selected_contracts} />
 
-              :section == 2 ?
-              <ClientClaimsListView id={info?.id} claims={selected_claims} />
+                : section == 2 ?
+                  <ClientClaimsListView id={info?.id} claims={selected_claims} />
 
-              :
-              null
+                  :
+                  null
           }
 
         </Box>

@@ -184,7 +184,7 @@ export default function OrderListView() {
               href: paths.dashboard.root,
             },
             {
-              name: t('Claims'),
+              name: t('claims'),
               href: paths.dashboard.clients.root,
             },
             { name: t('alerts') },

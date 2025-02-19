@@ -11,6 +11,7 @@ import { formHelperTextClasses } from '@mui/material/FormHelperText';
 
 import Iconify from 'src/components/iconify';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import { t } from 'i18next';
 
 // ----------------------------------------------------------------------
 
@@ -53,7 +54,7 @@ export default function OrderTableToolbar({ filters, onFilters, dateError }) {
         }}
       >
         <DatePicker
-          label="Release date"
+          label={t("release_date")}
           value={filters.release_date}
           onChange={handleFilterStartDate}
           slotProps={{
@@ -67,7 +68,7 @@ export default function OrderTableToolbar({ filters, onFilters, dateError }) {
         />
 
         <DatePicker
-          label="Expiry Date"
+          label={t("expiry_date")}
           value={filters.expiry_date}
           onChange={handleFilterEndDate}
           slotProps={{
@@ -91,7 +92,7 @@ export default function OrderTableToolbar({ filters, onFilters, dateError }) {
             fullWidth
             value={filters.name}
             onChange={handleFilterName}
-            placeholder="Search customer or order number..."
+            placeholder={t("search_by")+"..."}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">

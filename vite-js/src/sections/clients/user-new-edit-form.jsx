@@ -156,7 +156,7 @@ export default function UserNewEditForm({ currentClient }) {
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>
       <Grid container spacing={3}>
-        <Grid xs={12} md={8}>
+        <Grid xs={12} md={12}>
           <Card sx={{ p: 3 }}>
             <Box
               rowGap={3}
@@ -175,27 +175,27 @@ export default function UserNewEditForm({ currentClient }) {
                 label={t('state')}
                 options={data?.states}
                 getOptionLabel={(option) => option?.key}
-                placeholder='choose state'
+                placeholder={t('choose_state')}
               />
               <SimpleAutocomplete
                 name="neighborhood_id"
                 label={t('location')}
                 options={data?.neighborhoods}
                 getOptionLabel={(option) => option?.translations[0]?.name}
-                placeholder='choose neighborhood'
+                placeholder={t('choose_neighborhood')}
               />
             </Box>
 
 
             <div style={{ marginTop: '30px', border: "1px solid gray", padding: "15px", borderRadius: '10px' }}>
-              <Label >Add Representor</Label>
+              <Label > {t("add_representor")}</Label>
 
 
               {representors?.map((row, index) => (
                 <Box key={index} rowGap={3} columnGap={3} alignItems={"center"} display="grid" gridTemplateColumns={{ xs: 'repeat(3, 1fr)', sm: 'repeat(3, 1fr)', }} sx={{ marginTop: "10px" }}>
                   <Label >{row?.name}</Label>
                   <Label >{row?.contact_number}</Label>
-                  <div style={{display: "flex",columnGap:"5px"}}>
+                  <div style={{ display: "flex", columnGap: "5px" }}>
                     <Iconify onClick={() => handleRemoveRepresentor(row?.name)} icon="solar:trash-bin-trash-bold" />
                     <Iconify onClick={() => handleUpdateRepresentor(row)} icon="fa:pencil-square-o" />
                   </div>
@@ -211,13 +211,13 @@ export default function UserNewEditForm({ currentClient }) {
                 }}
                 sx={{ marginTop: "30px" }}
               >
-                <RHFTextField name="rep_name" label={t('rep_name')} />
-                <RHFTextField name="rep_contact_number" label={t('rep_contact_number')} />
+                <RHFTextField name="rep_name" label={t('representor_name')} />
+                <RHFTextField name="rep_contact_number" label={t('representor_contact_number')} />
                 {/* <button type="button" variant="contained">
                   {!currentClient ? t('add representor') : 'Save Changes'}
                 </button> */}
                 <LoadingButton type="button" onClick={handleAddRepresentor} variant="contained" loading={false}>
-                  add rep
+                  {t("add_representor")}
                 </LoadingButton>
               </Box>
 

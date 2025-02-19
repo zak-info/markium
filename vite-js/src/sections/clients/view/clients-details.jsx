@@ -86,7 +86,7 @@ export default function UserProfileView({id}) {
         }}
       />
 
-      <Card
+      {/* <Card
         sx={{
           mb: 3,
           height: 290,
@@ -99,7 +99,7 @@ export default function UserProfileView({id}) {
           coverUrl={_userAbout.coverUrl}
         />
 
-      </Card>
+      </Card> */}
 
       {currentTab === 'profile' && <ProfileHome info={client} posts={_userFeeds} />}
 

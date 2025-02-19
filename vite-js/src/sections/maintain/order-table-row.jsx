@@ -130,7 +130,7 @@ export default function OrderTableRow({
       {/* <TableCell> {driver_phone_number || '-'} </TableCell> */}
       <TableCell>
         <ListItemText
-          primary={driver?.name || t("not_yet_attached")}
+          primary={driver?.name || "--"}
           secondary={driver?.phone}
           primaryTypographyProps={{ typography: 'body2', noWrap: true }}
           secondaryTypographyProps={{

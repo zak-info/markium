@@ -26,7 +26,7 @@ import { t } from 'i18next';
 
 // ----------------------------------------------------------------------
 
-export default function OrderTableRow({ row, car, status, selected, onViewRow, onSelectRow, onDeleteRow }) {
+export default function OrderTableRow({ row, car,currentLang, status, selected, onViewRow, onSelectRow, onDeleteRow }) {
   const { items, orderNumber, action, created_at, note_en, updated_at, createdAt, customer, totalQuantity, subTotal } = row;
 
   const confirm = useBoolean();
@@ -41,34 +41,7 @@ export default function OrderTableRow({ row, car, status, selected, onViewRow, o
         <Checkbox checked={selected} onClick={onSelectRow} />
       </TableCell>
 
-      {/* <TableCell>
-        <Box
-          onClick={onViewRow}
-          sx={{
-            cursor: 'pointer',
-            '&:hover': {
-              textDecoration: 'underline',
-            },
-          }}
-        >
-        {orderNumber}
-        </Box>
-      </TableCell> */}
-
-      {/* <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-        <Avatar alt={customer?.name} src={customer?.avatarUrl} sx={{ mr: 2 }} />
-        <ListItemText
-          primary={customer?.name}
-          secondary={customer?.email}
-          primaryTypographyProps={{ typography: 'body2' }}
-          secondaryTypographyProps={{
-            component: 'span',
-            color: 'text.disabled',
-          }}
-        />
-      </TableCell> */}
-
-      {/* <TableCell>Tesla </TableCell> */}
+     
       <TableCell>
         <ListItemText
           primary={car?.plat_number}
@@ -112,7 +85,7 @@ export default function OrderTableRow({ row, car, status, selected, onViewRow, o
 
 
       {/* <TableCell> {fCurrency(subTotal)} </TableCell> */}
-      <TableCell> {note_en} </TableCell>
+      <TableCell> {row["note_"+currentLang]} </TableCell>
 
       <TableCell align="end" sx={{ px: 1, whiteSpace: 'nowrap' }}>
         <IconButton
@@ -159,7 +132,7 @@ export default function OrderTableRow({ row, car, status, selected, onViewRow, o
               <Box sx={{ typography: 'subtitle2' }}>{row?.note_en}</Box>
             </Stack>
             {row?.new_values ?
-              ["vin","created_at","plat_number","chassis_number","production_year","passengers_capacity"].map((item, index) => (
+              [{value:"vin",lable:"vin"},{value:"created_at",lable:"created_at"},{value:"plat_number",lable:"plateNumber"},{value:"chassis_number",lable:"chassis_number"},{value:"production_year",lable:"manufacturingYear"},{value:"passengers_capacity",lable:"numberOfPassengers"}].map((item, index) => (
                 <Stack
                   key={index}
                   direction="row"
@@ -171,8 +144,8 @@ export default function OrderTableRow({ row, car, status, selected, onViewRow, o
                     },
                   }}
                 >
-                  <Box sx={{ width: 160, color: 'text.secondary' }}>{t(item)}</Box>
-                  <Box sx={{ typography: 'subtitle2' }}>{row?.new_values[item]}</Box>
+                  <Box sx={{ width: 160, color: 'text.secondary' }}>{t(item?.lable)}</Box>
+                  <Box sx={{ typography: 'subtitle2' }}>{row?.new_values[item?.value]}</Box>
                 </Stack>
               ))
               :

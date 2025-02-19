@@ -345,7 +345,7 @@ export default function OrderListView() {
                         row={row}
                         car_model={car?.find(item => item?.model?.id == row?.car?.car_model_id)?.model?.translations?.name}
                         work_site={data?.states?.find(item => item?.id == row?.state_id)?.translations[0]?.name}
-                        driver={drivers?.find(item=> item.id == row?.car?.driver_id) || {name:t("not_yet_attached"),phone:"...."} }
+                        driver={drivers?.find(item=> item.id == row?.car?.driver_id) || {name:t("---"),phone:"...."} }
                         selected={table.selected.includes(row.id)}
                         onSelectRow={() => table.onSelectRow(row.id)}
                         onDeleteRow={() => handleDeleteRow(row.id)}

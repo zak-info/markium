@@ -23,6 +23,7 @@ import Iconify from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import { Typography } from '@mui/material';
+import { useLocales } from 'src/locales';
 
 // ----------------------------------------------------------------------
 
@@ -32,6 +33,9 @@ export default function OrderTableRow({ row, selected, onViewRow, onEditRow, onS
   const confirm = useBoolean();
 
   const collapse = useBoolean();
+
+  const days = { ar: "يوم", en: 'day' }
+  const { currentLang } = useLocales()
 
   const popover = usePopover();
 
@@ -67,7 +71,7 @@ export default function OrderTableRow({ row, selected, onViewRow, onEditRow, onS
       <TableCell>
         {row?.entry_date ? fDate(row?.entry_date) : '-'}
       </TableCell>
-      <TableCell align="center"> {row?.remaining_days ? row?.remaining_days : "-"} days </TableCell>
+      <TableCell align="center"> {row?.remaining_days ? row?.remaining_days : "-"} {days[currentLang?.value]} </TableCell>
       {/* <TableCell align="center"> - </TableCell> */}
       <TableCell align="center"> {state?.translations?.name} </TableCell>
       <TableCell>

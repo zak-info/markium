@@ -175,11 +175,11 @@ export default function UserNewEditForm({ maintenance_id, currentClause, setTabl
               }}
             >
               {/* <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}> */}
-              <RHFSelect name="spec_or_period" label={t('type')}  >
+              <RHFSelect name="spec_or_period" label={t('clause_type')}  >
                 <Divider sx={{ borderStyle: 'dashed' }} />
-                {[{ name: "periodic" }, { name: "not-periodic" }].map((option) => (
+                {[{ name: "periodic",lable:t("periodic") }, { name: "not-periodic",lable:t("not_periodic") }].map((option) => (
                   <MenuItem key={option?.name} value={option?.name}>
-                    {option?.name}
+                    {option?.lable}
                   </MenuItem>
                 ))}
               </RHFSelect>
@@ -194,7 +194,7 @@ export default function UserNewEditForm({ maintenance_id, currentClause, setTabl
                     ))}
                   </RHFSelect>
                   :
-                  <RHFSelect type="number" name="spec_id" label={t('non-periodic')}>
+                  <RHFSelect type="number" name="spec_id" label={t('not_periodic')}>
                     <Divider sx={{ borderStyle: 'dashed' }} />
                     {maintenance_specs?.filter(item => !item?.is_periodic)?.map((option) => (
                       <MenuItem key={option?.name} value={option?.id}>
@@ -206,7 +206,7 @@ export default function UserNewEditForm({ maintenance_id, currentClause, setTabl
               {/* </div> */}
               <RHFTextField name="cost" label={t('cost')} type={"number"} sx={{ width: "100%" }} />
               {/* <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}> */}
-              <RHFTextField name="quantity" label={t('quantity')} type={"number"} sx={{ width: "100%" }} />
+              <RHFTextField name="quantity" label={t('qte')} type={"number"} sx={{ width: "100%" }} />
               <RHFSelect name="piece_status" label={t('piece_status')} sx={{ width: "100%" }}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
                 {[{ name: "new" }, { name: "used" }, { name: "renewd" }].map((option) => (

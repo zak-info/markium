@@ -32,7 +32,7 @@ import FormProvider, {
   RHFSelect,
 } from 'src/components/hook-form';
 
-import { useTranslate } from 'src/locales';
+import { useLocales, useTranslate } from 'src/locales';
 import { useValues } from 'src/api/utils';
 import SimpleAutocomplete from 'src/components/hook-form/rhf-simple-autocomplete';
 import { createClient, useGetClients } from 'src/api/client';
@@ -55,6 +55,9 @@ export default function ContractNewEditForm({ currentUser }) {
   const { car } = useGetCar()
   const { clients } = useGetClients()
   const { drivers } = useGetDrivers()
+  const { currentLang } = useLocales()
+  const attachables = [{ name: "car", id: 1,lable: { ar: "سيارة", en: "car" } }, { name: "driver", id: 2,lable: { ar: "سائق", en: "driver" } }]
+  const attachables2 = { car:{ ar: "سيارة", en: "car" } ,driver:{ ar: "سائق", en: "driver" }} 
 
   const NewUserSchema = Yup.object().shape({
     client_id: Yup.number().required('client is required'),
@@ -62,6 +65,7 @@ export default function ContractNewEditForm({ currentUser }) {
     duration: Yup.number(),
     clauseable_id: Yup.number(),
     clauseable_type: Yup.string(),
+    starting_from: Yup.string(),
     cost: Yup.number(),
     // rep_name: Yup.string(),
     // rep_contact_number: Yup.string(),
@@ -74,6 +78,7 @@ export default function ContractNewEditForm({ currentUser }) {
       duration: currentUser?.duration || 0,
       clauseable_id: currentUser?.clauseable_id || '',
       clauseable_type: currentUser?.clauseable_type || '',
+      starting_from: currentUser?.starting_from || "",
       cost: currentUser?.cost || 0,
       // rep_name: currentUser?.rep_name || '',
       // rep_contact_number: currentUser?.rep_contact_number || '',
@@ -99,11 +104,12 @@ export default function ContractNewEditForm({ currentUser }) {
 
   const [clauses, setClauses] = useState([])
   const handleAddClause = () => {
-    setClauses([...clauses, { id: clauses?.length > 0 ? clauses[clauses.length - 1].id + 1 : 1, clauseable_id: values.clauseable_id, clauseable_type: values.clauseable_type, duration: values.duration, cost: values.cost }])
+    setClauses([...clauses, { id: clauses?.length > 0 ? clauses[clauses.length - 1].id + 1 : 1, clauseable_id: values.clauseable_id, clauseable_type: values.clauseable_type, duration: values.duration, cost: values.cost,starting_from:values?.starting_from }])
     setValue("clauseable_id", 0)
     setValue("clauseable_type", " ")
     setValue("cost", 0)
     setValue("duration", 0)
+    setValue("starting_from", new Date())
 
   }
   const handleRemoveClause = (clauseable_id) => {
@@ -114,6 +120,7 @@ export default function ContractNewEditForm({ currentUser }) {
     try {
       // await new Promise((resolve) => setTimeout(resolve, 500));
       // reset();
+      console.log(data);
       const response = currentUser?.id ? await editDocument(currentUser?.id, data) : await createContracts({ client_id: data?.client_id, payment_method: data?.payment_method, clauses });
       enqueueSnackbar(currentUser ? 'Update success!' : 'Create success!');
       router.push(paths.dashboard.clients.contracts);
@@ -163,14 +170,14 @@ export default function ContractNewEditForm({ currentUser }) {
                 label={t('client')}
                 options={clients}
                 getOptionLabel={(option) => option?.name}
-                placeholder='choose client'
+                placeholder={t('choose_client')}
               />
 
               <RHFSelect required name="payment_method" label={t('payment_method')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
-                {[{ name: "deferred" }, { name: "cash" }]?.map((type) => (
+                {[{ name: "deferred", lable: { ar: "دفعات", en: "deferred" } }, { name: "cash", lable: { ar: "نقدا", en: "cash" } }]?.map((type) => (
                   <MenuItem key={type?.name} value={type.name}>
-                    {type?.name}
+                    {type?.lable[currentLang.value]}
                   </MenuItem>
                 ))}
               </RHFSelect>
@@ -180,13 +187,13 @@ export default function ContractNewEditForm({ currentUser }) {
 
 
             <div style={{ marginTop: '30px', border: "1px solid gray", padding: "15px", borderRadius: '10px' }}>
-              <Label >Add Clauses</Label>
+              <Label >{t("addClause")}</Label>
 
 
               {clauses.map((row, index) => (
                 <Box key={index} rowGap={3} columnGap={3} alignItems={"center"} display="grid" gridTemplateColumns={{ xs: 'repeat(6, 1fr)', sm: 'repeat(6, 1fr)', }} sx={{ marginTop: "10px" }}>
                   <Label >
-                    {row?.clauseable_type}
+                    { attachables2[row?.clauseable_type][currentLang?.value]}
                   </Label>
                   <Label >{car.find(item => item.id == row?.clauseable_id).plat_number}</Label>
                   <Label >{row?.cost + ".00"}</Label>
@@ -211,17 +218,17 @@ export default function ContractNewEditForm({ currentUser }) {
 
                 <RHFSelect name="clauseable_type" label={t('attachment_type')}>
                   <Divider sx={{ borderStyle: 'dashed' }} />
-                  {[{ name: "car", id: 1 }, { name: "driver", id: 2 }]?.map((type) => (
+                  {attachables?.map((type) => (
                     <MenuItem key={type?.id} value={type.name}>
-                      {type?.name}
+                      {type?.lable[currentLang.value]}
                     </MenuItem>
                   ))}
                 </RHFSelect>
                 {
                   values.clauseable_type == "car" ?
-                    <CarsAutocomplete options={car} name="clauseable_id" label={t('cars')} placeholder='filter with plat_number' />
+                    <CarsAutocomplete options={car} name="clauseable_id" label={t('car')} placeholder='filter with plat_number' />
                     : values.clauseable_type == "driver" ?
-                      <SimpleAutocomplete options={drivers} name="clauseable_id" label={t('drives')} placeholder='filter with name' />
+                      <SimpleAutocomplete options={drivers} name="clauseable_id" label={t('drivers')} placeholder='filter with name' />
                       :
                       <RHFSelect disabled={!values.clauseable_type} name="clauseable_id" label={t('attachable')}>
                         <Divider sx={{ borderStyle: 'dashed' }} />
@@ -232,10 +239,22 @@ export default function ContractNewEditForm({ currentUser }) {
                 }
                 <RHFTextField name="duration" label={t('duration')} />
                 <RHFTextField name="cost" label={t('cost')} />
+                <DatePicker
+                  required
+                  name="starting_from"
+                  label={t('starting_from')}
+                  value={values?.starting_from || new Date()}
+                  onChange={(date) => setValue('starting_from', date)}
+                  slotProps={{
+                    textField: {
+                      fullWidth: true,
+                    },
+                  }}
+                />
               </Box>
               <Stack alignItems="flex-end" sx={{ mt: 3 }}>
                 <LoadingButton type="button" onClick={handleAddClause} variant="contained" loading={false}>
-                  add clause
+                  {t("addClause")}
                 </LoadingButton>
               </Stack>
 

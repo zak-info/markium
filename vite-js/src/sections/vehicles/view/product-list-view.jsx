@@ -260,7 +260,7 @@ export default function OrderListView() {
               key={"all"}
               iconPosition="end"
               value={"All"}
-              label={"All"}
+              label={t("all")}
               icon={
                 <Label
                   variant={'soft'}

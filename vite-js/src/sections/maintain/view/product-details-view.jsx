@@ -99,13 +99,13 @@ export default function OrderDetailsView({ id }) {
             tableData={tableData}
             setTableData={setTableData}
             tableLabels={[
-              { id: 'type', label: 'clause type' },
-              { id: 'clause', label: 'clause ' },
-              { id: 'cost', label: 'cost' },
-              { id: 'qte', label: 'Qte' },
-              { id: 'piece_status', label: 'piece status' },
+              { id: 'type', label: t('clause_type') },
+              { id: 'clause', label: t('clause') },
+              { id: 'cost', label: t('cost') },
+              { id: 'qte', label: t('qte') },
+              { id: 'piece_status', label: t('piece_status') },
               // { id: 'piece_status', label: 'piece status' },
-              { id: 'total', label: 'total' },
+              { id: 'total', label: t('total') },
               // { id: 'status', label: 'Status' },
               { id: '' },
             ]}

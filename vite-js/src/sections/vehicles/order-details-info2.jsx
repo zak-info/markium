@@ -50,9 +50,11 @@ export default function OrderDetailsInfo2({ carDetails, delivery, payment, shipp
                 >
                   {carDetails?.driver?.name}
                 </Box>
-                : t("not_yet_attached")
+                : "--"
+
 
             }</Box>
+          {/* t("not_yet_attached") */}
 
         </Stack>
         {carDetails?.driver?.id &&

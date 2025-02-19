@@ -79,7 +79,7 @@ export default function OrderDetailsToolbar({
             {status}
           </Button> */}
 
-          <Button
+          {/* <Button
             color="inherit"
             variant="outlined"
             startIcon={<Iconify icon="solar:printer-minimalistic-bold" />}
@@ -93,7 +93,7 @@ export default function OrderDetailsToolbar({
               startIcon={<Iconify icon="mingcute:add-line" />}
             >
               {t('AddMaintenanceElement')}
-            </Button>
+            </Button> */}
         </Stack>
       </Stack>
 

@@ -23,6 +23,7 @@ import Iconify from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import { t } from 'i18next';
+import { useLocales } from 'src/locales';
 
 // ----------------------------------------------------------------------
 
@@ -34,6 +35,8 @@ export default function OrderTableRow({ row,onCreateRow, car,action, selected, o
   const collapse = useBoolean();
 
   const popover = usePopover();
+  const days = {ar:"يوم",en:'day'}
+  const {currentLang} = useLocales()
 
   const renderPrimary = (
     <TableRow hover selected={selected}>
@@ -54,7 +57,7 @@ export default function OrderTableRow({ row,onCreateRow, car,action, selected, o
 
       <TableCell> {row?.id} </TableCell>
       <TableCell> {fDate(row?.created_at)} </TableCell>
-      <TableCell>{row?.new_values?.remaining_days || t("not_yet_selected")} {row?.new_values?.remaining_days ? "day" : ""}</TableCell>
+      <TableCell>{row?.new_values?.remaining_days || t("--")} {row?.new_values?.remaining_days ? days[currentLang.value] : ""}</TableCell>
       <TableCell align="start">{row?.new_values?.maintenance_manager ? row?.new_values?.maintenance_manager[0]?.name : t("not_yet_selected")} </TableCell>
       <TableCell>
         <Label
