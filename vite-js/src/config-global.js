@@ -3,8 +3,8 @@ import { paths } from 'src/routes/paths';
 // API
 // ----------------------------------------------------------------------
 
-export const HOST_API = 'http://172.105.83.136:8044/api';
-export const STORAGE_API = 'http://172.105.83.136:8044/storage';
+export const HOST_API = 'https://172.105.83.136:8044/api';
+export const STORAGE_API = 'https://172.105.83.136:8044/storage';
 export const ASSETS_API = import.meta.env.VITE_ASSETS_API;
 
 export const FIREBASE_API = {
