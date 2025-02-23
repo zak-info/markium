@@ -1,5 +1,5 @@
 import { Helmet } from 'react-helmet-async';
-import MainSpecCreateView from 'src/sections/settings/view/main_spec-create-view';
+import MainSpecCreateView from 'src/sections/system_periodic_maintenance/view/main_spec-create-view';
 
 
 // ----------------------------------------------------------------------

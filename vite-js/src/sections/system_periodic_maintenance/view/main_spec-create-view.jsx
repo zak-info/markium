@@ -17,7 +17,7 @@ export default function MainSpecCreateView() {
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
       <CustomBreadcrumbs
-        heading={t('addNewMaintenanceSpecs')}
+        heading={t('addNewMaintenaceSpecs')}
         links={[
           {
             name: t('dashboard'),

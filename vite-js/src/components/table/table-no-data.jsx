@@ -4,6 +4,7 @@ import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 
 import EmptyContent from '../empty-content';
+import { t } from 'i18next';
 
 // ----------------------------------------------------------------------
 
@@ -14,7 +15,7 @@ export default function TableNoData({ notFound, sx }) {
         <TableCell colSpan={12}>
           <EmptyContent
             filled
-            title="No Data"
+            title={t("no_data")}
             sx={{
               py: 10,
               ...sx,

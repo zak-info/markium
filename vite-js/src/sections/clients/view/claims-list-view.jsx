@@ -202,18 +202,20 @@ export default function OrderListView() {
             { name: t('claims') },
           ]}
           action={
-            <Button
-              component={RouterLink}
-              href={paths.dashboard.clients.claims + "/new"}
-              variant="contained"
-              startIcon={<Iconify icon="mingcute:add-line" />}
-            >
-              {t('addNewClaim')}
-            </Button>
+            <>
+            {/* // <Button
+            //   component={RouterLink}
+            //   href={paths.dashboard.clients.claims + "/new"}
+            //   variant="contained"
+            //   startIcon={<Iconify icon="mingcute:add-line" />}
+            // >
+            //   {t('addNewClaim')}
+            // </Button> */}
+            </>
           }
-          sx={{
-            mb: { xs: 3, md: 5 },
-          }}
+        sx={{
+          mb: { xs: 3, md: 5 },
+        }}
         />
 
         <Card>
@@ -228,8 +230,8 @@ export default function OrderListView() {
             <Tab
               key={"all"}
               iconPosition="end"
-              value={"All"}
-              label={"All"}
+              value={"all"}
+              label={t("all")}
               icon={
                 <Label
                   variant={'soft'}
@@ -251,14 +253,14 @@ export default function OrderListView() {
                       ((tab.key === 'all' || tab.key === filters.status) && 'filled') || 'soft'
                     }
                     color={
-                      (tab.key === 'paid' && 'success') ||
+                      (tab.key === 'paid_claim' && 'success') ||
                       (tab.key === 'not_yet_claim' && 'secondary') ||
                       (tab.value === 'overdue_claim' && 'warning') ||
                       (tab.value === 'severely_overdue_claim' && 'error') ||
                       'default'
                     }
                   >
-                    {['paid_claim',"due_claim", 'not_yet_claim', 'overdue_claim', 'severely_overdue_claim'].includes(tab.key)
+                    {['paid_claim', "due_claim", 'not_yet_claim', 'overdue_claim', 'severely_overdue_claim'].includes(tab.key)
                       ? tableData.filter((user) => user.status?.key == tab.key).length
                       : tableData.length}
                   </Label>
@@ -422,7 +424,9 @@ function applyFilter({ inputData, contracts, clients, comparator, filters, dateE
   }
 
   if (status !== 'all') {
-    inputData = inputData.filter((order) => order.status === status);
+    inputData = inputData.filter((order) => order.status?.key === status);
+  }else{
+    inputData = inputData
   }
 
   if (!dateError) {

@@ -131,7 +131,7 @@ export default function UserNewEditForm({ car_id, currentClause }) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <RHFSelect name="spec_id" label={t('periodic_maintenance_item')} sx={{ width: "100%" }}>
+              <RHFSelect name="spec_id" label={t('periodic_maintenances')} sx={{ width: "100%" }}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
                 {data?.maintenance_specifications?.filter(item => item?.is_periodic)?.map((option) => (
                   <MenuItem key={option?.id} value={option?.id}>

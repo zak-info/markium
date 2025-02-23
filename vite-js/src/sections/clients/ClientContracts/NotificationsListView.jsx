@@ -44,6 +44,7 @@ import OrderTableToolbar from './notification-table-toolbar';
 import OrderTableFiltersResult from './notifications-tabel-filters-result';
 import { useTranslate } from 'src/locales';
 import { Typography } from '@mui/material';
+import { useValues } from 'src/api/utils';
 
 // ----------------------------------------------------------------------
 
@@ -83,6 +84,7 @@ export default function ClientContractsListView({ id,contracts }) {
   const settings = useSettingsContext();
   const router = useRouter();
   const confirm = useBoolean();
+  const {data} = useValues();
   const [tableData, setTableData] = useState(contracts);
   useEffect(() => {
     setTableData(contracts)
@@ -246,6 +248,7 @@ export default function ClientContractsListView({ id,contracts }) {
                     <OrderTableRow
                       key={row?.id}
                       row={row}
+                      payment_method={data?.payment_method_enum?.find(item => item?.key == row?.payment_method).translations[0].name}
                       selected={table.selected.includes(row?.id)}
                       onSelectRow={() => table.onSelectRow(row?.id)}
                       onDeleteRow={() => handleDeleteRow(row?.id)}

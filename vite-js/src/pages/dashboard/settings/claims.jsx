@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 
 
-import MainSpecListView from 'src/sections/settings/view/main_spec-list-view';
+import MainSpecListView from 'src/sections/system_periodic_maintenance/view/main_spec-list-view';
 
 // ----------------------------------------------------------------------
 

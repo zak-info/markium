@@ -240,7 +240,7 @@ export default function UserNewEditForm({ maintenance_id, currentClause, setTabl
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                {!currentClause ? t('addNewClause') : t('saveChange')}
+                {!currentClause ? t('addClause') : t('saveChange')}
               </LoadingButton>
             </Stack>
           </Card>

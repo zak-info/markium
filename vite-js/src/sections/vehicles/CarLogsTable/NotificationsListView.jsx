@@ -70,6 +70,7 @@ export default function CarLogsListView({ id }) {
     // { value: 'completed', label: t('available') },
     { value: 'created_at', label: t('created_at') },
     { value: 'action', label: t('action') },
+    { value: 'note', label: t('note') },
     // { value: 'cancelled', label: t('maintain') },
   ];
 

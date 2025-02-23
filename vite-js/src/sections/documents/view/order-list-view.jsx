@@ -72,7 +72,7 @@ export default function OrderListView() {
     { id: 'attachment_type_id', label: t('attachment_type'), width: 50 },
     { id: 'RD & ED', label: t('document_duration'), width: 140 },
     { id: 'attachable', label: t('attachable'), width: 140 },
-    { id: 'document_duration_days', label: t('DDD'), width: 50 },
+    { id: 'document_duration_days', label: t('remaining'), width: 50 },
     // { id: 'status', label: t('status'), width: 140 },
     // { id: 'totalAmount2', label: t('workSite'), width: 140 },
     // { id: 'totalAmount2', label: t('tenantName'), width: 140 },

@@ -23,10 +23,11 @@ import Iconify from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import { STORAGE_API } from 'src/config-global';
+import { t } from 'i18next';
 
 // ----------------------------------------------------------------------
 
-export default function OrderTableRow({ row, contract, client, selected, onViewRow, onSelectRow, onDeleteRow, onEditRow }) {
+export default function OrderTableRow({ row,unit,pv,currentLang, contract, client, selected, onViewRow, onSelectRow, onDeleteRow, onEditRow }) {
   const { status } = row;
 
   const confirm = useBoolean();
@@ -34,6 +35,7 @@ export default function OrderTableRow({ row, contract, client, selected, onViewR
   const collapse = useBoolean();
 
   const popover = usePopover();
+  const yesno = {yes:{ar:"نعم",en:"yes"},no:{ar:"لا",en:"no"}}
 
   const renderPrimary = (
     <TableRow hover selected={selected}>
@@ -43,7 +45,7 @@ export default function OrderTableRow({ row, contract, client, selected, onViewR
 
       {/* <TableCell>{row?.name}</TableCell> */}
       <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-        <Avatar alt={"name"} src={STORAGE_API+"/"+row?.icon} sx={{ mr: 2 }} />
+        {/* <Avatar alt={"name"} src={STORAGE_API+"/"+row?.icon} sx={{ mr: 2 }} /> */}
         <ListItemText
           primary={row?.name}
           secondary={row?.note}
@@ -55,9 +57,9 @@ export default function OrderTableRow({ row, contract, client, selected, onViewR
         />
       </TableCell>
 
-      <TableCell>{row?.unit}</TableCell>
+      <TableCell>{unit}</TableCell>
       <TableCell>
-      {row?.is_periodic ? "yes" : "no"}
+      {row?.is_periodic ? yesno.yes[currentLang] : yesno.no[currentLang]}
         {/* <ListItemText
           primary={row?.is_periodic ? "yes" : "no"}
           secondary={row?.is_periodic ? row?.period_value + " " + row?.period_unit : "--"}
@@ -69,7 +71,7 @@ export default function OrderTableRow({ row, contract, client, selected, onViewR
           }}
         /> */}
       </TableCell>
-      <TableCell>{row?.is_periodic ? row?.period_value + " " + row?.period_unit : "--"}</TableCell>
+      <TableCell>{row?.is_periodic ? row?.period_value + " " + pv : "--"}</TableCell>
       {/* <TableCell>
         <Label
           variant="soft"
@@ -192,7 +194,7 @@ export default function OrderTableRow({ row, contract, client, selected, onViewR
           }}
         >
           <Iconify icon="solar:pen-bold" />
-          Edit
+          {t("edit")}
         </MenuItem>
 
         <MenuItem
@@ -203,7 +205,7 @@ export default function OrderTableRow({ row, contract, client, selected, onViewR
           sx={{ color: 'error.main' }}
         >
           <Iconify icon="solar:trash-bin-trash-bold" />
-          Delete
+          {t("delete")}
         </MenuItem>
 
 

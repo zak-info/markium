@@ -71,7 +71,7 @@ export default function NotificationsListView() {
     // { id: 'vehicle', label: t('vehicle'), width: 116 },
     // { id: 'entry_date', label: t('entry date'), width: 120 },
     { id: 'rem_days', label: t('date'), width: 140 },
-    { id: 'rem_days', label: t('duration'), width: 140 },
+    { id: 'rem_days', label: t('duration'), width: 100 },
     { id: 'employee', label: t('employee'), width: 120 },
     // { id: 'createdAt', label: t('alert'), width: 140 },
     // { id: 'workSite', label: t('workSite'), width: 140 },
@@ -172,7 +172,7 @@ export default function NotificationsListView() {
 
   const handleViewRow = useCallback(
     (id) => {
-      router.push(paths.dashboard.order.details(id));
+      router.push(paths.dashboard.vehicle.details(id));
     },
     [router]
   );

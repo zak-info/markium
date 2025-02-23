@@ -29,12 +29,14 @@ import { Link } from '@mui/material';
 
 export default function OrderTableRow({
   row,
+  contract,
   selected,
   onViewRow,
   onSelectRow,
   onDeleteRow,
   onEditRow,
   onDriverViewRow,
+  onContractViewRow,
   onAddCarToMentainance,
   onMarkCarAsAvailable,
 }) {
@@ -152,7 +154,26 @@ export default function OrderTableRow({
         }
       </TableCell>
 
-      <TableCell align="center" >- </TableCell>
+      <TableCell align="center" >
+        <Box
+          onClick={() => onContractViewRow(contract?.id)}
+          sx={{
+            cursor: 'pointer',
+            '&:hover': {
+              textDecoration: 'underline',
+            },
+          }}
+        >
+          {
+            contract?.ref ?
+              <Label color={"primary"} sx={{cursor:'pointer'}}>
+                {contract?.ref}
+              </Label>
+              :
+              "-"}
+        </Box>
+
+      </TableCell>
 
       <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
         {/* <IconButton

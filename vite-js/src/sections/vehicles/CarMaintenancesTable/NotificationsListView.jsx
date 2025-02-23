@@ -48,6 +48,7 @@ import { useGetMaintenanceLogs } from 'src/api/maintainance';
 import { useGetCar, useGetCarMaintenance } from 'src/api/car';
 import { useGetDocuments } from 'src/api/document';
 import { Typography } from '@mui/material';
+import { useValues } from 'src/api/utils';
 
 // ----------------------------------------------------------------------
 
@@ -68,7 +69,7 @@ export default function CarMaintenancesListView({ id }) {
   const TABLE_HEAD = [
     { id: 'maintenanceName', label: t('maintenanceName') },
     { id: 'note', label: t('status') },
-    { id: 'EnD_ExD', label: t('EnD_ExD') },
+    { id: 'EnD_ExD', label: t('end_exd') },
     { id: 'status', label: t('cost') },
   ];
 
@@ -88,6 +89,7 @@ export default function CarMaintenancesListView({ id }) {
 
   const confirm = useBoolean();
   const { maintenance } = useGetCarMaintenance(id);
+  const { data } = useValues();
   const [tableData, setTableData] = useState(maintenance);
   useEffect(() => {
     setTableData(maintenance)
@@ -251,6 +253,7 @@ export default function CarMaintenancesListView({ id }) {
                     <OrderTableRow
                       key={row?.id}
                       row={row}
+                      type={data?.maintenance_type_enum?.find(item => item?.key == row?.maintainance_type).translations[0]?.name}
                       selected={table.selected.includes(row?.id)}
                       onSelectRow={() => table.onSelectRow(row?.id)}
                       onDeleteRow={() => handleDeleteRow(row?.id)}

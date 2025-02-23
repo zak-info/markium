@@ -43,11 +43,12 @@ import {
 import OrderTableRow from '../claims-table-row';
 import OrderTableToolbar from '../claims-table-toolbar';
 import OrderTableFiltersResult from '../claims-table-filters-result';
-import { useTranslate } from 'src/locales';
+import { useLocales, useTranslate } from 'src/locales';
 import { useGetClaim } from 'src/api/claim';
 import { useGetClients } from 'src/api/client';
 import { useGetContracts } from 'src/api/contract';
 import { useGetMainSpecs } from 'src/api/settings';
+import { useValues } from 'src/api/utils';
 
 // ----------------------------------------------------------------------
 
@@ -69,8 +70,8 @@ export default function MainSpecListView() {
   const TABLE_HEAD = [
     { id: 'item', label: t('item'), width: 140 },
     { id: 'unit', label: t('unit'), width: 140 },
-    { id: 'is_periodic', label: t('periodic or not'), width: 140 },
-    { id: 'ver', label: t('period value'), width: 140 },
+    { id: 'is_periodic', label: t('periodic'), width: 140 },
+    { id: 'ver', label: t('period_value'), width: 140 },
     // { id: 'key5', label: t('key5'), width: 140 },
     // { id: 'key6', label: t('key6'), width: 140 },
 
@@ -88,6 +89,8 @@ export default function MainSpecListView() {
   const { mainspecs } = useGetMainSpecs()
   const { clients } = useGetClients()
   const { contracts } = useGetContracts()
+  const { data } = useValues()
+  const { currentLang } = useLocales()
 
   const [tableData, setTableData] = useState(mainspecs);
   useEffect(() => {
@@ -182,14 +185,14 @@ export default function MainSpecListView() {
     <>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
-          heading={t('Maintenance Specifications')}
+          heading={t('maintenance_specifications')}
           links={[
             {
               name: t('dashboard'),
               href: paths.dashboard.root,
             },
             {
-              name: t('maintenance specifications'),
+              name: t('maintenance_specifications'),
               href: paths.dashboard.settings.root,
             },
             { name: t('list') },
@@ -311,6 +314,9 @@ export default function MainSpecListView() {
                       <OrderTableRow
                         key={row.id}
                         row={row}
+                        currentLang={currentLang.value}
+                        unit={data?.volume_enum?.find(item => item?.key == row.unit).translations[0].name}
+                        pv={data?.unit_enum?.find(item => item?.key == row.period_unit)?.translations[0]?.name}
                         contract={contracts?.find(item => item.id == row?.contract_id)}
                         client={clients.find(client => client.id == contracts?.find(item => item.id == row?.contract_id)?.id)?.name}
                         selected={table.selected.includes(row.id)}

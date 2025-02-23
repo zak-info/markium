@@ -46,6 +46,7 @@ import { useTranslate } from 'src/locales';
 import { RouterLink } from 'src/routes/components';
 
 import { useGetCarUnderMaintenance } from 'src/api/car';
+import { useGetMaintenance } from 'src/api/maintainance';
 
 // ----------------------------------------------------------------------
 
@@ -62,6 +63,7 @@ export default function NotificationsListView() {
   const { enqueueSnackbar } = useSnackbar();
 
   const { car } = useGetCarUnderMaintenance();
+  const { maintenance } = useGetMaintenance();
 
   const { t } = useTranslate();
 
@@ -99,7 +101,7 @@ export default function NotificationsListView() {
 
   const confirm = useBoolean();
 
-  const [tableData, setTableData] = useState([]);
+  const [tableData, setTableData] = useState(car);
 
   useEffect(() => {
     setTableData(car);
@@ -170,6 +172,12 @@ export default function NotificationsListView() {
   }, [dataFiltered.length, dataInPage.length, enqueueSnackbar, table, tableData]);
 
   const handleViewRow = useCallback(
+    (id) => {
+      router.push(paths.dashboard.maintenance.details(id));
+    },
+    [router]
+  );
+  const handleViewMaintenance = useCallback(
     (id) => {
       router.push(paths.dashboard.maintenance.details(id));
     },
@@ -322,11 +330,13 @@ export default function NotificationsListView() {
                       <OrderTableRow
                         key={row.id}
                         row={row}
+                        maintenance={maintenance?.find(item=> item?.car_id == row?.id)}
                         selected={table.selected.includes(row.id)}
                         onSelectRow={() => table.onSelectRow(row.id)}
                         onDeleteRow={() => handleDeleteRow(row.id)}
                         onEditRow={()=>handleEditRow(row.id)}
                         onViewRow={() => handleViewRow(row.id)}
+                        onViewMaintenance={() => handleViewMaintenance(row.id)}
                       />
                     ))}
 

@@ -45,6 +45,7 @@ import { RouterLink } from 'src/routes/components';
 
 import { useGetCar, deleteCar, AddCarToMentainance, markCarAsAvailable } from 'src/api/car';
 import { useValues } from 'src/api/utils';
+import { useGetContracts } from 'src/api/contract';
 // ----------------------------------------------------------------------
 
 const defaultFilters = {
@@ -64,12 +65,13 @@ export default function OrderListView() {
 
   const { car, mutate } = useGetCar();
   const { data } = useValues()
+  const { contracts } = useGetContracts()
 
   const TABLE_HEAD = [
     // { id: 'orderNumber', label: t('company'), width: 116 },
     { id: 'model', label: t('model'), width: 120, sorted: true },
     { id: 'plateNumber', label: t('plateNumber'), width: 120 },
-    { id: 'manuYear', label: t('manuYear'), width: 90 },
+    { id: 'manuYear', label: t('manufacturingYear'), width: 100 },
     // { id: 'color', label: t('vehcileColor'), width: 120 },
     { id: 'vehicleCondition', label: t('vehicleCondition'), width: 140 },
     { id: 'driver', label: t('driver'), width: 100 },
@@ -95,6 +97,7 @@ export default function OrderListView() {
   const confirm = useBoolean();
 
   const [tableData, setTableData] = useState(car);
+  console.log(contracts);
 
   const [filters, setFilters] = useState(defaultFilters);
 
@@ -198,6 +201,12 @@ export default function OrderListView() {
   const handleViewDriverRow = useCallback(
     (id) => {
       router.push(paths.dashboard.drivers.details(id));
+    },
+    [router]
+  );
+  const handleViewContractRow = useCallback(
+    (id) => {
+      router.push(paths.dashboard.clients.contractsDetails(id));
     },
     [router]
   );
@@ -364,11 +373,13 @@ export default function OrderListView() {
                       <OrderTableRow
                         key={row.id}
                         row={row}
+                        contract={contracts.find(contract => contract.clauses.some(clause => clause.clauseable_type == "car" &&  clause.clauseable_id == row?.id))}
                         selected={table.selected.includes(row.id)}
                         onSelectRow={() => table.onSelectRow(row.id)}
                         onDeleteRow={() => handleDeleteRow(row.id)}
                         onViewRow={() => handleViewRow(row.id)}
                         onDriverViewRow={() => handleViewDriverRow(row?.driver?.id)}
+                        onContractViewRow={(id) => handleViewContractRow(id)}
                         onEditRow={() => handleEditRow(row.id)}
                         onAddCarToMentainance={() => handleAddCarToMentainance(row.id)}
                         onMarkCarAsAvailable={() => handleMarkCarAsAvailable(row.id)}

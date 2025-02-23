@@ -40,7 +40,7 @@ export default function AppNewInvoice({ title, subheader, tableData, tableLabels
 
             <TableBody>
               {tableData.map((row) => (
-                <AppNewInvoiceRow key={row.id} row={row} maintenance={data?.maintenance_specifications?.find(item=>item?.id=="d")}  />
+                <AppNewInvoiceRow key={row.id} unit={data?.unit_enum?.find(item => item.key == row?.period_unit)?.translations[0]?.name} row={row} maintenance={data?.maintenance_specifications?.find(item=>item?.id=="d")}  />
               ))}
             </TableBody>
           </Table>
@@ -71,7 +71,7 @@ AppNewInvoice.propTypes = {
 
 // ----------------------------------------------------------------------
 
-function AppNewInvoiceRow({ row ,spec}) {
+function AppNewInvoiceRow({ row ,spec,unit}) {
   const popover = usePopover();
 
   const handleDownload = () => {
@@ -112,7 +112,7 @@ function AppNewInvoiceRow({ row ,spec}) {
             }}
           />
         </TableCell> */}
-        <TableCell>{row?.period_value + " " + row?.period_unit}</TableCell>
+        <TableCell>{row?.period_value + " " + unit}</TableCell>
         <TableCell>
           <ListItemText
             primary={row?.last_value}

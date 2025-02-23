@@ -46,7 +46,7 @@ export default function OrderTableRow({ row, onCreateRow, selected, onViewRow, o
         {fDate(row?.created_at)}
       </TableCell>
       <TableCell align="start" sx={{ px: 1 }}>
-        <IconButton
+        {/* <IconButton
           color={collapse.value ? 'inherit' : 'default'}
           onClick={collapse.onToggle}
           sx={{
@@ -56,7 +56,7 @@ export default function OrderTableRow({ row, onCreateRow, selected, onViewRow, o
           }}
         >
           <Iconify icon="eva:arrow-ios-downward-fill" />
-        </IconButton>
+        </IconButton> */}
 
         <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
           <Iconify icon="eva:more-vertical-fill" />
@@ -127,7 +127,7 @@ export default function OrderTableRow({ row, onCreateRow, selected, onViewRow, o
           }}
         >
           <Iconify icon="solar:pen-bold" />
-          {t("update")}
+          {t("edit")}
         </MenuItem>
 
         <MenuItem

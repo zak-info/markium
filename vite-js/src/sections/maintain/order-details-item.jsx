@@ -64,8 +64,8 @@ export default function OrderDetailsItems({
           <Box sx={{ typography: 'subtitle2' }}>{new Date(currentMentainance?.entry_date).toDateString()}</Box>
         </Stack>
 
-        <Stack direction="row">
-          <Box sx={{ width: 160, color: 'text.secondary' }}>{t('DD days')}</Box>
+        {/* <Stack direction="row">
+          <Box sx={{ width: 160, color: 'text.secondary' }}>{t('remaining')}</Box>
           <Box
             sx={{
               ...(shipping && { color: 'error.main' }),
@@ -75,7 +75,7 @@ export default function OrderDetailsItems({
               {currentMentainance?.remaining_days}
             </Label>
           </Box>
-        </Stack>
+        </Stack> */}
 
         {/* <Stack direction="row">
           <Box sx={{ width: 160, color: 'text.secondary' }}>{t('driver')}</Box>

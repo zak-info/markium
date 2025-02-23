@@ -24,6 +24,7 @@ import { ListItemText } from '@mui/material';
 import { toNumber } from 'lodash';
 import { useValues } from 'src/api/utils';
 import UserNewEditForm from 'src/sections/clause/user-new-edit-form';
+import { t } from 'i18next';
 
 
 // ----------------------------------------------------------------------
@@ -60,7 +61,7 @@ export default function AppNewInvoice({ title,maintenance_id, subheader, tableDa
           color="inherit"
           endIcon={<Iconify icon="eva:arrow-ios-forward-fill" width={18} sx={{ ml: -0.5 }} />}
         >
-          View All
+          {t("view_all")}
         </Button>
       </Box>
     </Card>

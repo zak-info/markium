@@ -24,10 +24,11 @@ import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import { Typography } from '@mui/material';
 import { useLocales } from 'src/locales';
+import { t } from 'i18next';
 
 // ----------------------------------------------------------------------
 
-export default function OrderTableRow({ row, selected, onViewRow, onEditRow, onSelectRow, onDeleteRow }) {
+export default function OrderTableRow({ row,maintenance, selected, onViewRow, onEditRow, onSelectRow, onDeleteRow,onViewMaintenance }) {
   const { model, status, plat_number, createdAt, state, totalQuantity, subTotal } = row;
 
   const confirm = useBoolean();
@@ -106,9 +107,9 @@ export default function OrderTableRow({ row, selected, onViewRow, onEditRow, onS
           <Iconify icon="eva:arrow-ios-downward-fill" />
         </IconButton> */}
 
-        {/* <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
+        <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
           <Iconify icon="eva:more-vertical-fill" />
-        </IconButton> */}
+        </IconButton>
       </TableCell>
     </TableRow>
   );
@@ -146,12 +147,12 @@ export default function OrderTableRow({ row, selected, onViewRow, onEditRow, onS
       >
         <MenuItem
           onClick={() => {
-            onEditRow();
+            onViewMaintenance(maintenance?.id);
             popover.onClose();
           }}
         >
           <Iconify icon="solar:pen-bold" />
-          create maintenance
+          {t("view_maintenance")}
         </MenuItem>
 
         {/* <MenuItem
@@ -164,7 +165,7 @@ export default function OrderTableRow({ row, selected, onViewRow, onEditRow, onS
           View
         </MenuItem> */}
 
-        <MenuItem
+        {/* <MenuItem
           onClick={() => {
             confirm.onTrue();
             popover.onClose();
@@ -173,7 +174,7 @@ export default function OrderTableRow({ row, selected, onViewRow, onEditRow, onS
         >
           <Iconify icon="solar:trash-bin-trash-bold" />
           Delete
-        </MenuItem>
+        </MenuItem> */}
 
 
       </CustomPopover>

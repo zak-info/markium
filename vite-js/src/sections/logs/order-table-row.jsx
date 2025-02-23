@@ -26,7 +26,7 @@ import { t } from 'i18next';
 
 // ----------------------------------------------------------------------
 
-export default function OrderTableRow({ row, car,currentLang, status, selected, onViewRow, onSelectRow, onDeleteRow }) {
+export default function OrderTableRow({ row, car, currentLang, status, selected, onViewRow, onSelectRow, onDeleteRow }) {
   const { items, orderNumber, action, created_at, note_en, updated_at, createdAt, customer, totalQuantity, subTotal } = row;
 
   const confirm = useBoolean();
@@ -41,11 +41,11 @@ export default function OrderTableRow({ row, car,currentLang, status, selected, 
         <Checkbox checked={selected} onClick={onSelectRow} />
       </TableCell>
 
-     
+
       <TableCell>
         <ListItemText
           primary={car?.plat_number}
-          secondary={car?.model?.company?.translations?.name+" "+car?.model?.translations?.name}
+          secondary={car?.model?.company?.translations?.name + " " + car?.model?.translations?.name}
           primaryTypographyProps={{ typography: 'body2', noWrap: true }}
           secondaryTypographyProps={{
             mt: 0.5,
@@ -85,7 +85,7 @@ export default function OrderTableRow({ row, car,currentLang, status, selected, 
 
 
       {/* <TableCell> {fCurrency(subTotal)} </TableCell> */}
-      <TableCell> {row["note_"+currentLang]} </TableCell>
+      <TableCell> {row["note_" + currentLang]} </TableCell>
 
       <TableCell align="end" sx={{ px: 1, whiteSpace: 'nowrap' }}>
         <IconButton
@@ -129,24 +129,27 @@ export default function OrderTableRow({ row, car,currentLang, status, selected, 
               }}
             >
               <Box sx={{ width: 160, color: 'text.secondary' }}>{t("note")}</Box>
-              <Box sx={{ typography: 'subtitle2' }}>{row?.note_en}</Box>
+              <Box sx={{ typography: 'subtitle2' }}>{row["note_" + currentLang]}</Box>
             </Stack>
             {row?.new_values ?
-              [{value:"vin",lable:"vin"},{value:"created_at",lable:"created_at"},{value:"plat_number",lable:"plateNumber"},{value:"chassis_number",lable:"chassis_number"},{value:"production_year",lable:"manufacturingYear"},{value:"passengers_capacity",lable:"numberOfPassengers"}].map((item, index) => (
-                <Stack
-                  key={index}
-                  direction="row"
-                  alignItems="center"
-                  sx={{
-                    p: (theme) => theme.spacing(1.5, 2, 1.5, 1.5),
-                    '&:not(:last-of-type)': {
-                      borderBottom: (theme) => `solid 2px ${theme.palette.background.neutral}`,
-                    },
-                  }}
-                >
-                  <Box sx={{ width: 160, color: 'text.secondary' }}>{t(item?.lable)}</Box>
-                  <Box sx={{ typography: 'subtitle2' }}>{row?.new_values[item?.value]}</Box>
-                </Stack>
+              [{ value: "vin", lable: "vin" }, { value: "created_at", lable: "created_at" }, { value: "plat_number", lable: "plateNumber" }, { value: "chassis_number", lable: "chassis_number" }, { value: "production_year", lable: "manufacturingYear" }, { value: "passengers_capacity", lable: "numberOfPassengers" }].map((item, index) => (
+                !!row?.new_values[item?.value] ?
+                  <Stack
+                    key={index}
+                    direction="row"
+                    alignItems="center"
+                    sx={{
+                      p: (theme) => theme.spacing(1.5, 2, 1.5, 1.5),
+                      '&:not(:last-of-type)': {
+                        borderBottom: (theme) => `solid 2px ${theme.palette.background.neutral}`,
+                      },
+                    }}
+                  >
+                    <Box sx={{ width: 160, color: 'text.secondary' }}>{t(item?.lable)}</Box>
+                    <Box sx={{ typography: 'subtitle2' }}>{row?.new_values[item?.value]}</Box>
+                  </Stack>
+                  :
+                  null
               ))
               :
               null

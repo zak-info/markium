@@ -32,7 +32,7 @@ import FormProvider, {
 
 } from 'src/components/hook-form';
 
-import { useTranslate } from 'src/locales';
+import { useLocales, useTranslate } from 'src/locales';
 import { createDocument, editDocument } from 'src/api/document';
 import { Divider, ListItemText, MenuItem } from '@mui/material';
 import RHFFileInput from 'src/components/hook-form/rhf-input-field';
@@ -97,6 +97,7 @@ export default function UserNewEditForm({ currentDocument }) {
   const values = watch();
   const { car } = useGetCar()
   const { drivers } = useGetDrivers()
+  const {currentLang} = useLocales()
   const attachableType = watch("attachable_type");
 
   const onSubmit = handleSubmit(async (data) => {
@@ -179,9 +180,9 @@ export default function UserNewEditForm({ currentDocument }) {
 
               <RHFSelect required name="attachable_type" label={t('attachment_type')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
-                {[{ name: "car", id: 1 }, { name: "driver", id: 2 }]?.map((type) => (
+                {[{ name: "car",lable:{ar:"سيارة",en:"car"}, id: 1 }, { name: "driver",lable:{ar:"سائق",en:"driver"}, id: 2 }]?.map((type) => (
                   <MenuItem key={type?.id} value={type.name}>
-                    {type?.name}
+                    {type?.lable[currentLang.value]}
                   </MenuItem>
                 ))}
               </RHFSelect>
@@ -210,9 +211,9 @@ export default function UserNewEditForm({ currentDocument }) {
               {/* disabled={!attachableType} */}
               {
                 values.attachable_type == "car" ?
-                  <CarsAutocomplete required options={car} name="attachable_id" label={t('attachable')} placeholder='filter with plat_number' />
+                  <CarsAutocomplete required options={car} name="attachable_id" label={t('car')} placeholder='filter with plat_number' />
                   : values.attachable_type == "driver" ?
-                    <SimpleAutocomplete required options={drivers} name="attachable_id" label={t('attachable')} placeholder='filter with plat_number' />
+                    <SimpleAutocomplete required options={drivers} name="attachable_id" label={t('driver')}  placeholder={t('filter')} />
                     :
                     <RHFSelect disabled={!attachableType} required name="attachable_id" label={t('attachable')}>
                       <Divider sx={{ borderStyle: 'dashed' }} />

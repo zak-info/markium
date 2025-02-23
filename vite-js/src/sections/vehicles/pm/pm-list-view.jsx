@@ -159,14 +159,14 @@ export default function PmListView(id) {
     <>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
-          heading={t('Periodic Maintenances')}
+          heading={t('periodic_maintenances')}
           links={[
             { name: t('dashboard'), href: paths.dashboard.root },
             {
               name: t('vehicle'),
               href: paths.dashboard.vehicle.root,
             },
-            { name: t('Periodic Maintenances') },
+            { name: t('periodic_maintenances') },
           ]}
           // action={
           //   <Button
@@ -194,10 +194,10 @@ export default function PmListView(id) {
            
 
             tableLabels={[
-              { id: 'name', label: t('Name') },
-              { id: 'period_value', label: t('Period value') },
+              { id: 'name', label: t('item') },
+              { id: 'period_value', label: t('period_value') },
               // { id: 'note', label: t('note') },
-              { id: 'last_value', label: t('last value') },
+              { id: 'last_value', label: t('last_value') },
               { id: 'status', label: t('action') },
             ]}
           />

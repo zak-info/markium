@@ -181,8 +181,9 @@ export const paths = {
     },
     settings: {
       root: `${ROOTS.DASHBOARD}/settings`,
-      new: `${ROOTS.DASHBOARD}/settings/new`,
-      edit: (id)=>`${ROOTS.DASHBOARD}/settings/${id}/edit`,
+      pm: `${ROOTS.DASHBOARD}/settings/pm`,
+      new: `${ROOTS.DASHBOARD}/settings/pm/new`,
+      edit: (id)=>`${ROOTS.DASHBOARD}/settings/pm/${id}/edit`,
     },
     vehicle: {
       root: `${ROOTS.DASHBOARD}/vehicle`,

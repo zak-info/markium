@@ -25,7 +25,7 @@ import CustomPopover, { usePopover } from 'src/components/custom-popover';
 
 // ----------------------------------------------------------------------
 
-export default function OrderTableRow({ row, onCreateRow, selected, onViewRow, onSelectRow, onDeleteRow }) {
+export default function OrderTableRow({ row, type, onCreateRow, selected, onViewRow, onSelectRow, onDeleteRow }) {
   const { items, status, orderNumber, createdAt, customer, totalQuantity, subTotal } = row;
 
   const confirm = useBoolean();
@@ -38,7 +38,7 @@ export default function OrderTableRow({ row, onCreateRow, selected, onViewRow, o
     <TableRow hover selected={selected}>
 
       <TableCell>{row?.cause}</TableCell>
-      <TableCell>{row?.maintainance_type}</TableCell>
+      <TableCell>{type}</TableCell>
       {/* <TableCell>{fDate(row.created_at)}</TableCell> */}
       <TableCell>
         <ListItemText

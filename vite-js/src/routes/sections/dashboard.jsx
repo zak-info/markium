@@ -6,6 +6,7 @@ import DashboardLayout from 'src/layouts/dashboard';
 
 import { LoadingScreen } from 'src/components/loading-screen';
 import ContractCreatePage from 'src/pages/dashboard/clients/contracts-new';
+import SettingsView from 'src/sections/settings/view';
 
 // ----------------------------------------------------------------------
 
@@ -252,9 +253,10 @@ export const dashboardRoutes = [
       {
         path: 'settings',
         children: [
-          { element: <MainSpecListPage />, index: true },
-          { path: 'new', element: <MainSpecCreatePage /> },
-          { path: ':id/edit', element: <MainSpecEditPage /> },
+          { element: <SettingsView />, index: true },
+          { path:"pm",element: <MainSpecListPage />, index: true },
+          { path: 'pm/new', element: <MainSpecCreatePage /> },
+          { path: 'pm/:id/edit', element: <MainSpecEditPage /> },
         ],
       },
 

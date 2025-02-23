@@ -27,7 +27,7 @@ import { useLocales } from 'src/locales';
 
 // ----------------------------------------------------------------------
 
-export default function OrderTableRow({ row,onCreateRow, car,action, selected, onViewRow, onSelectRow, onDeleteRow }) {
+export default function OrderTableRow({ row, onCreateRow, car, action, selected, onViewRow, onSelectRow, onDeleteRow }) {
   const { items, status, orderNumber, createdAt, customer, totalQuantity, subTotal } = row;
 
   const confirm = useBoolean();
@@ -35,30 +35,40 @@ export default function OrderTableRow({ row,onCreateRow, car,action, selected, o
   const collapse = useBoolean();
 
   const popover = usePopover();
-  const days = {ar:"يوم",en:'day'}
-  const {currentLang} = useLocales()
+  const days = { ar: "يوم", en: 'day' }
+  const { currentLang } = useLocales()
 
   const renderPrimary = (
     <TableRow hover selected={selected}>
       {/* <TableCell>{car?.plat_number}</TableCell> */}
-      {/* <TableCell>
-        <ListItemText
-          primary={car?.model?.translations?.name}
-          secondary={car?.model?.company?.translations?.name}
-          primaryTypographyProps={{ typography: 'body2', noWrap: true }}
-          secondaryTypographyProps={{
-            mt: 0.5,
-            component: 'span',
-            typography: 'caption',
+      <TableCell>
+        <Box
+          onClick={onViewRow}
+          sx={{
+            cursor: 'pointer',
+            '&:hover': {
+              textDecoration: 'underline',
+            },
           }}
-        />
-      </TableCell> */}
+        >
+          <ListItemText
+            primary={car?.model?.translations?.name}
+            secondary={car?.model?.company?.translations?.name}
+            primaryTypographyProps={{ typography: 'body2', noWrap: true }}
+            secondaryTypographyProps={{
+              mt: 0.5,
+              component: 'span',
+              typography: 'caption',
+            }}
+          />
+        </Box>
+      </TableCell>
 
 
-      <TableCell> {row?.id} </TableCell>
+      {/* <TableCell> {row?.id} </TableCell> */}
       <TableCell> {fDate(row?.created_at)} </TableCell>
       <TableCell>{row?.new_values?.remaining_days || t("--")} {row?.new_values?.remaining_days ? days[currentLang.value] : ""}</TableCell>
-      <TableCell align="start">{row?.new_values?.maintenance_manager ? row?.new_values?.maintenance_manager[0]?.name : t("not_yet_selected")} </TableCell>
+      <TableCell align="start">{row?.new_values?.maintenance_manager ? row?.new_values?.maintenance_manager[0]?.name : "--"} </TableCell>
       <TableCell>
         <Label
           variant="soft"
@@ -75,7 +85,7 @@ export default function OrderTableRow({ row,onCreateRow, car,action, selected, o
       </TableCell>
 
       <TableCell align="start" sx={{ px: 1 }}>
-        <IconButton
+        {/* <IconButton
           color={collapse.value ? 'inherit' : 'default'}
           onClick={collapse.onToggle}
           sx={{
@@ -85,7 +95,7 @@ export default function OrderTableRow({ row,onCreateRow, car,action, selected, o
           }}
         >
           <Iconify icon="eva:arrow-ios-downward-fill" />
-        </IconButton>
+        </IconButton> */}
 
         <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
           <Iconify icon="eva:more-vertical-fill" />
@@ -160,16 +170,16 @@ export default function OrderTableRow({ row,onCreateRow, car,action, selected, o
         </MenuItem> */}
         {/* {
           row?.action == 'action_required' && */}
-          <MenuItem
-            onClick={() => {
-              onCreateRow();
-              popover.onClose();
-            }}
-            disabled={row?.action !== 'action_required' || !row?.enabled}
-          >
-            <Iconify icon="duo-icons:add-circle" />
-            create maintenance
-          </MenuItem>
+        <MenuItem
+          onClick={() => {
+            onCreateRow();
+            popover.onClose();
+          }}
+          disabled={row?.action !== 'action_required' || !row?.enabled}
+        >
+          <Iconify icon="duo-icons:add-circle" />
+          create maintenance
+        </MenuItem>
         {/* } */}
 
 

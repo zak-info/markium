@@ -25,7 +25,7 @@ import { fData } from 'src/utils/format-number';
 import { useSnackbar } from 'src/components/snackbar';
 import FormProvider, { RHFTextField, RHFSelect } from 'src/components/hook-form';
 
-import { useTranslate } from 'src/locales';
+import { useLocales, useTranslate } from 'src/locales';
 
 import { addNewDriver, editDriver } from 'src/api/drivers';
 
@@ -50,6 +50,7 @@ export default function MainSpecNewEditForm({ currentMainSpec }) {
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslate();
   const { data } = useValues();
+  const { currentLang } = useLocales();
   const validationSchema = Yup.object({
     is_periodic: Yup.boolean().required('is periodic is required'),
     name: Yup.string().required('name is required'),
@@ -86,13 +87,13 @@ export default function MainSpecNewEditForm({ currentMainSpec }) {
 
 
   useEffect(() => {
-    console.log("currentMainSpec :",currentMainSpec);
+    console.log("currentMainSpec :", currentMainSpec);
     if (currentMainSpec?.id) {
-      setValue("name",currentMainSpec?.name)
-      setValue("is_periodic",currentMainSpec?.is_periodic)
-      setValue("period_value",currentMainSpec?.period_value)
-      setValue("period_unit",currentMainSpec?.period_unit)
-      setValue("note",currentMainSpec?.note)
+      setValue("name", currentMainSpec?.name)
+      setValue("is_periodic", currentMainSpec?.is_periodic)
+      setValue("period_value", currentMainSpec?.period_value)
+      setValue("period_unit", currentMainSpec?.period_unit)
+      setValue("note", currentMainSpec?.note)
     }
   }, [data, setValue]);
 
@@ -103,11 +104,11 @@ export default function MainSpecNewEditForm({ currentMainSpec }) {
 
       if (currentMainSpec?.id) {
         delete body?.name
-        await editMainSpec(currentMainSpec?.id,{...body,is_periodic: body?.is_periodic == "true" ? true:false});
+        await editMainSpec(currentMainSpec?.id, { ...body, is_periodic: body?.is_periodic == "true" ? true : false });
 
       } else {
         // await createMainSpec({...body,icon:"lmhm",is_periodic: body?.is_periodic == "true" ? true:false});
-        console.log("data spec :",{...body,is_periodic: body?.is_periodic == "true" ? true:false});
+        console.log("data spec :", { ...body, is_periodic: body?.is_periodic == "true" ? true : false });
       }
       reset();
       enqueueSnackbar(currentMainSpec?.id ? 'Update success!' : 'Create success!');
@@ -150,21 +151,21 @@ export default function MainSpecNewEditForm({ currentMainSpec }) {
                 xs: 'repeat(1, 1fr)',
                 sm: 'repeat(2, 1fr)',
               }}>
-              <RHFTextField disabled={!!currentMainSpec?.id ? true:false} name="name" label={t('name')} />
-              <RHFSelect required name="is_periodic" label={t('is periodic')}>
+              <RHFTextField disabled={!!currentMainSpec?.id ? true : false} name="name" label={t('name')} />
+              <RHFSelect required name="is_periodic" label={t('is_periodic')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
-                {['true', "false"]?.map((option, index) => (
-                  <MenuItem key={index} value={option}>
-                    {option}
+                {[{ value: "true", lable: { ar: "نعم", en: "true" } }, { value: "false", lable: { ar: "لا", en: "false" } }]?.map((option, index) => (
+                  <MenuItem key={index} value={option.value}>
+                    {option.lable[currentLang.value]}
                   </MenuItem>
                 ))}
               </RHFSelect>
-              <RHFTextField name="period_value" label={t('period value')} type={"number"} />
-              <RHFSelect required name="period_unit" label={t('period unit')}>
+              <RHFTextField name="period_value" label={t('period_value')} type={"number"} />
+              <RHFSelect required name="period_unit" label={t('period_unit')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
-                {["day", "km"]?.map((option, index) => (
-                  <MenuItem key={index} value={option}>
-                    {option}
+                {data?.unit_enum?.map((option, index) => (
+                  <MenuItem key={index} value={option.key}>
+                    {option?.translations[0]?.name}
                   </MenuItem>
                 ))}
               </RHFSelect>
@@ -172,7 +173,7 @@ export default function MainSpecNewEditForm({ currentMainSpec }) {
             </Box>
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                {!currentMainSpec ? t('addNewClause') : t('saveChange')}
+                {!currentMainSpec ? t('addMaintenanceItem') : t('saveChange')}
               </LoadingButton>
             </Stack>
           </Card>

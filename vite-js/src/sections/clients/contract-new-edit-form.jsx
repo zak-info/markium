@@ -192,13 +192,13 @@ export default function ContractNewEditForm({ currentUser }) {
 
 
               {clauses.map((row, index) => (
-                <Box key={index} rowGap={3} columnGap={3} alignItems={"center"} display="grid" gridTemplateColumns={{ xs: 'repeat(6, 1fr)', sm: 'repeat(6, 1fr)', }} sx={{ marginTop: "10px" }}>
+                <Box key={index} rowGap={3} columnGap={1} alignItems={"center"} display="grid" gridTemplateColumns={{ xs: 'repeat(6, 1fr)', sm: 'repeat(6, 1fr)', }} sx={{ marginTop: "10px" }}>
                   <Label >
                     { attachables2[row?.clauseable_type][currentLang?.value]}
                   </Label>
                   <Label >{car.find(item => item.id == row?.clauseable_id).plat_number}</Label>
                   <Label >{row?.cost + ".00"}</Label>
-                  <Label >{row?.duration + " months"}</Label>
+                  <Label >{row?.duration +" "+ data?.unit_enum[0]?.translations[0]?.name}</Label>
                   <Label >{row?.cost * row?.duration + ".00"}</Label>
                   <Iconify onClick={() => handleRemoveClause(row?.clauseable_id)} icon="solar:trash-bin-trash-bold" />
                 </Box>

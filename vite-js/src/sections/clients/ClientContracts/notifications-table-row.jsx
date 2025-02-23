@@ -26,7 +26,7 @@ import { t } from 'i18next';
 
 // ----------------------------------------------------------------------
 
-export default function OrderTableRow({ row, onCreateRow, selected, onViewRow, onSelectRow, onDeleteRow }) {
+export default function OrderTableRow({ row,payment_method, onCreateRow, selected, onViewRow, onSelectRow, onDeleteRow }) {
   const { items, status, orderNumber, createdAt, customer, totalQuantity, subTotal } = row;
 
   const confirm = useBoolean();
@@ -40,14 +40,14 @@ export default function OrderTableRow({ row, onCreateRow, selected, onViewRow, o
 
       <TableCell>{row?.id}</TableCell>
       <TableCell>{row?.ref}</TableCell>
-      <TableCell>{row?.net + ".00 " + row?.payment_method}</TableCell>
+      <TableCell>{row?.net + ".00 " + payment_method}</TableCell>
       <TableCell>{row?.paid_amount}.00</TableCell>
       {/* <TableCell>{fDate(row.created_at)}</TableCell> */}
       <TableCell>
         {fDate(row?.created_at)}
       </TableCell>
       <TableCell align="start" sx={{ px: 1 }}>
-        <IconButton
+        {/* <IconButton
           color={collapse.value ? 'inherit' : 'default'}
           onClick={collapse.onToggle}
           sx={{
@@ -57,7 +57,7 @@ export default function OrderTableRow({ row, onCreateRow, selected, onViewRow, o
           }}
         >
           <Iconify icon="eva:arrow-ios-downward-fill" />
-        </IconButton>
+        </IconButton> */}
 
         <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
           <Iconify icon="eva:more-vertical-fill" />
@@ -136,7 +136,7 @@ export default function OrderTableRow({ row, onCreateRow, selected, onViewRow, o
           }}
         >
           <Iconify icon="solar:pen-bold" />
-          {t("update")}
+          {t("edit")}
         </MenuItem>
 
         <MenuItem
