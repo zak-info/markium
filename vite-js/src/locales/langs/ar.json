@@ -179,7 +179,7 @@
   "addToMaintenance": "إضافة إلى الصيانة",
   "manitainClassification": "تصنيف الصيانة",
   "expectedMaintainDays": "عدد أيام الصيانة المتوقعة",
-  "under_maintenance": "في طور الصيانة",
+  "under_maintenance": "في الصيانة",
   "repaired": "تم إصلاحه",
   "nationality": "الجنسية",
   "nationality_id": "رقم الهوية الوطنية",
@@ -292,6 +292,7 @@
   "due_claim": " المستحقة",
   "overdue_claim": " المتأخرة",
   "severely_overdue_claim": " المتأخرة جدًا",
-  "paid_claim": " المدفوعة"
+  "paid_claim": " المدفوعة",
+  "under_preparation": "قيد التجهيز"
 
 }
