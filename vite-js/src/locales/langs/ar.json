@@ -287,6 +287,11 @@
   "MaintenaceSpecList": "قائمة مواصفات الصيانة",
   "view_maintenance": "عرض الصيانة",
   "items": "العناصر",
-  "statistics": "الإحصائيات"
+  "statistics": "الإحصائيات",
+  "not_yet_claim": "لم يتم  بعد",
+  "due_claim": " المستحقة",
+  "overdue_claim": " المتأخرة",
+  "severely_overdue_claim": " المتأخرة جدًا",
+  "paid_claim": " المدفوعة"
 
 }

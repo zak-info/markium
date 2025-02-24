@@ -42,6 +42,7 @@ const ICONS = {
   menuItem: icon('ic_menu_item'),
   ecommerce: icon('ic_ecommerce'),
   analytics: icon('ic_analytics'),
+  settings: icon('ic_settings'),
   dashboard: icon('ic_dashboard'),
   car: <Iconify icon="tabler:car" />,
   maintenance: <Iconify icon="map:car-repair" />,
@@ -64,7 +65,7 @@ export function useNavData() {
           {
             title: t('statistics'),
             path: paths.dashboard.root,
-            icon: ICONS.dashboard,
+            icon: ICONS.analytics,
           },
         ],
       },
@@ -166,7 +167,7 @@ export function useNavData() {
           {
             title: t('settings'),
             path: paths.dashboard.settings.root,
-            icon: ICONS.analytics,
+            icon: ICONS.settings,
             roles: ['admin', 'manager'],
           },
           {

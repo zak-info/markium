@@ -228,5 +228,10 @@
   "MaintenaceSpecList": "Maintenance Specification List",
   "view_maintenance": "View Maintenance",
   "items": "Items",
-  "statistics": "Statistics"
+  "statistics": "Statistics",
+  "not_yet_claim": "Not Yet Claim",
+  "due_claim": "Due Claim",
+  "overdue_claim": "Overdue Claim",
+  "severely_overdue_claim": "Severely Overdue Claim",
+  "paid_claim": "Paid Claim"
 }

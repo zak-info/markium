@@ -7,6 +7,7 @@ import { styled, useTheme } from '@mui/material/styles';
 import { fNumber } from 'src/utils/format-number';
 
 import Chart, { useChart } from 'src/components/chart';
+import { useTranslation } from 'react-i18next';
 
 // ----------------------------------------------------------------------
 
@@ -30,6 +31,7 @@ const StyledChart = styled(Chart)(({ theme }) => ({
 
 export default function AppCurrentDownload({ title, subheader, chart, ...other }) {
   const theme = useTheme();
+  const { t } = useTranslation();
 
   const { colors, series, options } = chart;
 
@@ -42,7 +44,7 @@ export default function AppCurrentDownload({ title, subheader, chart, ...other }
     legend: {  // ✅ Merged `legend` object
       show: true,
       showForSingleSeries: true,
-      customLegendItems: ['Actual', 'Mac', 'Windows'],
+      customLegendItems: [t('paid_claim'), t('severely_overdue_claim'), t('due_claim')],
       offsetY: 0,
       floating: true,
       position: 'bottom',

@@ -62,7 +62,7 @@ export default function AppWidgetSummary({ title, percent, total, chart, sx, ...
       <Box sx={{ flexGrow: 1 }}>
         <Typography variant="subtitle2">{title}</Typography>
 
-        <Stack direction="row" alignItems="center" sx={{ mt: 2, mb: 1 }}>
+        {/* <Stack direction="row" alignItems="center" sx={{ mt: 2, mb: 1 }}>
           <Iconify
             width={24}
             icon={
@@ -84,7 +84,7 @@ export default function AppWidgetSummary({ title, percent, total, chart, sx, ...
 
             {fPercent(percent)}
           </Typography>
-        </Stack>
+        </Stack> */}
 
         <Typography variant="h3">{fNumber(total)}</Typography>
       </Box>
