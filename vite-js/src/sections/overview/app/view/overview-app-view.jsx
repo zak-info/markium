@@ -69,7 +69,7 @@ export default function OverviewAppView() {
           <AppWidgetSummary
             title={t('vehicles')}
             percent={2.6}
-            total={car?.length}
+            total={car?.length ? car?.length : "0"}
             chart={{
               series: [5, 18, 12, 51, 68, 11, 39, 37, 27, 20],
             }}
@@ -80,7 +80,7 @@ export default function OverviewAppView() {
           <AppWidgetSummary
             title={t('claims')}
             percent={0.2}
-            total={claims?.length}
+            total={claims?.length ? claims?.length : "0"}
             chart={{
               colors: [theme.palette.info.light, theme.palette.info.main],
               series: [20, 41, 63, 33, 28, 35, 50, 46, 11, 26],
