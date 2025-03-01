@@ -293,6 +293,9 @@
   "overdue_claim": " المتأخرة",
   "severely_overdue_claim": " المتأخرة جدًا",
   "paid_claim": " المدفوعة",
-  "under_preparation": "قيد التجهيز"
+  "under_preparation": "قيد التجهيز",
+  "english": "الإنجليزية",
+  "arabic": "العربية",
+  "logout": "تسجيل الخروج"
 
 }

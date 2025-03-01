@@ -47,39 +47,39 @@ export const allLangs = [
       currency: 'USD',
     },
   },
-  {
-    label: 'French',
-    value: 'fr',
-    systemValue: merge(frFRDate, frFRDataGrid, frFRCore),
-    adapterLocale: frFRAdapter,
-    icon: 'flagpack:fr',
-    numberFormat: {
-      code: 'fr-Fr',
-      currency: 'EUR',
-    },
-  },
-  {
-    label: 'Vietnamese',
-    value: 'vi',
-    systemValue: merge(viVNDate, viVNDataGrid, viVNCore),
-    adapterLocale: viVNAdapter,
-    icon: 'flagpack:vn',
-    numberFormat: {
-      code: 'vi-VN',
-      currency: 'VND',
-    },
-  },
-  {
-    label: 'Chinese',
-    value: 'cn',
-    systemValue: merge(zhCNDate, zhCNDataGrid, zhCNCore),
-    adapterLocale: zhCNAdapter,
-    icon: 'flagpack:cn',
-    numberFormat: {
-      code: 'zh-CN',
-      currency: 'CNY',
-    },
-  },
+  // {
+  //   label: 'French',
+  //   value: 'fr',
+  //   systemValue: merge(frFRDate, frFRDataGrid, frFRCore),
+  //   adapterLocale: frFRAdapter,
+  //   icon: 'flagpack:fr',
+  //   numberFormat: {
+  //     code: 'fr-Fr',
+  //     currency: 'EUR',
+  //   },
+  // },
+  // {
+  //   label: 'Vietnamese',
+  //   value: 'vi',
+  //   systemValue: merge(viVNDate, viVNDataGrid, viVNCore),
+  //   adapterLocale: viVNAdapter,
+  //   icon: 'flagpack:vn',
+  //   numberFormat: {
+  //     code: 'vi-VN',
+  //     currency: 'VND',
+  //   },
+  // },
+  // {
+  //   label: 'Chinese',
+  //   value: 'cn',
+  //   systemValue: merge(zhCNDate, zhCNDataGrid, zhCNCore),
+  //   adapterLocale: zhCNAdapter,
+  //   icon: 'flagpack:cn',
+  //   numberFormat: {
+  //     code: 'zh-CN',
+  //     currency: 'CNY',
+  //   },
+  // },
   {
     label: 'Arabic',
     value: 'ar',
@@ -93,7 +93,70 @@ export const allLangs = [
   },
 ];
 
-export const defaultLang = allLangs[0]; // English
+export function allLangs2(english,arabic){
+  return [
+  {
+    label:english,
+    value: 'en',
+    systemValue: merge(enUSDate, enUSDataGrid, enUSCore),
+    adapterLocale: enUSAdapter,
+    icon: 'flagpack:gb-nir',
+    numberFormat: {
+      code: 'en-US',
+      currency: 'USD',
+    },
+  },
+  {
+    label: arabic,
+    value: 'ar',
+    systemValue: merge(arSDDataGrid, arSACore),
+    adapterLocale: arSAAdapter,
+    icon: 'flagpack:sa',
+    numberFormat: {
+      code: 'ar',
+      currency: 'AED',
+    },
+  },
+  // {
+  //   label: 'French',
+  //   value: 'fr',
+  //   systemValue: merge(frFRDate, frFRDataGrid, frFRCore),
+  //   adapterLocale: frFRAdapter,
+  //   icon: 'flagpack:fr',
+  //   numberFormat: {
+  //     code: 'fr-Fr',
+  //     currency: 'EUR',
+  //   },
+  // },
+  // {
+  //   label: 'Vietnamese',
+  //   value: 'vi',
+  //   systemValue: merge(viVNDate, viVNDataGrid, viVNCore),
+  //   adapterLocale: viVNAdapter,
+  //   icon: 'flagpack:vn',
+  //   numberFormat: {
+  //     code: 'vi-VN',
+  //     currency: 'VND',
+  //   },
+  // },
+  // {
+  //   label: 'Chinese',
+  //   value: 'cn',
+  //   systemValue: merge(zhCNDate, zhCNDataGrid, zhCNCore),
+  //   adapterLocale: zhCNAdapter,
+  //   icon: 'flagpack:cn',
+  //   numberFormat: {
+  //     code: 'zh-CN',
+  //     currency: 'CNY',
+  //   },
+  // },
+  
+]
+
+};
+
+// export const defaultLang = allLangs[0]; // English
+export const defaultLang = allLangs[1]; // Arabic
 
 // GET MORE COUNTRY FLAGS
 // https://icon-sets.iconify.design/flagpack/

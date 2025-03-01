@@ -28,9 +28,10 @@ import { useGetCar } from 'src/api/car';
 import { useGetAllClaim } from 'src/api/claim';
 import { useGetDrivers } from 'src/api/drivers';
 import { useValues } from 'src/api/utils';
-import { useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { TableNoData } from 'src/components/table';
 import EmptyContent from 'src/components/empty-content';
+
 // ----------------------------------------------------------------------
 
 export default function OverviewAppView() {
@@ -44,6 +45,13 @@ export default function OverviewAppView() {
   const { claims } = useGetAllClaim();
   const { drivers } = useGetDrivers();
   const { data } = useValues();
+  // const {SystemData} = useContext(DataContext);
+  // const [data , setData] = useState(SystemData);
+  // useEffect(()=>{
+  //   setData(SystemData)
+  // },[SystemData])
+
+
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'xl'}>

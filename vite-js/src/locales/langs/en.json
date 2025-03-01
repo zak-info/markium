@@ -234,5 +234,8 @@
   "overdue_claim": "Overdue Claim",
   "severely_overdue_claim": "Severely Overdue Claim",
   "paid_claim": "Paid Claim",
-  "under_preparation": "Under Preparation"
+  "under_preparation": "Under Preparation",
+  "english": "English",
+  "arabic": "العربية",
+  "logout": "Logout"
 }

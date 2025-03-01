@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useContext, useEffect } from 'react';
 
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
@@ -65,6 +65,11 @@ export default function OrderListView() {
 
   const { car, mutate } = useGetCar();
   const { data } = useValues()
+  // const { SystemData } = useContext(DataContext);
+  // const [data, setData] = useState(SystemData);
+  // useEffect(() => {
+  //   setData(SystemData)
+  // }, [SystemData])
   const { contracts } = useGetContracts()
 
   const TABLE_HEAD = [
@@ -373,7 +378,7 @@ export default function OrderListView() {
                       <OrderTableRow
                         key={row.id}
                         row={row}
-                        contract={contracts.find(contract => contract.clauses.some(clause => clause.clauseable_type == "car" &&  clause.clauseable_id == row?.id))}
+                        contract={contracts.find(contract => contract.clauses.some(clause => clause.clauseable_type == "car" && clause.clauseable_id == row?.id))}
                         selected={table.selected.includes(row.id)}
                         onSelectRow={() => table.onSelectRow(row.id)}
                         onDeleteRow={() => handleDeleteRow(row.id)}

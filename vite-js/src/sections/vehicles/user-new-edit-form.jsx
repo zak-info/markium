@@ -43,9 +43,16 @@ export default function UserNewEditForm({ currentCar }) {
   const router = useRouter();
   console.log("currentCar : ", currentCar);
 
-  const { company } = useGetCompany();
+  // const { company } = useGetCompany();
 
   const { data } = useValues();
+  // const { SystemData } = useContext(DataContext);
+  // const [data, setData] = useState(SystemData);
+  // useEffect(() => {
+  //   setData(SystemData)
+  //   console.log("SystemData : ",SystemData);
+  // }, [SystemData])
+  // const { contracts } = useGetContracts()
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslate();
 

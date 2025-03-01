@@ -4,20 +4,21 @@ import { useCallback } from 'react';
 import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
 
-import { useLocales, useTranslate } from 'src/locales';
+import { useLocales, useLocales2, useTranslate } from 'src/locales';
 
 import Iconify from 'src/components/iconify';
 import { varHover } from 'src/components/animate';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
-
 // ----------------------------------------------------------------------
 
 export default function LanguagePopover() {
   const popover = usePopover();
 
   const { onChangeLang } = useTranslate();
+  const {t} = useTranslate();
 
   const { allLangs, currentLang } = useLocales();
+  const { langs } = useLocales2(t("english"),t("arabic"));
 
   const handleChangeLang = useCallback(
     (newLang) => {
@@ -47,7 +48,7 @@ export default function LanguagePopover() {
       </IconButton>
 
       <CustomPopover open={popover.open} onClose={popover.onClose} sx={{ width: 160 }}>
-        {allLangs.map((option) => (
+        {langs.map((option) => (
           <MenuItem
             key={option.value}
             selected={option.value === currentLang.value}

@@ -103,53 +103,12 @@ function AppNewInvoiceRow({ row, maintenance_spec }) {
   return (
     <>
       <TableRow>
-        {/* <TableCell>
-          <ListItemText
-            primary={!!row?.is_periodic ? "periodic" : "non periodic"}
-            secondary={maintenance_spec}
-            primaryTypographyProps={{ typography: 'body2', noWrap: true }}
-            secondaryTypographyProps={{
-              mt: 0.5,
-              component: 'span',
-              typography: 'caption',
-            }}
-          />
-        </TableCell> */}
         <TableCell>{!!row?.is_periodic ? "periodic" : "non periodic"}</TableCell>
         <TableCell>{maintenance_spec}</TableCell>
         <TableCell>{row?.cost + " RS"}</TableCell>
         <TableCell>{row?.quantity + " " + row?.unit}</TableCell>
         <TableCell>{row?.piece_status}</TableCell>
-        {/* <TableCell>
-          <ListItemText
-            primary={row?.quantity + " " + row?.unit}
-            secondary={ " piece_status : " +row?.piece_status}
-            primaryTypographyProps={{ typography: 'body2', noWrap: true }}
-            secondaryTypographyProps={{
-              mt: 0.5,
-              component: 'span',
-              typography: 'caption',
-            }}
-          />
-        </TableCell> */}
         <TableCell align="left">{toNumber(row?.cost) * row?.quantity + ".00 RS"}</TableCell>
-        {/* <TableCell>{row?.category}</TableCell> */}
-
-
-
-        {/* <TableCell>
-          <Label
-            variant="soft"
-            color={
-              (row.status === 'progress' && 'warning') ||
-              (row.status === 'out of date' && 'error') ||
-              'success'
-            }
-          >
-            {row.status}
-          </Label>
-        </TableCell> */}
-
         <TableCell align="right" sx={{ pr: 1 }}>
           <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
             <Iconify icon="eva:more-vertical-fill" />
@@ -163,21 +122,6 @@ function AppNewInvoiceRow({ row, maintenance_spec }) {
         arrow="right-top"
         sx={{ width: 160 }}
       >
-        {/* <MenuItem onClick={handleDownload}>
-          <Iconify icon="eva:cloud-download-fill" />
-          Download
-        </MenuItem>
-
-        <MenuItem onClick={handlePrint}>
-          <Iconify icon="solar:printer-minimalistic-bold" />
-          Print
-        </MenuItem>
-
-        <MenuItem onClick={handleShare}>
-          <Iconify icon="solar:share-bold" />
-          Share
-        </MenuItem> */}
-
         <Divider sx={{ borderStyle: 'dashed' }} />
 
         <MenuItem onClick={handleDelete} sx={{ color: 'error.main' }}>
