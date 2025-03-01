@@ -27,7 +27,7 @@ i18n
       ar: { translations: translationAr },
     },
     lng,
-    fallbackLng: 'en',
+    fallbackLng: 'ar',
     debug: false,
     ns: ['translations'],
     defaultNS: 'translations',
