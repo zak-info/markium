@@ -16,6 +16,7 @@ import { bgGradient } from 'src/theme/css';
 import { useAuthContext } from 'src/auth/hooks';
 
 import Logo from 'src/components/logo';
+import { useTranslate } from 'src/locales';
 
 // ----------------------------------------------------------------------
 
@@ -58,6 +59,7 @@ export default function AuthClassicLayout({ children, image, title }) {
   const theme = useTheme();
 
   const mdUp = useResponsive('up', 'md');
+  const { t } = useTranslate();
 
   const renderLogo = (
     <Logo
@@ -101,7 +103,8 @@ export default function AuthClassicLayout({ children, image, title }) {
       }}
     >
       <Typography variant="h3" sx={{ maxWidth: 480, textAlign: 'center' }}>
-        {title || 'Hi, Welcome back'}
+        {title || t('hi_welcome_back')}
+        {/* Hi, Welcome back */}
       </Typography>
 
       <Box
