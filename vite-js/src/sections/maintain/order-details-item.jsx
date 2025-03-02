@@ -77,10 +77,6 @@ export default function OrderDetailsItems({
           </Box>
         </Stack> */}
 
-        {/* <Stack direction="row">
-          <Box sx={{ width: 160, color: 'text.secondary' }}>{t('driver')}</Box>
-          <Box sx={{ typography: 'subtitle2' }}>23444vf</Box>
-        </Stack> */}
 
         <Stack direction="row">
           <Box sx={{ width: 160, color: 'text.secondary' }}>{t('note')}</Box>
