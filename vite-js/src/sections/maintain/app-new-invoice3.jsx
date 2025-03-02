@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import {
   Box,
@@ -15,20 +15,14 @@ import {
   TableContainer,
   TextField,
   Paper,
+  Stack,
 } from "@mui/material";
 
-import { fCurrency } from "src/utils/format-number";
-import Label from "src/components/label";
-import Iconify from "src/components/iconify";
+import { useValues } from "src/api/utils";
 import Scrollbar from "src/components/scrollbar";
 import { TableHeadCustom } from "src/components/table";
 import CustomPopover, { usePopover } from "src/components/custom-popover";
-import { ListItemText } from "@mui/material";
-import { toNumber } from "lodash";
-import { useValues } from "src/api/utils";
-import UserNewEditForm from "src/sections/clause/user-new-edit-form";
 import { t } from "i18next";
-import { Stack } from "@mui/system";
 
 export default function AppNewInvoice3({
   title,
@@ -41,7 +35,24 @@ export default function AppNewInvoice3({
   ...other
 }) {
   const { data } = useValues();
+  const [originalTableData, setOriginalTableData] = useState([...tableData]); // Store initial data
   const [editing, setEditing] = useState({ rowId: null, field: null });
+
+  useEffect(() => {
+    setOriginalTableData([...tableData]); // Update original data when tableData changes externally
+  }, [tableData]);
+
+  // Function to compare tableData with originalTableData
+  const hasChanges = () => {
+    return JSON.stringify(originalTableData) != JSON.stringify(tableData);
+  };
+
+  console.log("tableData : ",tableData);
+
+  // Function to find edited rows
+  const getEditedRows = () => {
+    return tableData.filter((row, index) => JSON.stringify(row) !== JSON.stringify(originalTableData[index]));
+  };
 
   const handleEdit = (rowId, field) => {
     setEditing({ rowId, field });
@@ -63,6 +74,16 @@ export default function AppNewInvoice3({
     setEditing({ rowId: newRow.id, field: "type" }); // Start editing the first cell of the new row
   };
 
+  const handleSaveChanges = () => {
+    const editedRows = getEditedRows();
+    console.log("Saving changes: ", editedRows);
+
+    // Send editedRows to the backend
+    // Example: axios.post('/api/update-table', { updatedRows: editedRows })
+
+    setOriginalTableData([...tableData]); // Reset original data after saving
+  };
+
   return (
     <Card {...other}>
       <CardHeader title={title} subheader={subheader} sx={{ mb: 3 }} />
@@ -75,6 +96,7 @@ export default function AppNewInvoice3({
               {tableData?.map((row) => (
                 <AppNewInvoiceRow
                   key={row.id}
+                  tableLabels={tableLabels}
                   row={row}
                   editing={editing}
                   handleEdit={handleEdit}
@@ -83,10 +105,8 @@ export default function AppNewInvoice3({
                   maintenance_spec={data?.maintenance_specifications?.find((item) => item.id == row?.related_id)?.name}
                 />
               ))}
-
             </TableBody>
           </Table>
-          {/* <UserNewEditForm maintenance_id={maintenance_id} setTableData={setTableData} /> */}
         </Scrollbar>
         <Stack alignItems="flex-end" sx={{ m: 3 }}>
           <Button variant="contained" onClick={handleAddRow}>
@@ -94,18 +114,16 @@ export default function AppNewInvoice3({
           </Button>
         </Stack>
       </TableContainer>
-
       <Divider sx={{ borderStyle: "dashed" }} />
 
-      {/* <Box sx={{ p: 2, textAlign: "right" }}>
-        <Button
-          size="small"
-          color="inherit"
-          endIcon={<Iconify icon="eva:arrow-ios-forward-fill" width={18} sx={{ ml: -0.5 }} />}
-        >
-          {t("view_all")}
-        </Button>
-      </Box> */}
+      {/* Show Save Changes button only when data is modified */}
+      {hasChanges() && (
+        <Stack alignItems="flex-end" sx={{ m: 3 }}>
+          <Button variant="contained" color="primary" onClick={handleSaveChanges}>
+            {t("save_changes")}
+          </Button>
+        </Stack>
+      )}
     </Card>
   );
 }
@@ -117,9 +135,13 @@ AppNewInvoice3.propTypes = {
   title: PropTypes.string,
 };
 
-// ----------------------------------------------------------------------
+// ---------------------------------------------------------
 
-function AppNewInvoiceRow({ row, maintenance_spec, editing, handleEdit, handleChange, handleBlur }) {
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { Select } from "@mui/material";
+import Iconify from "src/components/iconify";
+
+function AppNewInvoiceRow({ row, tableLabels, editing, handleEdit, handleChange, handleBlur }) {
   const popover = usePopover();
 
   const handleDelete = () => {
@@ -130,17 +152,28 @@ function AppNewInvoiceRow({ row, maintenance_spec, editing, handleEdit, handleCh
   return (
     <>
       <TableRow>
-        {["type", "clause", "cost", "qte", "piece_status", "total"].map((field) => (
-          <TableCell key={field} onClick={() => handleEdit(row.id, field)}>
-            {editing.rowId === row.id && editing.field === field ? (
-              <TextField
-                value={row[field] || ""}
-                onChange={(e) => handleChange(e, row.id, field)}
-                onBlur={handleBlur}
-                autoFocus
-              />
+        {tableLabels.map(({ id, editable, type, options,key_to_update }) => (
+          <TableCell key={id} onClick={() => editable && handleEdit(row.id, id)}>
+            {editing.rowId === row.id && editing.field === id ? (
+              editable ? (
+                type === "select" ? (
+                  <Select value={row[id] || ""} onChange={(e) => handleChange(e, row.id, key_to_update)} onBlur={handleBlur} autoFocus>
+                    {options.map((option,index) => (
+                      <MenuItem key={index} value={option.value}>
+                        {option.lable}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                ) : type === "date" ? (
+                  <DatePicker value={row[id] || null} onChange={(newValue) => handleChange({ target: { value: newValue } }, row.id, id)} onBlur={handleBlur} />
+                ) : (
+                  <TextField value={row[id] || ""} onChange={(e) => handleChange(e, row.id, id)} onBlur={handleBlur} autoFocus />
+                )
+              ) : (
+                row[id] || "--"
+              )
             ) : (
-              row[field] || "Click to edit"
+              row[id] || "--"
             )}
           </TableCell>
         ))}
@@ -154,7 +187,6 @@ function AppNewInvoiceRow({ row, maintenance_spec, editing, handleEdit, handleCh
 
       <CustomPopover open={popover.open} onClose={popover.onClose} arrow="right-top" sx={{ width: 160 }}>
         <Divider sx={{ borderStyle: "dashed" }} />
-
         <MenuItem onClick={handleDelete} sx={{ color: "error.main" }}>
           <Iconify icon="solar:trash-bin-trash-bold" />
           Delete
