@@ -35,19 +35,22 @@ export default function AppNewInvoice3({
   ...other
 }) {
   const { data } = useValues();
-  const [originalTableData, setOriginalTableData] = useState([...tableData]); // Store initial data
+  const [originalTableData, setOriginalTableData] = useState(tableData); // Store initial data
   const [editing, setEditing] = useState({ rowId: null, field: null });
 
   useEffect(() => {
-    setOriginalTableData([...tableData]); // Update original data when tableData changes externally
+    // setOriginalTableData([...tableData]); // Update original data when tableData changes externally
+    console.log("tableData : ",tableData);
+    console.log("originalTableData : ",originalTableData);
+    console.log(hasChanges());
   }, [tableData]);
 
   // Function to compare tableData with originalTableData
   const hasChanges = () => {
-    return JSON.stringify(originalTableData) != JSON.stringify(tableData);
+    return JSON.stringify(originalTableData) !== JSON.stringify(tableData);
   };
 
-  console.log("tableData : ",tableData);
+  
 
   // Function to find edited rows
   const getEditedRows = () => {
@@ -60,7 +63,7 @@ export default function AppNewInvoice3({
 
   const handleChange = (event, rowId, field) => {
     setTableData((prev) =>
-      prev.map((row) => (row.id === rowId ? { ...row, [field]: event.target.value } : row))
+      prev.map((row) => (row.id === rowId ? { ...row, [field]: event.target.value,new:false } : row))
     );
   };
 
@@ -69,7 +72,7 @@ export default function AppNewInvoice3({
   };
 
   const handleAddRow = () => {
-    const newRow = { id: tableData.length + 1, type: "", clause: "", cost: "", qte: "", piece_status: "", total: "" };
+    const newRow = { id: tableData.length + 1, type: "", clause: "", cost: "", qte: "", piece_status: "", total: "",new:true };
     setTableData((prev) => [...prev, newRow]);
     setEditing({ rowId: newRow.id, field: "type" }); // Start editing the first cell of the new row
   };
@@ -167,7 +170,7 @@ function AppNewInvoiceRow({ row, tableLabels, editing, handleEdit, handleChange,
                 ) : type === "date" ? (
                   <DatePicker value={row[id] || null} onChange={(newValue) => handleChange({ target: { value: newValue } }, row.id, id)} onBlur={handleBlur} />
                 ) : (
-                  <TextField value={row[id] || ""} onChange={(e) => handleChange(e, row.id, id)} onBlur={handleBlur} autoFocus />
+                  <TextField value={row[id] || ""} type={type} onChange={(e) => handleChange(e, row.id, id)} onBlur={handleBlur} autoFocus />
                 )
               ) : (
                 row[id] || "--"

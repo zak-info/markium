@@ -83,7 +83,7 @@ export default function OrderDetailsItems({
         </Stack> */}
 
         <Stack direction="row">
-          <Box sx={{ width: 160, color: 'text.secondary' }}>{t('cause')}</Box>
+          <Box sx={{ width: 160, color: 'text.secondary' }}>{t('note')}</Box>
           <Box sx={{ typography: 'subtitle2' }}>{currentMentainance?.cause}</Box>
         </Stack>
       </Stack>

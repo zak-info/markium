@@ -114,13 +114,12 @@ export default function OrderDetailsView({ id }) {
             tableData={tableData?.map(item => ({ ...item, total: item.cost * item?.quantity, clause: data?.maintenance_specifications?.find(item2 => item2.id == item?.related_id)?.name }))}
             setTableData={setTableData}
             tableLabels={[
-              { id: "related_type", label: t("clause_type"), editable: true, type: "select", options: [{ value: "periodic", lable: t("periodic") }, { value: "not-periodic", lable: t("not_periodic") }] },
-              { id: "clause",key_to_update:"related_id", label: t("clause"), editable: true, type: "select", options: [...periodic_maintenance , ...maintenance_specs]?.map(item => ({value : item.id , lable:item?.name})) },
-              { id: "cost", label: t("cost"), editable: true, type: "text" },
-              { id: "quantity", label: t("qte"), editable: true, type: "number" },
-              { id: "piece_status", label: t("piece_status"), editable: true, type: "select", options: data?.piece_status_enum?.map(item => ({ value: item.key, lable: item?.translations?.name })) },
-              // { id: "date", label: t("date"), editable: true, type: "date" },
-              { id: "total", label: t("total"), editable: false },
+              { id: "related_type",key_to_update:"related_type",label: t("clause_type"), editable: true, type: "select", options: [{ value: "periodic", lable: t("periodic") }, { value: "not-periodic", lable: t("not_periodic") }]  ,width: 180},
+              { id: "clause",      key_to_update:"related_id",  label: t("clause"),      editable: true, type: "select", options: [...periodic_maintenance , ...maintenance_specs]?.map(item => ({value : item.id , lable:item?.name})) ,width: 180},
+              { id: "cost",        key_to_update:"cost" , label: t("cost"),              editable: true, type: "number",width: 140},
+              { id: "quantity",    key_to_update:"quantity",  label: t("qte"),           editable: true, type: "number",width: 100 },
+              { id: "piece_status",key_to_update:"piece_status",label: t("piece_status"),editable: true, type: "select", options: data?.piece_status_enum?.map(item => ({ value: item.key, lable: item?.translations[0]?.name })) ,width: 140},
+              { id: "total",       key_to_update:"total",  label: t("total"),            editable: false ,width: 140},
             ]}
           />
         </Grid>
