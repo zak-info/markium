@@ -71,12 +71,12 @@ export default function UserNewEditForm({ currentCar }) {
       .positive()
       .integer(),
     odometer: Yup.number().nullable().positive().required('odometer is required'),
-    depreciation: Yup.number()
-      .nullable()
-      .min(0, 'Depreciation cannot be negative')
-      .test('is-decimal', 'يجب أن يكون الاستهلاك رقم عشري مع حدين عشريين كحد أقصى', (value) =>
-        (value + '').match(/^\d*\.{1}\d*$/)
-      ),
+    // depreciation: Yup.number()
+    //   .nullable()
+    //   .min(0, 'Depreciation cannot be negative')
+    //   .test('is-decimal', 'يجب أن يكون الاستهلاك رقم عشري مع حدين عشريين كحد أقصى', (value) =>
+    //     (value + '').match(/^\d*\.{1}\d*$/)
+    //   ),
     car_model_id: Yup.string().required('Car model is required'),
     color_id: Yup.string().required('Color is required'),
     state_id: Yup.string().required('Location is required'),
@@ -93,7 +93,7 @@ export default function UserNewEditForm({ currentCar }) {
       vin: currentCar?.vin || '',
       passengers_capacity: currentCar?.passengers_capacity || null, // Default to 1 passenger
       odometer: currentCar?.odometer || null, // Default to 0
-      depreciation: currentCar?.depreciation || null, // Default to 0
+      // depreciation: currentCar?.depreciation || null, // Default to 0
       car_model_id: currentCar?.car_model_id || '',
       color_id: currentCar?.color_id || '',
       state_id: currentCar?.state_id || '',
@@ -246,7 +246,7 @@ export default function UserNewEditForm({ currentCar }) {
 
               <RHFTextField required name="vin" label={t('serialNumber')} />
               <RHFTextField required name="odometer" label={t('odometer')} />
-              <RHFTextField name="depreciation" label={t('depreciation')} />
+              {/* <RHFTextField name="depreciation" label={t('depreciation')} /> */}
               <RHFTextField
                 type="number"
                 required
