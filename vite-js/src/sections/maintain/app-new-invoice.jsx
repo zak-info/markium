@@ -25,12 +25,16 @@ import { toNumber } from 'lodash';
 import { useValues } from 'src/api/utils';
 import UserNewEditForm from 'src/sections/clause/user-new-edit-form';
 import { t } from 'i18next';
+import { useLocales } from 'src/locales';
 
 
 // ----------------------------------------------------------------------
 
 export default function AppNewInvoice({ title,maintenance_id, subheader, tableData,setTableData, tableLabels, ...other }) {
   const { data } = useValues()
+
+  const p_n = {periodic:{en:"periodic",ar:"دوري"},not_periodic:{en:"not_periodic",ar:"غير دوري"}}
+  const {currentLang} = useLocales()
   return (
     <Card {...other}>
       <CardHeader title={title} subheader={subheader} sx={{ mb: 3 }} />
@@ -43,6 +47,7 @@ export default function AppNewInvoice({ title,maintenance_id, subheader, tableDa
             <TableBody>
               {tableData.map((row) => (
                 <AppNewInvoiceRow
+                p_n={!!row?.is_periodic ? p_n?.periodic[currentLang?.value] : p_n?.not_periodic[currentLang?.value]}
                   maintenance_spec={data?.maintenance_specifications?.find(item => item.id == row?.related_id)?.name}
                   key={row.id}
                   row={row} />
@@ -52,9 +57,7 @@ export default function AppNewInvoice({ title,maintenance_id, subheader, tableDa
           <UserNewEditForm maintenance_id={maintenance_id} setTableData={setTableData} />
         </Scrollbar>
       </TableContainer>
-
       <Divider sx={{ borderStyle: 'dashed' }} />
-
       <Box sx={{ p: 2, textAlign: 'right' }}>
         <Button
           size="small"
@@ -77,7 +80,7 @@ AppNewInvoice.propTypes = {
 
 // ----------------------------------------------------------------------
 
-function AppNewInvoiceRow({ row, maintenance_spec }) {
+function AppNewInvoiceRow({ row, maintenance_spec , p_n }) {
   const popover = usePopover();
 
   const handleDownload = () => {
@@ -103,19 +106,18 @@ function AppNewInvoiceRow({ row, maintenance_spec }) {
   return (
     <>
       <TableRow>
-        <TableCell>{!!row?.is_periodic ? "periodic" : "non periodic"}</TableCell>
+        <TableCell>{p_n}</TableCell>
         <TableCell>{maintenance_spec}</TableCell>
-        <TableCell>{row?.cost + " RS"}</TableCell>
+        <TableCell>{row?.cost}</TableCell>
         <TableCell>{row?.quantity + " " + row?.unit}</TableCell>
         <TableCell>{row?.piece_status}</TableCell>
-        <TableCell align="left">{toNumber(row?.cost) * row?.quantity + ".00 RS"}</TableCell>
+        <TableCell align="left">{toNumber(row?.cost) * row?.quantity + ".00 "}</TableCell>
         <TableCell align="right" sx={{ pr: 1 }}>
           <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
             <Iconify icon="eva:more-vertical-fill" />
           </IconButton>
         </TableCell>
       </TableRow>
-
       <CustomPopover
         open={popover.open}
         onClose={popover.onClose}
@@ -123,7 +125,6 @@ function AppNewInvoiceRow({ row, maintenance_spec }) {
         sx={{ width: 160 }}
       >
         <Divider sx={{ borderStyle: 'dashed' }} />
-
         <MenuItem onClick={handleDelete} sx={{ color: 'error.main' }}>
           <Iconify icon="solar:trash-bin-trash-bold" />
           Delete

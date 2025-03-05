@@ -68,6 +68,7 @@ export default function NotificationsListView() {
   const { t } = useTranslate();
 
   const TABLE_HEAD = [
+    { id: 'id', label: t('id'), width: 60 },
     { id: 'plateNumber', label: t('plateNumber'), width: 140 },
     // { id: 'vehicle', label: t('vehicle'), width: 116 },
     { id: 'entryDate', label: t('entryDate'), width: 140 },

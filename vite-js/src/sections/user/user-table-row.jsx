@@ -40,7 +40,7 @@ export default function UserTableRow({ row, selected, onEditRow, onSelectRow, on
         <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
           <Avatar alt={name} src={avatarUrl} sx={{ mr: 2 }} />
 
-          <ListItemText
+          {/* <ListItemText
             primary={name}
             secondary={email}
             primaryTypographyProps={{ typography: 'body2' }}
@@ -48,18 +48,16 @@ export default function UserTableRow({ row, selected, onEditRow, onSelectRow, on
               component: 'span',
               color: 'text.disabled',
             }}
-          />
+          /> */}
+          {row?.name}
         </TableCell>
 
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{phoneNumber}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row?.username}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row?.email}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row?.phone}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{row?.role}</TableCell>
 
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{company}</TableCell>
-
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{role}</TableCell>
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{role}</TableCell>
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{role}</TableCell>
-
-        <TableCell>
+        {/* <TableCell>
           <Label
             variant="soft"
             color={
@@ -71,7 +69,7 @@ export default function UserTableRow({ row, selected, onEditRow, onSelectRow, on
           >
             {status}
           </Label>
-        </TableCell>
+        </TableCell> */}
 
         {/* <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
           <Tooltip title="Quick Edit" placement="top" arrow>

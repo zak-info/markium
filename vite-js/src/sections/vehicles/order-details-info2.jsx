@@ -58,7 +58,7 @@ export default function OrderDetailsInfo2({ carDetails, delivery, payment, shipp
 
         </Stack>
         {carDetails?.driver?.id &&
-          <Stack direction="row" sx={{ px: '10px' }}>
+          <Stack direction="row" >
             <Box sx={{ width: 120, color: 'text.secondary' }}>
               <CarDettachForm car_id={carDetails?.id} driver_id={carDetails?.driver?.id} />
             </Box>

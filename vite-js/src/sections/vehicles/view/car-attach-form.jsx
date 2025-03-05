@@ -108,8 +108,8 @@ export default function CarAttachForm({ car_id, currentClause }) {
   return (
     <FormProvider methods={methods} onSubmit={onSubmit} >
       <Grid container spacing={3} sx={{px:"10px"}}>
-        <Grid xs={12} md={12}>
-          <Card sx={{ py: 2 }}>
+        <Grid xs={12} md={12} sx={{ py: 2 }}>
+          {/* <Card sx={{ py: 2 }}> */}
             <Box
               rowGap={3}
               columnGap={2}
@@ -126,14 +126,14 @@ export default function CarAttachForm({ car_id, currentClause }) {
                 getOptionLabel={(option) => option?.name}
                 placeholder={t('attache_driver')}
               />
-              <Stack alignItems="flex-start" sx={{ mt: 1 }}>
+              <Stack alignItems="flex-start" >
                 <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
                   {!currentClause ? t('attache_driver') : t('saveChange')}
                 </LoadingButton>
               </Stack>
             </Box>
 
-          </Card>
+          {/* </Card> */}
         </Grid>
       </Grid>
     </FormProvider>

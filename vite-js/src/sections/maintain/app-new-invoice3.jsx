@@ -13,9 +13,9 @@ import {
   CardHeader,
   IconButton,
   TableContainer,
-  TextField,
   Paper,
   Stack,
+  TextField,
 } from "@mui/material";
 
 import { useValues } from "src/api/utils";
@@ -37,24 +37,20 @@ export default function AppNewInvoice3({
   const { data } = useValues();
   const [originalTableData, setOriginalTableData] = useState(tableData); // Store initial data
   const [editing, setEditing] = useState({ rowId: null, field: null });
-
   useEffect(() => {
-    // setOriginalTableData([...tableData]); // Update original data when tableData changes externally
-    console.log("tableData : ",tableData);
-    console.log("originalTableData : ",originalTableData);
-    console.log(hasChanges());
-  }, [tableData]);
-
-  // Function to compare tableData with originalTableData
+    setOriginalTableData(tableData);
+  }, []);
+  // useEffect(() => {
+  //   console.log("tableData : ", tableData);
+  //   console.log("originalTableData : ", originalTableData);
+  //   // console.log(hasChanges());
+  // }, [tableData]);
   const hasChanges = () => {
     return JSON.stringify(originalTableData) !== JSON.stringify(tableData);
   };
-
-  
-
-  // Function to find edited rows
   const getEditedRows = () => {
-    return tableData.filter((row, index) => JSON.stringify(row) !== JSON.stringify(originalTableData[index]));
+    // return tableData.filter((row, index) => JSON.stringify(row) !== JSON.stringify(originalTableData[index]));
+    return tableData.filter((row, index) => row?.new == "false"  || row?.new == "true"  );
   };
 
   const handleEdit = (rowId, field) => {
@@ -63,7 +59,7 @@ export default function AppNewInvoice3({
 
   const handleChange = (event, rowId, field) => {
     setTableData((prev) =>
-      prev.map((row) => (row.id === rowId ? { ...row, [field]: event.target.value,new:false } : row))
+      prev.map((row) => (row.id === rowId ? { ...row, [field]: event.target.value, new: row?.new == "true" ? "true" : "false" } : row))
     );
   };
 
@@ -72,19 +68,46 @@ export default function AppNewInvoice3({
   };
 
   const handleAddRow = () => {
-    const newRow = { id: tableData.length + 1, type: "", clause: "", cost: "", qte: "", piece_status: "", total: "",new:true };
+    const newRow = { id: tableData.length + 1, type: "", clause: "", cost: "", qte: "", piece_status: "", total: "", new: "true" };
     setTableData((prev) => [...prev, newRow]);
     setEditing({ rowId: newRow.id, field: "type" }); // Start editing the first cell of the new row
   };
 
-  const handleSaveChanges = () => {
+
+  const [postloader, setPostloader] = useState(false)
+
+  const handleSaveChanges = async () => {
     const editedRows = getEditedRows();
-    console.log("Saving changes: ", editedRows);
+    setPostloader(true)
+    try {
+      for (const row of editedRows) {
+        let body = { maintenance_id:Number(maintenance_id), cost: Number(row?.cost), quantity: Number(row?.quantity), piece_status: row?.piece_status,  }
+        if (row?.related_type == "not-periodic" || row?.is_periodic == 0) {
+          body.spec_id = Number(row?.related_id); 
+        }else if(row?.related_type == "periodic" || row?.is_periodic == 1 ) {
+          body.period_maintenance_id = Number(body?.related_id);
+        }
+        console.log("Saving changes:", body);
+        if (row?.new === "true") {
+          console.log("create");
+          await addNewMaintenanceClause(body);
+        } else {
+          console.log("edit");
+          await EditMaintenanceClause(body);
+        }
+      }
+      enqueueSnackbar("Success operation",);
+      setOriginalTableData([...tableData]); // Reset original data after saving
+    } catch (error) {
+      console.error(error);
+      enqueueSnackbar(error?.message ? error?.message : "Somthing Went Wrong", { variant: 'error' });
+
+    }
+    setPostloader(false)
 
     // Send editedRows to the backend
     // Example: axios.post('/api/update-table', { updatedRows: editedRows })
 
-    setOriginalTableData([...tableData]); // Reset original data after saving
   };
 
   return (
@@ -112,6 +135,7 @@ export default function AppNewInvoice3({
           </Table>
         </Scrollbar>
         <Stack alignItems="flex-end" sx={{ m: 3 }}>
+
           <Button variant="contained" onClick={handleAddRow}>
             {t("add_new_row")}
           </Button>
@@ -122,9 +146,12 @@ export default function AppNewInvoice3({
       {/* Show Save Changes button only when data is modified */}
       {hasChanges() && (
         <Stack alignItems="flex-end" sx={{ m: 3 }}>
-          <Button variant="contained" color="primary" onClick={handleSaveChanges}>
+          <LoadingButton type="submit" variant="contained" onClick={handleSaveChanges} loading={postloader}>
+            {t('save_changes')}
+          </LoadingButton>
+          {/* <Button variant="contained" color="primary" onClick={handleSaveChanges}>
             {t("save_changes")}
-          </Button>
+          </Button> */}
         </Stack>
       )}
     </Card>
@@ -143,6 +170,9 @@ AppNewInvoice3.propTypes = {
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { Select } from "@mui/material";
 import Iconify from "src/components/iconify";
+import { addNewMaintenanceClause, EditMaintenanceClause } from "src/api/clauses";
+import { LoadingButton } from "@mui/lab";
+import { enqueueSnackbar } from "notistack";
 
 function AppNewInvoiceRow({ row, tableLabels, editing, handleEdit, handleChange, handleBlur }) {
   const popover = usePopover();
@@ -155,22 +185,22 @@ function AppNewInvoiceRow({ row, tableLabels, editing, handleEdit, handleChange,
   return (
     <>
       <TableRow>
-        {tableLabels.map(({ id, editable, type, options,key_to_update }) => (
+        {tableLabels.map(({ id, editable, type, options, key_to_update }) => (
           <TableCell key={id} onClick={() => editable && handleEdit(row.id, id)}>
             {editing.rowId === row.id && editing.field === id ? (
               editable ? (
                 type === "select" ? (
                   <Select value={row[id] || ""} onChange={(e) => handleChange(e, row.id, key_to_update)} onBlur={handleBlur} autoFocus>
-                    {options.map((option,index) => (
+                    {options.map((option, index) => (
                       <MenuItem key={index} value={option.value}>
                         {option.lable}
                       </MenuItem>
                     ))}
                   </Select>
                 ) : type === "date" ? (
-                  <DatePicker value={row[id] || null} onChange={(newValue) => handleChange({ target: { value: newValue } }, row.id, id)} onBlur={handleBlur} />
+                  <DatePicker value={row[id] || null} onChange={(newValue) => handleChange({ target: { value: newValue } }, row.id, key_to_update)} onBlur={handleBlur} />
                 ) : (
-                  <TextField value={row[id] || ""} type={type} onChange={(e) => handleChange(e, row.id, id)} onBlur={handleBlur} autoFocus />
+                  <TextField value={row[id] || ""} type={type} onChange={(e) => handleChange(e, row.id, key_to_update)} onBlur={handleBlur} autoFocus />
                 )
               ) : (
                 row[id] || "--"

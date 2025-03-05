@@ -5,6 +5,11 @@ import TextField from '@mui/material/TextField';
 
 // ----------------------------------------------------------------------
 
+
+const convertArabicToWesternNumbers = (input) => {
+  return input.replace(/[٠-٩]/g, (digit) => String("٠١٢٣٤٥٦٧٨٩".indexOf(digit)));
+};
+
 export default function RHFTextField({ name, helperText, type, ...other }) {
   const { control } = useFormContext();
 

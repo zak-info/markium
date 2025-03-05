@@ -238,5 +238,11 @@
   "english": "English",
   "arabic": "العربية",
   "logout": "Logout",
-  "hi_welcome_back":"Hi, Welcome back"
+  "hi_welcome_back":"Hi, Welcome back",
+  "not_rented":"not rented",
+  "phone":"Phone",
+  "role":"Role",
+  "add_new_user":"add new user",
+  "create_maintenance": "Create Maintenance",
+  "cause": "Cause"
 }

@@ -64,26 +64,18 @@ export default function UserListView() {
   const table = useTable();
 
   const TABLE_HEAD = [
-    { id: 'name', label: t('userName') },
-    { id: 'phoneNumber', label: t('numberSecret'), width: 180 },
-    { id: 'company', label: t('phone'), width: 220 },
-    { id: 'company2', label: t('userType'), width: 220 },
-    { id: 'name2', label: t('name'), width: 220 },
-    { id: 'role', label: t('functionalNumber'), width: 180 },
-    { id: 'status', label: t('email'), width: 100 },
+    { id: 'name', label: t('name') },
+    { id: 'username', label: t('username'), width: 180 },
+    { id: 'email', label: t('email'), width: 220 },
+    { id: 'phone', label: t('phone'), width: 220 },
+    { id: 'role', label: t('role'), width: 220 },
     { id: '', width: 88 },
   ];
-
   const settings = useSettingsContext();
-
   const router = useRouter();
-
   const confirm = useBoolean();
-
-  const [tableData, setTableData] = useState(_userList);
-
+  const [tableData, setTableData] = useState([{name:"zaki",username:"zaki",email:"zaki@gmail.com",phone:"065854958485",role :"UI/UX"}]);
   const [filters, setFilters] = useState(defaultFilters);
-
   const dataFiltered = applyFilter({
     inputData: tableData,
     comparator: getComparator(table.order, table.orderBy),

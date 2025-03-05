@@ -42,7 +42,7 @@ import {
 import OrderTableRow from '../order-table-row';
 import OrderTableToolbar from '../order-table-toolbar';
 import OrderTableFiltersResult from '../order-table-filters-result';
-import { useTranslate } from 'src/locales';
+import { useLocales, useTranslate } from 'src/locales';
 import { RouterLink } from 'src/routes/components';
 
 import { useGetMaintenance, deleteMaintenance } from 'src/api/maintainance';
@@ -66,9 +66,12 @@ export default function OrderListView() {
 
   const { t } = useTranslate();
 
-  const TABLE_HEAD = [
-    { id: 'plateNumber', label: t('plateNumber'), width: 116 },
+  const days = {en:"dais",ar:"يوم"}
+  const {currentLang} = useLocales()
 
+  const TABLE_HEAD = [
+    { id: 'id', label: t('id'), width: 80 },
+    { id: 'plateNumber', label: t('plateNumber'), width: 116 },
     // { id: 'orderNumber', label: t('vehicle'), width: 144 },
     { id: 'workSite', label: t('workSite'), width: 144 },
     { id: 'remaining_days', label: t('remainingDate'), width: 144 },
@@ -343,6 +346,7 @@ export default function OrderListView() {
                       <OrderTableRow
                         key={row.id}
                         row={row}
+                        days={days[currentLang?.value]}
                         car_model={car?.find(item => item?.model?.id == row?.car?.car_model_id)?.model?.translations?.name}
                         work_site={data?.states?.find(item => item?.id == row?.state_id)?.translations[0]?.name}
                         driver={drivers?.find(item=> item.id == row?.car?.driver_id) || {name:t("---"),phone:"...."} }

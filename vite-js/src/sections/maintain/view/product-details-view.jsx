@@ -49,17 +49,19 @@ export default function OrderDetailsView({ id }) {
   const { maintenance, mutate } = useGetMaintenance();
   const { clauses } = useGetClauses(id)
   const { maintenance_specs } = useGetMaintenanceSpecs()
-  const { maintenance: periodic_maintenance } = useGetCarPeriodicMaintenance(maintenance?.car_id);
   const maintenanceclauses = clauses.filter(item => item.maintenance_id == id)
   const [tableData, setTableData] = useState(clauses.filter(item => item.maintenance_id == id))
   useEffect(() => {
     setTableData(clauses.filter(item => item.maintenance_id == id))
+    console.log("data :: ",clauses.filter(item => item.maintenance_id == id));
   }, [clauses])
-
+  
   const currentMentainance = maintenance?.find((i) => i.id == id);
+  const { maintenance: periodic_maintenance } = useGetCarPeriodicMaintenance(currentMentainance?.car_id);
   const { car } = useGetCar()
   const currentCar = car?.find((i) => i.id == currentMentainance?.car?.id);
-
+  
+  console.log("spec or per : ",[...periodic_maintenance , ...maintenance_specs?.filter(item => !item?.is_periodic)]);
   const [status, setStatus] = useState(currentMentainance?.status);
 
   const handleChangeStatus = useCallback((newValue) => {
@@ -105,7 +107,7 @@ export default function OrderDetailsView({ id }) {
       </Grid>
 
       <Grid container spacing={3} sx={{ marginTop: "20px" }}>
-        <Grid xs={12} md={12}>
+        {/* <Grid xs={12} md={12}>
           <AppNewInvoice3
             sx={{ marginTop: "10px" }}
             title={t('maintenanceItems')}
@@ -114,8 +116,26 @@ export default function OrderDetailsView({ id }) {
             tableData={tableData?.map(item => ({ ...item, total: item.cost * item?.quantity, clause: data?.maintenance_specifications?.find(item2 => item2.id == item?.related_id)?.name }))}
             setTableData={setTableData}
             tableLabels={[
-              { id: "related_type",key_to_update:"related_type",label: t("clause_type"), editable: true, type: "select", options: [{ value: "periodic", lable: t("periodic") }, { value: "not-periodic", lable: t("not_periodic") }]  ,width: 180},
-              { id: "clause",      key_to_update:"related_id",  label: t("clause"),      editable: true, type: "select", options: [...periodic_maintenance , ...maintenance_specs]?.map(item => ({value : item.id , lable:item?.name})) ,width: 180},
+              { id: "related_type",key_to_update:"related_type",label: t("clause_type"), editable: true, type: "select", options:  [{ value: "periodic", lable: t("periodic") }, { value: "not-periodic", lable: t("not_periodic") }]  ,width: 180},
+              { id: "clause",      key_to_update:"related_id",  label: t("clause"),      editable: true, type: "select", options: [...periodic_maintenance , ...maintenance_specs?.filter(item => !item?.is_periodic)]?.map(item => ({value : item.id , lable:item?.name})) ,width: 180},
+              { id: "cost",        key_to_update:"cost" , label: t("cost"),              editable: true, type: "number",width: 140},
+              { id: "quantity",    key_to_update:"quantity",  label: t("qte"),           editable: true, type: "number",width: 100 },
+              { id: "piece_status",key_to_update:"piece_status",label: t("piece_status"),editable: true, type: "select", options: data?.piece_status_enum?.map(item => ({ value: item.key, lable: item?.translations[0]?.name })) ,width: 140},
+              { id: "total",       key_to_update:"total",  label: t("total"),            editable: false ,width: 140},
+            ]}
+          />
+        </Grid> */}
+        <Grid xs={12} md={12}>
+          <AppNewInvoice
+            sx={{ marginTop: "10px" }}
+            title={t('maintenanceItems')}
+            maintenance_id={id}
+            maintenanceclauses={maintenanceclauses.map(item => item)}
+            tableData={tableData?.map(item => ({ ...item, total: item.cost * item?.quantity, clause: data?.maintenance_specifications?.find(item2 => item2.id == item?.related_id)?.name }))}
+            setTableData={setTableData}
+            tableLabels={[
+              { id: "related_type",key_to_update:"related_type",label: t("clause_type"), editable: true, type: "select", options:  [{ value: "periodic", lable: t("periodic") }, { value: "not-periodic", lable: t("not_periodic") }]  ,width: 180},
+              { id: "clause",      key_to_update:"related_id",  label: t("clause"),      editable: true, type: "select", options: [...periodic_maintenance , ...maintenance_specs?.filter(item => !item?.is_periodic)]?.map(item => ({value : item.id , lable:item?.name})) ,width: 180},
               { id: "cost",        key_to_update:"cost" , label: t("cost"),              editable: true, type: "number",width: 140},
               { id: "quantity",    key_to_update:"quantity",  label: t("qte"),           editable: true, type: "number",width: 100 },
               { id: "piece_status",key_to_update:"piece_status",label: t("piece_status"),editable: true, type: "select", options: data?.piece_status_enum?.map(item => ({ value: item.key, lable: item?.translations[0]?.name })) ,width: 140},
@@ -123,9 +143,6 @@ export default function OrderDetailsView({ id }) {
             ]}
           />
         </Grid>
-        {/* <Grid xs={12} md={12}>
-          <AppNewInvoice2 />
-        </Grid> */}
       </Grid>
     </Container>
   );

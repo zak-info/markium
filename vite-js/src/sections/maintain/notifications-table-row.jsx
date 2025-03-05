@@ -178,7 +178,7 @@ export default function OrderTableRow({ row, onCreateRow, car, action, selected,
           disabled={row?.action !== 'action_required' || !row?.enabled}
         >
           <Iconify icon="duo-icons:add-circle" />
-          create maintenance
+          {t("create_maintenance")}
         </MenuItem>
         {/* } */}
 
@@ -190,7 +190,7 @@ export default function OrderTableRow({ row, onCreateRow, car, action, selected,
           }}
         >
           <Iconify icon="solar:eye-bold" />
-          View
+          {t("view")}
         </MenuItem>
       </CustomPopover>
 

@@ -3,7 +3,7 @@ import { format, getTime, formatDistanceToNow } from 'date-fns';
 // ----------------------------------------------------------------------
 
 export function fDate(date, newFormat) {
-  const fm = newFormat || 'yyy MMM dd';
+  const fm = newFormat || 'yyyy MM dd';
 
   return date ? format(new Date(date), fm) : '';
 }
@@ -15,7 +15,7 @@ export function fTime(date, newFormat) {
 }
 
 export function fDateTime(date, newFormat) {
-  const fm = newFormat || 'dd MMM yyyy p';
+  const fm = newFormat || 'dd MM yyyy p';
 
   return date ? format(new Date(date), fm) : '';
 }

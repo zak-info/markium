@@ -25,10 +25,12 @@ import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import { Typography } from '@mui/material';
 import { useLocales } from 'src/locales';
 import { t } from 'i18next';
+import ContentDialog from 'src/components/custom-dialog/content-dialog';
+import { MarkAsCompletedForm } from './order-table-row';
 
 // ----------------------------------------------------------------------
 
-export default function OrderTableRow({ row,maintenance, selected, onViewRow, onEditRow, onSelectRow, onDeleteRow,onViewMaintenance }) {
+export default function OrderTableRow({ row, maintenance, selected, onViewRow, onEditRow, onSelectRow, onDeleteRow, onViewMaintenance }) {
   const { model, status, plat_number, createdAt, state, totalQuantity, subTotal } = row;
 
   const confirm = useBoolean();
@@ -39,9 +41,23 @@ export default function OrderTableRow({ row,maintenance, selected, onViewRow, on
   const { currentLang } = useLocales()
 
   const popover = usePopover();
+  const completed = useBoolean();
 
   const renderPrimary = (
     <TableRow hover selected={selected}>
+      <TableCell>
+        <Box
+          onClick={onViewRow}
+          sx={{
+            cursor: 'pointer',
+            '&:hover': {
+              textDecoration: 'underline',
+            },
+          }}
+        >
+          {row?.id}
+        </Box>
+      </TableCell>
       <TableCell>
         {/* <Box
           onClick={onViewRow}
@@ -155,6 +171,16 @@ export default function OrderTableRow({ row,maintenance, selected, onViewRow, on
           {t("view_maintenance")}
         </MenuItem>
 
+        <MenuItem
+          onClick={() => {
+            completed.onTrue();
+            popover.onClose();
+          }}
+        >
+          <Iconify icon="solar:pen-bold" />
+          {t("mark_as_completed")}
+        </MenuItem>
+
         {/* <MenuItem
           onClick={() => {
             onViewRow();
@@ -178,6 +204,15 @@ export default function OrderTableRow({ row,maintenance, selected, onViewRow, on
 
 
       </CustomPopover>
+
+      <ContentDialog
+        open={completed.value}
+        onClose={completed.onFalse}
+        title="Complete"
+        content={
+          <MarkAsCompletedForm maintenanceId={row?.id} close={() => completed?.onFalse()} />
+        }
+      />
 
       <ConfirmDialog
         open={confirm.value}

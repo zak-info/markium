@@ -27,3 +27,15 @@ export async function addNewClause(body) {
   const URL = endpoints.clauses.add;
   return await axios.post(URL, body);
 }
+export async function addNewMaintenanceClause(body) {
+  const URL = endpoints.clauses.add;
+  return await axios.post(URL, body);
+}
+export async function EditClause(body) {
+  const URL = endpoints.clauses.edit;
+  return await axios.put(URL, body);
+}
+export async function EditMaintenanceClause(body) {
+  const URL = endpoints.clauses.edit;
+  return await axios.put(URL, body);
+}

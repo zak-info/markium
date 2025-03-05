@@ -28,8 +28,10 @@ import FormProvider, {
   RHFTextField,
   RHFUploadAvatar,
   RHFAutocomplete,
+  RHFSelect,
 } from 'src/components/hook-form';
 import { useTranslation } from 'react-i18next';
+import { Divider, MenuItem } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -42,35 +44,19 @@ export default function UserNewEditForm({ currentUser }) {
   const NewUserSchema = Yup.object().shape({
     name: Yup.string().required('Name is required'),
     email: Yup.string().required('Email is required').email('Email must be a valid email address'),
+    username: Yup.string().required('username is required').email('Email must be a valid email address'),
+    role_id: Yup.string().required('role is required').email('Email must be a valid email address'),
     phoneNumber: Yup.string().required('Phone number is required'),
-    address: Yup.string().required('Address is required'),
-    country: Yup.string().required('Country is required'),
-    company: Yup.string().required('Company is required'),
-    state: Yup.string().required('State is required'),
-    city: Yup.string().required('City is required'),
-    role: Yup.string().required('Role is required'),
-    zipCode: Yup.string().required('Zip code is required'),
-    avatarUrl: Yup.mixed().nullable().required('Avatar is required'),
-    // not required
-    status: Yup.string(),
-    isVerified: Yup.boolean(),
+    
   });
 
   const defaultValues = useMemo(
     () => ({
       name: currentUser?.name || '',
-      city: currentUser?.city || '',
-      role: currentUser?.role || '',
-      email: currentUser?.email || '',
-      state: currentUser?.state || '',
-      status: currentUser?.status || '',
-      address: currentUser?.address || '',
-      country: currentUser?.country || '',
-      zipCode: currentUser?.zipCode || '',
-      company: currentUser?.company || '',
-      avatarUrl: currentUser?.avatarUrl || null,
       phoneNumber: currentUser?.phoneNumber || '',
-      isVerified: currentUser?.isVerified || true,
+      role_id: currentUser?.role_id || '',
+      email: currentUser?.email || '',
+      username: currentUser?.username || '',
     }),
     [currentUser]
   );
@@ -121,102 +107,6 @@ export default function UserNewEditForm({ currentUser }) {
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>
       <Grid container spacing={3}>
-        {/* <Grid xs={12} md={4}>
-          <Card sx={{ pt: 10, pb: 5, px: 3 }}>
-            {currentUser && (
-              <Label
-                color={
-                  (values.status === 'active' && 'success') ||
-                  (values.status === 'banned' && 'error') ||
-                  'warning'
-                }
-                sx={{ position: 'absolute', top: 24, right: 24 }}
-              >
-                {values.status}
-              </Label>
-            )}
-
-            <Box sx={{ mb: 5 }}>
-              <RHFUploadAvatar
-                name="avatarUrl"
-                maxSize={3145728}
-                onDrop={handleDrop}
-                helperText={
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      mt: 3,
-                      mx: 'auto',
-                      display: 'block',
-                      textAlign: 'center',
-                      color: 'text.disabled',
-                    }}
-                  >
-                    Allowed *.jpeg, *.jpg, *.png, *.gif
-                    <br /> max size of {fData(3145728)}
-                  </Typography>
-                }
-              />
-            </Box>
-
-            {currentUser && (
-              <FormControlLabel
-                labelPlacement="start"
-                control={
-                  <Controller
-                    name="status"
-                    control={control}
-                    render={({ field }) => (
-                      <Switch
-                        {...field}
-                        checked={field.value !== 'active'}
-                        onChange={(event) =>
-                          field.onChange(event.target.checked ? 'banned' : 'active')
-                        }
-                      />
-                    )}
-                  />
-                }
-                label={
-                  <>
-                    <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
-                      Banned
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                      Apply disable account
-                    </Typography>
-                  </>
-                }
-                sx={{ mx: 0, mb: 3, width: 1, justifyContent: 'space-between' }}
-              />
-            )}
-
-            <RHFSwitch
-              name="isVerified"
-              labelPlacement="start"
-              label={
-                <>
-                  <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
-                    Email Verified
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                    Disabling this will automatically send the user a verification email
-                  </Typography>
-                </>
-              }
-              sx={{ mx: 0, width: 1, justifyContent: 'space-between' }}
-            />
-
-            {currentUser && (
-              <Stack justifyContent="center" alignItems="center" sx={{ mt: 3 }}>
-                <Button variant="soft" color="error">
-                  Delete User
-                </Button>
-              </Stack>
-            )}
-          </Card>
-        </Grid> */}
-
         <Grid xs={12} md={8}>
           <Card sx={{ p: 3 }}>
             <Box
@@ -229,18 +119,23 @@ export default function UserNewEditForm({ currentUser }) {
               }}
             >
               <RHFTextField name="name" label={t('name')} />
-              <RHFTextField name="name" label={t('userName')} />
+              <RHFTextField name="name" label={t('username')} />
               <RHFTextField name="email" label={t('email')} />
-
               <RHFTextField name="state" label={t('phone')} />
-              <RHFTextField name="phoneNumber" label={t('numberSecret')} />
-              <RHFTextField name="phoneNumber" label={t('userType')} />
-              <RHFTextField name="phoneNumber" label={t('functionalNumber')} />
+              <RHFSelect required name="role_id" label={t('role')} >
+                <Divider sx={{ borderStyle: 'dashed' }} />
+                {[{name:"role 1"}]?.map((option,index) => (
+                  <MenuItem key={index} value={option?.name}>
+                    {option?.name}
+                  </MenuItem>
+                ))}
+              </RHFSelect>
+              
             </Box>
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                {!currentUser ? t('addNewUser') : 'Save Changes'}
+                {!currentUser ? t('add_new_user') : 'save_changes'}
               </LoadingButton>
             </Stack>
           </Card>

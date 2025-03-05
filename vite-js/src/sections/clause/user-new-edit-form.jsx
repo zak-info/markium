@@ -31,7 +31,7 @@ import { addNewDriver, editDriver } from 'src/api/drivers';
 
 import { useValues } from 'src/api/utils';
 import { useGetCar, useGetCarPeriodicMaintenance } from 'src/api/car';
-import { addNewClause } from 'src/api/clauses';
+import { addNewMaintenanceClause } from 'src/api/clauses';
 import { useGetMaintenanceSpecs, useShowMaintenance } from 'src/api/maintainance';
 import RHFTextarea from 'src/components/hook-form/RHFTextarea';
 
@@ -130,7 +130,7 @@ export default function UserNewEditForm({ maintenance_id, currentClause, setTabl
         //   console.log("res : ", res);
       } else {
         console.log("lets create :", body);
-        await addNewClause(body);
+        await addNewMaintenanceClause(body);
         // console.log("res : ", res);
       }
       reset();

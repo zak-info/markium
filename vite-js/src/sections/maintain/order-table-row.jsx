@@ -55,6 +55,7 @@ import { markMaintenanceAsCompeleted } from 'src/api/maintainance';
 
 export default function OrderTableRow({
   row,
+  days,
   car_model,
   work_site,
   driver,
@@ -94,6 +95,19 @@ export default function OrderTableRow({
   const renderPrimary = (
     <TableRow hover selected={selected}>
       <TableCell>
+      <Box
+          onClick={onViewRow}
+          sx={{
+            cursor: 'pointer',
+            '&:hover': {
+              textDecoration: 'underline',
+            },
+          }}
+        >
+        {row?.id}
+        </Box>
+      </TableCell>
+      <TableCell>
         <Link href={"/dashboard/vehicle/" + car?.id}>
           <ListItemText
             onClick={onViewRow}
@@ -110,7 +124,7 @@ export default function OrderTableRow({
       </TableCell>
       {/* <TableCell>{car_model}</TableCell> */}
       <TableCell>{state?.translations[0]?.name}</TableCell>
-      <TableCell>{remaining_days} days</TableCell>
+      <TableCell>{remaining_days} {days}</TableCell>
       {/* <TableCell>{occupant_name}</TableCell> */}
 
       <TableCell>

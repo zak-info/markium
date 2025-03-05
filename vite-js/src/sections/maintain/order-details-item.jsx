@@ -15,6 +15,7 @@ import { fCurrency } from 'src/utils/format-number';
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 import { Divider } from '@mui/material';
+import { fDate } from 'src/utils/format-time';
 
 // ----------------------------------------------------------------------
 
@@ -42,28 +43,23 @@ export default function OrderDetailsItems({
       <Stack spacing={1} sx={{ my: 1, typography: 'body2' }}>
         <Stack direction="row">
           <Box sx={{ width: 160, color: 'text.secondary' }}>{t('maintainDate')}</Box>
-          <Box sx={{ typography: 'subtitle2' }}>{new Date(currentMentainance?.created_at).toDateString()}</Box>
+          <Box sx={{ typography: 'subtitle2' }}>{fDate(currentMentainance?.created_at)}</Box>
         </Stack>
-
         <Stack direction="row">
           <Box sx={{ width: 160, color: 'text.secondary' }}>{t('maintainType')}</Box>
           <Box sx={{ typography: 'subtitle2' }}>{currentMentainance?.type || "-----------" }</Box>
         </Stack>
-
         {/* <Stack direction="row">
           <Box sx={{ width: 160, color: 'text.secondary' }}>{t('vehcileColor')}</Box>
           <Box sx={{ typography: 'subtitle2' }}>23444vf</Box>
         </Stack> */}
       </Stack>
-
       <Divider orientation="vertical" flexItem />
-
       <Stack spacing={2} sx={{ my: 1, typography: 'body2' }}>
         <Stack direction="row">
           <Box sx={{ width: 160, color: 'text.secondary' }}>{t('entryDate')}</Box>
-          <Box sx={{ typography: 'subtitle2' }}>{new Date(currentMentainance?.entry_date).toDateString()}</Box>
+          <Box sx={{ typography: 'subtitle2' }}>{fDate(currentMentainance?.entry_date)}</Box>
         </Stack>
-
         {/* <Stack direction="row">
           <Box sx={{ width: 160, color: 'text.secondary' }}>{t('remaining')}</Box>
           <Box
@@ -76,10 +72,8 @@ export default function OrderDetailsItems({
             </Label>
           </Box>
         </Stack> */}
-
-
         <Stack direction="row">
-          <Box sx={{ width: 160, color: 'text.secondary' }}>{t('note')}</Box>
+          <Box sx={{ width: 160, color: 'text.secondary' }}>{t('cause')}</Box>
           <Box sx={{ typography: 'subtitle2' }}>{currentMentainance?.cause}</Box>
         </Stack>
       </Stack>

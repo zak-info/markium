@@ -95,7 +95,7 @@ export default function AppCurrentDownload({ title, subheader, chart, ...other }
   const w = [
     {
       name: 'series-1',
-      data: [49, 60, 70, 91],
+      data: chartSeries,
       strokeColor: '#775DD0',
     },
   ];

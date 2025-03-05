@@ -297,6 +297,11 @@
   "english": "الإنجليزية",
   "arabic": "العربية",
   "logout": "تسجيل الخروج",
-  "hi_welcome_back":"مرحبا بكم في زيتي 👋"
+  "hi_welcome_back":"مرحبا بكم في زيتي 👋",
+  "not_rented":" غير مؤجر",
+  "role":"الدور",
+  "add_new_user":"اضافة مستخدم",
+  "create_maintenance": "إنشاء صيانة",
+  "cause": "سبب"
 
 }

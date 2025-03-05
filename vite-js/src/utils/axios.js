@@ -56,8 +56,9 @@ export const endpoints = {
     register: '/api/auth/register',
   },
   clauses: {
-    list:(id)=> `/maintenance/${id}/clauses`,
+    list:(id) => `/maintenance/${id}/clauses`,
     add:`/maintenance/clauses`,
+    edit:`/maintenance/clauses`,
 
   },
   mail: {
@@ -79,6 +80,7 @@ export const endpoints = {
   utils: { values: '/values' },
   company: {
     list: '/company',
+    statistics:"/company/statistics"
   },
   maintenance: {
     list: '/maintenance',
@@ -117,6 +119,9 @@ export const endpoints = {
   },
   documents: {
     list: '/attachments',
+  },
+  statistics: {
+    root: '/attachments',
   },
 
   drivers: {

@@ -31,6 +31,7 @@ import { useValues } from 'src/api/utils';
 import { useContext, useEffect, useState } from 'react';
 import { TableNoData } from 'src/components/table';
 import EmptyContent from 'src/components/empty-content';
+import { useGetStatistics } from 'src/api/statistics';
 
 // ----------------------------------------------------------------------
 
@@ -41,8 +42,11 @@ export default function OverviewAppView() {
   const theme = useTheme();
 
   const settings = useSettingsContext();
+  
+  const { statistics } = useGetStatistics();
   const { car } = useGetCar();
   const { claims } = useGetAllClaim();
+  console.log(claims);
   const { drivers } = useGetDrivers();
   const { data } = useValues();
   // const {SystemData} = useContext(DataContext);
@@ -77,7 +81,7 @@ export default function OverviewAppView() {
           <AppWidgetSummary
             title={t('vehicles')}
             percent={2.6}
-            total={car?.length ? car?.length : "0"}
+            total={statistics?.counts?.cars}
             chart={{
               series: [5, 18, 12, 51, 68, 11, 39, 37, 27, 20],
             }}
@@ -88,7 +92,7 @@ export default function OverviewAppView() {
           <AppWidgetSummary
             title={t('claims')}
             percent={0.2}
-            total={claims?.length ? claims?.length : "0"}
+            total={statistics?.counts?.claims}
             chart={{
               colors: [theme.palette.info.light, theme.palette.info.main],
               series: [20, 41, 63, 33, 28, 35, 50, 46, 11, 26],
@@ -100,7 +104,7 @@ export default function OverviewAppView() {
           <AppWidgetSummary
             title={t('drivers')}
             percent={-0.1}
-            total={drivers?.length > 0 ? drivers?.length : "0"}
+            total={statistics?.counts?.drivers}
             chart={{
               colors: [theme.palette.warning.light, theme.palette.warning.main],
               series: [8, 9, 31, 8, 16, 37, 8, 33, 46, 31],
@@ -118,6 +122,7 @@ export default function OverviewAppView() {
                 { label: t("rented"), value: car?.filter(item => item?.status?.key == "rented").length },
                 { label: t("under_maintenance"), value: car?.filter(item => item?.status?.key == "under_maintenance").length },
               ],
+              // series:statistics?.cars_by_status?.map(item => ({lable:item?.status?.key,value:item?.count}))
             }}
           />
         </Grid>
@@ -133,6 +138,7 @@ export default function OverviewAppView() {
                 { label: t('severely_overdue_claim'), value: claims?.filter(item => item?.status?.key == "severely_overdue_claim").length },
                 { label: t('paid_claim'), value: claims?.filter(item => item?.status?.key == "paid_claim").length },
               ],
+              // series:statistics?.claims_by_status?.map(item => ({lable:item?.status?.key,value:item?.count}))
             }}
           />
         </Grid>
@@ -144,7 +150,8 @@ export default function OverviewAppView() {
                 title={t('drivers')}
                 chart={{
                   series: [
-                    { label: t('drivers'), value: drivers?.length },
+                    { label: t('not_rented'), value:statistics?.drivers_by_rental?.not_rented},
+                    { label: t('rented'), value: statistics?.drivers_by_rental?.rented },
                     // { label: 'Window', value: 53345 },
                     // { label: 'iOS', value: 44313 },
                     // { label: 'Android', value: 78343 },
