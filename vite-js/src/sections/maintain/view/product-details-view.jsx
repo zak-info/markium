@@ -57,6 +57,7 @@ export default function OrderDetailsView({ id }) {
   }, [clauses])
   
   const currentMentainance = maintenance?.find((i) => i.id == id);
+  console.log("currentMentainance : ",currentMentainance );
   const { maintenance: periodic_maintenance } = useGetCarPeriodicMaintenance(currentMentainance?.car_id);
   const { car } = useGetCar()
   const currentCar = car?.find((i) => i.id == currentMentainance?.car?.id);
@@ -85,6 +86,7 @@ export default function OrderDetailsView({ id }) {
           <Stack spacing={3} direction={{ xs: 'column-reverse', md: 'column' }}>
             <OrderDetailsItems
               currentMentainance={currentMentainance}
+              maintenance_type={data?.maintenance_type_enum?.find(item => item.key == currentMentainance?.maintainance_type)?.translations[0]?.name}
               currentCar={currentCar}
               items={currentMentainance?.items}
               taxes={currentMentainance?.taxes}
@@ -140,6 +142,7 @@ export default function OrderDetailsView({ id }) {
               { id: "quantity",    key_to_update:"quantity",  label: t("qte"),           editable: true, type: "number",width: 100 },
               { id: "piece_status",key_to_update:"piece_status",label: t("piece_status"),editable: true, type: "select", options: data?.piece_status_enum?.map(item => ({ value: item.key, lable: item?.translations[0]?.name })) ,width: 140},
               { id: "total",       key_to_update:"total",  label: t("total"),            editable: false ,width: 140},
+              { id: "note",       key_to_update:"note",  label: t("note"),            editable: false ,width: 140},
             ]}
           />
         </Grid>

@@ -117,6 +117,7 @@ export default function UserNewEditForm({ maintenance_id, currentClause, setTabl
         maintenace_spec = data?.maintenance_specifications?.find(item => item.id = Number(body?.period_maintenance_id))
         delete body?.spec_id
       }
+
       delete body?.spec_or_period
       console.log("body : ", body);
 
@@ -137,7 +138,7 @@ export default function UserNewEditForm({ maintenance_id, currentClause, setTabl
       enqueueSnackbar(currentClause?.id ? 'Update success!' : 'Create success!');
       // router.push(paths.dashboard.maintenance.details(maintenance_id));
       // router.reload();
-      setTableData(prev => [...prev, { is_periodic: maintenace_spec?.is_periodic, maintenance_spec: maintenace_spec?.name, cost: Number(body.cost), piece_status: body?.piece_status, quantity: body.quantity, unit: maintenace_spec?.unit }])
+      setTableData(prev => [...prev, { related_id:maintenace_spec?.id,is_periodic: maintenace_spec?.is_periodic, maintenance_spec: maintenace_spec?.name, cost: Number(body.cost), piece_status: body?.piece_status, quantity: body.quantity, unit: maintenace_spec?.unit }])
     } catch (error) {
       console.error(error);
       enqueueSnackbar(error?.message ? error?.message : "Somthing Went Wrong", { variant: 'error' });
@@ -209,9 +210,9 @@ export default function UserNewEditForm({ maintenance_id, currentClause, setTabl
               <RHFTextField name="quantity" label={t('qte')} type={"number"} sx={{ width: "100%" }} />
               <RHFSelect name="piece_status" label={t('piece_status')} sx={{ width: "100%" }}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
-                {[{ name: "new" }, { name: "used" }, { name: "renewd" }].map((option) => (
-                  <MenuItem key={option?.name} value={option?.name}>
-                    {option?.name}
+                {data?.piece_status_enum.map((option) => (
+                  <MenuItem key={option?.key} value={option?.key}>
+                    {option?.translations[0]?.name}
                   </MenuItem>
                 ))}
               </RHFSelect>

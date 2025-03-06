@@ -26,6 +26,7 @@ export default function OrderDetailsItems({
   discount,
   subTotal,
   totalAmount,
+  maintenance_type,
   currentMentainance,
   currentCar
 }) {
@@ -47,7 +48,7 @@ export default function OrderDetailsItems({
         </Stack>
         <Stack direction="row">
           <Box sx={{ width: 160, color: 'text.secondary' }}>{t('maintainType')}</Box>
-          <Box sx={{ typography: 'subtitle2' }}>{currentMentainance?.type || "-----------" }</Box>
+          <Box sx={{ typography: 'subtitle2' }}>{maintenance_type || "--" }</Box>
         </Stack>
         {/* <Stack direction="row">
           <Box sx={{ width: 160, color: 'text.secondary' }}>{t('vehcileColor')}</Box>

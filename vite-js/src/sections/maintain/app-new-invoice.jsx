@@ -30,11 +30,11 @@ import { useLocales } from 'src/locales';
 
 // ----------------------------------------------------------------------
 
-export default function AppNewInvoice({ title,maintenance_id, subheader, tableData,setTableData, tableLabels, ...other }) {
+export default function AppNewInvoice({ title, maintenance_id, subheader, tableData, setTableData, tableLabels, ...other }) {
   const { data } = useValues()
 
-  const p_n = {periodic:{en:"periodic",ar:"دوري"},not_periodic:{en:"not_periodic",ar:"غير دوري"}}
-  const {currentLang} = useLocales()
+  const p_n = { periodic: { en: "periodic", ar: "دوري" }, not_periodic: { en: "not_periodic", ar: "غير دوري" } }
+  const { currentLang } = useLocales()
   return (
     <Card {...other}>
       <CardHeader title={title} subheader={subheader} sx={{ mb: 3 }} />
@@ -47,7 +47,9 @@ export default function AppNewInvoice({ title,maintenance_id, subheader, tableDa
             <TableBody>
               {tableData.map((row) => (
                 <AppNewInvoiceRow
-                p_n={!!row?.is_periodic ? p_n?.periodic[currentLang?.value] : p_n?.not_periodic[currentLang?.value]}
+                  p_n={!!row?.is_periodic ? p_n?.periodic[currentLang?.value] : p_n?.not_periodic[currentLang?.value]}
+                  piece_status={data?.piece_status_enum?.find(item => item.key == row?.piece_status)?.translations[0]?.name}
+                  volume={data?.volume_enum?.find(item => item.key == row?.unit)?.translations[0]?.name}
                   maintenance_spec={data?.maintenance_specifications?.find(item => item.id == row?.related_id)?.name}
                   key={row.id}
                   row={row} />
@@ -80,7 +82,7 @@ AppNewInvoice.propTypes = {
 
 // ----------------------------------------------------------------------
 
-function AppNewInvoiceRow({ row, maintenance_spec , p_n }) {
+function AppNewInvoiceRow({ row, maintenance_spec, p_n,piece_status,volume }) {
   const popover = usePopover();
 
   const handleDownload = () => {
@@ -109,9 +111,10 @@ function AppNewInvoiceRow({ row, maintenance_spec , p_n }) {
         <TableCell>{p_n}</TableCell>
         <TableCell>{maintenance_spec}</TableCell>
         <TableCell>{row?.cost}</TableCell>
-        <TableCell>{row?.quantity + " " + row?.unit}</TableCell>
-        <TableCell>{row?.piece_status}</TableCell>
+        <TableCell>{row?.quantity + " " + volume}</TableCell>
+        <TableCell>{piece_status}</TableCell>
         <TableCell align="left">{toNumber(row?.cost) * row?.quantity + ".00 "}</TableCell>
+        <TableCell>{row?.note || "--"}</TableCell>
         <TableCell align="right" sx={{ pr: 1 }}>
           <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
             <Iconify icon="eva:more-vertical-fill" />
@@ -127,7 +130,7 @@ function AppNewInvoiceRow({ row, maintenance_spec , p_n }) {
         <Divider sx={{ borderStyle: 'dashed' }} />
         <MenuItem onClick={handleDelete} sx={{ color: 'error.main' }}>
           <Iconify icon="solar:trash-bin-trash-bold" />
-          Delete
+          {t("delete")}
         </MenuItem>
       </CustomPopover>
     </>
