@@ -231,7 +231,7 @@ export default function UserNewEditForm({ currentMentainance }) {
                 ))}
               </RHFSelect>
 
-              <RHFTextField required name="cause" label={t('note')} />
+              <RHFTextField required name="cause" label={t('cause')} />
 
               <RHFSelect required name="maintainance_type" label={t('maintainType')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
