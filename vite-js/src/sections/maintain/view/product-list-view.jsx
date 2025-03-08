@@ -102,9 +102,8 @@ export default function OrderListView() {
   const { data } = useValues();
 
   const { maintenance, mutate } = useGetMaintenance();
-
+  console.log("maintenance : ",maintenance);
   const [tableData, setTableData] = useState([]);
-
   // exit_date,
   // status,
   // maintenance_manager,
@@ -187,6 +186,12 @@ export default function OrderListView() {
   }, [dataFiltered.length, dataInPage.length, enqueueSnackbar, table, tableData]);
 
   const handleViewRow = useCallback(
+    (id) => {
+      router.push(paths.dashboard.vehicle.details(id));
+    },
+    [router]
+  );
+  const handleViewMaintenance = useCallback(
     (id) => {
       router.push(paths.dashboard.maintenance.details(id));
     },
@@ -356,6 +361,7 @@ export default function OrderListView() {
                         onEditRow={() => handleEditRow(row.id)}
                         onMarkAsCompleted={() => handleMarkAsCompleted(row.id)}
                         onViewRow={() => handleViewRow(row.car.id)}
+                        onViewMaintenance={()=>handleViewMaintenance(row?.id)}
                       />
                     ))}
 

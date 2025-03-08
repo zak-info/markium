@@ -210,7 +210,7 @@ export default function UserNewEditForm({ maintenance_id, currentClause, setTabl
               <RHFTextField name="quantity" label={t('qte')} type={"number"} sx={{ width: "100%" }} />
               <RHFSelect name="piece_status" label={t('piece_status')} sx={{ width: "100%" }}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
-                {data?.piece_status_enum.map((option) => (
+                {data?.piece_status_enum?.map((option) => (
                   <MenuItem key={option?.key} value={option?.key}>
                     {option?.translations[0]?.name}
                   </MenuItem>

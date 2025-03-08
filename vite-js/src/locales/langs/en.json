@@ -116,6 +116,7 @@
   "companyList": "Company List",
   "addCompany": "Add new company",
   "exitDate": "Exit Date ",
+  "exitExpectedDate": "Expected Exit Date ",
   "remainingDate": "Remaining Date",
   "maintanceResponsible": "Maintenance Responsible",
   "addToMaintenance": "Add To Maintenance",
@@ -244,5 +245,7 @@
   "role":"Role",
   "add_new_user":"add new user",
   "create_maintenance": "Create Maintenance",
-  "cause": "Cause"
+  "cause": "Cause",
+  "contractList":"Contract List",
+  "remaining_days":"Remaining Days"
 }

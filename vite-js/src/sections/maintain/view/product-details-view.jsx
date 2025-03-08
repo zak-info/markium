@@ -19,7 +19,7 @@ import AppNewInvoice from '../app-new-invoice';
 
 import { _appAuthors, _appRelated, _appFeatured, _appInvoices, _appInstalled } from 'src/_mock';
 import { useTranslate } from 'src/locales';
-import { useGetMaintenance, useGetMaintenanceSpecs } from 'src/api/maintainance';
+import { useGetMaintenance, useGetMaintenanceSpecs, useShowMaintenance } from 'src/api/maintainance';
 import { useGetCar, useGetCarPeriodicMaintenance } from 'src/api/car';
 import { useGetClauses } from 'src/api/clauses';
 import UserNewEditForm from 'src/sections/clause/user-new-edit-form';
@@ -46,7 +46,8 @@ export default function OrderDetailsView({ id }) {
 
   // const currentMentainance = _orders.filter((order) => order.id === id)[0];
 
-  const { maintenance, mutate } = useGetMaintenance();
+  // const { maintenance, mutate } = useGetMaintenance();
+  const { maintenance, mutate } = useShowMaintenance(id);
   const { clauses } = useGetClauses(id)
   const { maintenance_specs } = useGetMaintenanceSpecs()
   const maintenanceclauses = clauses.filter(item => item.maintenance_id == id)
@@ -56,8 +57,10 @@ export default function OrderDetailsView({ id }) {
     console.log("data :: ",clauses.filter(item => item.maintenance_id == id));
   }, [clauses])
   
-  const currentMentainance = maintenance?.find((i) => i.id == id);
+  // const currentMentainance = maintenance?.find((i) => i.id == id);
+  const currentMentainance = maintenance;
   console.log("currentMentainance : ",currentMentainance );
+  console.log("id : ",id );
   const { maintenance: periodic_maintenance } = useGetCarPeriodicMaintenance(currentMentainance?.car_id);
   const { car } = useGetCar()
   const currentCar = car?.find((i) => i.id == currentMentainance?.car?.id);

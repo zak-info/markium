@@ -16,6 +16,10 @@ import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 import { Divider } from '@mui/material';
 import { fDate } from 'src/utils/format-time';
+import { paths } from 'src/routes/paths';
+import { useRouter } from 'src/routes/hooks';
+import { useCallback } from 'react';
+import { useLocales } from 'src/locales';
 
 // ----------------------------------------------------------------------
 
@@ -32,6 +36,26 @@ export default function OrderDetailsItems({
 }) {
   const { t } = useTranslation();
 
+  const router = useRouter();
+
+
+    const day = { ar: "يوم", en: 'day' }
+    const days = { ar: "ايام", en: 'day' }
+    const { currentLang } = useLocales()
+
+  const handleViewCar = useCallback(
+    (id) => {
+      router.push(paths.dashboard.vehicle.details(id));
+    },
+    [router]
+  )
+  const handleViewDriver = useCallback(
+    (id) => {
+      router.push(paths.dashboard.drivers.details(id));
+    },
+    [router]
+  )
+
   const renderTotal = (
     <Stack
       spacing={4}
@@ -43,12 +67,12 @@ export default function OrderDetailsItems({
     >
       <Stack spacing={1} sx={{ my: 1, typography: 'body2' }}>
         <Stack direction="row">
-          <Box sx={{ width: 160, color: 'text.secondary' }}>{t('maintainDate')}</Box>
-          <Box sx={{ typography: 'subtitle2' }}>{fDate(currentMentainance?.created_at)}</Box>
+          <Box sx={{ width: 160, color: 'text.secondary' }}>{t('entryDate')}</Box>
+          <Box sx={{ typography: 'subtitle2' }}>{fDate(currentMentainance?.entry_date)}</Box>
         </Stack>
         <Stack direction="row">
           <Box sx={{ width: 160, color: 'text.secondary' }}>{t('maintainType')}</Box>
-          <Box sx={{ typography: 'subtitle2' }}>{maintenance_type || "--" }</Box>
+          <Box sx={{ typography: 'subtitle2' }}>{maintenance_type || "--"}</Box>
         </Stack>
         {/* <Stack direction="row">
           <Box sx={{ width: 160, color: 'text.secondary' }}>{t('vehcileColor')}</Box>
@@ -58,8 +82,12 @@ export default function OrderDetailsItems({
       <Divider orientation="vertical" flexItem />
       <Stack spacing={2} sx={{ my: 1, typography: 'body2' }}>
         <Stack direction="row">
-          <Box sx={{ width: 160, color: 'text.secondary' }}>{t('entryDate')}</Box>
-          <Box sx={{ typography: 'subtitle2' }}>{fDate(currentMentainance?.entry_date)}</Box>
+          <Box sx={{ width: 160, color: 'text.secondary' }}>{t('exitExpectedDate')}</Box>
+          <Box sx={{ typography: 'subtitle2' }}>{fDate(currentMentainance?.exit_date)}</Box>
+        </Stack>
+        <Stack direction="row">
+          <Box sx={{ width: 160, color: 'text.secondary' }}>{t('remaining_days')}</Box>
+          <Box sx={{ typography: 'subtitle2' }}>{currentMentainance?.remaining_days ? currentMentainance?.remaining_days : "--" }  {currentMentainance?.remaining_days ? currentMentainance?.remaining_days >2 && currentMentainance?.remaining_days < 11 ? days[currentLang?.value] :day[currentLang?.value]   : "-" } </Box>
         </Stack>
         {/* <Stack direction="row">
           <Box sx={{ width: 160, color: 'text.secondary' }}>{t('remaining')}</Box>
@@ -76,6 +104,11 @@ export default function OrderDetailsItems({
         <Stack direction="row">
           <Box sx={{ width: 160, color: 'text.secondary' }}>{t('cause')}</Box>
           <Box sx={{ typography: 'subtitle2' }}>{currentMentainance?.cause}</Box>
+        </Stack>
+
+        <Stack direction="row">
+          <Box sx={{ width: 160, color: 'text.secondary' }}>{t('contract')}</Box>
+          <Box sx={{ typography: 'subtitle2' }}>{currentMentainance?.contract?.ref || "--"}</Box>
         </Stack>
       </Stack>
     </Stack>
@@ -100,18 +133,55 @@ export default function OrderDetailsItems({
               borderBottom: (theme) => `dashed 2px ${theme.palette.background.neutral}`,
             }}
           >
-            <ListItemText
-              primary={currentCar?.model?.translations?.name+" - ("+currentCar?.model?.company?.translations?.name+")"}
-              secondary={currentCar?.plat_number}
-              primaryTypographyProps={{
-                typography: 'body2',
+            <Box
+              onClick={()=> handleViewCar(currentCar?.id)}
+              sx={{
+                cursor: 'pointer',
+                '&:hover': {
+                  textDecoration: 'underline',
+                },
               }}
-              secondaryTypographyProps={{
-                component: 'span',
-                color: 'text.disabled',
-                mt: 0.5,
+            >
+              <ListItemText
+                primary={currentCar?.model?.translations?.name + " - (" + currentCar?.model?.company?.translations?.name + ")"}
+                secondary={currentCar?.plat_number}
+                primaryTypographyProps={{
+                  typography: 'body2',
+                }}
+                secondaryTypographyProps={{
+                  component: 'span',
+                  color: 'text.disabled',
+                  mt: 0.5,
+                }}
+              />
+            </Box>
+            {
+              currentMentainance?.driver ?
+              <Box
+              onClick={()=> handleViewDriver(currentMentainance?.driver?.id)}
+              sx={{
+                cursor: 'pointer',
+                '&:hover': {
+                  textDecoration: 'underline',
+                },
               }}
-            />
+            >
+              <ListItemText
+                primary={currentMentainance?.driver?.name || "--"}
+                secondary={currentMentainance?.driver?.phone_number || "--"}
+                primaryTypographyProps={{
+                  typography: 'body2',
+                }}
+                secondaryTypographyProps={{
+                  component: 'span',
+                  color: 'text.disabled',
+                  mt: 0.5,
+                }}
+              />
+            </Box>
+            :
+            null
+            }
           </Stack>
         </Scrollbar>
 

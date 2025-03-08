@@ -55,7 +55,6 @@ import { markMaintenanceAsCompeleted } from 'src/api/maintainance';
 
 export default function OrderTableRow({
   row,
-  days,
   car_model,
   work_site,
   driver,
@@ -65,6 +64,7 @@ export default function OrderTableRow({
   onMarkAsCompleted,
   onDeleteRow,
   onEditRow,
+  onViewMaintenance,
 }) {
   const {
     exit_date,
@@ -85,7 +85,11 @@ export default function OrderTableRow({
   const completed = useBoolean();
 
   const collapse = useBoolean();
-  const {currentLang} = useLocales();
+
+  const day = { ar: "يوم", en: 'day' }
+  const days = { ar: "ايام", en: 'day' }
+  const { currentLang } = useLocales()
+
   console.log("currecnt lang : ",currentLang);
 
   const popover = usePopover();
@@ -96,7 +100,7 @@ export default function OrderTableRow({
     <TableRow hover selected={selected}>
       <TableCell>
       <Box
-          onClick={onViewRow}
+          onClick={()=>onViewMaintenance()}
           sx={{
             cursor: 'pointer',
             '&:hover': {
@@ -124,7 +128,7 @@ export default function OrderTableRow({
       </TableCell>
       {/* <TableCell>{car_model}</TableCell> */}
       <TableCell>{state?.translations[0]?.name}</TableCell>
-      <TableCell>{remaining_days} {days}</TableCell>
+      <TableCell>{remaining_days} {remaining_days ? remaining_days >2 && remaining_days < 11 ?days[currentLang?.value] :day[currentLang?.value]   : "-"}</TableCell>
       {/* <TableCell>{occupant_name}</TableCell> */}
 
       <TableCell>

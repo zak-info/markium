@@ -32,6 +32,7 @@ export function useGetMaintenance() {
 
   return memoizedValue;
 }
+
 export function useShowMaintenance(id) {
   const { data, isLoading, error, isValidating, mutate } = useSWR(
     endpoints.maintenance.list+"/"+id,

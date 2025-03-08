@@ -38,12 +38,19 @@ const OPTIONS = [
   },
 ];
 
+import { useContext } from 'react';
+import { AuthContext } from 'src/auth/context/jwt';
+// import { AuthContext } from 'path-to-auth-context/auth-context'; // Adjust the path accordingly
+
+
 // ----------------------------------------------------------------------
 
 export default function AccountPopover() {
   const router = useRouter();
+  const { user } = useContext(AuthContext);
+  console.log("user : ",user);
+  // const { user } = useMockedUser();
 
-  const { user } = useMockedUser();
 
   const { logout } = useAuthContext();
 
@@ -89,27 +96,27 @@ export default function AccountPopover() {
       >
         <Avatar
           src={user?.photoURL}
-          alt={user?.displayName}
+          alt={user?.name}
           sx={{
             width: 36,
             height: 36,
             border: (theme) => `solid 2px ${theme.palette.background.default}`,
           }}
         >
-          {user?.displayName?.charAt(0).toUpperCase()}
+          {user?.name?.charAt(0).toUpperCase()}
         </Avatar>
       </IconButton>
 
       <CustomPopover open={popover.open} onClose={popover.onClose} sx={{ width: 200, p: 0 }}>
-        {/* <Box sx={{ p: 2, pb: 1.5 }}>
+        <Box sx={{ p: 2, pb: 1.5 }}>
           <Typography variant="subtitle2" noWrap>
-            {user?.displayName}
+            {user?.name}
           </Typography>
 
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
             {user?.email}
           </Typography>
-        </Box> */}
+        </Box>
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 

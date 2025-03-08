@@ -1,14 +1,14 @@
 import PropTypes from 'prop-types';
 import { Controller, useFormContext } from 'react-hook-form';
-
 import TextField from '@mui/material/TextField';
 
 // ----------------------------------------------------------------------
 
+function convertToLatinNumbers(input) {
+  if (!input) return input; // Return as-is if input is empty or undefined
 
-const convertArabicToWesternNumbers = (input) => {
-  return input.replace(/[٠-٩]/g, (digit) => String("٠١٢٣٤٥٦٧٨٩".indexOf(digit)));
-};
+  return input.replace(/[٠-٩]/g, d => '0123456789'['٠١٢٣٤٥٦٧٨٩'.indexOf(d)]);
+}
 
 export default function RHFTextField({ name, helperText, type, ...other }) {
   const { control } = useFormContext();
@@ -22,16 +22,18 @@ export default function RHFTextField({ name, helperText, type, ...other }) {
           {...field}
           fullWidth
           type={type}
-          value={type === 'number' && field.value === 0 ? '' : field.value}
+          value={field.value || ''} // Ensure controlled component
           onChange={(event) => {
+            let newValue = event.target.value;
+
             if (type === 'number') {
-              field.onChange(Number(event.target.value));
-            } else {
-              field.onChange(event.target.value);
+              newValue = convertToLatinNumbers(newValue); // Convert Arabic numbers to Latin
+              newValue = newValue ? Number(newValue) : ''; // Prevent NaN
             }
+
+            field.onChange(newValue);
           }}
           error={!!error}
-
           helperText={error ? error?.message : helperText}
           {...other}
           sx={{
@@ -49,7 +51,7 @@ export default function RHFTextField({ name, helperText, type, ...other }) {
 }
 
 RHFTextField.propTypes = {
-  helperText: PropTypes.object,
-  name: PropTypes.string,
+  helperText: PropTypes.node,
+  name: PropTypes.string.isRequired,
   type: PropTypes.string,
 };

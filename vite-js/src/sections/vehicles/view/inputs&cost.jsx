@@ -45,6 +45,7 @@ import OrderTableFiltersResult from '../inputs-table-filters-result';
 import { useTranslation } from 'react-i18next';
 import { useGetCar, useGetCarCostIput } from 'src/api/car';
 import { useLocales } from 'src/locales';
+import { useValues } from 'src/api/utils';
 
 // ----------------------------------------------------------------------
 
@@ -82,7 +83,9 @@ export default function OrderListView() {
   const confirm = useBoolean();
   const {currentLang} = useLocales()
   const {cost_input} = useGetCarCostIput()
+  console.log("cost_input : ",cost_input);
   const {car} = useGetCar()
+  const {data} = useValues()
   const [tableData, setTableData] = useState(cost_input);
   useEffect(()=>{
     setTableData(cost_input)
@@ -289,6 +292,7 @@ export default function OrderListView() {
                       <OrderTableRow
                         key={row.id}
                         row={row}
+                        operation={data?.transaction_type_enum?.find(item => item?.key == row?.operation)?.translations[0]?.name}
                         currentLang={currentLang.value}
                         car={car?.find(item => item?.id == row?.car_id)}
                         selected={table.selected.includes(row.id)}

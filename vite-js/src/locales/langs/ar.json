@@ -174,6 +174,7 @@
   "companyList": "قائمة الشركة",
   "addCompany": "إضافة شركة جديدة",
   "exitDate": "تاريخ الانتهاء",
+  "exitExpectedDate": "التاريخ المتوقع الانتهاء",
   "remainingDate": "عدد الايام المتبقية",
   "maintanceResponsible": "مسؤول الصيانة",
   "addToMaintenance": "إضافة إلى الصيانة",
@@ -302,6 +303,8 @@
   "role":"الدور",
   "add_new_user":"اضافة مستخدم",
   "create_maintenance": "إنشاء صيانة",
-  "cause": "سبب العطل"
+  "cause": "سبب العطل",
+  "contractList":"قائمة العقود",
+  "remaining_days":"عدد الايام المتبقية"
 
 }

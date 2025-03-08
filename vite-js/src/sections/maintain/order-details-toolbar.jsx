@@ -51,9 +51,18 @@ export default function OrderDetailsToolbar({
                 {' '}
                 {t('maintenance')} {orderNumber}{' '}
               </Typography>
-              {/* <Label variant="soft" color={status == "completed" ? "success" : status == "pending" ? "warning" : status == "cancelled" ? "error" :"default"}>
-                {status}
-              </Label> */}
+              <Label
+                variant="soft"
+                color={
+                  (status?.key === 'available' && 'success') ||
+                  (status?.key === 'pending' && 'warning') ||
+                  (status?.key === 'under_maintenance' && 'error') ||
+                  (status?.key === 'under_preparation' && 'secondary') ||
+                  'default'
+                }
+              >
+                {status?.translations[0]?.name}
+              </Label>
             </Stack>
 
             <Typography variant="body2" sx={{ color: 'text.disabled' }}>
