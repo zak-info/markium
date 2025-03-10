@@ -145,6 +145,7 @@ export default function ClaimNewEditForm({ currentClause }) {
               <RHFTextField name="amount" label={t('amount')} type={"number"} />
               <DatePicker
                 label={t('paiment date')}
+                format="dd/MM/yyyy"  
                 value={values?.paiment_date ? new Date(values?.paiment_date) : new Date()}
                 required
                 name="paiment_date"

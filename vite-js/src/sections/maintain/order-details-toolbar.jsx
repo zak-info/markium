@@ -27,6 +27,8 @@ export default function OrderDetailsToolbar({
   onChangeStatus,
   idMaintenance
 }) {
+
+  console.log("status : ",status);
   const popover = usePopover();
 
   const { t } = useTranslation();
@@ -48,13 +50,12 @@ export default function OrderDetailsToolbar({
           <Stack spacing={0.5}>
             <Stack spacing={1} direction="row" alignItems="center">
               <Typography variant="h4">
-                {' '}
-                {t('maintenance')} {orderNumber}{' '}
+                {t('maintenance')} 
               </Typography>
               <Label
                 variant="soft"
                 color={
-                  (status?.key === 'available' && 'success') ||
+                  (status?.key === 'completed' && 'success') ||
                   (status?.key === 'pending' && 'warning') ||
                   (status?.key === 'under_maintenance' && 'error') ||
                   (status?.key === 'under_preparation' && 'secondary') ||

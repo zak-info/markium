@@ -59,8 +59,8 @@ export default function AppNewInvoice({ title, maintenance_id, subheader, tableD
           <UserNewEditForm maintenance_id={maintenance_id} setTableData={setTableData} />
         </Scrollbar>
       </TableContainer>
-      <Divider sx={{ borderStyle: 'dashed' }} />
-      <Box sx={{ p: 2, textAlign: 'right' }}>
+      {/* <Divider sx={{ borderStyle: 'dashed' }} /> */}
+      {/* <Box sx={{ p: 2, textAlign: 'right' }}>
         <Button
           size="small"
           color="inherit"
@@ -68,7 +68,7 @@ export default function AppNewInvoice({ title, maintenance_id, subheader, tableD
         >
           {t("view_all")}
         </Button>
-      </Box>
+      </Box> */}
     </Card>
   );
 }

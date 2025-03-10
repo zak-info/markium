@@ -55,6 +55,7 @@ export default function OrderTableToolbar({ filters, onFilters, dateError }) {
         <DatePicker
           label="Start date"
           value={filters.startDate}
+          format="dd/MM/yyyy"  
           onChange={handleFilterStartDate}
           slotProps={{
             textField: {
@@ -69,6 +70,7 @@ export default function OrderTableToolbar({ filters, onFilters, dateError }) {
         <DatePicker
           label="End date"
           value={filters.endDate}
+          format="dd/MM/yyyy"  
           onChange={handleFilterEndDate}
           slotProps={{
             textField: {

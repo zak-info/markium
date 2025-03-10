@@ -20,6 +20,7 @@ export default function PickerDate() {
         <DesktopDatePicker
           label="For desktop"
           value={value}
+          format="dd/MM/yyyy"  
           minDate={new Date('2017-01-01')}
           onChange={(newValue) => {
             setValue(newValue);
@@ -96,6 +97,7 @@ export default function PickerDate() {
           views={['year', 'month', 'day']}
           label="Year, month and date"
           value={value}
+          format="dd/MM/yyyy"  
           onChange={(newValue) => {
             setValue(newValue);
           }}
@@ -110,6 +112,7 @@ export default function PickerDate() {
           views={['day', 'month', 'year']}
           label="Invert the order of views"
           value={value}
+          format="dd/MM/yyyy"  
           onChange={(newValue) => {
             setValue(newValue);
           }}

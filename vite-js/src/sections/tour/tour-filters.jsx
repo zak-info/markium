@@ -114,6 +114,7 @@ export default function TourFilters({
         <DatePicker
           label="End date"
           value={filters.endDate}
+          format="dd/MM/yyyy"  
           onChange={handleFilterEndDate}
           slotProps={{
             textField: {

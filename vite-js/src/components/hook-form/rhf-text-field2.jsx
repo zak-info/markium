@@ -4,13 +4,12 @@ import TextField from '@mui/material/TextField';
 
 // ----------------------------------------------------------------------
 
-function convertToLatinNumbers(input) {
-  if (!input) return input; // Return as-is if input is empty or undefined
+const convertToLatinNumbers = (input) => {
+  if (!input) return input;
+  return input.replace(/[٠-٩]/g, (d) => "0123456789"["٠١٢٣٤٥٦٧٨٩".indexOf(d)]);
+};
 
-  return input.toString().replace(/[٠-٩]/g, d => '0123456789'['٠١٢٣٤٥٦٧٨٩'.indexOf(d)]);
-}
-
-export default function RHFTextField({ name, helperText, type, ...other }) {
+export default function RHFTextField2({ name, helperText, type, ...other }) {
   const { control } = useFormContext();
 
   return (
@@ -18,10 +17,11 @@ export default function RHFTextField({ name, helperText, type, ...other }) {
       name={name}
       control={control}
       render={({ field, fieldState: { error } }) => (
-        <TextField
+        <input
           {...field}
           fullWidth
           type={type}
+          style={{background:"transparent"}}
           value={field.value || ''} // Ensure controlled component
           onChange={(event) => {
             let newValue = event.target.value;
@@ -50,7 +50,7 @@ export default function RHFTextField({ name, helperText, type, ...other }) {
   );
 }
 
-RHFTextField.propTypes = {
+RHFTextField2.propTypes = {
   helperText: PropTypes.node,
   name: PropTypes.string.isRequired,
   type: PropTypes.string,

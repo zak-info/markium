@@ -35,7 +35,7 @@ export async function EditClause(body) {
   const URL = endpoints.clauses.edit;
   return await axios.put(URL, body);
 }
-export async function EditMaintenanceClause(body) {
-  const URL = endpoints.clauses.edit;
+export async function EditMaintenanceClause(id,body) {
+  const URL = endpoints.clauses.edit(id);
   return await axios.put(URL, body);
 }

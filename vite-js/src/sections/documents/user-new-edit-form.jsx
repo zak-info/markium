@@ -244,6 +244,7 @@ export default function UserNewEditForm({ currentDocument }) {
                 required
                 name="release_date"
                 label={t('release_date')}
+                format="dd/MM/yyyy"  
                 value={currentDocument?.release_date ? new Date(currentDocument?.release_date) : values?.release_date ? new Date(values?.release_date) : new Date()}
                 onChange={(date) => setValue('release_date', date)}
                 slotProps={{
@@ -256,6 +257,7 @@ export default function UserNewEditForm({ currentDocument }) {
                 required
                 name="expiry_date"
                 label={t('expiry_date')}
+                format="dd/MM/yyyy"  
                 value={currentDocument?.expiry_date ? new Date(currentDocument?.expiry_date) : values?.expiry_date ? new Date(values?.expiry_date) : new Date()}
                 onChange={(date) => setValue('expiry_date', date)}
                 slotProps={{

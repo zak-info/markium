@@ -50,7 +50,7 @@ export default function AppNewInvoice3({
   };
   const getEditedRows = () => {
     // return tableData.filter((row, index) => JSON.stringify(row) !== JSON.stringify(originalTableData[index]));
-    return tableData.filter((row, index) => row?.new == "false"  || row?.new == "true"  );
+    return tableData.filter((row, index) => row?.new == "false" || row?.new == "true");
   };
 
   const handleEdit = (rowId, field) => {
@@ -67,8 +67,16 @@ export default function AppNewInvoice3({
     setEditing({ rowId: null, field: null });
   };
 
+  const [addProcess, setAddProcess] = useState(true)
+
   const handleAddRow = () => {
-    const newRow = { id: tableData.length + 1, type: "", clause: "", cost: "", qte: "", piece_status: "", total: "", new: "true" };
+    // const newRow = { id: tableData.length + 1, is_periodic: "not-periodic", clause: "", cost: "", qte: "", piece_status: "", total: "", new: "true" };
+    // setTableData((prev) => [...prev, newRow]);
+    // setEditing({ rowId: newRow.id, field: "type" }); // Start editing the first cell of the new row
+    setAddProcess(false)
+  };
+  const handleAddRowold = () => {
+    const newRow = { id: tableData.length + 1, is_periodic: "not-periodic", clause: "", cost: "", qte: "", piece_status: "", total: "", new: "true" };
     setTableData((prev) => [...prev, newRow]);
     setEditing({ rowId: newRow.id, field: "type" }); // Start editing the first cell of the new row
   };
@@ -81,26 +89,33 @@ export default function AppNewInvoice3({
     setPostloader(true)
     try {
       for (const row of editedRows) {
-        let body = { maintenance_id:Number(maintenance_id), cost: Number(row?.cost), quantity: Number(row?.quantity), piece_status: row?.piece_status,  }
-        if (row?.related_type == "not-periodic" || row?.is_periodic == 0) {
-          body.spec_id = Number(row?.related_id); 
-        }else if(row?.related_type == "periodic" || row?.is_periodic == 1 ) {
+        let body = { maintenance_id: Number(maintenance_id), cost: Number(row?.cost), quantity: Number(row?.quantity), piece_status: row?.piece_status, }
+        console.log("Saving changes 1 :", body);
+
+        if (row?.is_periodic == "not-periodic") {
+          body.spec_id = Number(row?.related_id);
+        } else if (row?.is_periodic == "periodic") {
           body.period_maintenance_id = Number(body?.related_id);
         }
-        console.log("Saving changes:", body);
+        console.log("Saving changes 2 :", body);
         if (row?.new === "true") {
           console.log("create");
-          await addNewMaintenanceClause(body);
+          // await addNewMaintenanceClause(body);
         } else {
           console.log("edit");
-          await EditMaintenanceClause(body);
+          await EditMaintenanceClause(row.id, { piece_status: body.piece_status, cost: body.cost, quantity: body.quantity });
         }
       }
       enqueueSnackbar("Success operation",);
       setOriginalTableData([...tableData]); // Reset original data after saving
     } catch (error) {
       console.error(error);
-      enqueueSnackbar(error?.message ? error?.message : "Somthing Went Wrong", { variant: 'error' });
+      // enqueueSnackbar(error?.message ? error?.message : "Somthing Went Wrong", { variant: 'error' });
+      Object.values(error?.data).forEach(array => {
+        array.forEach(text => {
+          enqueueSnackbar(text, { variant: 'error' });
+        });
+      });
 
     }
     setPostloader(false)
@@ -134,12 +149,17 @@ export default function AppNewInvoice3({
             </TableBody>
           </Table>
         </Scrollbar>
-        <Stack alignItems="flex-end" sx={{ m: 3 }}>
 
-          <Button variant="contained" onClick={handleAddRow}>
-            {t("add_new_row")}
-          </Button>
-        </Stack>
+        {
+          !addProcess ?
+            <UserNewEditForm setAddProcess={setAddProcess} maintenance_id={maintenance_id} setTableData={setTableData} />
+            :
+            <Stack alignItems="flex-end" sx={{ m: 3 }}>
+              <Button variant="contained" onClick={handleAddRow}>
+                {t("addClause")}
+              </Button>
+            </Stack>
+        }
       </TableContainer>
       <Divider sx={{ borderStyle: "dashed" }} />
 
@@ -173,6 +193,7 @@ import Iconify from "src/components/iconify";
 import { addNewMaintenanceClause, EditMaintenanceClause } from "src/api/clauses";
 import { LoadingButton } from "@mui/lab";
 import { enqueueSnackbar } from "notistack";
+import UserNewEditForm from "../clause/user-new-edit-form";
 
 function AppNewInvoiceRow({ row, tableLabels, editing, handleEdit, handleChange, handleBlur }) {
   const popover = usePopover();
@@ -185,22 +206,38 @@ function AppNewInvoiceRow({ row, tableLabels, editing, handleEdit, handleChange,
   return (
     <>
       <TableRow>
-        {tableLabels.map(({ id, editable, type, options, key_to_update }) => (
+        {tableLabels.map(({ id, editable, creatable, type, options, key_to_update }) => (
           <TableCell key={id} onClick={() => editable && handleEdit(row.id, id)}>
             {editing.rowId === row.id && editing.field === id ? (
               editable ? (
                 type === "select" ? (
-                  <Select value={row[id] || ""} onChange={(e) => handleChange(e, row.id, key_to_update)} onBlur={handleBlur} autoFocus>
-                    {options.map((option, index) => (
+                  <Select
+                    value={row[id] || ""}
+                    onChange={(e) => handleChange(e, row.id, key_to_update)}
+                    onBlur={handleBlur}
+                    autoFocus
+                  >
+                    {options?.map((option, index) => (
                       <MenuItem key={index} value={option.value}>
-                        {option.lable}
+                        {option.label} {/* ✅ Fixed typo */}
                       </MenuItem>
                     ))}
                   </Select>
                 ) : type === "date" ? (
-                  <DatePicker value={row[id] || null} onChange={(newValue) => handleChange({ target: { value: newValue } }, row.id, key_to_update)} onBlur={handleBlur} />
+                  <DatePicker
+                    value={row[id] || null}
+                    format="dd/MM/yyyy"  
+                    onChange={(newValue) => handleChange({ target: { value: newValue } }, row.id, key_to_update)}
+                    onBlur={handleBlur}
+                  />
                 ) : (
-                  <TextField value={row[id] || ""} type={type} onChange={(e) => handleChange(e, row.id, key_to_update)} onBlur={handleBlur} autoFocus />
+                  <TextField
+                    value={row[id] || ""}
+                    type={type}
+                    onChange={(e) => handleChange(e, row.id, key_to_update)}
+                    onBlur={handleBlur}
+                    autoFocus
+                  />
                 )
               ) : (
                 row[id] || "--"
@@ -217,6 +254,7 @@ function AppNewInvoiceRow({ row, tableLabels, editing, handleEdit, handleChange,
           </IconButton>
         </TableCell>
       </TableRow>
+
 
       <CustomPopover open={popover.open} onClose={popover.onClose} arrow="right-top" sx={{ width: 160 }}>
         <Divider sx={{ borderStyle: "dashed" }} />

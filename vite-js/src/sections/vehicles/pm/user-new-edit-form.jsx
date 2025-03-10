@@ -154,6 +154,7 @@ export default function UserNewEditForm({ car_id, currentClause }) {
                   : values?.period_unit == 'month' ?
                     <DatePicker
                       label={t('last_value')}
+                      format="dd/MM/yyyy"  
                       value={values.last_value ? new Date(values.last_value) : new Date()}
                       name="last_value"
                       onChange={(newValue) => setValue('last_value', fDate(newValue, 'yyyy-MM-dd'))}

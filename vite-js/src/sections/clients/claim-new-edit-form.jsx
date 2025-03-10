@@ -151,6 +151,7 @@ export default function ClaimNewEditForm({ currentClause,setTableData,contract_i
                 value={values?.paiment_date ? new Date(values?.paiment_date) : new Date()}
                 required
                 name="paiment_date"
+                format="dd/MM/yyyy"  
                 onChange={(newValue) => setValue('paiment_date', fDate(newValue, 'yyyy-MM-dd'))}
                 slotProps={{
                   textField: {

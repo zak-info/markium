@@ -154,7 +154,7 @@ export default function ContractNewEditForm({ currentUser }) {
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>
       <Grid container spacing={3}>
-        <Grid xs={12} md={8}>
+        <Grid xs={12} md={10}>
           <Card sx={{ p: 3 }}>
             <Box
               rowGap={3}
@@ -244,6 +244,7 @@ export default function ContractNewEditForm({ currentUser }) {
                   required
                   name="starting_from"
                   label={t('starting_from')}
+                  format="dd/MM/yyyy"  
                   value={values?.starting_from || new Date()}
                   onChange={(date) => setValue('starting_from', date)}
                   slotProps={{

@@ -78,7 +78,7 @@ export default function UserNewEditForm({ currentMentainance }) {
       maintainance_type: '', // default value for car plate number
       entry_date: new Date(), // default value for entry date
       cause: '', // default value for cause
-      exit_date: new Date(), // default value for exit date (empty string)
+      exit_date:new Date(), // default value for exit date (empty string)
     }),
     [currentMentainance]
   );
@@ -201,7 +201,8 @@ export default function UserNewEditForm({ currentMentainance }) {
                 value={values.entry_date ? new Date(values.entry_date) : new Date()}
                 required
                 name="entry_date"
-                onChange={(newValue) => setValue('entry_date', fDate(newValue, 'yyyy-MM-dd'))}
+                format="dd/MM/yyyy"  
+                onChange={(newValue) => setValue('entry_date', fDate(newValue, 'dd/MM/yyyy'))}
                 slotProps={{
                   textField: {
                     fullWidth: true,
@@ -213,7 +214,8 @@ export default function UserNewEditForm({ currentMentainance }) {
                 label={t('exitDate')}
                 value={values.exit_date ? new Date(values.exit_date) : new Date()}
                 name="exit_date"
-                onChange={(newValue) => setValue('exit_date', fDate(newValue, 'yyyy-MM-dd'))}
+                onChange={(newValue) => setValue('exit_date', fDate(newValue, 'dd/MM/yyyy'))}
+                format="dd/MM/yyyy"  
                 slotProps={{
                   textField: {
                     fullWidth: true,

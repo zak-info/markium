@@ -226,6 +226,7 @@ export default function UserNewEditForm({ currentDriver }) {
               {/* Start Date */}
               <DatePicker
                 label={t('start_date')}
+                format="dd/MM/yyyy"  
                 value={currentDriver?.start_date ? new Date(currentDriver?.start_date) : values?.start_date ? new Date(values?.start_date) : new Date()}
                 onChange={(date) => setValue('start_date', date)}
 

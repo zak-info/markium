@@ -58,7 +58,7 @@ export const endpoints = {
   clauses: {
     list:(id) => `/maintenance/${id}/clauses`,
     add:`/maintenance/clauses`,
-    edit:`/maintenance/clauses`,
+    edit:(id) => `/maintenance/clauses/${id}`,
 
   },
   mail: {
