@@ -22,6 +22,7 @@ import AccountPopover from '../common/account-popover';
 import ContactsPopover from '../common/contacts-popover';
 import LanguagePopover from '../common/language-popover';
 import NotificationsPopover from '../common/notifications-popover';
+import { useState } from 'react';
 
 // ----------------------------------------------------------------------
 
@@ -39,6 +40,14 @@ export default function Header({ onOpenNav }) {
   const offset = useOffSetTop(HEADER.H_DESKTOP);
 
   const offsetTop = offset && !isNavHorizontal;
+
+  const [darkMode, setDarkMode] = useState(settings.themeMode);
+
+  const Toggle = () => {
+    const mode = darkMode == "dark" ? "light" : "dark"
+    setDarkMode(mode)
+    settings.onUpdate('themeMode', mode)
+  }
 
   const renderContent = (
     <>
@@ -59,13 +68,39 @@ export default function Header({ onOpenNav }) {
         justifyContent="flex-end"
         spacing={{ xs: 0.5, sm: 1 }}
       >
+
+        {/* <div>
+          <input type="checkbox" class="checkbox" id="checkbox" />
+          <label for="checkbox" class="checkbox-label">
+            <i class="fas fa-moon"></i>
+            <i class="fas fa-sun"></i>
+            <span class="ball"></span>
+          </label>
+        </div> */}
+
+        <div>
+          <input
+            type="checkbox"
+            className="checkbox"
+            id="checkbox"
+            checked={darkMode === "dark"}
+            onChange={Toggle}
+          />
+          <label htmlFor="checkbox" className="checkbox-label">
+            <i className={`fas ${darkMode === "dark" ? "fa-moon" : "fa-sun"}`}></i>
+            <span className="ball"></span>
+          </label>
+        </div>
+
+
         <LanguagePopover />
 
         {/* <NotificationsPopover /> */}
 
         {/* <ContactsPopover /> */}
 
-        <SettingsButton />
+        {/* <SettingsButton /> */}
+
 
         <AccountPopover />
       </Stack>

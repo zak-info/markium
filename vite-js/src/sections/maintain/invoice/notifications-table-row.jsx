@@ -23,11 +23,14 @@ import Iconify from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import { STORAGE_API } from 'src/config-global';
+import { useTranslate } from 'src/locales';
 
 // ----------------------------------------------------------------------
 
 export default function OrderTableRow({ row, attachement_name,status, onCreateRow, selected, onViewRow, onSelectRow, onDeleteRow }) {
   const { items, orderNumber, createdAt, customer, totalQuantity, subTotal } = row;
+
+   const { t } = useTranslate();
 
   const confirm = useBoolean();
 
@@ -37,10 +40,10 @@ export default function OrderTableRow({ row, attachement_name,status, onCreateRo
 
   const renderPrimary = (
     <TableRow hover selected={selected}>
-      <TableCell>{attachement_name}</TableCell>
-      <TableCell> <a href={STORAGE_API + "/" + row?.attachment_path} target='_blank' ><Label variant="soft" color="success">View</Label></a></TableCell>
-      <TableCell><a href={STORAGE_API + "/" + row?.invoice_path} target='_blank' ><Label variant="soft" color="success">View</Label></a></TableCell>
-      <TableCell>
+      <TableCell>{row?.title}</TableCell>
+      <TableCell> <a href={STORAGE_API + "/" + row?.link} target='_blank' ><Label variant="soft" color="success">View</Label></a></TableCell>
+      {/* <TableCell><a href={STORAGE_API + "/" + row?.invoice_path} target='_blank' ><Label variant="soft" color="success">View</Label></a></TableCell> */}
+      {/* <TableCell>
         <Label
           variant="soft"
           color={
@@ -53,10 +56,10 @@ export default function OrderTableRow({ row, attachement_name,status, onCreateRo
         >
           {row?.status?.translations[0]?.name}
         </Label>
-      </TableCell>
+      </TableCell> */}
 
-      {/* <TableCell align="start" sx={{ px: 1 }}>
-        <IconButton
+      <TableCell align="start" sx={{ px: 1 }}>
+        {/* <IconButton
           color={collapse.value ? 'inherit' : 'default'}
           onClick={collapse.onToggle}
           sx={{
@@ -66,12 +69,12 @@ export default function OrderTableRow({ row, attachement_name,status, onCreateRo
           }}
         >
           <Iconify icon="eva:arrow-ios-downward-fill" />
-        </IconButton>
+        </IconButton> */}
 
         <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
           <Iconify icon="eva:more-vertical-fill" />
         </IconButton>
-      </TableCell> */}
+      </TableCell>
     </TableRow>
   );
 
@@ -128,7 +131,7 @@ export default function OrderTableRow({ row, attachement_name,status, onCreateRo
         content="Are you sure want to delete?"
         action={
           <Button variant="contained" color="error" onClick={onDeleteRow}>
-            Delete
+            {t("delete")}
           </Button>
         }
       />
