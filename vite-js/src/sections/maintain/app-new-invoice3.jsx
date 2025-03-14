@@ -76,7 +76,7 @@ export default function AppNewInvoice3({
     setAddProcess(false)
   };
   const handleAddRowold = () => {
-    const newRow = { id: tableData.length + 1, is_periodic: "not-periodic", clause: "", cost: "", qte: "", piece_status: "", total: "", new: "true" };
+    const newRow = { id: tableData.length + 1, is_periodic: "not-periodic", clause: "", cost: "", qte: "", piece_status: "", total: "",note:"", new: "true" };
     setTableData((prev) => [...prev, newRow]);
     setEditing({ rowId: newRow.id, field: "type" }); // Start editing the first cell of the new row
   };
@@ -89,7 +89,7 @@ export default function AppNewInvoice3({
     setPostloader(true)
     try {
       for (const row of editedRows) {
-        let body = { maintenance_id: Number(maintenance_id), cost: Number(row?.cost), quantity: Number(row?.quantity), piece_status: row?.piece_status, }
+        let body = { maintenance_id: Number(maintenance_id), cost: Number(row?.cost), quantity: Number(row?.quantity), piece_status: row?.piece_status,note: row?.note }
         console.log("Saving changes 1 :", body);
 
         if (row?.is_periodic == "not-periodic") {
@@ -103,7 +103,7 @@ export default function AppNewInvoice3({
           // await addNewMaintenanceClause(body);
         } else {
           console.log("edit");
-          await EditMaintenanceClause(row.id, { piece_status: body.piece_status, cost: body.cost, quantity: body.quantity });
+          await EditMaintenanceClause(row.id, { piece_status: body.piece_status, cost: body.cost, quantity: body.quantity,note:body?.note });
         }
       }
       enqueueSnackbar("Success operation",);
@@ -167,7 +167,7 @@ export default function AppNewInvoice3({
       {hasChanges() && (
         <Stack alignItems="flex-end" sx={{ m: 3 }}>
           <LoadingButton type="submit" variant="contained" onClick={handleSaveChanges} loading={postloader}>
-            {t('save_changes')}
+            {t('saveChange')}
           </LoadingButton>
           {/* <Button variant="contained" color="primary" onClick={handleSaveChanges}>
             {t("save_changes")}
@@ -207,7 +207,7 @@ function AppNewInvoiceRow({ row, tableLabels, editing, handleEdit, handleChange,
     <>
       <TableRow>
         {tableLabels.map(({ id, editable, creatable, type, options, key_to_update }) => (
-          <TableCell key={id} onClick={() => editable && handleEdit(row.id, id)}>
+          <TableCell key={id} onClick={() => editable && handleEdit(row.id, id)} sx={{width:id == "note"? "40%":"auto"}} >
             {editing.rowId === row.id && editing.field === id ? (
               editable ? (
                 type === "select" ? (

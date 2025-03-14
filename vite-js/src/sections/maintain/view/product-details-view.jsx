@@ -30,6 +30,8 @@ import {
 import AppNewInvoice2 from '../app-new-invoice2';
 import AppNewInvoice3 from '../app-new-invoice3';
 import { useValues } from 'src/api/utils';
+import InvoiceListView from '../invoice/NotificationsListView';
+import { Box } from '@mui/system';
 // ----------------------------------------------------------------------
 
 export default function OrderDetailsView({ id }) {
@@ -91,30 +93,26 @@ export default function OrderDetailsView({ id }) {
       />
 
       <Grid container spacing={3}>
-        <Grid xs={12} md={8}>
-          <Stack spacing={3} direction={{ xs: 'column-reverse', md: 'column' }}>
-            <OrderDetailsItems
-              currentMentainance={currentMentainance}
-              maintenance_type={data?.maintenance_type_enum?.find(item => item.key == currentMentainance?.maintainance_type)?.translations[0]?.name}
-              currentCar={currentCar}
-              items={currentMentainance?.items}
-              taxes={currentMentainance?.taxes}
-              shipping={currentMentainance?.shipping}
-              discount={currentMentainance?.discount}
-              subTotal={currentMentainance?.subTotal}
-              totalAmount={currentMentainance?.totalAmount}
-            />
+        <Grid xs={12} md={16}>
+          <Stack spacing={3} direction={{ xs: 'column-reverse', md: 'row' }}>
+            <Grid xs={12} md={8}>
+              <OrderDetailsItems
+                currentMentainance={currentMentainance}
+                maintenance_type={data?.maintenance_type_enum?.find(item => item.key == currentMentainance?.maintainance_type)?.translations[0]?.name}
+                currentCar={currentCar}
+                items={currentMentainance?.items}
+                taxes={currentMentainance?.taxes}
+                shipping={currentMentainance?.shipping}
+                discount={currentMentainance?.discount}
+                subTotal={currentMentainance?.subTotal}
+                totalAmount={currentMentainance?.totalAmount}
+              />
+            </Grid>
+            {/* <Grid xs={12} md={6} >
+              <InvoiceListView />
+            </Grid> */}
           </Stack>
         </Grid>
-
-        {/* <Grid xs={12} md={4}>
-          <OrderDetailsInfo
-            customer={currentMentainance?.customer}
-            delivery={currentMentainance?.delivery}
-            payment={currentMentainance?.payment}
-            shippingAddress={currentMentainance?.shippingAddress}
-          />
-        </Grid> */}
       </Grid>
 
       <Grid container spacing={3} sx={{ marginTop: "20px" }}>
@@ -134,13 +132,13 @@ export default function OrderDetailsView({ id }) {
             }))}
             setTableData={setTableData}
             tableLabels={[
-              { id: "is_periodic", key_to_update: "is_periodic", label: t("clause_type"), editable: false, creatable: true, type: "select", options: [{ value: "periodic", label: t("periodic") }, { value: "not-periodic", label: t("not_periodic") }], width: 180 },
-              { id: "clause", key_to_update: "related_id", label: t("clause"), editable: false, creatable: true, type: "select", options: [...periodic_maintenance, ...maintenance_specs?.filter(item => !item?.is_periodic)]?.map(item => ({ value: item.id, label: item?.name })), width: 180 },
-              { id: "cost", key_to_update: "cost", label: t("cost"), editable: true, creatable: true, type: "number", width: 140 },
-              { id: "quantity", key_to_update: "quantity", label: t("qte"), editable: true, creatable: true, type: "number", width: 100 },
-              { id: "tpiece_status", key_to_update: "piece_status", label: t("piece_status"), editable: true, creatable: true, type: "select", options: data?.piece_status_enum?.map(item => ({ value: item.key, label: item?.translations[0]?.name })), width: 140 },
-              { id: "total", key_to_update: "total", label: t("total"), editable: false, creatable: false, width: 140 },
-              { id: "note", key_to_update: "note", label: t("note"), editable: true, creatable: true, width: 140 },
+              { id: "is_periodic", key_to_update: "is_periodic", label: t("clause_type"), editable: false, creatable: true, type: "select", options: [{ value: "periodic", label: t("periodic") }, { value: "not-periodic", label: t("not_periodic") }], width: 100 },
+              { id: "clause", key_to_update: "related_id", label: t("clause"), editable: false, creatable: true, type: "select", options: [...periodic_maintenance, ...maintenance_specs?.filter(item => !item?.is_periodic)]?.map(item => ({ value: item.id, label: item?.name })), width:160 },
+              { id: "cost", key_to_update: "cost", label: t("cost"), editable: true, creatable: true, type: "number", width: 100 },
+              { id: "quantity", key_to_update: "quantity", label: t("qte"), editable: true, creatable: true, type: "number", width: 80 },
+              { id: "tpiece_status", key_to_update: "piece_status", label: t("piece_status"), editable: true, creatable: true, type: "select", options: data?.piece_status_enum?.map(item => ({ value: item.key, label: item?.translations[0]?.name })), width: 100 },
+              { id: "total", key_to_update: "total", label: t("total"), editable: false, creatable: false, width: 100 },
+              { id: "note", key_to_update: "note", label: t("note"), editable: true, creatable: true, width: 200 },
             ]}
           />
         </Grid>

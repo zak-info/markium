@@ -39,9 +39,9 @@ export default function OrderDetailsItems({
   const router = useRouter();
 
 
-    const day = { ar: "يوم", en: 'day' }
-    const days = { ar: "ايام", en: 'day' }
-    const { currentLang } = useLocales()
+  const day = { ar: "يوم", en: 'day' }
+  const days = { ar: "ايام", en: 'day' }
+  const { currentLang } = useLocales()
 
   const handleViewCar = useCallback(
     (id) => {
@@ -71,9 +71,14 @@ export default function OrderDetailsItems({
           <Box sx={{ typography: 'subtitle2' }}>{fDate(currentMentainance?.entry_date)}</Box>
         </Stack>
         <Stack direction="row">
-          <Box sx={{ width: 160, color: 'text.secondary' }}>{t('maintainType')}</Box>
-          <Box sx={{ typography: 'subtitle2' }}>{maintenance_type || "--"}</Box>
+          <Box sx={{ width: 160, color: 'text.secondary' }}>{t('exitExpectedDate')}</Box>
+          <Box sx={{ typography: 'subtitle2' }}>{fDate(currentMentainance?.exit_date)}</Box>
         </Stack>
+        <Stack direction="row">
+          <Box sx={{ width: 160, color: 'text.secondary' }}>{t('remaining_days')}</Box>
+          <Box sx={{ typography: 'subtitle2' }}>{currentMentainance?.remaining_days ? currentMentainance?.remaining_days : "--"}  {currentMentainance?.remaining_days ? currentMentainance?.remaining_days > 2 && currentMentainance?.remaining_days < 11 ? days[currentLang?.value] : day[currentLang?.value] : "-"} </Box>
+        </Stack>
+
         {/* <Stack direction="row">
           <Box sx={{ width: 160, color: 'text.secondary' }}>{t('vehcileColor')}</Box>
           <Box sx={{ typography: 'subtitle2' }}>23444vf</Box>
@@ -82,12 +87,8 @@ export default function OrderDetailsItems({
       <Divider orientation="vertical" flexItem />
       <Stack spacing={2} sx={{ my: 1, typography: 'body2' }}>
         <Stack direction="row">
-          <Box sx={{ width: 160, color: 'text.secondary' }}>{t('exitExpectedDate')}</Box>
-          <Box sx={{ typography: 'subtitle2' }}>{fDate(currentMentainance?.exit_date)}</Box>
-        </Stack>
-        <Stack direction="row">
-          <Box sx={{ width: 160, color: 'text.secondary' }}>{t('remaining_days')}</Box>
-          <Box sx={{ typography: 'subtitle2' }}>{currentMentainance?.remaining_days ? currentMentainance?.remaining_days : "--" }  {currentMentainance?.remaining_days ? currentMentainance?.remaining_days >2 && currentMentainance?.remaining_days < 11 ? days[currentLang?.value] :day[currentLang?.value]   : "-" } </Box>
+          <Box sx={{ width: 160, color: 'text.secondary' }}>{t('maintainType')}</Box>
+          <Box sx={{ typography: 'subtitle2' }}>{maintenance_type || "--"}</Box>
         </Stack>
         {/* <Stack direction="row">
           <Box sx={{ width: 160, color: 'text.secondary' }}>{t('remaining')}</Box>
@@ -110,6 +111,10 @@ export default function OrderDetailsItems({
           <Box sx={{ width: 160, color: 'text.secondary' }}>{t('contract')}</Box>
           <Box sx={{ typography: 'subtitle2' }}>{currentMentainance?.contract?.ref || "--"}</Box>
         </Stack>
+        <Stack direction="row">
+          <Box sx={{ width: 160, color: 'text.secondary' }}>{t('driver')}</Box>
+          <Box sx={{ typography: 'subtitle2' }}>{currentMentainance?.driver?.name || "--"}</Box>
+        </Stack>
       </Stack>
     </Stack>
   );
@@ -123,7 +128,7 @@ export default function OrderDetailsItems({
           px: 3,
         }}
       >
-        <Scrollbar>
+        {/* <Scrollbar> */}
           <Stack
             direction="row"
             alignItems="center"
@@ -134,7 +139,7 @@ export default function OrderDetailsItems({
             }}
           >
             <Box
-              onClick={()=> handleViewCar(currentCar?.id)}
+              onClick={() => handleViewCar(currentCar?.id)}
               sx={{
                 cursor: 'pointer',
                 '&:hover': {
@@ -155,37 +160,52 @@ export default function OrderDetailsItems({
                 }}
               />
             </Box>
+          </Stack>
+          {/* <Stack
+            direction="row"
+            alignItems="center"
+            sx={{
+              py: 3,
+              minWidth: 640,
+              borderBottom: (theme) => `dashed 2px ${theme.palette.background.neutral}`,
+            }}
+          >
+            <Box sx={{ width: 160, color: 'text.secondary' }}>{t('driver')}</Box>
+
             {
               currentMentainance?.driver ?
-              <Box
-              onClick={()=> handleViewDriver(currentMentainance?.driver?.id)}
-              sx={{
-                cursor: 'pointer',
-                '&:hover': {
-                  textDecoration: 'underline',
-                },
-              }}
-            >
-              <ListItemText
-                primary={currentMentainance?.driver?.name || "--"}
-                secondary={currentMentainance?.driver?.phone_number || "--"}
-                primaryTypographyProps={{
-                  typography: 'body2',
-                }}
-                secondaryTypographyProps={{
-                  component: 'span',
-                  color: 'text.disabled',
-                  mt: 0.5,
-                }}
-              />
-            </Box>
-            :
-            null
+                <Box
+                  onClick={() => handleViewDriver(currentMentainance?.driver?.id)}
+                  sx={{
+                    cursor: 'pointer',
+                    '&:hover': {
+                      textDecoration: 'underline',
+                    },
+                  }}
+                >
+                  <ListItemText
+                    primary={currentMentainance?.driver?.name || "--"}
+                    secondary={currentMentainance?.driver?.phone_number || "--"}
+                    primaryTypographyProps={{
+                      typography: 'body2',
+                    }}
+                    secondaryTypographyProps={{
+                      component: 'span',
+                      color: 'text.disabled',
+                      mt: 0.5,
+                    }}
+                  />
+                </Box>
+                :
+                "--"
             }
-          </Stack>
-        </Scrollbar>
+          </Stack> */}
+
+
+        {/* </Scrollbar> */}
 
         {renderTotal}
+        
       </Stack>
     </Card>
   );
