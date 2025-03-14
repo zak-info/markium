@@ -106,6 +106,8 @@ export default function OrderTableRow({ row, maintenance, selected, onViewRow, o
           {status?.translations?.name}
         </Label>
       </TableCell>
+      <TableCell align="center">{row?.cause}</TableCell>
+
       {/* <TableCell align="center"> {status?.translations?.name} </TableCell> */}
       {/* <TableCell align="center"> - </TableCell> */}
 

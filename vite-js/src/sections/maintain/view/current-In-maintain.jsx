@@ -65,6 +65,9 @@ export default function NotificationsListView() {
   const { car } = useGetCarUnderMaintenance();
   const { maintenance } = useGetMaintenance();
 
+  console.log("car : ",car);
+  console.log("maintenance : ",maintenance);
+
   const { t } = useTranslate();
 
   const TABLE_HEAD = [
@@ -78,6 +81,7 @@ export default function NotificationsListView() {
 
     { id: 'totalAmount', label: t('workSite'), width: 140 },
     { id: 'malfunction', label: t('status'), width: 140 },
+    { id: 'cause', label: t('cause'), width: 140 },
     { id: 'actions', label: t('actions'), width: 140 },
 
     // { id: 'tenantName', label: t('state'), width: 140 },
