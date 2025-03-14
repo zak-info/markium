@@ -13,6 +13,7 @@ import { bgBlur } from 'src/theme/css';
 
 import Logo from 'src/components/logo';
 import SvgColor from 'src/components/svg-color';
+import { m } from 'framer-motion';
 import { useSettingsContext } from 'src/components/settings';
 
 import Searchbar from '../common/searchbar';
@@ -23,6 +24,8 @@ import ContactsPopover from '../common/contacts-popover';
 import LanguagePopover from '../common/language-popover';
 import NotificationsPopover from '../common/notifications-popover';
 import { useState } from 'react';
+import Iconify from 'src/components/iconify';
+import { Icon } from '@iconify/react';
 
 // ----------------------------------------------------------------------
 
@@ -78,19 +81,28 @@ export default function Header({ onOpenNav }) {
           </label>
         </div> */}
 
-        <div>
-          <input
-            type="checkbox"
-            className="checkbox"
-            id="checkbox"
-            checked={darkMode === "dark"}
-            onChange={Toggle}
-          />
-          <label htmlFor="checkbox" className="checkbox-label">
-            <i className={`fas ${darkMode === "dark" ? "fa-moon" : "fa-sun"}`}></i>
-            <span className="ball"></span>
-          </label>
+        <div style={{display:"flex",alignItems:"center"}}>
+          {darkMode == "dark" ?
+            <m.button  initial={{ opacity: 0 }}  animate={{ opacity: 1 }} transition={{duration: 0.2}} onClick={Toggle} style={{background:"none",border:"none"}}>
+              <Icon icon="duo-icons:moon-stars" width={24} height={24} style={{color: "#fffefe"}} />
+            </m.button>
+            :
+            null}
+          {darkMode == "light" ?
+            <m.button initial={{ opacity: 0 }}  animate={{ opacity: 1 }} transition={{duration: 0.2}} onClick={Toggle} style={{background:"none",border:"none"}}>
+              <Icon icon="duo-icons:sun" width={24} height={24} />
+            </m.button>
+            :
+            null}
         </div>
+
+        {/* <div className="toggle-container">
+          <Icon icon="duo-icons:moon-stars" className="icon" />
+          <div className={`toggle-switch ${darkMode}`} onClick={Toggle}>
+            <div className="toggle-ball"></div>
+          </div>
+          <Icon icon="duo-icons:sun" className="icon" />
+        </div> */}
 
 
         <LanguagePopover />
