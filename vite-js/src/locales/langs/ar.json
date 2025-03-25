@@ -230,8 +230,8 @@
   "document_type": "نوع المستند",
   "document_name": "اسم المستند",
   "upload_invoice_file": "رفع ملف الفاتورة",
-  "state": "الولاية",
-  "duration": "المدة",
+  "state": "المدينة",
+  "duration": " المدة (شهر) ",
   "add_representor": "إضافة ممثل",
   "contract_details": "تفاصيل العقد",
   "unclaimed": "غير مطالب به",
@@ -267,7 +267,7 @@
   "status_description": "وصف الحالة",
   "representor_name": "اسم الممثل",
   "representor_contact_number": "رقم اتصال الممثل",
-  "choose_state": "اختر الولاية",
+  "choose_state": "اختر المدينة",
   "choose_neighborhood": "اختر الحي",
   "choose_client": "اختر العميل",
   "starting_from": "ابتداءً من",
@@ -305,6 +305,11 @@
   "create_maintenance": "إنشاء صيانة",
   "cause": "سبب العطل",
   "contractList":"قائمة العقود",
-  "remaining_days":"عدد الايام المتبقية"
+  "remaining_days":"عدد الايام المتبقية",
+   "show_less":"عرض اقل",
+  "show_more":"عرض المزيد ",
+  "is_soon":"اقترب الموعد النهائي للصيانة",
+  "in_processing":"الصيانة تمضي على الوقت",
+  "too_late":"الصيانة متأخرة"
 
 }

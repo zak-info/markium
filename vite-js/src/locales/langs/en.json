@@ -247,5 +247,11 @@
   "create_maintenance": "Create Maintenance",
   "cause": "Cause",
   "contractList":"Contract List",
-  "remaining_days":"Remaining Days"
+  "remaining_days":"Remaining Days",
+  "show_less":"Show Less",
+  "show_more":"Show More",
+  "in_processing":"maintenance is on schedule",
+  "is_soon":"maintenance deadline is approaching.",
+  "too_late":"The maintenance is delayed."
+
 }

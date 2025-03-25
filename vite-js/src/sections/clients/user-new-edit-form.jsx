@@ -226,7 +226,7 @@ export default function UserNewEditForm({ currentClient }) {
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                {!currentClient ? t('addNewClient') : 'Save Changes'}
+                {!currentClient ? t('addNewClient') : t('saveChange')}
               </LoadingButton>
             </Stack>
 

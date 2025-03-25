@@ -103,17 +103,6 @@ export default function UserNewEditForm({ currentDocument }) {
   const onSubmit = handleSubmit(async (data) => {
     try {
 
-      // await new Promise((resolve) => setTimeout(resolve, 500));
-      // console.log("lets add document");
-      // attachment_name_id: currentDocument?.attachment_name_id || '',
-      // attachment_type_id: currentDocument?.attachment_type_id || '',
-      // attachable_id: currentDocument?.attachable_id || '',
-      // attachable_type: currentDocument?.attachable_type || '',
-      // document_duration_days: currentDocument?.document_duration_days || '',
-      // expiry_date: currentDocument?.expiry_date || '',
-      // release_date: currentDocument?.release_date || '',
-
-
       const formData = new FormData();
       formData.append("attachment", data.attachment);
       formData.append("invoice", data.invoice);
@@ -132,6 +121,8 @@ export default function UserNewEditForm({ currentDocument }) {
       console.info('DATA is  : ', data);
       // body.release_date = format(new Date(data.release_date), 'yyyy-MM-dd');
       // body.expiry_date = format(new Date(data.expiry_date), 'yyyy-MM-dd');
+
+      console.log("form :::",formData);
       const response = currentDocument?.id ? await editDocument(currentDocument?.id, formData) : await createDocument(formData);
 
       enqueueSnackbar(currentDocument ? 'Update success!' : 'Create success!');

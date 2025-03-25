@@ -7,12 +7,15 @@ import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 
 import { useTranslate } from 'src/locales';
 import ContractNewEditForm from '../contract-new-edit-form';
+import { useGetContract } from 'src/api/contract';
 
 // ----------------------------------------------------------------------
 
-export default function ContractCreateView() {
+export default function ContractCreateView({id}) {
   const settings = useSettingsContext();
   const { t } = useTranslate();
+
+  const { contract } = useGetContract(id);
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
@@ -34,7 +37,7 @@ export default function ContractCreateView() {
         }}
       />
 
-      <ContractNewEditForm />
+      <ContractNewEditForm contract={contract} />
     </Container>
   );
 }

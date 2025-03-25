@@ -20,6 +20,9 @@ import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 import { useCallback } from 'react';
 import { useLocales } from 'src/locales';
+import StatusLabel from './StatusLabel';
+import EditExitDate from './EditExitDatePopUp';
+import EditExitDatePopUp from './EditExitDatePopUp';
 
 // ----------------------------------------------------------------------
 
@@ -72,11 +75,17 @@ export default function OrderDetailsItems({
         </Stack>
         <Stack direction="row">
           <Box sx={{ width: 160, color: 'text.secondary' }}>{t('exitExpectedDate')}</Box>
-          <Box sx={{ typography: 'subtitle2' }}>{fDate(currentMentainance?.exit_date)}</Box>
+          <Box rowGap={3} columnGap={11} display="grid" gridTemplateColumns={{ xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)', }}>
+            <Box sx={{ typography: 'subtitle2' }}>{fDate(currentMentainance?.exit_date)}</Box>
+            <EditExitDatePopUp currentMentainance={currentMentainance} />
+          </Box>
         </Stack>
         <Stack direction="row">
           <Box sx={{ width: 160, color: 'text.secondary' }}>{t('remaining_days')}</Box>
-          <Box sx={{ typography: 'subtitle2' }}>{currentMentainance?.remaining_days ? currentMentainance?.remaining_days : "--"}  {currentMentainance?.remaining_days ? currentMentainance?.remaining_days > 2 && currentMentainance?.remaining_days < 11 ? days[currentLang?.value] : day[currentLang?.value] : "-"} </Box>
+          <Box rowGap={3} columnGap={0} display="grid" gridTemplateColumns={{ xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)', }}>
+            <Box sx={{ typography: 'subtitle2' }}>{currentMentainance?.remaining_days ? currentMentainance?.remaining_days : "--"}  {currentMentainance?.remaining_days ? currentMentainance?.remaining_days > 2 && currentMentainance?.remaining_days < 11 ? days[currentLang?.value] : day[currentLang?.value] : "-"} </Box>
+            <StatusLabel date={currentMentainance?.exit_date} />
+          </Box>
         </Stack>
 
         {/* <Stack direction="row">
@@ -129,39 +138,39 @@ export default function OrderDetailsItems({
         }}
       >
         {/* <Scrollbar> */}
-          <Stack
-            direction="row"
-            alignItems="center"
+        <Stack
+          direction="row"
+          alignItems="center"
+          sx={{
+            py: 3,
+            minWidth: 640,
+            borderBottom: (theme) => `dashed 2px ${theme.palette.background.neutral}`,
+          }}
+        >
+          <Box
+            onClick={() => handleViewCar(currentCar?.id)}
             sx={{
-              py: 3,
-              minWidth: 640,
-              borderBottom: (theme) => `dashed 2px ${theme.palette.background.neutral}`,
+              cursor: 'pointer',
+              '&:hover': {
+                textDecoration: 'underline',
+              },
             }}
           >
-            <Box
-              onClick={() => handleViewCar(currentCar?.id)}
-              sx={{
-                cursor: 'pointer',
-                '&:hover': {
-                  textDecoration: 'underline',
-                },
+            <ListItemText
+              primary={currentCar?.model?.translations?.name + " - (" + currentCar?.model?.company?.translations?.name + ")"}
+              secondary={currentCar?.plat_number}
+              primaryTypographyProps={{
+                typography: 'body2',
               }}
-            >
-              <ListItemText
-                primary={currentCar?.model?.translations?.name + " - (" + currentCar?.model?.company?.translations?.name + ")"}
-                secondary={currentCar?.plat_number}
-                primaryTypographyProps={{
-                  typography: 'body2',
-                }}
-                secondaryTypographyProps={{
-                  component: 'span',
-                  color: 'text.disabled',
-                  mt: 0.5,
-                }}
-              />
-            </Box>
-          </Stack>
-          {/* <Stack
+              secondaryTypographyProps={{
+                component: 'span',
+                color: 'text.disabled',
+                mt: 0.5,
+              }}
+            />
+          </Box>
+        </Stack>
+        {/* <Stack
             direction="row"
             alignItems="center"
             sx={{
@@ -205,7 +214,7 @@ export default function OrderDetailsItems({
         {/* </Scrollbar> */}
 
         {renderTotal}
-        
+
       </Stack>
     </Card>
   );

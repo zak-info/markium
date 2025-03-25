@@ -76,7 +76,7 @@ export default function AppNewInvoice3({
     setAddProcess(false)
   };
   const handleAddRowold = () => {
-    const newRow = { id: tableData.length + 1, is_periodic: "not-periodic", clause: "", cost: "", qte: "", piece_status: "", total: "",note:"", new: "true" };
+    const newRow = { id: tableData.length + 1, is_periodic: "not-periodic", clause: "", cost: "", qte: "", piece_status: "", total: "", note: "", new: "true" };
     setTableData((prev) => [...prev, newRow]);
     setEditing({ rowId: newRow.id, field: "type" }); // Start editing the first cell of the new row
   };
@@ -89,7 +89,7 @@ export default function AppNewInvoice3({
     setPostloader(true)
     try {
       for (const row of editedRows) {
-        let body = { maintenance_id: Number(maintenance_id), cost: Number(row?.cost), quantity: Number(row?.quantity), piece_status: row?.piece_status,note: row?.note }
+        let body = { maintenance_id: Number(maintenance_id), cost: Number(row?.cost), quantity: Number(row?.quantity), piece_status: row?.piece_status, note: row?.note }
         console.log("Saving changes 1 :", body);
 
         if (row?.is_periodic == "not-periodic") {
@@ -97,13 +97,18 @@ export default function AppNewInvoice3({
         } else if (row?.is_periodic == "periodic") {
           body.period_maintenance_id = Number(body?.related_id);
         }
-        console.log("Saving changes 2 :", body);
+
         if (row?.new === "true") {
           console.log("create");
           // await addNewMaintenanceClause(body);
         } else {
           console.log("edit");
-          await EditMaintenanceClause(row.id, { piece_status: body.piece_status, cost: body.cost, quantity: body.quantity,note:body?.note });
+          let editBody = { piece_status: body.piece_status, cost: body.cost, quantity: body.quantity, note: body?.note };
+          if (!body.note) {
+            delete editBody.note
+          }
+          console.log("Saving changes 2 :", editBody);
+          await EditMaintenanceClause(row.id, editBody);
         }
       }
       enqueueSnackbar("Success operation",);
@@ -194,6 +199,7 @@ import { addNewMaintenanceClause, EditMaintenanceClause } from "src/api/clauses"
 import { LoadingButton } from "@mui/lab";
 import { enqueueSnackbar } from "notistack";
 import UserNewEditForm from "../clause/user-new-edit-form";
+import ExpandableText from "./ExpandableText";
 
 function AppNewInvoiceRow({ row, tableLabels, editing, handleEdit, handleChange, handleBlur }) {
   const popover = usePopover();
@@ -207,7 +213,7 @@ function AppNewInvoiceRow({ row, tableLabels, editing, handleEdit, handleChange,
     <>
       <TableRow>
         {tableLabels.map(({ id, editable, creatable, type, options, key_to_update }) => (
-          <TableCell key={id} onClick={() => editable && handleEdit(row.id, id)} sx={{width:id == "note"? "40%":"auto"}} >
+          <TableCell key={id} onClick={() => editable && handleEdit(row.id, id)} sx={{ width: id == "note" ? "40%" : "auto" }} >
             {editing.rowId === row.id && editing.field === id ? (
               editable ? (
                 type === "select" ? (
@@ -226,7 +232,7 @@ function AppNewInvoiceRow({ row, tableLabels, editing, handleEdit, handleChange,
                 ) : type === "date" ? (
                   <DatePicker
                     value={row[id] || null}
-                    format="dd/MM/yyyy"  
+                    format="dd/MM/yyyy"
                     onChange={(newValue) => handleChange({ target: { value: newValue } }, row.id, key_to_update)}
                     onBlur={handleBlur}
                   />
@@ -240,10 +246,16 @@ function AppNewInvoiceRow({ row, tableLabels, editing, handleEdit, handleChange,
                   />
                 )
               ) : (
-                row[id] || "--"
+                id == "note" ?
+                  <ExpandableText text={row[id]} />
+                  :
+                  row[id] || "--"
               )
             ) : (
-              row[id] || "--"
+              id == "note" ?
+                <ExpandableText text={row[id]} />
+                :
+                row[id] || "--"
             )}
           </TableCell>
         ))}
@@ -275,3 +287,6 @@ AppNewInvoiceRow.propTypes = {
   handleChange: PropTypes.func,
   handleBlur: PropTypes.func,
 };
+
+
+

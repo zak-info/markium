@@ -135,6 +135,13 @@ export default function OrderListView() {
     setFilters(defaultFilters);
   }, []);
 
+  const handleEditRow = useCallback(
+    (id) => {
+      router.push(paths.dashboard.clients.editContracts(id));
+    },
+    [router]
+  );
+
   const handleDeleteRow = useCallback(
     (id) => {
       const deleteRow = tableData.filter((row) => row.id !== id);
@@ -278,6 +285,7 @@ export default function OrderListView() {
                         selected={table.selected.includes(row.id)}
                         onSelectRow={() => table.onSelectRow(row.id)}
                         onDeleteRow={() => handleDeleteRow(row.id)}
+                        onEditRow={() => handleEditRow(row.id)}
                         onViewRow={() => handleViewRow(row.id)}
                       />
                     ))}

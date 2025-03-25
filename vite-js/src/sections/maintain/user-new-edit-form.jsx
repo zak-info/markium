@@ -122,6 +122,7 @@ export default function UserNewEditForm({ currentMentainance }) {
       let body = data
       body.entry_date = format(new Date(data.entry_date), 'yyyy-MM-dd')
       body.exit_date = format(new Date(data.exit_date), 'yyyy-MM-dd')
+     
       const response = currentMentainance?.id ? await editMaintenance(currentMentainance?.id, body) : await createMaintenance(body);
       enqueueSnackbar(currentMentainance ? 'Update success!' : 'Create success!');
       router.push(paths.dashboard.maintenance.root);

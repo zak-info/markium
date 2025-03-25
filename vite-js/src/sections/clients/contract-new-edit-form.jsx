@@ -42,11 +42,11 @@ import { TableHeadCustom } from 'src/components/table';
 import CarsAutocomplete from 'src/components/hook-form/rhf-CarsAutocomplete';
 import { useGetCar } from 'src/api/car';
 import { useGetDrivers } from 'src/api/drivers';
-import { createContracts } from 'src/api/contract';
+import { createContracts, editContracts } from 'src/api/contract';
 
 // ----------------------------------------------------------------------
 
-export default function ContractNewEditForm({ currentUser }) {
+export default function ContractNewEditForm({ contract }) {
   const router = useRouter();
 
   const { enqueueSnackbar } = useSnackbar();
@@ -73,17 +73,17 @@ export default function ContractNewEditForm({ currentUser }) {
 
   const defaultValues = useMemo(
     () => ({
-      client_id: currentUser?.client_id || '',
-      payment_method: currentUser?.payment_method || '',
-      duration: currentUser?.duration || 0,
-      clauseable_id: currentUser?.clauseable_id || '',
-      clauseable_type: currentUser?.clauseable_type || '',
-      starting_from: currentUser?.starting_from || "",
-      cost: currentUser?.cost || 0,
-      // rep_name: currentUser?.rep_name || '',
-      // rep_contact_number: currentUser?.rep_contact_number || '',
+      client_id: contract?.client_id || '',
+      payment_method: contract?.payment_method || '',
+      duration: contract?.duration || 0,
+      // clauseable_id: contract?.clauseable_id || '',
+      // clauseable_type: contract?.clauseable_type || '',
+      starting_from: contract?.starting_from || new Date(),
+      // cost: contract?.cost || 0,
+      // rep_name: contract?.rep_name || '',
+      // rep_contact_number: contract?.rep_contact_number || '',
     }),
-    [currentUser]
+    [contract]
   );
 
   const methods = useForm({
@@ -102,7 +102,7 @@ export default function ContractNewEditForm({ currentUser }) {
 
   const values = watch();
 
-  const [clauses, setClauses] = useState([])
+  const [clauses, setClauses] = useState(contract?.clauses ? [...contract?.clauses]:[])
   const handleAddClause = () => {
     setClauses([...clauses, { id: clauses?.length > 0 ? clauses[clauses.length - 1].id + 1 : 1, clauseable_id: values.clauseable_id, clauseable_type: values.clauseable_type, duration: values.duration, cost: values.cost,starting_from:values?.starting_from }])
     setValue("clauseable_id", 0)
@@ -122,8 +122,9 @@ export default function ContractNewEditForm({ currentUser }) {
       // reset();
       console.log(data);
       delete data?.id;
-      const response = currentUser?.id ? await editDocument(currentUser?.id, data) : await createContracts({ client_id: data?.client_id, payment_method: data?.payment_method, clauses:clauses.map(({ id, ...rest }) => rest) });
-      enqueueSnackbar(currentUser ? 'Update success!' : 'Create success!');
+      let body = { client_id: data?.client_id, payment_method: data?.payment_method, clauses:clauses.map(({ id, ...rest }) => rest) }
+      const response = contract?.id ? await editContracts(contract?.id, body) : await createContracts(body);
+      enqueueSnackbar(contract ? 'Update success!' : 'Create success!');
       router.push(paths.dashboard.clients.contracts);
     } catch (error) {
       Object.values(error?.data).forEach(array => {
@@ -135,21 +136,7 @@ export default function ContractNewEditForm({ currentUser }) {
     }
   });
 
-  const handleDrop = useCallback(
-    (acceptedFiles) => {
-      const file = acceptedFiles[0];
-
-      const newFile = Object.assign(file, {
-        preview: URL.createObjectURL(file),
-      });
-
-      if (file) {
-        setValue('avatarUrl', newFile, { shouldValidate: true });
-      }
-    },
-    [setValue]
-  );
-
+  
   const options = ['نيسان', 'تويتا'];
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>
@@ -265,7 +252,7 @@ export default function ContractNewEditForm({ currentUser }) {
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                {!currentUser ? t('addNewContract') : 'Save Changes'}
+                {!contract ? t('addNewContract') : t('saveChange')}
               </LoadingButton>
             </Stack>
 
@@ -279,7 +266,7 @@ export default function ContractNewEditForm({ currentUser }) {
 }
 
 ContractNewEditForm.propTypes = {
-  currentUser: PropTypes.object,
+  contract: PropTypes.object,
 };
 
 

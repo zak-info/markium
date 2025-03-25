@@ -361,23 +361,35 @@ export function MarkAsCompletedForm({ maintenanceId, close }) {
     try {
       console.log("hi there 2");
       const formData = new FormData();
-      formData.append("invoice", data.invoice);
-      console.log("hi there 3");
-      const response = await markMaintenanceAsCompeleted(maintenanceId, formData)
+  
+      if (Array.isArray(data.invoice)) {
+        data.invoice.forEach((file) => {
+          formData.append("invoice[]", file);
+        });
+      } else {
+        formData.append("invoice[]", data.invoice);
+      }
+      
+  
+      console.log("hi there 3 formData", formData.getAll("invoice[]")); // Debugging
+  
+      const response = await markMaintenanceAsCompeleted(maintenanceId, formData);
       console.log("hi there 4");
+  
       enqueueSnackbar('Update success!', { variant: 'success' });
       close();
-      // router.push(paths.dashboard.documents.root);
-      // reset();
     } catch (error) {
       console.error(error);
-      Object.values(error?.data).forEach(array => {
+      Object.values(error?.data || {}).forEach(array => {
         array.forEach(text => {
           enqueueSnackbar(text, { variant: 'error' });
         });
       });
     }
   });
+  
+  
+  
 
 
   return (
@@ -393,7 +405,7 @@ export function MarkAsCompletedForm({ maintenanceId, close }) {
               sm: 'repeat(1, 1fr)',
             }}
           >
-            <RHFUpload name="invoice" lable={"Upload Invoice File"} />
+            <RHFUpload multiple name="invoice" lable={"Upload Invoice File"} />
 
           </Box>
           <Stack alignItems="flex-end" sx={{ mt: 3 }}>

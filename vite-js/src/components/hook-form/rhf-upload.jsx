@@ -55,57 +55,47 @@ RHFUploadBox.propTypes = {
 
 // ----------------------------------------------------------------------
 
-export function RHFUpload({ name, multiple,lable, helperText, ...other }) {
-  const { control,setValue } = useFormContext();
+export function RHFUpload({ name, multiple = false, label, helperText, ...other }) {
+  const { control, setValue } = useFormContext();
 
   return (
     <Controller
       name={name}
       control={control}
-      render={({ field, fieldState: { error } }) =>
-        multiple ? (
-          <Upload
-            lable={lable}
-            multiple
-            accept={{ 'image/*': [] }}
-            files={field}
-            field={field}
-            error={!!error}
-            helperText={
-              (!!error || helperText) && (
-                <FormHelperText error={!!error} sx={{ px: 2 }}>
-                  {error ? error?.message : helperText}
-                </FormHelperText>
-              )
+      render={({ field, fieldState: { error } }) => (
+        <Upload
+          label={label}
+          multiple={multiple}
+          files={multiple ? field.value || [] : undefined}
+          file={!multiple ? field.value : undefined}
+          error={!!error}
+          onChange={(selectedFiles) => {
+            if (multiple) {
+              setValue(name, selectedFiles);
+            } else {
+              setValue(name, selectedFiles[0]);
             }
-            {...other}
-          />
-        ) : (
-          <Upload
-            // accept={{ 'image/*': [] }}
-            lable={lable}
-            file={field?.value}
-            name={name}
-            error={!!error}
-            onDelete={()=>{setValue(name,"")}}
-            field={field}
-            helperText={
-              (!!error || helperText) && (
-                <FormHelperText error={!!error} sx={{ px: 2 }}>
-                  {error ? error?.message : helperText}
-                </FormHelperText>
-              )
-            }
-            {...other}
-          />
-        )
-      }
+          }}
+          onDelete={() => {
+            setValue(name, multiple ? [] : '');
+          }}
+          helperText={
+            (!!error || helperText) && (
+              <FormHelperText error={!!error} sx={{ px: 2 }}>
+                {error ? error.message : helperText}
+              </FormHelperText>
+            )
+          }
+          {...other}
+        />
+      )}
     />
   );
 }
 
 RHFUpload.propTypes = {
-  helperText: PropTypes.string,
+  name: PropTypes.string.isRequired,
   multiple: PropTypes.bool,
-  name: PropTypes.string,
+  label: PropTypes.string,
+  helperText: PropTypes.string,
 };

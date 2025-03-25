@@ -25,7 +25,7 @@ export default function UserCreateView() {
             href: paths.dashboard.root,
           },
           {
-            name: t('ClientsList'),
+            name: t('clients'),
             href: paths.dashboard.clients.root,
           },
           { name: t('addNewClient') },

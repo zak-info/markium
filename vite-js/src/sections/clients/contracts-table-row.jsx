@@ -26,7 +26,7 @@ import { t } from 'i18next';
 
 // ----------------------------------------------------------------------
 
-export default function OrderTableRow({ row,payment_method, client, selected, onViewRow, onSelectRow, onDeleteRow }) {
+export default function OrderTableRow({ row, payment_method, client, selected, onViewRow, onSelectRow, onDeleteRow ,onEditRow}) {
   const { clauses, status, orderNumber, createdAt, customer, totalQuantity, subTotal } = row;
 
   const confirm = useBoolean();
@@ -97,8 +97,8 @@ export default function OrderTableRow({ row,payment_method, client, selected, on
       </TableCell>
       <TableCell>
         <ListItemText
-          primary={t("remaining") +" "+ row?.remaining_unclaimed_amount}
-          secondary={t("paid")+" " + row?.paid_amount}
+          primary={t("remaining") + " " + row?.remaining_unclaimed_amount}
+          secondary={t("paid") + " " + row?.paid_amount}
           primaryTypographyProps={{ typography: 'body2', noWrap: true }}
           secondaryTypographyProps={{
             mt: 0.5,
@@ -106,6 +106,12 @@ export default function OrderTableRow({ row,payment_method, client, selected, on
             typography: 'caption',
           }}
         />
+      </TableCell>
+
+      <TableCell align="start" sx={{ px: 1, whiteSpace: 'nowrap' }}>
+        <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
+          <Iconify icon="eva:more-vertical-fill" />
+        </IconButton>
       </TableCell>
 
     </TableRow>
@@ -175,7 +181,7 @@ export default function OrderTableRow({ row,payment_method, client, selected, on
         arrow="right-top"
         sx={{ width: 140 }}
       >
-        <MenuItem
+        {/* <MenuItem
           onClick={() => {
             confirm.onTrue();
             popover.onClose();
@@ -184,9 +190,9 @@ export default function OrderTableRow({ row,payment_method, client, selected, on
         >
           <Iconify icon="solar:trash-bin-trash-bold" />
           Delete
-        </MenuItem>
+        </MenuItem> */}
 
-        <MenuItem
+        {/* <MenuItem
           onClick={() => {
             onViewRow();
             popover.onClose();
@@ -194,6 +200,12 @@ export default function OrderTableRow({ row,payment_method, client, selected, on
         >
           <Iconify icon="solar:eye-bold" />
           View
+        </MenuItem> */}
+        <MenuItem
+          onClick={() => onEditRow()}
+        >
+          <Iconify icon="solar:eye-bold" />
+          {t("edit")}
         </MenuItem>
       </CustomPopover>
 

@@ -119,7 +119,7 @@ export function useNavData() {
             icon: ICONS.file,
             children: [
               { title: t('documents'), path: paths.dashboard.documents.root },
-              { title: t('allNoti'), path: paths.dashboard.documents.alerts },
+              // { title: t('allNoti'), path: paths.dashboard.documents.alerts },
               // { title: t('list'), path: paths.dashboard.user.list },
               // { title: t('create'), path: paths.dashboard.user.new },
               // { title: t('edit'), path: paths.dashboard.user.demo.edit },
@@ -134,8 +134,8 @@ export function useNavData() {
             icon: ICONS.driver,
             children: [
               { title: t('driversList'), path: paths.dashboard.drivers.root },
-              { title: t('alerts'), path: paths.dashboard.drivers.alerts },
-              { title: t('salaries'), path: paths.dashboard.drivers.salary },
+              // { title: t('alerts'), path: paths.dashboard.drivers.alerts },
+              // { title: t('salaries'), path: paths.dashboard.drivers.salary },
               // {
               //   title: t('details'),
               //   path: paths.dashboard.product.demo.details,
@@ -164,29 +164,24 @@ export function useNavData() {
       {
         subheader: t(t('other_cases')),
         items: [
-          {
-            title: t('settings'),
-            path: paths.dashboard.settings.root,
-            icon: ICONS.settings,
-            roles: ['admin', 'manager'],
-          },
-          {
-            title: t('reports'),
-            path: paths.dashboard.permission,
-            icon: ICONS.blog,
-            roles: ['admin', 'manager'],
-          },
-          {
-            // default roles : All roles can see this entry.
-            // roles: ['user'] Only users can see this item.
-            // roles: ['admin'] Only admin can see this item.
-            // roles: ['admin', 'manager'] Only admin/manager can see this item.
-            // Reference from 'src/guards/RoleBasedGuard'.
-            title: t('users'),
-            path: paths.dashboard.user.list,
-            icon: ICONS.lock,
-            roles: ['admin', 'manager'],
-          },
+          // {
+          //   title: t('settings'),
+          //   path: paths.dashboard.settings.root,
+          //   icon: ICONS.settings,
+          //   roles: ['admin', 'manager'],
+          // },
+          // {
+          //   title: t('reports'),
+          //   path: paths.dashboard.permission,
+          //   icon: ICONS.blog,
+          //   roles: ['admin', 'manager'],
+          // },
+          // {
+          //   title: t('users'),
+          //   path: paths.dashboard.user.list,
+          //   icon: ICONS.lock,
+          //   roles: ['admin', 'manager'],
+          // },
         ],
       },
     ],
