@@ -32,8 +32,11 @@ import { useContext, useEffect, useState } from 'react';
 import { TableNoData } from 'src/components/table';
 import EmptyContent from 'src/components/empty-content';
 import { useGetStatistics } from 'src/api/statistics';
+import { useLocales } from 'src/locales';
 
 // ----------------------------------------------------------------------
+
+const langsNum = { en: 0, ar: 1 }
 
 export default function OverviewAppView() {
   const { user } = useMockedUser();
@@ -42,11 +45,14 @@ export default function OverviewAppView() {
   const theme = useTheme();
 
   const settings = useSettingsContext();
-  
+
   const { statistics } = useGetStatistics();
+  const { currentLang } = useLocales()
+  console.log("currentLang : ", currentLang);
   const { car } = useGetCar();
   const { claims } = useGetAllClaim();
-  console.log(claims);
+  console.log("statistics : ", statistics);
+  console.log("cars_by_status : ", statistics?.cars_by_status?.map(item => ({ lable: item?.status?.key, value: item?.count })));
   const { drivers } = useGetDrivers();
   const { data } = useValues();
   // const {SystemData} = useContext(DataContext);
@@ -115,15 +121,19 @@ export default function OverviewAppView() {
         <Grid xs={12} md={6} lg={4}>
           <AppCurrentDownload
             title={t('vehicles')}
+            // series: [
+            //   { label: t("available"), value: car?.filter(item => item?.status?.key == "available").length },
+            //   { label: t("under_preparation"), value: car?.filter(item => item?.status?.key == "under_preparation").length },
+            //   { label: t("rented"), value: car?.filter(item => item?.status?.key == "rented").length },
+            //   { label: t("under_maintenance"), value: car?.filter(item => item?.status?.key == "under_maintenance").length },
+            // ],
             chart={{
-              series: [
-                { label: t("available"), value: car?.filter(item => item?.status?.key == "available").length },
-                { label: t("under_preparation"), value: car?.filter(item => item?.status?.key == "under_preparation").length },
-                { label: t("rented"), value: car?.filter(item => item?.status?.key == "rented").length },
-                { label: t("under_maintenance"), value: car?.filter(item => item?.status?.key == "under_maintenance").length },
-              ],
-              // series:statistics?.cars_by_status?.map(item => ({lable:item?.status?.key,value:item?.count}))
+              series: statistics?.cars_by_status?.map(item => ({
+                label: item?.status?.translations[langsNum[currentLang.value]]?.name,
+                value: item?.count
+              })) || []
             }}
+
           />
         </Grid>
 
@@ -138,7 +148,12 @@ export default function OverviewAppView() {
                 { label: t('severely_overdue_claim'), value: claims?.filter(item => item?.status?.key == "severely_overdue_claim").length },
                 { label: t('paid_claim'), value: claims?.filter(item => item?.status?.key == "paid_claim").length },
               ],
-              // series:statistics?.claims_by_status?.map(item => ({lable:item?.status?.key,value:item?.count}))
+            }}
+            chartss={{
+              series: statistics?.claims_by_status?.map(item => ({
+                label: item?.status?.translations[langsNum[currentLang.value]]?.name,
+                value: item?.count
+              })) || []
             }}
           />
         </Grid>
@@ -150,12 +165,16 @@ export default function OverviewAppView() {
                 title={t('drivers')}
                 chart={{
                   series: [
-                    { label: t('not_rented'), value:statistics?.drivers_by_rental?.not_rented},
+                    { label: t('not_rented'), value: statistics?.drivers_by_rental?.not_rented },
                     { label: t('rented'), value: statistics?.drivers_by_rental?.rented },
-                    // { label: 'Window', value: 53345 },
-                    // { label: 'iOS', value: 44313 },
-                    // { label: 'Android', value: 78343 },
                   ],
+                }}
+
+                chartssss={{
+                  series: [
+                    { lable: t("rented"), value: statistics?.drivers_by_rental?.rented },
+                    { lable: t("not_rented"), value: statistics?.drivers_by_rental?.not_rented }
+                  ]
                 }}
               />
               :

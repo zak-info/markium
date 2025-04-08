@@ -3,6 +3,7 @@ import merge from 'lodash/merge';
 import { alpha, useTheme } from '@mui/material/styles';
 
 import { useResponsive } from 'src/hooks/use-responsive';
+import { t } from 'i18next';
 
 // ----------------------------------------------------------------------
 
@@ -13,7 +14,7 @@ export default function useChart(options) {
 
   const LABEL_TOTAL = {
     show: true,
-    label: 'Total',
+    label: t('total'),
     color: theme.palette.text.secondary,
     fontSize: theme.typography.subtitle2.fontSize,
     fontWeight: theme.typography.subtitle2.fontWeight,
