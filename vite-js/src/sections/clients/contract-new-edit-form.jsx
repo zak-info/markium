@@ -43,6 +43,8 @@ import CarsAutocomplete from 'src/components/hook-form/rhf-CarsAutocomplete';
 import { useGetCar } from 'src/api/car';
 import { useGetDrivers } from 'src/api/drivers';
 import { createContracts, editContracts } from 'src/api/contract';
+import SelfEditTable from './SelfEditTable';
+import { fDate } from 'src/utils/format-time';
 
 // ----------------------------------------------------------------------
 
@@ -56,8 +58,8 @@ export default function ContractNewEditForm({ contract }) {
   const { clients } = useGetClients()
   const { drivers } = useGetDrivers()
   const { currentLang } = useLocales()
-  const attachables = [{ name: "car", id: 1,lable: { ar: "سيارة", en: "car" } }, { name: "driver", id: 2,lable: { ar: "سائق", en: "driver" } }]
-  const attachables2 = { car:{ ar: "سيارة", en: "car" } ,driver:{ ar: "سائق", en: "driver" }} 
+  const attachables = [{ name: "car", id: 1, lable: { ar: "سيارة", en: "car" } }, { name: "driver", id: 2, lable: { ar: "سائق", en: "driver" } }]
+  const attachables2 = { car: { ar: "سيارة", en: "car" }, driver: { ar: "سائق", en: "driver" } }
 
   const NewUserSchema = Yup.object().shape({
     client_id: Yup.number().required('client is required'),
@@ -102,9 +104,9 @@ export default function ContractNewEditForm({ contract }) {
 
   const values = watch();
 
-  const [clauses, setClauses] = useState(contract?.clauses ? [...contract?.clauses]:[])
+  const [clauses, setClauses] = useState(contract?.clauses ? [...contract?.clauses] : [])
   const handleAddClause = () => {
-    setClauses([...clauses, { id: clauses?.length > 0 ? clauses[clauses.length - 1].id + 1 : 1, clauseable_id: values.clauseable_id, clauseable_type: values.clauseable_type, duration: values.duration, cost: values.cost,starting_from:values?.starting_from }])
+    setClauses([...clauses, { id: clauses?.length > 0 ? clauses[clauses.length - 1].id + 1 : 1, clauseable_id: values.clauseable_id, clauseable_type: values.clauseable_type, duration: values.duration, cost: values.cost, starting_from: values?.starting_from }])
     setValue("clauseable_id", 0)
     setValue("clauseable_type", " ")
     setValue("cost", 0)
@@ -122,7 +124,7 @@ export default function ContractNewEditForm({ contract }) {
       // reset();
       console.log(data);
       delete data?.id;
-      let body = { client_id: data?.client_id, payment_method: data?.payment_method, clauses:clauses.map(({ id, ...rest }) => rest) }
+      let body = { client_id: data?.client_id, payment_method: data?.payment_method, clauses: clauses.map(({ id, ...rest }) => rest) }
       const response = contract?.id ? await editContracts(contract?.id, body) : await createContracts(body);
       enqueueSnackbar(contract ? 'Update success!' : 'Create success!');
       router.push(paths.dashboard.clients.contracts);
@@ -136,12 +138,12 @@ export default function ContractNewEditForm({ contract }) {
     }
   });
 
-  
+
   const options = ['نيسان', 'تويتا'];
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>
       <Grid container spacing={3}>
-        <Grid xs={12} md={10}>
+        <Grid xs={12} md={16}>
           <Card sx={{ p: 3 }}>
             <Box
               rowGap={3}
@@ -173,81 +175,108 @@ export default function ContractNewEditForm({ contract }) {
 
             </Box>
 
+            <Grid xs={12} md={12}>
+              <SelfEditTable
+                sx={{ marginTop: "10px" }}
+                title={t('contract_clauses')}
+                parentId={contract?.id}
+                // tableData={clauses?.map(item=> ({...item,clauseableType:attachables?.find(i => i?.name == item?.clauseable_type)?.lable[currentLang?.value],total:Number(item?.cost) * Number(item?.duration),startingFrom:fDate(item?.starting_from),clauseable:clauseable_type == "car" ? car?.find(i => i?.id == item?.clauseable_id)?.model?.translations?.name+" "+car?.find(i => i?.id == item?.clauseable_id)?.plat_number:drivers?.find(i => i?.id == item?.clauseable_id)?.name})})) }
+                tableData={clauses?.map(item => ({
+                  ...item,
+                  clauseableType: attachables?.find(i => i?.name === item?.clauseable_type)?.lable[currentLang?.value],
+                  total: Number(item?.cost) * Number(item?.duration),
+                  startingFrom: fDate(item?.starting_from),
+                  clauseable: item?.clauseable_type == "car"
+                    ? `${car?.find(i => i?.id === item?.clauseable_id)?.model?.translations?.name} ${car?.find(i => i?.id === item?.clauseable_id)?.plat_number}`
+                    : drivers?.find(i => i?.id === item?.clauseable_id)?.name
+                }))}
+                setTableData={setClauses}
+                tableLabels={[
+                  { id: "clauseableType", key_to_update: "clauseable_type", label: t("attachment_type"), editable: false, creatable: true, type: "select", options: attachables?.map((item) => ({ value: item?.name, lable: item?.lable[currentLang.value] })), width: 160 },
+                  { id: "clauseable", key_to_update: "clauseable_id", label: t("car"), editable: false, creatable: true, type: "car_autocomplete", options: car, width: 240 },
+                  { id: "cost", key_to_update: "cost", label: t("cost"), editable: true, creatable: true, type: "number", width: 160 },
+                  { id: "duration", key_to_update: "duration", label: t("duration"), editable: true, creatable: true, type: "number", width: 120 },
+                  { id: "total", key_to_update: "total", label: t("total"), editable: false, creatable: false, type: "number", width: 160 },
+                  { id: "startingFrom", key_to_update: "starting_from", label: t("starting_from"), editable: true, creatable: true, type: "date", width: 180 },
+                ]}
+              />
+            </Grid>
 
-            <div style={{ marginTop: '30px', border: "1px solid gray", padding: "15px", borderRadius: '10px' }}>
-              <Label >{t("addClause")}</Label>
+
+            {/* <div style={{ marginTop: '30px', border: "1px solid gray", padding: "15px", borderRadius: '10px' }}> */}
+            {/* <Label >{t("addClause")}</Label> */}
 
 
-              {clauses.map((row, index) => (
+            {/* {clauses.map((row, index) => (
                 <Box key={index} rowGap={3} columnGap={1} alignItems={"center"} display="grid" gridTemplateColumns={{ xs: 'repeat(6, 1fr)', sm: 'repeat(6, 1fr)', }} sx={{ marginTop: "10px" }}>
                   <Label >
-                    { attachables2[row?.clauseable_type][currentLang?.value]}
+                    {attachables2[row?.clauseable_type][currentLang?.value]}
                   </Label>
                   <Label >{car.find(item => item.id == row?.clauseable_id).plat_number}</Label>
                   <Label >{row?.cost + ".00"}</Label>
-                  <Label >{row?.duration +" "+ data?.unit_enum[0]?.translations[0]?.name}</Label>
+                  <Label >{row?.duration + " " + data?.unit_enum[0]?.translations[0]?.name}</Label>
                   <Label >{row?.cost * row?.duration + ".00"}</Label>
                   <Iconify onClick={() => handleRemoveClause(row?.clauseable_id)} icon="solar:trash-bin-trash-bold" />
                 </Box>
-              ))}
+              ))} */}
 
 
 
-              <Box
-                rowGap={3}
-                columnGap={2}
-                display="grid"
-                gridTemplateColumns={{
-                  xs: 'repeat(1, 1fr)',
-                  sm: 'repeat(2, 1fr)',
+            <Box
+              rowGap={3}
+              columnGap={2}
+              display="grid"
+              gridTemplateColumns={{
+                xs: 'repeat(1, 1fr)',
+                sm: 'repeat(5, 1fr)',
+              }}
+              sx={{ marginTop: "30px" }}
+            >
+
+              <RHFSelect name="clauseable_type" label={t('attachment_type')}>
+                <Divider sx={{ borderStyle: 'dashed' }} />
+                {attachables?.map((type) => (
+                  <MenuItem key={type?.id} value={type.name}>
+                    {type?.lable[currentLang.value]}
+                  </MenuItem>
+                ))}
+              </RHFSelect>
+              {
+                values.clauseable_type == "car" ?
+                  <CarsAutocomplete options={car} name="clauseable_id" label={t('car')} placeholder='filter with plat_number' />
+                  : values.clauseable_type == "driver" ?
+                    <SimpleAutocomplete options={drivers} name="clauseable_id" label={t('drivers')} placeholder='filter with name' />
+                    :
+                    <RHFSelect disabled={!values.clauseable_type} name="clauseable_id" label={t('attachable')}>
+                      <Divider sx={{ borderStyle: 'dashed' }} />
+                      <MenuItem value={"1"}>
+                        name
+                      </MenuItem>
+                    </RHFSelect>
+              }
+              <RHFTextField name="duration" label={t('duration')} />
+              <RHFTextField name="cost" label={t('cost')} type={"number"} />
+              <DatePicker
+                required
+                name="starting_from"
+                label={t('starting_from')}
+                format="dd/MM/yyyy"
+                value={values?.starting_from || new Date()}
+                onChange={(date) => setValue('starting_from', date)}
+                slotProps={{
+                  textField: {
+                    fullWidth: true,
+                  },
                 }}
-                sx={{ marginTop: "30px" }}
-              >
+              />
+            </Box>
+            <Stack alignItems="flex-end" sx={{ mt: 3 }}>
+              <LoadingButton type="button" onClick={handleAddClause} variant="contained" loading={false}>
+                {t("addClause")}
+              </LoadingButton>
+            </Stack>
 
-                <RHFSelect name="clauseable_type" label={t('attachment_type')}>
-                  <Divider sx={{ borderStyle: 'dashed' }} />
-                  {attachables?.map((type) => (
-                    <MenuItem key={type?.id} value={type.name}>
-                      {type?.lable[currentLang.value]}
-                    </MenuItem>
-                  ))}
-                </RHFSelect>
-                {
-                  values.clauseable_type == "car" ?
-                    <CarsAutocomplete options={car} name="clauseable_id" label={t('car')} placeholder='filter with plat_number' />
-                    : values.clauseable_type == "driver" ?
-                      <SimpleAutocomplete options={drivers} name="clauseable_id" label={t('drivers')} placeholder='filter with name' />
-                      :
-                      <RHFSelect disabled={!values.clauseable_type} name="clauseable_id" label={t('attachable')}>
-                        <Divider sx={{ borderStyle: 'dashed' }} />
-                        <MenuItem value={"1"}>
-                          name
-                        </MenuItem>
-                      </RHFSelect>
-                }
-                <RHFTextField name="duration" label={t('duration')} />
-                <RHFTextField name="cost" label={t('cost')} type={"number"} />
-                <DatePicker
-                  required
-                  name="starting_from"
-                  label={t('starting_from')}
-                  format="dd/MM/yyyy"  
-                  value={values?.starting_from || new Date()}
-                  onChange={(date) => setValue('starting_from', date)}
-                  slotProps={{
-                    textField: {
-                      fullWidth: true,
-                    },
-                  }}
-                />
-              </Box>
-              <Stack alignItems="flex-end" sx={{ mt: 3 }}>
-                <LoadingButton type="button" onClick={handleAddClause} variant="contained" loading={false}>
-                  {t("addClause")}
-                </LoadingButton>
-              </Stack>
-
-            </div>
+            {/* </div> */}
 
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>

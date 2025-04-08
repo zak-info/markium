@@ -239,3 +239,8 @@ export async function markCarAsAvailable(id) {
 
   return await axios.post(URL);
 }
+
+export async function updateCarODO(id,body) {
+  const URL = endpoints.cars.list + '/' + id+"/odometer";
+  return await axios.post(URL, body);
+}

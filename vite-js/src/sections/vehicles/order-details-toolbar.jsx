@@ -14,10 +14,15 @@ import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import { useTranslation } from 'react-i18next';
+import { paths } from 'src/routes/paths';
+import { useBoolean } from 'src/hooks/use-boolean';
+import ContentDialog from 'src/components/custom-dialog/content-dialog';
+import { EditODO } from './EditODO';
 
 // ----------------------------------------------------------------------
 
 export default function OrderDetailsToolbar({
+  idCar,
   status,
   backLink,
   createdAt,
@@ -28,6 +33,8 @@ export default function OrderDetailsToolbar({
   const popover = usePopover();
 
   const { t } = useTranslation();
+  const confirm = useBoolean();
+  const completed = useBoolean();
 
   return (
     <>
@@ -39,7 +46,7 @@ export default function OrderDetailsToolbar({
         }}
       >
         <Stack spacing={1} direction="row" alignItems="flex-start">
-          <IconButton component={RouterLink} href={backLink}>
+          <IconButton component={RouterLink} href={paths.dashboard.vehicle.root}>
             <Iconify icon="eva:arrow-ios-back-fill" />
           </IconButton>
 
@@ -68,7 +75,7 @@ export default function OrderDetailsToolbar({
             </Typography>
           </Stack>
         </Stack>
-        {/* 
+
         <Stack
           flexGrow={1}
           spacing={1.5}
@@ -76,28 +83,15 @@ export default function OrderDetailsToolbar({
           alignItems="center"
           justifyContent="flex-end"
         >
-          <Button
-            color="inherit"
-            variant="outlined"
-            endIcon={<Iconify icon="eva:arrow-ios-downward-fill" />}
-            onClick={popover.onOpen}
-            sx={{ textTransform: 'capitalize' }}
-          >
-            {status?.translations?.[0]?.name}
-          </Button>
 
-          <Button
-            color="inherit"
-            variant="outlined"
-            startIcon={<Iconify icon="solar:printer-minimalistic-bold" />}
-          >
-            Print
-          </Button>
 
-          <Button color="inherit" variant="contained" startIcon={<Iconify icon="solar:pen-bold" />}>
-            Edit
+          <Button component={RouterLink} href={paths.dashboard.vehicle.edit(idCar)} color="inherit" variant="contained" startIcon={<Iconify icon="solar:pen-bold" />}>
+            {t("edit")}
           </Button>
-        </Stack> */}
+          <Button onClick={() => { completed.onTrue(); popover.onClose(); }} color="inherit" variant="contained" startIcon={<Iconify icon="solar:pen-bold" />}>
+            {t("odometer")}
+          </Button>
+        </Stack>
       </Stack>
 
       <CustomPopover
@@ -119,6 +113,14 @@ export default function OrderDetailsToolbar({
           </MenuItem>
         ))}
       </CustomPopover>
+      <ContentDialog
+        open={completed.value}
+        onClose={completed.onFalse}
+        title={t("odometer")}
+        content={
+          <EditODO idCar={idCar} close={() => completed?.onFalse()} />
+        }
+      />
     </>
   );
 }

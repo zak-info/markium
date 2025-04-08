@@ -11,6 +11,7 @@ import MultiFilePreview from './preview-multi-file';
 import SingleFilePreview from './preview-single-file';
 import RejectionFiles from './errors-rejection-files';
 import { useState, useEffect } from 'react';
+import { t } from 'i18next';
 
 export default function Upload({
   disabled,
@@ -87,12 +88,12 @@ export default function Upload({
           <SingleFilePreview imgUrl={URL.createObjectURL(previewFiles)} filename={previewFiles.name} />
         ) : (
           <Stack spacing={3} alignItems="center" justifyContent="center">
-            <Typography variant="h6">{label || 'Drop or Select file'}</Typography>
+            <Typography variant="h6">{label || t('drop_or_select_file')}</Typography>
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
               <Box component="span" sx={{ mx: 0.5, color: 'primary.main', textDecoration: 'underline' }}>
-                Browse
+                {t("browse")}
               </Box>
-              from your device
+              {t("from_your_device")}
             </Typography>
           </Stack>
         )}

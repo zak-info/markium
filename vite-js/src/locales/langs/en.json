@@ -252,6 +252,10 @@
   "show_more":"Show More",
   "in_processing":"maintenance is on schedule",
   "is_soon":"maintenance deadline is approaching.",
-  "too_late":"The maintenance is delayed."
+  "too_late":"The maintenance is delayed.",
+  "drop_or_select_file": "Drop or select a file",
+  "from_your_device": "From your device",
+  "submit":"Submit"
+
 
 }

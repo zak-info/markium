@@ -34,6 +34,7 @@ import OrderDetailsInfo3 from '../order-details-info3';
 import CarLogsListView from '../CarLogsTable/NotificationsListView';
 import CarPmListView from '../CarPmTable/NotificationsListView';
 import CarCostInputTable from '../CarCost&InputTable/NotificationsListView';
+import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 
 // ----------------------------------------------------------------------
 
@@ -74,9 +75,11 @@ export default function OrderDetailsView({ id }) {
         orderNumber={carDetails?.car_model_id}
         createdAt={carDetails?.created_at}
         status={carDetails?.status}
+        idCar={id}
         onChangeStatus={handleChangeStatus}
         statusOptions={ORDER_STATUS_OPTIONS}
       />
+      
       <Box
         rowGap={3}
         columnGap={3}
@@ -108,7 +111,7 @@ export default function OrderDetailsView({ id }) {
             </Stack>
           </Grid>
           <Grid xs={12} md={4}  >
-            <Stack spacing={3} direction={{ xs: 'column-reverse', md: 'column' ,height:'100%'}}>
+            <Stack spacing={3} direction={{ xs: 'column-reverse', md: 'column', height: '100%' }}>
               <OrderDetailsInfo
                 carDetails={carDetails}
                 customer={currentOrder?.customer}
@@ -126,20 +129,8 @@ export default function OrderDetailsView({ id }) {
               payment={currentOrder?.payment}
               shippingAddress={currentOrder?.shippingAddress}
             />
-            {/* <AppNewInvoiceBreakdown
-              style={{ marginTop: "20px" }}
-              title={t('Vehicul_Documents')}
-              tableData={carDocuments}
-              tableLabels={[
-                { id: 'document', label: t('document') },
-                { id: 'attach', label: t('attach') },
-                { id: 'invoice', label: t('invoice') },
-                // { id: 'status', label: t('cost') },
-              ]}
-            /> */}
           </Grid>
         </Box>
-        {/* <Grid container spacing={3} className='w-full flex flex-col pt-6 gap-4'> */}
         <Card sx={{ p: 1 }}>
           <Tabs
             value={section}
@@ -147,7 +138,7 @@ export default function OrderDetailsView({ id }) {
             aria-label="icon position tabs example"
             textColor="primary"
           >
-            <Tab  icon={<Iconify icon="duo-icons:settings" />} iconPosition="start" label={t("maintenance")} />
+            <Tab icon={<Iconify icon="duo-icons:settings" />} iconPosition="start" label={t("maintenance")} />
             <Tab icon={<Iconify icon="lets-icons:file-dock-search-fill" />} iconPosition="start" label={t("documents")} />
             <Tab icon={<Iconify icon="lets-icons:alarm-fill" />} iconPosition="start" label={t("alerts")} />
             <Tab icon={<Iconify icon="lets-icons:refresh" />} iconPosition="start" label={t("periodic_maintenances")} />
@@ -200,37 +191,13 @@ export default function OrderDetailsView({ id }) {
                         <CarPmListView id={id} />
                       </Grid>
                       : section == 4 ?
-                      <CarCostInputTable id={id} />
-                      :
-                      null
+                        <CarCostInputTable id={id} />
+                        :
+                        null
             }
           </Box>
-          {/* <Box
-            rowGap={3}
-            columnGap={3}
-            display="grid"
-            gridTemplateColumns={{
-              xs: 'repeat(1, 1fr)',
-              sm: 'repeat(1, 1fr)',
-            }}
-          >
-
-           
-          </Box> */}
         </Box>
       </Box>
-      {/* <Grid xs={12} md={12}> */}
-      {/* <AppNewInvoiceBreakdown
-            title={t('recurringFaults')}
-            tableData={breakdown}
-            tableLabels={[
-              { id: 'id', label: t('maintenanceType') },
-              { id: 'category', label: t('numberOfRepetitions') },
-              { id: 'status', label: t('cost') },
-            ]}
-          /> */}
-      {/* </Grid> */}
-      {/* </Grid> */}
     </Container>
   );
 }
