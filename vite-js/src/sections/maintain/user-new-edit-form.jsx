@@ -69,7 +69,6 @@ export default function UserNewEditForm({ currentMentainance }) {
     // .required('Cause is required')
 
     exit_date: Yup.date().nullable(), // Allowing an empty string for exit date (since it's not required)
-    // Exit date validation for the future
   });
   const defaultValues = useMemo(
     () => ({
