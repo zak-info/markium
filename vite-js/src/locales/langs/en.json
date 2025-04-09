@@ -256,7 +256,9 @@
   "drop_or_select_file": "Drop or select a file",
   "from_your_device": "From your device",
   "submit":"Submit",
-  "are_you_sure":"Are You Sure ??"
-
-
+  "are_you_sure":"Are You Sure ??",
+  "release_car":"Release Car",
+  "operation_success": "Operation Success",
+  "operation_failed":"Operation Failed",
+  "operation_error": "Operation Error"
 }

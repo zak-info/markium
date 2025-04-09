@@ -55,20 +55,20 @@ export default function UserNewEditForm({ currentMentainance }) {
   const { t } = useTranslate();
 
   const NewUserSchema = Yup.object({
-    state_id: Yup.number()
-      .required('State ID is required')
-      .positive('State ID must be a positive number')
-      .integer('State ID must be an integer'),
+    // state_id: Yup.number()
+    //   .required('State ID is required')
+    //   .positive('State ID must be a positive number')
+    //   .integer('State ID must be an integer'),
 
-    maintainance_type: Yup.string().required('Type is required'),
+    // maintainance_type: Yup.string().required('Type is required'),
 
-    car_id: Yup.number().required('Car is required'),
-    entry_date: Yup.date().required('Entry date is required'), // Validates that the entry date is not in the future
-    cause: Yup.string()
-      .min(3, 'Cause must be at least 3 characters long'), // Validates that cause has a minimum length of 3
-    // .required('Cause is required')
+    // car_id: Yup.number().required('Car is required'),
+    // entry_date: Yup.date().required('Entry date is required'), // Validates that the entry date is not in the future
+    // cause: Yup.string()
+    //   .min(3, 'Cause must be at least 3 characters long'), // Validates that cause has a minimum length of 3
+    // // .required('Cause is required')
 
-    exit_date: Yup.date().nullable(), // Allowing an empty string for exit date (since it's not required)
+    // exit_date: Yup.date().nullable(), // Allowing an empty string for exit date (since it's not required)
   });
   const defaultValues = useMemo(
     () => ({
@@ -118,13 +118,14 @@ export default function UserNewEditForm({ currentMentainance }) {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      console.log("lets do it now ");
       let body = data
-      body.entry_date = format(new Date(data.entry_date), 'yyyy-MM-dd')
-      body.exit_date = format(new Date(data.exit_date), 'yyyy-MM-dd')
-     
+      // body.entry_date = format(new Date(data.entry_date), 'yyyy-MM-dd')
+      // body.exit_date = format(new Date(data.exit_date), 'yyyy-MM-dd')
+      // body.car_id = searchParams.get("car_id")
+      console.log("lets do it now ");
       const response = currentMentainance?.id ? await editMaintenance(currentMentainance?.id, body) : await createMaintenance(body);
-      enqueueSnackbar(currentMentainance ? 'Update success!' : 'Create success!');
+      console.log("body : body: ",body);
+      enqueueSnackbar(t("operation_success"));
       router.push(paths.dashboard.maintenance.root);
       console.info('DATA', body);
     } catch (error) {
@@ -137,31 +138,6 @@ export default function UserNewEditForm({ currentMentainance }) {
     }
   });
 
-  const handleDrop = useCallback(
-    (acceptedFiles) => {
-      const file = acceptedFiles[0];
-
-      const newFile = Object.assign(file, {
-        preview: URL.createObjectURL(file),
-      });
-
-      if (file) {
-        setValue('avatarUrl', newFile, { shouldValidate: true });
-      }
-    },
-    [setValue]
-  );
-
-  const maintainType = [
-    {
-      value: 'urgent',
-      label: 'طارئ',
-    },
-    {
-      label: 'دوري',
-      value: 'periodic',
-    },
-  ];
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>
       <Grid container spacing={3}>
@@ -176,26 +152,8 @@ export default function UserNewEditForm({ currentMentainance }) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              {/* <RHFTextField required name="car_plat_number" label={t('plateNumber')} /> */}
 
-              {/* <RHFSelect required name="car_plat_number" label={t('car_plat_number')}>
-                <Divider sx={{ borderStyle: 'dashed' }} />
-                {car?.map((item) => (
-                  <MenuItem key={item?.plat_number} value={item.plat_number}>
-                    <ListItemText
-                      primary={item?.plat_number}
-                      secondary={item?.model?.company?.translations?.name}
-                      primaryTypographyProps={{ typography: 'body2', noWrap: true }}
-                      secondaryTypographyProps={{
-                        mt: 0.5,
-                        component: 'span',
-                        typography: 'caption',
-                      }}
-                    />
-                  </MenuItem>
-                ))}
-              </RHFSelect> */}
-              <CarsAutocomplete required options={car} name="car_id" label={t('car')} placeholder={t('search_by')+" "+t('plateNumber')} car_id={searchParams.get("car_id")} disabled={searchParams.get("car_id") ? true:false} />
+              <CarsAutocomplete required options={car} name="car_id" label={t('car')} placeholder={t('search_by')+" "+t('plateNumber')}  car_id={searchParams.get("car_id")} disabled={searchParams.get("car_id") ? true:false} />
 
               <DatePicker
                 label={t('entryDate')}
@@ -222,7 +180,7 @@ export default function UserNewEditForm({ currentMentainance }) {
                     fullWidth: true,
                   },
                 }}
-                minDate={new Date()}
+                // minDate={new Date()}
               />
 
               <RHFSelect required name="state_id" label={t('workSite')}>

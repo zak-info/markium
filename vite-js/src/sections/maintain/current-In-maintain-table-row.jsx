@@ -27,6 +27,7 @@ import { useLocales } from 'src/locales';
 import { t } from 'i18next';
 import ContentDialog from 'src/components/custom-dialog/content-dialog';
 import { MarkAsCompletedForm } from './order-table-row';
+import ReleaseCar from './releaseCar';
 
 // ----------------------------------------------------------------------
 
@@ -42,6 +43,7 @@ export default function OrderTableRow({ row, maintenance, selected, onViewRow, o
   const { currentLang } = useLocales()
 
   const popover = usePopover();
+  const release = useBoolean();
   const completed = useBoolean();
 
   const renderPrimary = (
@@ -176,11 +178,21 @@ export default function OrderTableRow({ row, maintenance, selected, onViewRow, o
 
         <MenuItem
           onClick={() => {
-            completed.onTrue();
+            release.onTrue();
             popover.onClose();
           }}
         >
           <Iconify icon="lets-icons:sign-out-squre-duotone-line" />
+          {t("release_car")}
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            completed.onTrue();
+            popover.onClose();
+          }}
+          disabled
+        >
+          <Iconify icon="solar:pen-bold" />
           {t("mark_as_completed")}
         </MenuItem>
 
@@ -208,6 +220,14 @@ export default function OrderTableRow({ row, maintenance, selected, onViewRow, o
 
       </CustomPopover>
 
+      <ContentDialog
+        open={release.value}
+        onClose={release.onFalse}
+        title={t("release_car")}
+        content={
+          <ReleaseCar maintenanceId={row?.id} close={() => release?.onFalse()} />
+        }
+      />
       <ContentDialog
         open={completed.value}
         onClose={completed.onFalse}

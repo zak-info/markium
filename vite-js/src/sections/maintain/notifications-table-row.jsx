@@ -52,8 +52,8 @@ export default function OrderTableRow({ row, onCreateRow, car, action, selected,
           }}
         >
           <ListItemText
-            primary={car?.model?.translations?.name}
-            secondary={car?.model?.company?.translations?.name}
+            primary={car?.plat_number}
+            secondary={car?.model?.translations?.name + " - " +car?.model?.company?.translations?.name}
             primaryTypographyProps={{ typography: 'body2', noWrap: true }}
             secondaryTypographyProps={{
               mt: 0.5,
