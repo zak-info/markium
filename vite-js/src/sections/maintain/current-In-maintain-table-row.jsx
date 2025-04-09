@@ -185,7 +185,7 @@ export default function OrderTableRow({ row, maintenance, selected, onViewRow, o
           <Iconify icon="lets-icons:sign-out-squre-duotone-line" />
           {t("release_car")}
         </MenuItem>
-        <MenuItem
+        {/* <MenuItem
           onClick={() => {
             completed.onTrue();
             popover.onClose();
@@ -194,7 +194,7 @@ export default function OrderTableRow({ row, maintenance, selected, onViewRow, o
         >
           <Iconify icon="solar:pen-bold" />
           {t("mark_as_completed")}
-        </MenuItem>
+        </MenuItem> */}
 
         {/* <MenuItem
           onClick={() => {

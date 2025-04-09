@@ -120,11 +120,11 @@ export default function UserNewEditForm({ currentMentainance }) {
     try {
       let body = data
       // body.entry_date = format(new Date(data.entry_date), 'yyyy-MM-dd')
-      // body.exit_date = format(new Date(data.exit_date), 'yyyy-MM-dd')
+      // body.exit_date = await format(new Date(data.exit_date), 'yyyy-MM-dd')
       // body.car_id = searchParams.get("car_id")
       console.log("lets do it now ");
-      const response = currentMentainance?.id ? await editMaintenance(currentMentainance?.id, body) : await createMaintenance(body);
       console.log("body : body: ",body);
+      const response = currentMentainance?.id ? await editMaintenance(currentMentainance?.id, body) : await createMaintenance(body);
       enqueueSnackbar(t("operation_success"));
       router.push(paths.dashboard.maintenance.root);
       console.info('DATA', body);
@@ -173,14 +173,14 @@ export default function UserNewEditForm({ currentMentainance }) {
                 label={t('exitDate')}
                 value={values.exit_date ? new Date(values.exit_date) : new Date()}
                 name="exit_date"
-                onChange={(newValue) => setValue('exit_date', fDate(newValue, 'dd/MM/yyyy'))}
+                onChange={(newValue) => setValue('exit_date', fDate(newValue))}
                 format="dd/MM/yyyy"  
                 slotProps={{
                   textField: {
                     fullWidth: true,
                   },
                 }}
-                // minDate={new Date()}
+                minDate={new Date()}
               />
 
               <RHFSelect required name="state_id" label={t('workSite')}>
