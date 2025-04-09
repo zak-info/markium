@@ -81,7 +81,7 @@ export default function UserProfileView({id}) {
         links={[
           { name: t('dashboard'), href: paths.dashboard.root },
           { name: t('contracts'), href: paths.dashboard.clients.contracts },
-          { name: "contractPage"},
+          { name: t("contract_details")},
         ]}
         sx={{
           mb: { xs: 3, md: 5 },

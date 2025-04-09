@@ -162,7 +162,7 @@ export default function OrderTableRow({ row, maintenance, selected, onViewRow, o
         open={popover.open}
         onClose={popover.onClose}
         arrow="right-top"
-        sx={{ width: 200 }}
+        sx={{ width: 220 }}
       >
         <MenuItem
           onClick={() => {
@@ -174,15 +174,15 @@ export default function OrderTableRow({ row, maintenance, selected, onViewRow, o
           {t("view_maintenance")}
         </MenuItem>
 
-        {/* <MenuItem
+        <MenuItem
           onClick={() => {
             completed.onTrue();
             popover.onClose();
           }}
         >
-          <Iconify icon="solar:pen-bold" />
+          <Iconify icon="lets-icons:sign-out-squre-duotone-line" />
           {t("mark_as_completed")}
-        </MenuItem> */}
+        </MenuItem>
 
         {/* <MenuItem
           onClick={() => {
@@ -211,7 +211,7 @@ export default function OrderTableRow({ row, maintenance, selected, onViewRow, o
       <ContentDialog
         open={completed.value}
         onClose={completed.onFalse}
-        title="Complete"
+        title={t("are_you_sure")}
         content={
           <MarkAsCompletedForm maintenanceId={row?.id} close={() => completed?.onFalse()} />
         }

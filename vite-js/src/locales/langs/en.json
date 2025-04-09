@@ -255,7 +255,8 @@
   "too_late":"The maintenance is delayed.",
   "drop_or_select_file": "Drop or select a file",
   "from_your_device": "From your device",
-  "submit":"Submit"
+  "submit":"Submit",
+  "are_you_sure":"Are You Sure ??"
 
 
 }

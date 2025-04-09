@@ -119,6 +119,7 @@ export default function UserNewEditForm({ currentMentainance }) {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
+      console.log("lets do it now ");
       let body = data
       body.entry_date = format(new Date(data.entry_date), 'yyyy-MM-dd')
       body.exit_date = format(new Date(data.exit_date), 'yyyy-MM-dd')
@@ -195,7 +196,7 @@ export default function UserNewEditForm({ currentMentainance }) {
                   </MenuItem>
                 ))}
               </RHFSelect> */}
-              <CarsAutocomplete required options={car} name="car_id" label={t('car')} placeholder='filter with plat_number' car_id={searchParams.get("car_id")} disabled={searchParams.get("car_id") ? true:false} />
+              <CarsAutocomplete required options={car} name="car_id" label={t('car')} placeholder={t('search_by')+" "+t('plateNumber')} car_id={searchParams.get("car_id")} disabled={searchParams.get("car_id") ? true:false} />
 
               <DatePicker
                 label={t('entryDate')}

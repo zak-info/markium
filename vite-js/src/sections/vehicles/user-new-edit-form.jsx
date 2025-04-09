@@ -172,7 +172,7 @@ export default function UserNewEditForm({ currentCar }) {
   const onSubmit = handleSubmit(async (data) => {
     try {
       const response = currentCar?.id ? await editCar(currentCar?.id, data) : await createCar(data);
-      enqueueSnackbar(currentCar?.id ? "Update Success!!!" : "Insertion Success!!!");
+      enqueueSnackbar(t('operation_success'));
       router.push(paths.dashboard.vehicle.root);
       reset();
     } catch (error) {

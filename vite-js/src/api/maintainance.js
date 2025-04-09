@@ -110,6 +110,11 @@ export async function markMaintenanceAsCompeleted(id,body) {
   return await axios.post(URL, body);
 }
 
+export async function releaseCar(id) {
+  const URL = endpoints.maintenance.release(id);
+  return await axios.post(URL);
+}
+
 // ----------------------------------------------------------------------
 
 export async function editMaintenance(id, body) {

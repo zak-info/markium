@@ -86,6 +86,7 @@ export const endpoints = {
     list: '/maintenance',
     specs:"/maintenance/specifications",
     complete:(id)=>`/maintenance/${id}/complete`,
+    release:(id)=>`/maintenance/${id}/car_release`,
     logs:"/maintenance/logs",
   },
   cars: {

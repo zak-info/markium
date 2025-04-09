@@ -48,7 +48,7 @@ import FormProvider, {
 import RHFFileInput from 'src/components/hook-form/rhf-input-field';
 import FileThumbnail from 'src/components/file-thumbnail';
 import ContentDialog from 'src/components/custom-dialog/content-dialog';
-import { markMaintenanceAsCompeleted } from 'src/api/maintainance';
+import { markMaintenanceAsCompeleted, releaseCar } from 'src/api/maintainance';
 
 
 // ----------------------------------------------------------------------
@@ -362,10 +362,10 @@ export function MarkAsCompletedForm({ maintenanceId, close }) {
   
       console.log("hi there 3 formData", formData.getAll("invoice[]")); // Debugging
   
-      const response = await markMaintenanceAsCompeleted(maintenanceId, formData);
+      const response = await releaseCar(maintenanceId);
       console.log("hi there 4");
   
-      enqueueSnackbar('Update success!', { variant: 'success' });
+      enqueueSnackbar(t("operation_success"), { variant: 'success' });
       close();
     } catch (error) {
       console.error(error);
@@ -374,6 +374,9 @@ export function MarkAsCompletedForm({ maintenanceId, close }) {
           enqueueSnackbar(text, { variant: 'error' });
         });
       });
+      if(error?.message){
+        enqueueSnackbar(error?.message, { variant: 'error' });
+      }
     }
   });
   
@@ -394,12 +397,12 @@ export function MarkAsCompletedForm({ maintenanceId, close }) {
               sm: 'repeat(1, 1fr)',
             }}
           >
-            <RHFUpload multiple name="invoice" lable={"Upload Invoice File"} />
+            {/* <RHFUpload multiple name="invoice" lable={"Upload Invoice File"} /> */}
 
           </Box>
           <Stack alignItems="flex-end" sx={{ mt: 3 }}>
             <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-              confirm
+              {t("submit")}
             </LoadingButton>
           </Stack>
         </Grid>

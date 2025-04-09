@@ -146,7 +146,7 @@ export default function OrderListView() {
     (id) => {
       deleteCar(id)
         .then(() => {
-          enqueueSnackbar('Delete success!');
+          enqueueSnackbar(t('operation_success'));
           mutate();
         })
         .catch((err) => {
@@ -158,8 +158,9 @@ export default function OrderListView() {
   const handleAddCarToMentainance = useCallback(
     async (id) => {
       const result = await AddCarToMentainance(id)
-        .then(() => {
-          enqueueSnackbar('Operation success!');
+      .then(() => {
+        enqueueSnackbar(t('operation_success'));
+        "Operation success"
           mutate();
         })
         .catch((err) => {
@@ -173,7 +174,7 @@ export default function OrderListView() {
     async (id) => {
       const result = await markCarAsAvailable(id)
         .then(() => {
-          enqueueSnackbar('Operation success!');
+          enqueueSnackbar(t('operation_success'));
           mutate();
         })
         .catch((err) => {
