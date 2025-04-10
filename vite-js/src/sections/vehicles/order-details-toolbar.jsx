@@ -26,6 +26,7 @@ export default function OrderDetailsToolbar({
   status,
   backLink,
   createdAt,
+  carDetails,
   orderNumber,
   statusOptions,
   onChangeStatus,
@@ -118,7 +119,7 @@ export default function OrderDetailsToolbar({
         onClose={completed.onFalse}
         title={t("odometer")}
         content={
-          <EditODO idCar={idCar} close={() => completed?.onFalse()} />
+          <EditODO odo={carDetails?.odometer} idCar={idCar} close={() => completed?.onFalse()} />
         }
       />
     </>

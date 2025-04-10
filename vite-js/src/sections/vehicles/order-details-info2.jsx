@@ -33,6 +33,10 @@ export default function OrderDetailsInfo2({ carDetails, delivery, payment, shipp
           <Box sx={{ width: 120, color: 'text.secondary' }}>{t('model')}</Box>
           <Box sx={{ typography: 'subtitle2' }}>{carDetails?.model?.translations?.name}</Box>
         </Stack>
+        <Stack direction="row" sx={{ px: '10px' }}>
+          <Box sx={{ width: 120, color: 'text.secondary' }}>{t('odometer')}</Box>
+          <Box sx={{ typography: 'subtitle2' }}>{carDetails?.odometer}</Box>
+        </Stack>
 
         <Stack direction="row" sx={{ px: '10px' }}>
           <Box sx={{ width: 120, color: 'text.secondary' }}>{t('attached_driver')}</Box>

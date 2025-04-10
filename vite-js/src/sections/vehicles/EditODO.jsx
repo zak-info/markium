@@ -46,7 +46,7 @@ import { updateCarODO } from 'src/api/car';
 
 
 
-export function EditODO({ maintenanceId, close,idCar }) {
+export function EditODO({ odo, maintenanceId, close, idCar }) {
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslate();
 
@@ -76,7 +76,7 @@ export function EditODO({ maintenanceId, close,idCar }) {
   } = methods;
   const onSubmit = handleSubmit(async (data) => {
     try {
-      const response = await updateCarODO(idCar,data);
+      const response = await updateCarODO(idCar, data);
       enqueueSnackbar('Update success!', { variant: 'success' });
       close();
     } catch (error) {
@@ -97,6 +97,10 @@ export function EditODO({ maintenanceId, close,idCar }) {
     <FormProvider methods={methods} onSubmit={onSubmit}>
       <Grid container spacing={3}>
         <Grid xs={12} md={12} sx={{ mt: 3 }}>
+          <Stack direction="row" sx={{ px: '10px' }}>
+            <Box sx={{ width: 180, color: 'text.secondary' }}>{t('current_odometer')+" :"}</Box>
+            <Box sx={{ typography: 'subtitle2' }}>{odo}</Box>
+          </Stack>
           <RHFTextField required type="number" name="odometer" label={t('odometer')} />
           <Stack alignItems="flex-end" sx={{ mt: 3 }}>
             <LoadingButton type="submit" variant="contained" loading={isSubmitting}>

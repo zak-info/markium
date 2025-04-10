@@ -44,6 +44,7 @@ export default function OrderDetailsView({ id }) {
   const { t } = useTranslate();
 
   const { carDetails } = useGetCompanyByID(id);
+  console.log("carDetails : ",carDetails);
   const { documents } = useGetDocuments()
   const carDocuments = documents.filter(item => item.attachable_id == id && item.attachable_type == "car")
 
@@ -76,6 +77,7 @@ export default function OrderDetailsView({ id }) {
         createdAt={carDetails?.created_at}
         status={carDetails?.status}
         idCar={id}
+        carDetails={carDetails}
         onChangeStatus={handleChangeStatus}
         statusOptions={ORDER_STATUS_OPTIONS}
       />

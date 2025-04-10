@@ -103,6 +103,7 @@
   "view": "View",
   "username": "Username",
   "odometer": "Odometer",
+  "current_odometer":"Current Odometer",
   "saveChange": "Save Changes",
   "deleteConfirm": "Are you sure want to delete?",
   "cancel": "Cancel",

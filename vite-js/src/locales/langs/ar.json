@@ -162,6 +162,7 @@
   "view": " عرض",
   "username": "اسم المستخدم",
   "odometer": "عداد المسافة",
+  "current_odometer": "عداد المسافة الحالي",
   "saveChange": "حفظ التغييرات",
   "deleteConfirm": "هل أنت متأكد أنك تريد الحذف؟",
   "cancel": "إلغاء",
