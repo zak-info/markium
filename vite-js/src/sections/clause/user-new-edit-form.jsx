@@ -111,6 +111,8 @@ export default function UserNewEditForm({ maintenance_id, currentClause, setTabl
       if (!body?.note) {
         body.note = "--"
       }
+
+      
       let clause_credentials = {}
       // if (body?.spec_or_period == "not-periodic") {
       //   body.spec_id = Number(body?.spec_id);
