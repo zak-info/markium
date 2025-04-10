@@ -39,7 +39,7 @@ import RHFTextField2 from 'src/components/hook-form/rhf-text-field2';
 
 // ----------------------------------------------------------------------
 
-export default function UserNewEditForm({ maintenance_id, currentClause, setTableData,setAddProcess }) {
+export default function UserNewEditForm({ maintenance_id, currentClause, setTableData, setAddProcess }) {
   const router = useRouter();
 
   const { enqueueSnackbar } = useSnackbar();
@@ -53,7 +53,7 @@ export default function UserNewEditForm({ maintenance_id, currentClause, setTabl
   const { maintenance: periodic_maintenance } = useGetCarPeriodicMaintenance(maintenance?.car_id);
   console.log("periodic_maintenance :", periodic_maintenance);
   const validationSchema = Yup.object({
-    cost: Yup.number(),
+    cost: Yup.number().nullable(),
     quantity: Yup.number(),
     piece_status: Yup.string().required('piece_status is required'),
     spec_id: Yup.string(),
@@ -109,18 +109,19 @@ export default function UserNewEditForm({ maintenance_id, currentClause, setTabl
       let maintenace_spec = {}
       body.maintenance_id = Number(maintenance_id);
       let clause_credentials = {}
-      if (body?.spec_or_period == "not-periodic") {
-        body.spec_id = Number(body?.spec_id);
-        maintenace_spec = data?.maintenance_specifications?.find(item => item.id = Number(body?.spec_id))
-        clause_credentials = {is_periodic : false , related_id :body?.spec_id}
-        delete body?.period_maintenance_id
-      } else {
-        body.period_maintenance_id = Number(body?.period_maintenance_id);
-        maintenace_spec = data?.maintenance_specifications?.find(item => item.id = Number(body?.period_maintenance_id))
-        clause_credentials = {is_periodic : true , related_id :body?.period_maintenance_id}
-
-        delete body?.spec_id
-      }
+      // if (body?.spec_or_period == "not-periodic") {
+      //   body.spec_id = Number(body?.spec_id);
+      //   maintenace_spec = data?.maintenance_specifications?.find(item => item.id = Number(body?.spec_id))
+      //   clause_credentials = { is_periodic: false, related_id: body?.spec_id }
+      //   delete body?.period_maintenance_id
+      // } else {
+      //   body.period_maintenance_id = Number(body?.period_maintenance_id);
+      //   maintenace_spec = data?.maintenance_specifications?.find(item => item.id = Number(body?.period_maintenance_id))
+      //   clause_credentials = { is_periodic: true, related_id: body?.period_maintenance_id }
+      //   delete body?.spec_id
+      // }
+      clause_credentials = { is_periodic: false, related_id: body?.spec_id }
+      maintenace_spec = data?.maintenance_specifications?.find(item => item.id = Number(body?.spec_id))
       delete body?.spec_or_period
       console.log("body : ", body);
       console.log("lets create :", body);
@@ -158,7 +159,7 @@ export default function UserNewEditForm({ maintenance_id, currentClause, setTabl
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>
       <Grid container spacing={3} >
-        <Grid xs={12} md={12} sx={{m:"10px"}}>
+        <Grid xs={12} md={12} sx={{ m: "10px" }}>
           {/* <Card sx={{ p: 3, fontSize: '0.4rem' }}> */}
           <Box
             rowGap={3}
@@ -169,15 +170,15 @@ export default function UserNewEditForm({ maintenance_id, currentClause, setTabl
               sm: 'repeat(7, 1fr)',
             }}
           >
-            <RHFSelect name="spec_or_period" label={t('clause_type')}  >
+            {/* <RHFSelect name="spec_or_period" label={t('clause_type')}  >
               <Divider sx={{ borderStyle: 'dashed' }} />
               {[{ name: "periodic", lable: t("periodic") }, { name: "not-periodic", lable: t("not_periodic") }].map((option) => (
                 <MenuItem key={option?.name} value={option?.name}>
                   {option?.lable}
                 </MenuItem>
               ))}
-            </RHFSelect>
-            {
+            </RHFSelect> */}
+            {/* {
               values?.spec_or_period == "periodic" ?
                 <RHFSelect type="number" name="period_maintenance_id" label={t('periodic')}>
                   <Divider sx={{ borderStyle: 'dashed' }} />
@@ -187,16 +188,16 @@ export default function UserNewEditForm({ maintenance_id, currentClause, setTabl
                     </MenuItem>
                   ))}
                 </RHFSelect>
-                :
-                <RHFSelect type="number" name="spec_id" label={t('not_periodic')}>
-                  <Divider sx={{ borderStyle: 'dashed' }} />
-                  {maintenance_specs?.filter(item => !item?.is_periodic)?.map((option) => (
-                    <MenuItem key={option?.name} value={option?.id}>
-                      {option?.name}
-                    </MenuItem>
-                  ))}
-                </RHFSelect>
-            }
+                : */}
+            <RHFSelect type="number" name="spec_id" label={t('clause')}>
+              <Divider sx={{ borderStyle: 'dashed' }} />
+              {maintenance_specs?.filter(item => !item?.is_periodic)?.map((option) => (
+                <MenuItem key={option?.name} value={option?.id}>
+                  {option?.name}
+                </MenuItem>
+              ))}
+            </RHFSelect>
+            {/* } */}
 
             {/* <RHFTextField name="cost" label={t('cost')} type={"number"} sx={{ width: "100%" }} />
               <RHFTextField name="quantity" label={t('qte')} type={"number"} sx={{ width: "100%" }} /> */}
@@ -225,8 +226,7 @@ export default function UserNewEditForm({ maintenance_id, currentClause, setTabl
               ))}
             </RHFSelect>
             <RHFTextField name="total" label={t('total')} type={"number"} sx={{ width: "100%" }} disabled value={credentials?.quantity * credentials?.cost} />
-          </Box>
-          <Box
+            {/* <Box
             rowGap={3}
             columnGap={2}
             display="grid"
@@ -234,8 +234,9 @@ export default function UserNewEditForm({ maintenance_id, currentClause, setTabl
               xs: 'repeat(1, 1fr)',
               sm: 'repeat(2, 1fr)',
             }}
-          >
-            <RHFTextarea name="note" label={t('note')} sx={{ mt: "10px" }} />
+          > */}
+            <RHFTextField name="note" label={t('note')} />
+            {/* </Box> */}
           </Box>
 
           <Stack alignItems="flex-end" sx={{ mt: 3 }}>

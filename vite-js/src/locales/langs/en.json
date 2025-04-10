@@ -260,5 +260,6 @@
   "release_car":"Release Car",
   "operation_success": "Operation Success",
   "operation_failed":"Operation Failed",
-  "operation_error": "Operation Error"
+  "operation_error": "Operation Error",
+  "car_status":"Car Status"
 }

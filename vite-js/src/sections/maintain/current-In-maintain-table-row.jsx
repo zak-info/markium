@@ -91,7 +91,7 @@ export default function OrderTableRow({ row, maintenance, selected, onViewRow, o
       <TableCell>
         {row?.entry_date ? fDate(row?.entry_date) : '-'}
       </TableCell>
-      <TableCell align="center"> {row?.remaining_days ? row?.remaining_days >2 && row?.remaining_days < 11 ? row?.remaining_days + " "+days[currentLang?.value] : row?.remaining_days + " "+day[currentLang?.value]   : "-"} </TableCell>
+      <TableCell align="center"> {row?.remaining_days ? row?.remaining_days > 2 && row?.remaining_days < 11 ? row?.remaining_days + " " + days[currentLang?.value] : row?.remaining_days + " " + day[currentLang?.value] : "-"} </TableCell>
       {/* <TableCell align="center"> - </TableCell> */}
       <TableCell align="center"> {state?.translations?.name} </TableCell>
       <TableCell>
@@ -106,6 +106,20 @@ export default function OrderTableRow({ row, maintenance, selected, onViewRow, o
         >
           {/* {status?.translations[0]?.name} */}
           {status?.translations?.name}
+        </Label>
+      </TableCell>
+      <TableCell>
+        <Label
+          variant="soft"
+          color={
+            (row?.car?.status?.key === 'available' && 'success') ||
+            (row?.car?.status?.key === 'under_maintenance' && 'warning') ||
+            (row?.car?.status?.key === 'under_preparation' && 'secondary') ||
+            'default'
+          }
+        >
+          {/* {status?.translations[0]?.name} */}
+          {row?.car?.status?.translations?.name}
         </Label>
       </TableCell>
       <TableCell align="center">{row?.cause}</TableCell>
@@ -176,25 +190,32 @@ export default function OrderTableRow({ row, maintenance, selected, onViewRow, o
           {t("view_maintenance")}
         </MenuItem>
 
-        <MenuItem
-          onClick={() => {
-            release.onTrue();
-            popover.onClose();
-          }}
-        >
-          <Iconify icon="lets-icons:sign-out-squre-duotone-line" />
-          {t("release_car")}
-        </MenuItem>
-        {/* <MenuItem
-          onClick={() => {
-            completed.onTrue();
-            popover.onClose();
-          }}
-          disabled
-        >
-          <Iconify icon="solar:pen-bold" />
-          {t("mark_as_completed")}
-        </MenuItem> */}
+        {
+          row?.car?.status?.key == "under_maintenance" ?
+            <MenuItem
+              onClick={() => {
+                release.onTrue();
+                popover.onClose();
+              }}
+            >
+              <Iconify icon="lets-icons:sign-out-squre-duotone-line" />
+              {t("release_car")}
+            </MenuItem>
+            :
+            row?.car?.status?.key == "under_preparation" ?
+              <MenuItem
+                onClick={() => {
+                  completed.onTrue();
+                  popover.onClose();
+                }}
+              >
+                <Iconify icon="solar:pen-bold" />
+                {t("mark_as_completed")}
+              </MenuItem>
+              :
+              null
+        }
+
 
         {/* <MenuItem
           onClick={() => {

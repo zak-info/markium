@@ -65,8 +65,7 @@ export default function NotificationsListView() {
   const { car } = useGetCarUnderMaintenance();
   const { maintenance } = useGetMaintenance();
 
-  console.log("car : ",car);
-  console.log("maintenance : ",maintenance);
+  console.log("useGetCarUnderMaintenance : ",car);
 
   const { t } = useTranslate();
 
@@ -76,18 +75,19 @@ export default function NotificationsListView() {
     // { id: 'vehicle', label: t('vehicle'), width: 116 },
     { id: 'entryDate', label: t('entryDate'), width: 140 },
     // { id: 'manitainClassification', label: t('manitainClassification'), width: 140 },
-    { id: 'expectedMaintainDays', label: t('expectedMaintainDays') },
+    { id: 'expectedMaintainDays', label: t('expectedMaintainDays'),width: 200 },
     // { id: 'theRest', label: t('theRest') },
 
     { id: 'totalAmount', label: t('workSite'), width: 140 },
-    { id: 'malfunction', label: t('status'), width: 140 },
+    { id: 'malfunction', label: t('status'), width: 100 },
+    { id: 'malfunction', label: t('car_status'), width: 100 },
     { id: 'cause', label: t('cause'), width: 140 },
     { id: 'actions', label: t('actions'), width: 140 },
 
     // { id: 'tenantName', label: t('state'), width: 140 },
     // { id: 'driver', label: t('driver'), width: 140 },
 
-    { id: '', width: 88 },
+    { id: '', width: 20 },
   ];
 
   const STATUS_OPTIONS = [

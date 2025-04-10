@@ -203,7 +203,7 @@
   "attachable": "المرفق",
   "attachment_name": "اسم المرفق",
   "attachment_type": "نوع المرفق",
-  "mark_as_completed": "تحديد كمكتمل",
+  "mark_as_completed": "اقفال الصيانة",
   "employee": "بواسطة",
   "periodic_maintenances": "الصيانات الدورية",
   "created_at": "تاريخ الإنشاء",
@@ -315,9 +315,10 @@
   "from_your_device": "من جهازك",
   "submit":"تأكيد",
   "are_you_sure":"هل أنت متأكد ؟",
-  "release_car":"إخراج من الصيانة",
+  "release_car":"إخراج من الصيانة ؟ ",
   "operation_success": "العملية تمت بنجاح",
   "operation_failed": "فشلت العملية",
-  "operation_error": "خطأ في العملية"
+  "operation_error": "خطأ في العملية",
+  "car_status": "حالة السيارة"
 
 }
