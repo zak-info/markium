@@ -75,9 +75,9 @@ export default function UserNewEditForm({ currentMentainance }) {
       state_id: null, // default value for state_id
       car_id: '', // default value for car plate number
       maintainance_type: '', // default value for car plate number
-      entry_date: new Date(), // default value for entry date
+      entry_date: format(new Date(), 'yyyy-MM-dd'), // default value for entry date
       cause: '', // default value for cause
-      exit_date:new Date(), // default value for exit date (empty string)
+      exit_date: format(new Date(), 'yyyy-MM-dd'), // default value for exit date (empty string)
     }),
     [currentMentainance]
   );
@@ -119,8 +119,8 @@ export default function UserNewEditForm({ currentMentainance }) {
   const onSubmit = handleSubmit(async (data) => {
     try {
       let body = data
-      // body.entry_date = format(new Date(data.entry_date), 'yyyy-MM-dd')
-      // body.exit_date = await format(new Date(data.exit_date), 'yyyy-MM-dd')
+      body.entry_date = format(new Date(data.entry_date), 'yyyy-MM-dd')
+      body.exit_date =  format(new Date(data.exit_date), 'yyyy-MM-dd')
       // body.car_id = searchParams.get("car_id")
       console.log("lets do it now ");
       console.log("body : body: ",body);
@@ -160,8 +160,8 @@ export default function UserNewEditForm({ currentMentainance }) {
                 value={values.entry_date ? new Date(values.entry_date) : new Date()}
                 required
                 name="entry_date"
-                format="dd/MM/yyyy"  
-                onChange={(newValue) => setValue('entry_date', fDate(newValue, 'dd/MM/yyyy'))}
+                format="yyyy/MM/dd"  
+                onChange={(newValue) => setValue('entry_date', fDate(newValue,"yyyy-MM-dd"))}
                 slotProps={{
                   textField: {
                     fullWidth: true,
@@ -169,12 +169,15 @@ export default function UserNewEditForm({ currentMentainance }) {
                 }}
               />
 
+              {/* allaow  يكون حقل invoice.0 ملفًا من نوع: jpg, jpeg, png, pdf, doc, docx. */}
+
+
               <DatePicker
                 label={t('exitDate')}
                 value={values.exit_date ? new Date(values.exit_date) : new Date()}
                 name="exit_date"
-                onChange={(newValue) => setValue('exit_date', fDate(newValue))}
-                format="dd/MM/yyyy"  
+                onChange={(newValue) => setValue('exit_date', fDate(newValue,"yyyy-MM-dd"))}
+                format="yyyy/MM/dd"  
                 slotProps={{
                   textField: {
                     fullWidth: true,

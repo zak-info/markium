@@ -46,10 +46,14 @@ export default function AppNewInvoice3({
   //   // console.log(hasChanges());
   // }, [tableData]);
   const hasChanges = () => {
+
     return JSON.stringify(originalTableData) !== JSON.stringify(tableData);
   };
+
+  const [changeSin, setChangeSin] = useState(false)
   const getEditedRows = () => {
     // return tableData.filter((row, index) => JSON.stringify(row) !== JSON.stringify(originalTableData[index]));
+    setChangeSin(true)
     return tableData.filter((row, index) => row?.new == "false" || row?.new == "true");
   };
 
@@ -113,6 +117,7 @@ export default function AppNewInvoice3({
       }
       enqueueSnackbar("Success operation",);
       setOriginalTableData([...tableData]); // Reset original data after saving
+      setChangeSin(false)
     } catch (error) {
       console.error(error);
       // enqueueSnackbar(error?.message ? error?.message : "Somthing Went Wrong", { variant: 'error' });
@@ -169,7 +174,7 @@ export default function AppNewInvoice3({
       <Divider sx={{ borderStyle: "dashed" }} />
 
       {/* Show Save Changes button only when data is modified */}
-      {hasChanges() && (
+      {hasChanges() ?
         <Stack alignItems="flex-end" sx={{ m: 3 }}>
           <LoadingButton type="submit" variant="contained" onClick={handleSaveChanges} loading={postloader}>
             {t('saveChange')}
@@ -178,7 +183,9 @@ export default function AppNewInvoice3({
             {t("save_changes")}
           </Button> */}
         </Stack>
-      )}
+        :
+        null
+      }
     </Card>
   );
 }

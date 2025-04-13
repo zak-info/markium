@@ -226,7 +226,7 @@
   "paiment_date": "تاريخ الدفع",
   "release_date": "تاريخ الإصدار",
   "expiry_date": "تاريخ الانتهاء",
-  "upload_document": "رفع مستند",
+  "upload_document": "رفع المستند",
   "browse": "تصفح",
   "document_type": "نوع المستند",
   "document_name": "اسم المستند",
@@ -320,6 +320,8 @@
   "operation_success": "العملية تمت بنجاح",
   "operation_failed": "فشلت العملية",
   "operation_error": "خطأ في العملية",
-  "car_status": "حالة السيارة"
+  "car_status": "حالة السيارة",
+  "logs": "سجل العمليات",
+  "completed": "مكتمل"
 
 }

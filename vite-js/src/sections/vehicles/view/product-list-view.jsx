@@ -74,15 +74,15 @@ export default function OrderListView() {
 
   const TABLE_HEAD = [
     // { id: 'orderNumber', label: t('company'), width: 116 },
-    { id: 'model', label: t('model'), width: 120, sorted: true },
-    { id: 'plateNumber', label: t('plateNumber'), width: 120 },
-    { id: 'manuYear', label: t('manufacturingYear'), width: 100 },
+    { id: 'plateNumber', label: t('plateNumber'), width: 90 },
+    { id: 'model', label: t('model'), width: 100, sorted: true },
+    { id: 'manuYear', label: t('manufacturingYear'), width: 80 },
     // { id: 'color', label: t('vehcileColor'), width: 120 },
-    { id: 'vehicleCondition', label: t('vehicleCondition'), width: 140 },
-    { id: 'driver', label: t('driver'), width: 100 },
-    { id: 'contract', label: t('contract'), width: 100 },
-    { id: 'actions', label: t('actions'), width: 90 },
-    { id: '', width: 88 },
+    { id: 'vehicleCondition', label: t('vehicleCondition'), width: 120 },
+    { id: 'driver', label: t('driver'), width: 180 },
+    { id: 'contract', label: t('contract'), width: 60,align: "center" },
+    { id: 'actions', label: t('actions'), width: 60,align:"right" },
+    // { id: '', width: 88 },
   ];
 
   const STATUS_OPTIONS = [
@@ -353,7 +353,7 @@ export default function OrderListView() {
             />
 
             <Scrollbar>
-              <Table size={table.dense ? 'small' : 'medium'} sx={{ minWidth: 960 }}>
+              <Table size={table.dense ? 'small' : 'medium'} sx={{ minWidth: 1060 }}>
                 <TableHeadCustom
                   order={table.order}
                   orderBy={table.orderBy}

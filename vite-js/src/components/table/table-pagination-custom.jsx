@@ -25,7 +25,7 @@ export default function TablePaginationCustom({
         }}
       />
 
-      {onChangeDense && (
+      {/* {onChangeDense && (
         <FormControlLabel
           label="Dense"
           control={<Switch checked={dense} onChange={onChangeDense} />}
@@ -38,7 +38,7 @@ export default function TablePaginationCustom({
             },
           }}
         />
-      )}
+      )} */}
     </Box>
   );
 }

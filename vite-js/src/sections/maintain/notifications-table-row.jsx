@@ -53,7 +53,7 @@ export default function OrderTableRow({ row, onCreateRow, car, action, selected,
         >
           <ListItemText
             primary={car?.plat_number}
-            secondary={car?.model?.translations?.name + " - " +car?.model?.company?.translations?.name}
+            secondary={car?.model?.translations?.name + " - " + car?.model?.company?.translations?.name}
             primaryTypographyProps={{ typography: 'body2', noWrap: true }}
             secondaryTypographyProps={{
               mt: 0.5,
@@ -170,16 +170,22 @@ export default function OrderTableRow({ row, onCreateRow, car, action, selected,
         </MenuItem> */}
         {/* {
           row?.action == 'action_required' && */}
-        <MenuItem
-          onClick={() => {
-            onCreateRow();
-            popover.onClose();
-          }}
-          disabled={row?.action !== 'action_required' || !row?.enabled}
-        >
-          <Iconify icon="duo-icons:add-circle" />
-          {t("create_maintenance")}
-        </MenuItem>
+        {
+          row?.action !== 'action_required' || !row?.enabled ?
+            null
+            :
+            <MenuItem
+              onClick={() => {
+                onCreateRow();
+                popover.onClose();
+              }}
+              disabled={row?.action !== 'action_required' || !row?.enabled}
+            >
+              <Iconify icon="duo-icons:add-circle" />
+              {t("create_maintenance")}
+            </MenuItem>
+
+        }
         {/* } */}
 
 
@@ -192,7 +198,7 @@ export default function OrderTableRow({ row, onCreateRow, car, action, selected,
           <Iconify icon="solar:eye-bold" />
           {t("view")}
         </MenuItem>
-      </CustomPopover>
+      </CustomPopover >
 
       <ConfirmDialog
         open={confirm.value}

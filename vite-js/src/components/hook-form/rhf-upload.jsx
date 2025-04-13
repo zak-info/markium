@@ -55,7 +55,7 @@ RHFUploadBox.propTypes = {
 
 // ----------------------------------------------------------------------
 
-export function RHFUpload({ name, multiple = false, label, helperText, ...other }) {
+export function RHFUpload({ name, multiple = false, label,placeholder, helperText, ...other }) {
   const { control, setValue } = useFormContext();
 
   return (
@@ -65,6 +65,7 @@ export function RHFUpload({ name, multiple = false, label, helperText, ...other 
       render={({ field, fieldState: { error } }) => (
         <Upload
           label={label}
+          placeholder={placeholder}
           multiple={multiple}
           files={multiple ? field.value || [] : undefined}
           file={!multiple ? field.value : undefined}

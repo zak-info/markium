@@ -262,5 +262,7 @@
   "operation_success": "Operation Success",
   "operation_failed":"Operation Failed",
   "operation_error": "Operation Error",
-  "car_status":"Car Status"
+  "car_status":"Car Status",
+  "logs":"Logs",
+  "completed":"completed"
 }

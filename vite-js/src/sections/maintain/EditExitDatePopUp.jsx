@@ -19,7 +19,7 @@ const EditExitDatePopUp = ({ currentMentainance }) => {
           completed.onTrue();
           popover.onClose();
         }}
-        sx={{ marginInlineStart: "10px" }} variant="soft" label={"edit"} color={"warning"} />
+        sx={{ marginInlineStart: "10px" }} variant="soft" label={t("edit")} color={"warning"} />
       <ContentDialog
         open={completed.value}
         onClose={completed.onFalse}

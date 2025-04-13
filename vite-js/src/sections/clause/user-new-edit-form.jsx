@@ -31,7 +31,7 @@ import { addNewDriver, editDriver } from 'src/api/drivers';
 
 import { useValues } from 'src/api/utils';
 import { useGetCar, useGetCarPeriodicMaintenance } from 'src/api/car';
-import { addNewMaintenanceClause } from 'src/api/clauses';
+import { addNewMaintenanceClause, useGetClauses } from 'src/api/clauses';
 import { useGetMaintenanceSpecs, useShowMaintenance } from 'src/api/maintainance';
 import RHFTextarea from 'src/components/hook-form/RHFTextarea';
 import { TextField } from '@mui/material';
@@ -49,7 +49,7 @@ export default function UserNewEditForm({ maintenance_id, currentClause, setTabl
   console.log(" maintenance_id : ", maintenance_id);
   const { maintenance_specs } = useGetMaintenanceSpecs()
   const { maintenance } = useShowMaintenance(maintenance_id)
-  console.log("maintenance :", maintenance);
+  console.log("maintenance_specs :", maintenance_specs);
   const { maintenance: periodic_maintenance } = useGetCarPeriodicMaintenance(maintenance?.car_id);
   console.log("periodic_maintenance :", periodic_maintenance);
   const validationSchema = Yup.object({
@@ -112,7 +112,7 @@ export default function UserNewEditForm({ maintenance_id, currentClause, setTabl
         body.note = "--"
       }
 
-      
+
       let clause_credentials = {}
       // if (body?.spec_or_period == "not-periodic") {
       //   body.spec_id = Number(body?.spec_id);
@@ -134,12 +134,16 @@ export default function UserNewEditForm({ maintenance_id, currentClause, setTabl
       console.log("dddddddddddddddd : ", dd);
       if (currentClause?.id) {
       } else {
-
         await addNewMaintenanceClause(dd);
+        const newClause = { cost: dd?.cost, is_periodic: maintenace_spec?.is_periodic ? 1 : 0, related_id: Number(dd.spec_id), quantity: dd?.quantity, piece_status: body?.piece_status, note: body?.note }
+        // console.log("newClause : ", newClause);
+        // const { clauses } = useGetClauses(maintenance_id)
+        // const maintenanceclauses = clauses.filter(item => item.maintenance_id == maintenance_id)
+        // setTableData(maintenanceclauses)
+        // setTableData(prev => [...(prev || []),newClause])
       }
-      reset();
-      enqueueSnackbar(currentClause?.id ? 'Update success!' : 'Create success!');
-      // setTableData(prev => [...prev, { ...clause_credentials, maintenance_spec: maintenace_spec?.name, cost: Number(credentials.cost), piece_status: body?.piece_status, quantity: Number(credentials.quantity), unit: maintenace_spec?.unit }])
+      // reset();
+      enqueueSnackbar(t("operation_success"), { variant: 'success' });
       setAddProcess(true);
       router.reload();
     } catch (error) {
@@ -175,37 +179,14 @@ export default function UserNewEditForm({ maintenance_id, currentClause, setTabl
               sm: 'repeat(7, 1fr)',
             }}
           >
-            {/* <RHFSelect name="spec_or_period" label={t('clause_type')}  >
-              <Divider sx={{ borderStyle: 'dashed' }} />
-              {[{ name: "periodic", lable: t("periodic") }, { name: "not-periodic", lable: t("not_periodic") }].map((option) => (
-                <MenuItem key={option?.name} value={option?.name}>
-                  {option?.lable}
-                </MenuItem>
-              ))}
-            </RHFSelect> */}
-            {/* {
-              values?.spec_or_period == "periodic" ?
-                <RHFSelect type="number" name="period_maintenance_id" label={t('periodic')}>
-                  <Divider sx={{ borderStyle: 'dashed' }} />
-                  {periodic_maintenance?.map((option) => (
-                    <MenuItem key={option?.id} value={option?.id}>
-                      {option?.name}
-                    </MenuItem>
-                  ))}
-                </RHFSelect>
-                : */}
             <RHFSelect type="number" name="spec_id" label={t('clause')}>
               <Divider sx={{ borderStyle: 'dashed' }} />
-              {maintenance_specs?.filter(item => !item?.is_periodic)?.map((option) => (
+              {maintenance_specs?.map((option) => (
                 <MenuItem key={option?.name} value={option?.id}>
                   {option?.name}
                 </MenuItem>
               ))}
             </RHFSelect>
-            {/* } */}
-
-            {/* <RHFTextField name="cost" label={t('cost')} type={"number"} sx={{ width: "100%" }} />
-              <RHFTextField name="quantity" label={t('qte')} type={"number"} sx={{ width: "100%" }} /> */}
 
             <TextField
               type="text"

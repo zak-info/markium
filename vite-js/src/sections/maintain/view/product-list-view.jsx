@@ -66,8 +66,8 @@ export default function OrderListView() {
 
   const { t } = useTranslate();
 
-  const days = {en:"dais",ar:"يوم"}
-  const {currentLang} = useLocales()
+  const days = { en: "dais", ar: "يوم" }
+  const { currentLang } = useLocales()
 
   const TABLE_HEAD = [
     { id: 'id', label: t('id'), width: 80 },
@@ -78,7 +78,7 @@ export default function OrderListView() {
     // { id: 'tenantName', label: t('tenantName'), width: 144 },
     { id: 'maintainStatus', label: t('maintainStatus'), width: 140 },
     { id: 'driver', label: t('driver'), width: 140 },
-    { id: 'actions',label: t('actions'), width: 140 },
+    { id: 'actions', label: t('actions'), width: 140 },
   ];
 
   const STATUS_OPTIONS = [
@@ -87,7 +87,7 @@ export default function OrderListView() {
     { value: 'completed', label: t('completed') },
     // { value: 'under_maintenance', label: t('under_maintenance') },
     // { value: 'plat_number', label: t('plat_number') },
-    
+
   ];
 
   const table = useTable({ defaultOrderBy: 'orderNumber' });
@@ -102,7 +102,7 @@ export default function OrderListView() {
   const { data } = useValues();
 
   const { maintenance, mutate } = useGetMaintenance();
-  console.log("maintenance : ",maintenance);
+  console.log("maintenance : ", maintenance);
   const [tableData, setTableData] = useState([]);
   // exit_date,
   // status,
@@ -343,6 +343,7 @@ export default function OrderListView() {
 
                 <TableBody>
                   {dataFiltered
+                    .reverse()
                     .slice(
                       table.page * table.rowsPerPage,
                       table.page * table.rowsPerPage + table.rowsPerPage
@@ -354,14 +355,14 @@ export default function OrderListView() {
                         days={days[currentLang?.value]}
                         car_model={car?.find(item => item?.model?.id == row?.car?.car_model_id)?.model?.translations?.name}
                         work_site={data?.states?.find(item => item?.id == row?.state_id)?.translations[0]?.name}
-                        driver={drivers?.find(item=> item.id == row?.car?.driver_id) || {name:t("---"),phone:"...."} }
+                        driver={drivers?.find(item => item.id == row?.car?.driver_id) || { name: t("---"), phone: "...." }}
                         selected={table.selected.includes(row.id)}
                         onSelectRow={() => table.onSelectRow(row.id)}
                         onDeleteRow={() => handleDeleteRow(row.id)}
                         onEditRow={() => handleEditRow(row.id)}
                         onMarkAsCompleted={() => handleMarkAsCompleted(row.id)}
                         onViewRow={() => handleViewRow(row.car.id)}
-                        onViewMaintenance={()=>handleViewMaintenance(row?.id)}
+                        onViewMaintenance={() => handleViewMaintenance(row?.id)}
                       />
                     ))}
 
@@ -418,7 +419,7 @@ export default function OrderListView() {
 // ----------------------------------------------------------------------
 
 function applyFilter({ inputData, comparator, filters, dateError }) {
-  const { status, name, startDate, endDate,plat_number } = filters;
+  const { status, name, startDate, endDate, plat_number } = filters;
 
   // const stabilizedThis = inputData.map((el, index) => [el, index]);
 
@@ -440,7 +441,7 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
   if (plat_number) {
     inputData = inputData.filter(
       (order) =>
-        order.car?.plat_number?.toLowerCase().includes(plat_number.toLowerCase()) 
+        order.car?.plat_number?.toLowerCase().includes(plat_number.toLowerCase())
     );
   }
 

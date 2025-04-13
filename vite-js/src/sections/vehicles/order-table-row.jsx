@@ -23,7 +23,7 @@ import Iconify from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import { useTranslate } from 'src/locales';
-import { Link } from '@mui/material';
+import { Grid, Link } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -92,6 +92,19 @@ export default function OrderTableRow({
             },
           }}
         >
+          {plat_number}
+        </Box>
+      </TableCell>
+      <TableCell>
+        <Box
+          onClick={onViewRow}
+          sx={{
+            cursor: 'pointer',
+            '&:hover': {
+              textDecoration: 'underline',
+            },
+          }}
+        >
           <ListItemText
             primary={model?.translations?.name}
             secondary={model?.company?.translations?.name}
@@ -105,9 +118,9 @@ export default function OrderTableRow({
         </Box>
       </TableCell>
 
-      <TableCell> {plat_number} </TableCell>
 
-      <TableCell>
+
+      <TableCell align='center'>
         <ListItemText
           primary={fDate(production_year, 'yyyy')}
           primaryTypographyProps={{ typography: 'body2', noWrap: true }}
@@ -120,22 +133,31 @@ export default function OrderTableRow({
       </TableCell>
       {/* <TableCell> {color?.translations?.name} </TableCell> */}
 
-      <TableCell>
-        <Label
-          variant="soft"
-          color={
-            (status?.key === 'available' && 'success') ||
-            (status?.key === 'pending' && 'warning') ||
-            (status?.key === 'under_maintenance' && 'error') ||
-            (status?.key === 'under_preparation' && 'secondary') ||
-            'default'
-          }
-        >
-          {status?.translations?.name}
-        </Label>
+      <TableCell direction="column" >
+        <Grid container spacing={1} >
+          <Label
+            variant="soft"
+            color={
+              (status?.key === 'available' && 'success') ||
+              (status?.key === 'pending' && 'warning') ||
+              (status?.key === 'under_maintenance' && 'error') ||
+              (status?.key === 'under_preparation' && 'secondary') ||
+              'default'
+            }
+          >
+            {status?.translations?.name}
+          </Label>
+          {
+            contract?.ref ?
+              <Label color={"warning"} sx={{ cursor: 'pointer', marginStart: "10px" }}>
+                {t("rented")}
+              </Label>
+              :
+              null}
+        </Grid>
       </TableCell>
       {/*  */}
-      <TableCell align="center">
+      <TableCell >
         {
           row?.driver?.id ?
             <Box
@@ -166,7 +188,7 @@ export default function OrderTableRow({
         >
           {
             contract?.ref ?
-              <Label color={"primary"} sx={{cursor:'pointer'}}>
+              <Label color={"warning"} sx={{ cursor: 'pointer' }}>
                 {contract?.ref}
               </Label>
               :

@@ -122,7 +122,7 @@ export default function NotificationsListView() {
     table.page * table.rowsPerPage + table.rowsPerPage
   );
 
-  const denseHeight = table.dense ? 56 : 56 + 20;
+  const denseHeight = 20;
 
   const canReset =
     !!filters.name || filters.status !== 'all' || (!!filters.startDate && !!filters.endDate);
@@ -211,7 +211,6 @@ export default function NotificationsListView() {
             },
           }}
         />
-
         <Card>
 
           <OrderTableToolbar
@@ -254,7 +253,7 @@ export default function NotificationsListView() {
             />
 
             <Scrollbar>
-              <Table size={table.dense ? 'small' : 'medium'} sx={{ minWidth: 960 }}>
+              <Table size={'small'} sx={{ minWidth: 960 }}>
                 <TableHeadCustom
                   order={table.order}
                   orderBy={table.orderBy}
@@ -272,10 +271,11 @@ export default function NotificationsListView() {
 
                 <TableBody>
                   {dataFiltered
+                    .filter(item => item?.action == 'action_required' && item?.enabled)
                     .slice(
                       table.page * table.rowsPerPage,
                       table.page * table.rowsPerPage + table.rowsPerPage
-                    )
+                    ).reverse()
                     .map((row) => (
                       <OrderTableRow
                         key={row.id}
@@ -302,7 +302,7 @@ export default function NotificationsListView() {
           </TableContainer>
 
           <TablePaginationCustom
-            count={dataFiltered.length}
+            count={dataFiltered.filter(item => item?.action == 'action_required' && item?.enabled).length}
             page={table.page}
             rowsPerPage={table.rowsPerPage}
             onPageChange={table.onChangePage}

@@ -44,6 +44,7 @@ import RHFTextarea from 'src/components/hook-form/RHFTextarea';
 import CarsAutocomplete from 'src/components/hook-form/rhf-CarsAutocomplete';
 import SimpleAutocomplete from 'src/components/hook-form/rhf-simple-autocomplete';
 import FileThumbnail from 'src/components/file-thumbnail';
+import FlexibleAutocomplete from 'src/components/hook-form/rhf-scalable-autocomplete';
 
 // ----------------------------------------------------------------------
 
@@ -53,11 +54,12 @@ export default function UserNewEditForm({ currentDocument }) {
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslate();
   const { data } = useValues();
+  console.log("data : attachmenat_names ", data?.attachmenat_names);
 
 
   const NewUserSchema = Yup.object().shape({
     attachment_name_id: Yup.string().required('Name is required'),
-    attachment_type_id: Yup.string().required('type id is required'),
+    // attachment_type_id: Yup.string().required('type id is required'),
     attachable_id: Yup.string().required('attachable_id is required'),
     attachable_type: Yup.string().required('Address is required'),
     // document_duration_days: Yup.string().required('document_duration_days is required'),
@@ -97,7 +99,7 @@ export default function UserNewEditForm({ currentDocument }) {
   const values = watch();
   const { car } = useGetCar()
   const { drivers } = useGetDrivers()
-  const {currentLang} = useLocales()
+  const { currentLang } = useLocales()
   const attachableType = watch("attachable_type");
 
   const onSubmit = handleSubmit(async (data) => {
@@ -109,7 +111,7 @@ export default function UserNewEditForm({ currentDocument }) {
       formData.append("release_date", format(new Date(data.release_date), 'yyyy-MM-dd'));
       formData.append("expiry_date", format(new Date(data.expiry_date), 'yyyy-MM-dd'));
       formData.append("attachment_name_id", data?.attachment_name_id);
-      formData.append("attachment_type_id", data?.attachment_type_id);
+      // formData.append("attachment_type_id", data?.attachment_type_id);
       formData.append("attachable_id", data?.attachable_id);
       formData.append("attachable_type", data?.attachable_type);
       // formData.append("document_duration_days", data?.document_duration_days);
@@ -122,7 +124,7 @@ export default function UserNewEditForm({ currentDocument }) {
       // body.release_date = format(new Date(data.release_date), 'yyyy-MM-dd');
       // body.expiry_date = format(new Date(data.expiry_date), 'yyyy-MM-dd');
 
-      console.log("form :::",formData);
+      console.log("form :::", formData);
       const response = currentDocument?.id ? await editDocument(currentDocument?.id, formData) : await createDocument(formData);
 
       enqueueSnackbar(currentDocument ? 'Update success!' : 'Create success!');
@@ -171,7 +173,7 @@ export default function UserNewEditForm({ currentDocument }) {
 
               <RHFSelect required name="attachable_type" label={t('attachment_type')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
-                {[{ name: "car",lable:{ar:"سيارة",en:"car"}, id: 1 }, { name: "driver",lable:{ar:"سائق",en:"driver"}, id: 2 }]?.map((type) => (
+                {[{ name: "car", lable: { ar: "سيارة", en: "car" }, id: 1 }, { name: "driver", lable: { ar: "سائق", en: "driver" }, id: 2 }]?.map((type) => (
                   <MenuItem key={type?.id} value={type.name}>
                     {type?.lable[currentLang.value]}
                   </MenuItem>
@@ -202,9 +204,9 @@ export default function UserNewEditForm({ currentDocument }) {
               {/* disabled={!attachableType} */}
               {
                 values.attachable_type == "car" ?
-                  <CarsAutocomplete required options={car} name="attachable_id" label={t('car')} placeholder='filter with plat_number' />
+                  <CarsAutocomplete required options={car} name="attachable_id" label={t('car')} placeholder={t(t('search_by') +" "+t('plateNumber') )} />
                   : values.attachable_type == "driver" ?
-                    <SimpleAutocomplete required options={drivers} name="attachable_id" label={t('driver')}  placeholder={t('filter')} />
+                    <SimpleAutocomplete required options={drivers} name="attachable_id" label={t('driver')} placeholder={t('search_by')} />
                     :
                     <RHFSelect disabled={!attachableType} required name="attachable_id" label={t('attachable')}>
                       <Divider sx={{ borderStyle: 'dashed' }} />
@@ -214,28 +216,28 @@ export default function UserNewEditForm({ currentDocument }) {
                     </RHFSelect>
               }
 
-              <RHFSelect required name="attachment_type_id" label={t('document_type')}>
+              {/* <RHFSelect required name="attachment_type_id" label={t('document_type')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
                 {data?.attachment_types?.map((type) => (
                   <MenuItem key={type?.id} value={type.id}>
                     {type?.translations[0]?.name || type.key}
                   </MenuItem>
                 ))}
-              </RHFSelect>
-              <RHFSelect required name="attachment_name_id" label={t('document_name')}>
-                <Divider sx={{ borderStyle: 'dashed' }} />
-                {data?.attachmenat_names?.map((item) => (
-                  <MenuItem key={item?.id} value={item.id}>
-                    {item?.translations[0]?.name || item.key}
-                  </MenuItem>
-                ))}
-              </RHFSelect>
+              </RHFSelect> */}
+              <FlexibleAutocomplete
+                name="attachment_name_id"
+                label={t('document_name')}
+                options={data?.attachmenat_names?.filter(item => item?.object_type?.includes(values.attachable_type ) )}
+                getOptionLabelFn={(option) => option?.translations?.[0]?.name}
+              />
+
+
 
               <DatePicker
                 required
                 name="release_date"
                 label={t('release_date')}
-                format="dd/MM/yyyy"  
+                format="dd/MM/yyyy"
                 value={currentDocument?.release_date ? new Date(currentDocument?.release_date) : values?.release_date ? new Date(values?.release_date) : new Date()}
                 onChange={(date) => setValue('release_date', date)}
                 slotProps={{
@@ -248,7 +250,7 @@ export default function UserNewEditForm({ currentDocument }) {
                 required
                 name="expiry_date"
                 label={t('expiry_date')}
-                format="dd/MM/yyyy"  
+                format="dd/MM/yyyy"
                 value={currentDocument?.expiry_date ? new Date(currentDocument?.expiry_date) : values?.expiry_date ? new Date(values?.expiry_date) : new Date()}
                 onChange={(date) => setValue('expiry_date', date)}
                 slotProps={{
@@ -257,34 +259,15 @@ export default function UserNewEditForm({ currentDocument }) {
                   },
                 }}
               />
-              {/* <div style={{ display: "flex", gap: "4px" }}>
-                <RHFTextField required type={"number"} sx={{ width: "60%" }} name="document_duration_days" label={t('documentDurationDays')} />
-                <RHFSelect required name="duration_unity" label={t('unity')} sx={{ width: "40%" }} >
-                  <Divider sx={{ borderStyle: 'dashed' }} />
-                  {[{ name: "day", id: 1 }, { name: "month", id: 2 }, { name: "year", id: 3 }]?.map((item) => (
-                    <MenuItem key={item?.id} value={item.id}>
-                      {item?.name}
-                    </MenuItem>
-                  ))}
-                </RHFSelect>
-              </div> */}
-
-
-              <RHFTextarea name="note" label={t('note')} />
-              {/* <RHFTextField required name="note_en" label={t('note_en')} /> */}
-              <p style={{ color: "gray" }}>.</p>
-
-              
-
-              <RHFUpload name="attachment" lable={t("upload_document")} />
-              <RHFUpload name="invoice" lable={t("upload_invoice_file")} />
-
+              <RHFTextField name="note" label={t('note')} />
+              {/* <p style={{ color: "gray" }}>.</p> */}
+              <RHFUpload name="attachment" placeholder={"upload_document"} lable={t("upload_document")} />
+              <RHFUpload name="invoice" placeholder={"upload_invoice_file"} lable={t("upload_invoice_file")} />
             </Box>
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                {!currentDocument ? t('addNewDocument') : 'Save Changes'}
-                {/* {t('addNewDocument')} */}
+                {!currentDocument ? t('addNewDocument') : t('save_changes')}
               </LoadingButton>
             </Stack>
           </Card>

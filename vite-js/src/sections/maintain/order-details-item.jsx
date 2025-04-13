@@ -14,7 +14,7 @@ import { fCurrency } from 'src/utils/format-number';
 
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
-import { Divider } from '@mui/material';
+import { Divider, Link } from '@mui/material';
 import { fDate } from 'src/utils/format-time';
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
@@ -35,7 +35,8 @@ export default function OrderDetailsItems({
   totalAmount,
   maintenance_type,
   currentMentainance,
-  currentCar
+  currentCar,
+  driver
 }) {
   const { t } = useTranslation();
 
@@ -52,6 +53,7 @@ export default function OrderDetailsItems({
     },
     [router]
   )
+
   const handleViewDriver = useCallback(
     (id) => {
       router.push(paths.dashboard.drivers.details(id));
@@ -61,14 +63,15 @@ export default function OrderDetailsItems({
 
   const renderTotal = (
     <Stack
-      spacing={4}
+      spacing={1}
       justifyContent="space-between"
+      alignItems="start"
       direction="row"
       flexWrap="wrap"
-      sx={{ my: 3, typography: 'body2' }}
+      sx={{ mb: 3, typography: 'body2' }}
       divider={<Divider />}
     >
-      <Stack spacing={1} sx={{ my: 1, typography: 'body2' }}>
+      <Stack spacing={1} sx={{  typography: 'body2' }}>
         <Stack direction="row">
           <Box sx={{ width: 160, color: 'text.secondary' }}>{t('entryDate')}</Box>
           <Box sx={{ typography: 'subtitle2' }}>{fDate(currentMentainance?.entry_date)}</Box>
@@ -94,23 +97,11 @@ export default function OrderDetailsItems({
         </Stack> */}
       </Stack>
       <Divider orientation="vertical" flexItem />
-      <Stack spacing={2} sx={{ my: 1, typography: 'body2' }}>
+      {/* <Stack spacing={2} sx={{ my: 1, typography: 'body2' }}>
         <Stack direction="row">
           <Box sx={{ width: 160, color: 'text.secondary' }}>{t('maintainType')}</Box>
           <Box sx={{ typography: 'subtitle2' }}>{maintenance_type || "--"}</Box>
         </Stack>
-        {/* <Stack direction="row">
-          <Box sx={{ width: 160, color: 'text.secondary' }}>{t('remaining')}</Box>
-          <Box
-            sx={{
-              ...(shipping && { color: 'error.main' }),
-            }}
-          >
-            <Label variant="soft" color={'default'}>
-              {currentMentainance?.remaining_days}
-            </Label>
-          </Box>
-        </Stack> */}
         <Stack direction="row">
           <Box sx={{ width: 160, color: 'text.secondary' }}>{t('cause')}</Box>
           <Box sx={{ typography: 'subtitle2' }}>{currentMentainance?.cause}</Box>
@@ -124,7 +115,7 @@ export default function OrderDetailsItems({
           <Box sx={{ width: 160, color: 'text.secondary' }}>{t('driver')}</Box>
           <Box sx={{ typography: 'subtitle2' }}>{currentMentainance?.driver?.name || "--"}</Box>
         </Stack>
-      </Stack>
+      </Stack> */}
     </Stack>
   );
 
@@ -140,7 +131,9 @@ export default function OrderDetailsItems({
         {/* <Scrollbar> */}
         <Stack
           direction="row"
-          alignItems="center"
+          justifyContent={"start"}
+          gap={12}
+          alignItems="start"
           sx={{
             py: 3,
             minWidth: 640,
@@ -168,8 +161,78 @@ export default function OrderDetailsItems({
                 mt: 0.5,
               }}
             />
+            <Stack direction="row">
+              <Box sx={{ width: 120, color: 'text.secondary' }}>{t('contract')}</Box>
+              <Box sx={{ typography: 'subtitle2' }}>{currentMentainance?.contract?.ref || "--"}</Box>
+            </Stack>
+            <Stack direction="row" >
+              <Box sx={{ width: 120, color: 'text.secondary' }}>{t('driver')}</Box>
+              <Box sx={{ typography: 'subtitle2' }}>{driver?.name ? <Link onClick={()=>{handleViewDriver(driver?.id)}} href={""}>{driver?.name} </Link>:"--"} </Box>
+            </Stack>
           </Box>
+          <Divider orientation="vertical" flexItem />
+          <Stack spacing={2} sx={{ my: 1, typography: 'body2' }}>
+            <Stack direction="row">
+              <Box sx={{ width: 120, color: 'text.secondary' }}>{t('maintainType')}</Box>
+              <Box sx={{ typography: 'subtitle2' }}>{maintenance_type || "--"}</Box>
+            </Stack>
+            {/* <Stack direction="row">
+          <Box sx={{ width: 160, color: 'text.secondary' }}>{t('remaining')}</Box>
+          <Box
+            sx={{
+              ...(shipping && { color: 'error.main' }),
+            }}
+          >
+            <Label variant="soft" color={'default'}>
+              {currentMentainance?.remaining_days}
+            </Label>
+          </Box>
+        </Stack> */}
+            <Stack direction="row">
+              <Box sx={{ width: 120, color: 'text.secondary' }}>{t('cause')}</Box>
+              <Box sx={{ typography: 'subtitle2' }}>{currentMentainance?.cause}</Box>
+            </Stack>
+
+
+          </Stack>
         </Stack>
+        {
+          driver ?
+            <Stack
+              direction="row"
+              alignItems="center"
+              sx={{
+                py: 3,
+                minWidth: 640,
+                // borderBottom: (theme) => ` 2px ${theme.palette.background.neutral}`,
+              }}
+            >
+              <Box
+                onClick={() => handleViewDriver(driver?.id)}
+                sx={{
+                  cursor: 'pointer',
+                  '&:hover': {
+                    textDecoration: 'underline',
+                  },
+                }}
+              >
+                <ListItemText
+                  primary={driver?.name}
+                  secondary={driver?.phone_number != "N/A" ? driver?.phone_number : "--"}
+                  primaryTypographyProps={{
+                    typography: 'body2',
+                  }}
+                  secondaryTypographyProps={{
+                    component: 'span',
+                    color: 'text.disabled',
+                    mt: 0.5,
+                  }}
+                />
+              </Box>
+            </Stack>
+            :
+            null
+        }
         {/* <Stack
             direction="row"
             alignItems="center"

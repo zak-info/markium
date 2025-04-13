@@ -32,6 +32,7 @@ import AppNewInvoice3 from '../app-new-invoice3';
 import { useValues } from 'src/api/utils';
 import InvoiceListView from '../invoice/NotificationsListView';
 import { Box } from '@mui/system';
+import { useGetDetailedDriver } from 'src/api/drivers';
 // ----------------------------------------------------------------------
 
 export default function OrderDetailsView({ id }) {
@@ -54,10 +55,11 @@ export default function OrderDetailsView({ id }) {
 
   // const { maintenance, mutate } = useGetMaintenance();
   const { maintenance, mutate } = useShowMaintenance(id);
+  const { driver } = useGetDetailedDriver(maintenance?.car?.driver_id);
   const { clauses } = useGetClauses(id)
   const { maintenance_specs } = useGetMaintenanceSpecs()
   const maintenanceclauses = clauses.filter(item => item.maintenance_id == id)
-  console.log("maintenanceclauses : ", maintenanceclauses);
+  console.log("current maintenanceclauses : ", maintenanceclauses);
 
   const [tableData, setTableData] = useState(clauses.filter(item => item.maintenance_id == id))
   useEffect(() => {
@@ -90,6 +92,7 @@ export default function OrderDetailsView({ id }) {
         onChangeStatus={handleChangeStatus}
         statusOptions={ORDER_STATUS_OPTIONS}
         idMaintenance={id}
+        driver={driver}
       />
 
       <Grid container spacing={3}>
@@ -100,6 +103,7 @@ export default function OrderDetailsView({ id }) {
                 currentMentainance={currentMentainance}
                 maintenance_type={data?.maintenance_type_enum?.find(item => item.key == currentMentainance?.maintainance_type)?.translations[0]?.name}
                 currentCar={currentCar}
+                driver={driver}
                 items={currentMentainance?.items}
                 taxes={currentMentainance?.taxes}
                 shipping={currentMentainance?.shipping}
@@ -132,10 +136,10 @@ export default function OrderDetailsView({ id }) {
             }))}
             setTableData={setTableData}
             tableLabels={[
-              { id: "is_periodic", key_to_update: "is_periodic", label: t("clause_type"), editable: false, creatable: true, type: "select", options: [{ value: "periodic", label: t("periodic") }, { value: "not-periodic", label: t("not_periodic") }], width: 100 },
-              { id: "clause", key_to_update: "related_id", label: t("clause"), editable: false, creatable: true, type: "select", options: [...periodic_maintenance, ...maintenance_specs?.filter(item => !item?.is_periodic)]?.map(item => ({ value: item.id, label: item?.name })), width:160 },
+              // { id: "is_periodic", key_to_update: "is_periodic", label: t("clause_type"), editable: false, creatable: true, type: "select", options: [{ value: "periodic", label: t("periodic") }, { value: "not-periodic", label: t("not_periodic") }], width: 100 },
+              { id: "clause", key_to_update: "related_id", label: t("clause"), editable: false, creatable: true, type: "select", options: [...periodic_maintenance, ...maintenance_specs?.filter(item => !item?.is_periodic)]?.map(item => ({ value: item.id, label: item?.name })), width:100 },
               { id: "cost", key_to_update: "cost", label: t("cost"), editable: true, creatable: true, type: "number", width: 100 },
-              { id: "quantity", key_to_update: "quantity", label: t("qte"), editable: true, creatable: true, type: "number", width: 80 },
+              { id: "quantity", key_to_update: "quantity", label: t("qte"), editable: true, creatable: true, type: "number", width: 60 },
               { id: "tpiece_status", key_to_update: "piece_status", label: t("piece_status"), editable: true, creatable: true, type: "select", options: data?.piece_status_enum?.map(item => ({ value: item.key, label: item?.translations[0]?.name })), width: 100 },
               { id: "total", key_to_update: "total", label: t("total"), editable: false, creatable: false, width: 100 },
               { id: "note", key_to_update: "note", label: t("note"), editable: true, creatable: true, width: 200 },

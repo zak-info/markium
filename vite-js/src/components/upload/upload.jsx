@@ -12,9 +12,11 @@ import SingleFilePreview from './preview-single-file';
 import RejectionFiles from './errors-rejection-files';
 import { useState, useEffect } from 'react';
 import { t } from 'i18next';
+import { FormHelperText } from '@mui/material';
 
 export default function Upload({
   disabled,
+  placeholder,
   multiple = false,
   error,
   name,
@@ -88,12 +90,15 @@ export default function Upload({
           <SingleFilePreview imgUrl={URL.createObjectURL(previewFiles)} filename={previewFiles.name} />
         ) : (
           <Stack spacing={3} alignItems="center" justifyContent="center">
-            <Typography variant="h6">{label || t('drop_or_select_file')}</Typography>
+            <Typography variant="h6">{label ? label : t(placeholder)}</Typography>
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
               <Box component="span" sx={{ mx: 0.5, color: 'primary.main', textDecoration: 'underline' }}>
                 {t("browse")}
               </Box>
               {t("from_your_device")}
+            </Typography>
+            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+              {" jpg, jpeg, png, pdf, doc, docx."}
             </Typography>
           </Stack>
         )}
@@ -119,7 +124,7 @@ export default function Upload({
 
       {hasFiles && (
         <Box sx={{ my: 3 }}>
-          <MultiFilePreview files={previewFiles} onRemove={onRemove} />
+          <MultiFilePreview files={previewFiles} onRemove={(file)=>setPreviewFiles(previewFiles.filter((f) => f !== file))} />
         </Box>
       )}
 
