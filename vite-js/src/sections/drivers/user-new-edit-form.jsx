@@ -197,7 +197,7 @@ export default function UserNewEditForm({ currentDriver }) {
 
               <RHFSelect name="nationality_id" label={t('nationality')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
-                {data?.nationalities?.map((option) => (
+                {data?.countries?.map((option) => (
                   <MenuItem key={option?.id} value={option?.id}>
                     {option?.translations[0]?.name}
                   </MenuItem>
