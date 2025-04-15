@@ -54,7 +54,7 @@ export default function UserNewEditForm({ currentDocument }) {
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslate();
   const { data } = useValues();
-  console.log("data : attachmenat_names ", data?.attachmenat_names);
+  console.log("data : lds;ldsld;s ", data);
 
 
   const NewUserSchema = Yup.object().shape({
@@ -72,7 +72,7 @@ export default function UserNewEditForm({ currentDocument }) {
   const defaultValues = useMemo(
     () => ({
       attachment_name_id: currentDocument?.attachment_name_id || '',
-      attachment_type_id: currentDocument?.attachment_type_id || '',
+      // attachment_type_id: currentDocument?.attachment_type_id || '',
       attachable_id: currentDocument?.attachable_id || '',
       attachable_type: currentDocument?.attachable_type || '',
       // document_duration_days: currentDocument?.document_duration_days || '',
@@ -104,32 +104,25 @@ export default function UserNewEditForm({ currentDocument }) {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-
       const formData = new FormData();
       formData.append("attachment", data.attachment);
       formData.append("invoice", data.invoice);
       formData.append("release_date", format(new Date(data.release_date), 'yyyy-MM-dd'));
       formData.append("expiry_date", format(new Date(data.expiry_date), 'yyyy-MM-dd'));
-      formData.append("attachment_name_id", data?.attachment_name_id);
-      // formData.append("attachment_type_id", data?.attachment_type_id);
-      formData.append("attachable_id", data?.attachable_id);
-      formData.append("attachable_type", data?.attachable_type);
+      formData.append("attachment_name_id", Number(data?.attachment_name_id));
+      formData.append("attachable_id", Number(data?.attachable_id));
+      formData.append("attachable_type", Number(data?.attachable_type));
+      formData.append("note", data?.note);
+      formData.append("attachment_type_id",1);
       // formData.append("document_duration_days", data?.document_duration_days);
       // formData.append("duration_unity", data?.duration_unity);
-      formData.append("note", data?.note);
 
-
-      // const body = data;
       console.info('DATA is  : ', data);
-      // body.release_date = format(new Date(data.release_date), 'yyyy-MM-dd');
-      // body.expiry_date = format(new Date(data.expiry_date), 'yyyy-MM-dd');
-
-      console.log("form :::", formData);
       const response = currentDocument?.id ? await editDocument(currentDocument?.id, formData) : await createDocument(formData);
 
-      enqueueSnackbar(currentDocument ? 'Update success!' : 'Create success!');
+      enqueueSnackbar(t("operation_success"));
       router.push(paths.dashboard.documents.root);
-      reset();
+      // reset();
     } catch (error) {
       console.error(error);
       Object.values(error?.data).forEach(array => {
@@ -139,21 +132,6 @@ export default function UserNewEditForm({ currentDocument }) {
       });
     }
   });
-
-  const handleDrop = useCallback(
-    (acceptedFiles) => {
-      const file = acceptedFiles[0];
-
-      const newFile = Object.assign(file, {
-        preview: URL.createObjectURL(file),
-      });
-
-      if (file) {
-        setValue('avatarUrl', newFile, { shouldValidate: true });
-      }
-    },
-    [setValue]
-  );
 
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>
@@ -173,7 +151,7 @@ export default function UserNewEditForm({ currentDocument }) {
 
               <RHFSelect required name="attachable_type" label={t('attachment_type')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
-                {[{ name: "car", lable: { ar: "سيارة", en: "car" }, id: 1 }, { name: "driver", lable: { ar: "سائق", en: "driver" }, id: 2 }]?.map((type) => (
+                {[{ name: "car", lable: { ar: "سيارة", en: "car" }, id: 1 }, { name: "driver", lable: { ar: "سائق", en: "driver" }, id: 2 },{ name: "client", lable: { ar: "عميل", en: "client" }, id: 3 },{ name: "other", lable: { ar: "اخرى", en: "other" }, id: 4 }]?.map((type) => (
                   <MenuItem key={type?.id} value={type.name}>
                     {type?.lable[currentLang.value]}
                   </MenuItem>
@@ -204,7 +182,7 @@ export default function UserNewEditForm({ currentDocument }) {
               {/* disabled={!attachableType} */}
               {
                 values.attachable_type == "car" ?
-                  <CarsAutocomplete required options={car} name="attachable_id" label={t('car')} placeholder={t(t('search_by') +" "+t('plateNumber') )} />
+                  <CarsAutocomplete required options={car} name="attachable_id" label={t('car')} placeholder={t(t('search_by') + " " + t('plateNumber'))} />
                   : values.attachable_type == "driver" ?
                     <SimpleAutocomplete required options={drivers} name="attachable_id" label={t('driver')} placeholder={t('search_by')} />
                     :
@@ -227,7 +205,7 @@ export default function UserNewEditForm({ currentDocument }) {
               <FlexibleAutocomplete
                 name="attachment_name_id"
                 label={t('document_name')}
-                options={data?.attachmenat_names?.filter(item => item?.object_type?.includes(values.attachable_type ) )}
+                options={data?.attachmenat_names?.filter(item => item?.object_type?.includes(values.attachable_type))}
                 getOptionLabelFn={(option) => option?.translations?.[0]?.name}
               />
 

@@ -22,6 +22,7 @@ import { SettingsDrawer, SettingsProvider } from 'src/components/settings';
 import { CheckoutProvider } from 'src/sections/checkout/context';
 
 import { AuthProvider } from 'src/auth/context/jwt';
+import { DataContextProvider } from './context/system-data/DataContext';
 // import { AuthProvider } from 'src/auth/context/auth0';
 // import { AuthProvider } from 'src/auth/context/amplify';
 // import { AuthProvider } from 'src/auth/context/firebase';
@@ -45,17 +46,19 @@ export default function App() {
             themeStretch: false,
           }}
         >
-          <ThemeProvider>
-            <MotionLazy>
-              <SnackbarProvider>
-                <CheckoutProvider>
-                  <SettingsDrawer />
-                  <ProgressBar />
-                  <Router />
-                </CheckoutProvider>
-              </SnackbarProvider>
-            </MotionLazy>
-          </ThemeProvider>
+            <ThemeProvider>
+              <MotionLazy>
+                <SnackbarProvider>
+          {/* <DataContextProvider> */}
+                  <CheckoutProvider>
+                    <SettingsDrawer />
+                    <ProgressBar />
+                    <Router />
+                  </CheckoutProvider>
+          {/* </DataContextProvider> */}
+                </SnackbarProvider>
+              </MotionLazy>
+            </ThemeProvider>
         </SettingsProvider>
       </LocalizationProvider>
     </AuthProvider>

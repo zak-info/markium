@@ -18,6 +18,8 @@ import {
   TextField,
 } from "@mui/material";
 
+import _ from "lodash";
+
 import { useValues } from "src/api/utils";
 import Scrollbar from "src/components/scrollbar";
 import { TableHeadCustom } from "src/components/table";
@@ -40,14 +42,14 @@ export default function AppNewInvoice3({
   useEffect(() => {
     setOriginalTableData(tableData);
   }, []);
-  // useEffect(() => {
-  //   console.log("tableData : ", tableData);
-  //   console.log("originalTableData : ", originalTableData);
-  //   // console.log(hasChanges());
-  // }, [tableData]);
-  const hasChanges = () => {
+  
+  // const hasChanges = () => {
+  //   return JSON.stringify(originalTableData) !== JSON.stringify(tableData);
+  // };
 
-    return JSON.stringify(originalTableData) !== JSON.stringify(tableData);
+  const [isChangeing, setIsChanging] = useState(false)
+  const hasChanges = () => {
+    return !_.isEqual(originalTableData, tableData);
   };
 
   const [changeSin, setChangeSin] = useState(false)
@@ -58,6 +60,7 @@ export default function AppNewInvoice3({
   };
 
   const handleEdit = (rowId, field) => {
+    setIsChanging(true)
     setEditing({ rowId, field });
   };
 
@@ -65,10 +68,12 @@ export default function AppNewInvoice3({
     setTableData((prev) =>
       prev.map((row) => (row.id === rowId ? { ...row, [field]: event.target.value, new: row?.new == "true" ? "true" : "false" } : row))
     );
+    setIsChanging(true)
   };
 
   const handleBlur = () => {
     setEditing({ rowId: null, field: null });
+    setIsChanging(true)
   };
 
   const [addProcess, setAddProcess] = useState(true)
@@ -115,9 +120,10 @@ export default function AppNewInvoice3({
           await EditMaintenanceClause(row.id, editBody);
         }
       }
-      enqueueSnackbar("Success operation",);
+      enqueueSnackbar(t("operation_success"),);
       setOriginalTableData([...tableData]); // Reset original data after saving
       setChangeSin(false)
+      setIsChanging(false)
     } catch (error) {
       console.error(error);
       // enqueueSnackbar(error?.message ? error?.message : "Somthing Went Wrong", { variant: 'error' });
@@ -174,7 +180,7 @@ export default function AppNewInvoice3({
       <Divider sx={{ borderStyle: "dashed" }} />
 
       {/* Show Save Changes button only when data is modified */}
-      {hasChanges() ?
+      {isChangeing ?
         <Stack alignItems="flex-end" sx={{ m: 3 }}>
           <LoadingButton type="submit" variant="contained" onClick={handleSaveChanges} loading={postloader}>
             {t('saveChange')}

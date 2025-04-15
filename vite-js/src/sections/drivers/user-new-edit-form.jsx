@@ -40,7 +40,7 @@ export default function UserNewEditForm({ currentDriver }) {
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslate();
   const { data } = useValues();
-  console.log("data nationality",data?.nationalities);
+  console.log("data nationality",data);
   const { car } = useGetCar();
 
 
