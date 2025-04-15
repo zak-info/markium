@@ -135,7 +135,7 @@ export default function UserNewEditForm({ currentDriver }) {
 
       reset();
 
-      enqueueSnackbar(currentDriver?.id ? 'Update success!' : 'Create success!');
+      enqueueSnackbar(t("operation_success"));
 
       router.push(paths.dashboard.drivers.root);
     } catch (error) {
