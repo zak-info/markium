@@ -322,6 +322,7 @@
   "operation_error": "خطأ في العملية",
   "car_status": "حالة السيارة",
   "logs": "سجل العمليات",
-  "completed": "مكتمل"
+  "completed": "مكتمل",
+  "gender":"الجنس"
 
 }

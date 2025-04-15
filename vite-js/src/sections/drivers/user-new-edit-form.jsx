@@ -25,7 +25,7 @@ import { fData } from 'src/utils/format-number';
 import { useSnackbar } from 'src/components/snackbar';
 import FormProvider, { RHFTextField, RHFSelect } from 'src/components/hook-form';
 
-import { useTranslate } from 'src/locales';
+import { useLocales, useTranslate } from 'src/locales';
 
 import { addNewDriver, editDriver } from 'src/api/drivers';
 
@@ -40,8 +40,9 @@ export default function UserNewEditForm({ currentDriver }) {
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslate();
   const { data } = useValues();
-  console.log("data nationality",data);
+  console.log("data nationality", data);
   const { car } = useGetCar();
+  const { currentLang } = useLocales()
 
 
 
@@ -51,29 +52,20 @@ export default function UserNewEditForm({ currentDriver }) {
       .required('Nationality ID is required')
       .typeError('Nationality ID must be a number'),
     residence_permit_number: Yup.string().required('Residence permit number is required'),
-
-    // license_number: Yup.string().required('License number is required'),
     salary: Yup.number().required('Salary is required').typeError('Salary must be a number'),
-    // end_of_service_bonus: Yup.number()
-    //   .required('End of service bonus is required')
-    //   .typeError('End of service bonus must be a number'),
-    // additional_salary: Yup.number()
-    //   .required('Additional salary is required')
-    //   .typeError('Additional salary must be a number'),
     phone_number: Yup.string()
       .required('Phone number is required')
       .matches(/^\d+$/, 'Phone number must be a valid numeric value'),
     start_date: Yup.date()
       .required('Start date is required')
       .typeError('Start date must be a valid date'),
-    // hourly_rate: Yup.number()
-    //   .required('Hourly rate is required')
-    //   .typeError('Hourly rate must be a number'),
-    // custody: Yup.number().required('Custody is required').typeError('Custody must be a number'),
-    // loan: Yup.number().required('Loan is required').typeError('Loan must be a number'),
-
-    // car_id: Yup.number().required('Car ID is required').typeError('Car ID must be a number'),
     state_id: Yup.number().required('State ID is required'),
+    isMale: Yup.boolean()
+      .required('Gender is required')
+      .typeError('Gender must be true or false'),
+    birth_date: Yup.date()
+      .required('Birth date is required')
+      .typeError('Birth date must be a valid date'),
   });
 
   const defaultValues = useMemo(
@@ -81,21 +73,16 @@ export default function UserNewEditForm({ currentDriver }) {
       name: currentDriver?.name || '',
       nationality_id: currentDriver?.nationality?.id || null,
       residence_permit_number: currentDriver?.residence_permit_number || '',
-
-      // license_number: currentDriver?.license_number || '',
       salary: currentDriver?.salary || null,
-      // end_of_service_bonus: currentDriver?.end_of_service_bonus || null,
-      // additional_salary: currentDriver?.additional_salary || null,
       phone_number: currentDriver?.phone_number || '',
       start_date: currentDriver?.start_date || new Date(),
-      // hourly_rate: currentDriver?.hourly_rate || null,
-      // custody: currentDriver?.custody || null,
-      // loan: currentDriver?.loan || null,
-      // car_id: currentDriver?.car_id || null,
       state_id: currentDriver?.state?.id || null,
+      isMale: currentDriver?.isMale ?? true, // default to true if undefined
+      birth_date: currentDriver?.birth_date || null,
     }),
     [currentDriver]
   );
+
 
   const methods = useForm({
     resolver: yupResolver(validationSchema),
@@ -124,7 +111,7 @@ export default function UserNewEditForm({ currentDriver }) {
     //     setValue('car_id', selectedCar.id); // Set the selected car's ID to car_id
     //   }
     // }
-    console.log("currentDriver : ",currentDriver);
+    console.log("currentDriver : ", currentDriver);
 
   }, [car, setValue]);
 
@@ -133,6 +120,7 @@ export default function UserNewEditForm({ currentDriver }) {
       console.log("lest edit driver");
       const body = data;
       body.start_date = format(data.start_date, 'yyyy-MM-dd');
+      body.birth_date = format(data.birth_date, 'yyyy-MM-dd');
       if (currentDriver?.id) {
         delete body.license_number
         delete body.residence_permit_number
@@ -161,21 +149,6 @@ export default function UserNewEditForm({ currentDriver }) {
     }
   });
 
-  const handleDrop = useCallback(
-    (acceptedFiles) => {
-      const file = acceptedFiles[0];
-
-      const newFile = Object.assign(file, {
-        preview: URL.createObjectURL(file),
-      });
-
-      if (file) {
-        setValue('avatarUrl', newFile, { shouldValidate: true });
-      }
-    },
-    [setValue]
-  );
-
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>
       <Grid container spacing={3}>
@@ -195,7 +168,7 @@ export default function UserNewEditForm({ currentDriver }) {
 
               {/* Nationality ID */}
 
-              <RHFSelect name="nationality_id" label={t('nationality')}>
+              <RHFSelect name="nationality_id"  label={t('nationality')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
                 {data?.countries?.map((option) => (
                   <MenuItem key={option?.id} value={option?.id}>
@@ -203,6 +176,44 @@ export default function UserNewEditForm({ currentDriver }) {
                   </MenuItem>
                 ))}
               </RHFSelect>
+
+              <RHFSelect required name="isMale" label={t('gender')}>
+                <Divider sx={{ borderStyle: 'dashed' }} />
+                {[
+                  { value: true, label: { ar: 'ذكر', en: 'Male' } },
+                  { value: false, label: { ar: 'أنثى', en: 'Female' } },
+                ].map((option) => (
+                  <MenuItem key={option.value.toString()} value={option.value}>
+                    {option.label[currentLang.value]}
+                  </MenuItem>
+                ))}
+              </RHFSelect>
+
+              <DatePicker
+                label={t('birth_date')}
+                format="dd/MM/yyyy"
+                value={currentDriver?.start_date ? new Date(currentDriver?.birth_date) : values?.birth_date ? new Date(values?.birth_date) : new Date()}
+                onChange={(date) => setValue('birth_date', date)}
+                slotProps={{
+                  textField: {
+                    fullWidth: true,
+                  },
+                }}
+              />
+
+              {/* <DatePicker
+                label={t('start_date')}
+                format="dd/MM/yyyy"
+                value={currentDriver?.start_date ? new Date(currentDriver?.start_date) : values?.start_date ? new Date(values?.start_date) : new Date()}
+                onChange={(date) => setValue('start_date', date)}
+
+                slotProps={{
+                  textField: {
+                    fullWidth: true,
+                  },
+                }}
+              /> */}
+
 
               {/* Residence Permit Number */}
               <RHFTextField disabled={currentDriver?.id ? true : false} name="residence_permit_number" label={t('residence_permit_number')} />
@@ -227,7 +238,7 @@ export default function UserNewEditForm({ currentDriver }) {
               {/* Start Date */}
               <DatePicker
                 label={t('start_date')}
-                format="dd/MM/yyyy"  
+                format="dd/MM/yyyy"
                 value={currentDriver?.start_date ? new Date(currentDriver?.start_date) : values?.start_date ? new Date(values?.start_date) : new Date()}
                 onChange={(date) => setValue('start_date', date)}
 
@@ -267,7 +278,7 @@ export default function UserNewEditForm({ currentDriver }) {
                 ))}
               </RHFSelect> */}
 
-              
+
             </Box>
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>
