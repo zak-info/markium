@@ -45,6 +45,7 @@ import CarsAutocomplete from 'src/components/hook-form/rhf-CarsAutocomplete';
 import SimpleAutocomplete from 'src/components/hook-form/rhf-simple-autocomplete';
 import FileThumbnail from 'src/components/file-thumbnail';
 import FlexibleAutocomplete from 'src/components/hook-form/rhf-scalable-autocomplete';
+import { useGetClients } from 'src/api/client';
 
 // ----------------------------------------------------------------------
 
@@ -99,6 +100,7 @@ export default function UserNewEditForm({ currentDocument }) {
   const values = watch();
   const { car } = useGetCar()
   const { drivers } = useGetDrivers()
+  const { clients } = useGetClients()
   const { currentLang } = useLocales()
   const attachableType = watch("attachable_type");
 
@@ -113,7 +115,7 @@ export default function UserNewEditForm({ currentDocument }) {
       formData.append("attachable_id", Number(data?.attachable_id));
       formData.append("attachable_type", Number(data?.attachable_type));
       formData.append("note", data?.note);
-      formData.append("attachment_type_id",1);
+      formData.append("attachment_type_id", 1);
       // formData.append("document_duration_days", data?.document_duration_days);
       // formData.append("duration_unity", data?.duration_unity);
 
@@ -151,7 +153,7 @@ export default function UserNewEditForm({ currentDocument }) {
 
               <RHFSelect required name="attachable_type" label={t('attachment_type')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
-                {[{ name: "car", lable: { ar: "سيارة", en: "car" }, id: 1 }, { name: "driver", lable: { ar: "سائق", en: "driver" }, id: 2 },{ name: "client", lable: { ar: "عميل", en: "client" }, id: 3 },{ name: "other", lable: { ar: "اخرى", en: "other" }, id: 4 }]?.map((type) => (
+                {[{ name: "car", lable: { ar: "سيارة", en: "car" }, id: 1 }, { name: "driver", lable: { ar: "سائق", en: "driver" }, id: 2 }, { name: "client", lable: { ar: "عميل", en: "client" }, id: 3 }, { name: "other", lable: { ar: "اخرى", en: "other" }, id: 4 }]?.map((type) => (
                   <MenuItem key={type?.id} value={type.name}>
                     {type?.lable[currentLang.value]}
                   </MenuItem>
@@ -185,13 +187,15 @@ export default function UserNewEditForm({ currentDocument }) {
                   <CarsAutocomplete required options={car} name="attachable_id" label={t('car')} placeholder={t(t('search_by') + " " + t('plateNumber'))} />
                   : values.attachable_type == "driver" ?
                     <SimpleAutocomplete required options={drivers} name="attachable_id" label={t('driver')} placeholder={t('search_by')} />
-                    :
-                    <RHFSelect disabled={!attachableType} required name="attachable_id" label={t('attachable')}>
-                      <Divider sx={{ borderStyle: 'dashed' }} />
-                      <MenuItem value={"1"}>
-                        name
-                      </MenuItem>
-                    </RHFSelect>
+                    : values.attachable_type == "client" ?
+                      <SimpleAutocomplete required options={clients} name="attachable_id" label={t('client')} placeholder={t('search_by')} />
+                      :
+                      <RHFSelect disabled={!attachableType} required name="attachable_id" label={t('attachable')}>
+                        <Divider sx={{ borderStyle: 'dashed' }} />
+                        <MenuItem value={"1"}>
+                          {t("other")}
+                        </MenuItem>
+                      </RHFSelect>
               }
 
               {/* <RHFSelect required name="attachment_type_id" label={t('document_type')}>
