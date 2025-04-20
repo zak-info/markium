@@ -107,7 +107,7 @@ export function EditClaim({ claim_id, close, contract_id, setTableData ,paiment_
       console.log("data id, ", data, claim_id);
       const response = await editClaims(claim_id, data);
       enqueueSnackbar(t("operation_success"), { variant: 'success' });
-      setTableData(prev => prev.map(item => item.id !== claim_id ? item : { ...item, amount: data.amount }));
+      setTableData(prev => prev.map(item => item.id !== claim_id ? item : { ...item, amount: data.amount,paiment_date: data.paiment_date }));
       close();
       //  router.push(paths.dashboard.clients.contractsDetails(contract_id));
     } catch (error) {
