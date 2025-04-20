@@ -173,7 +173,7 @@ function AppNewInvoiceRow({ row, clausable, contract_id, setTableData }) {
         onClose={edit.onFalse}
         title={t("")}
         content={
-          <EditClaim claim_id={row?.id} contract_id={contract_id} setTableData={setTableData} close={() => { edit?.onFalse(); popover.onClose }} />
+          <EditClaim claim_id={row?.id} paiment_date={row?.paiment_date} amount={row?.amount} contract_id={contract_id} setTableData={setTableData} close={() => { edit?.onFalse(); popover.onClose }} />
         }
       />
     </>

@@ -27,7 +27,7 @@ import { useLocales, useTranslate } from 'src/locales';
 import { Card, Link } from '@mui/material';
 
 import * as Yup from 'yup';
-import { useMemo, useCallback, useState } from 'react';
+import { useMemo, useCallback, useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
@@ -53,23 +53,26 @@ import { markMaintenanceAsCompeleted, releaseCar } from 'src/api/maintainance';
 import { editClaims, markClaimAsPaid } from 'src/api/claim';
 import { useRouter } from 'src/routes/hooks';
 import { paths } from 'src/routes/paths';
+import { use } from 'react';
 
 
 // ----------------------------------------------------------------------
 
 
 
-export function EditClaim({ claim_id, close, contract_id, setTableData }) {
+export function EditClaim({ claim_id, close, contract_id, setTableData ,paiment_date,amount}) {
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslate();
   const router = useRouter();
   const NewUserSchema = Yup.object().shape({
     amount: Yup.number(),
+    paiment_date: Yup.string().required('paiment date is required'),
   });
 
   const defaultValues = useMemo(
     () => ({
-      amount: 0,
+      amount: amount || 0,
+      paiment_date: paiment_date || new Date(),
     }),
     []
   );
@@ -85,6 +88,11 @@ export function EditClaim({ claim_id, close, contract_id, setTableData }) {
     defaultValues,
   });
 
+  useEffect(() => {
+    setValue('amount', amount);
+    setValue('paiment_date', paiment_date);
+  }, [amount]);
+
   const {
     reset,
     watch,
@@ -96,9 +104,9 @@ export function EditClaim({ claim_id, close, contract_id, setTableData }) {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      console.log("data id, ", data , claim_id);
+      console.log("data id, ", data, claim_id);
       const response = await editClaims(claim_id, data);
-      enqueueSnackbar(t("operation_success"),{ variant: 'success' });
+      enqueueSnackbar(t("operation_success"), { variant: 'success' });
       setTableData(prev => prev.map(item => item.id !== claim_id ? item : { ...item, amount: data.amount }));
       close();
       //  router.push(paths.dashboard.clients.contractsDetails(contract_id));
@@ -135,7 +143,20 @@ export function EditClaim({ claim_id, close, contract_id, setTableData }) {
           >
 
             <RHFTextField name="amount" required label={t('new_amount')} type="number" />
-
+            <DatePicker
+              label={t('paiment_date')}
+              value={paiment_date ? new Date(paiment_date) : new Date()}
+              required
+              name="paiment_date"
+              format="dd/MM/yyyy"
+              onChange={(newValue) => setValue('paiment_date', fDate(newValue, 'yyyy-MM-dd'))}
+              slotProps={{
+                textField: {
+                  fullWidth: true,
+                },
+              }}
+              minDate={new Date()}
+            />
           </Box>
           <Stack alignItems="flex-end" sx={{ mt: 3 }}>
             <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
