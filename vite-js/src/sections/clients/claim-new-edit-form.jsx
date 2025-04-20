@@ -97,7 +97,7 @@ export default function ClaimNewEditForm({ currentClause,setTableData,contract_i
       reset();
       enqueueSnackbar(currentClause?.id ? 'Update success!' : 'Create success!');
       // router.push(paths.dashboard.clients.claims);
-      setTableData(prev=> prev?.length > 0 ? [...prev,{contract_id,...body,created_at:new Date(),status:{translations:[{name:'created'}]}}] : [{contract_id,...body,created_at:new Date(),status:{translations:[{name:'created'}]}}])
+      setTableData(prev=> prev?.length > 0 ? [...prev,{contract_id,...body,created_at:new Date(),status:{translations:[{name:t("not_yet")}]}}] : [{contract_id,...body,created_at:new Date(),status:{translations:[{name:'created'}]}}])
     } catch (error) {
       console.error(error);
       Object.values(error?.data).forEach(array => {

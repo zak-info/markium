@@ -29,10 +29,14 @@ import { useGetClaim } from 'src/api/claim';
 import { useEffect, useState } from 'react';
 import { fDate } from 'src/utils/format-time';
 import { t } from 'i18next';
+import ContentDialog from 'src/components/custom-dialog/content-dialog';
+import { CloseClaim } from './ContractClaimsTable/CloseClaim';
+import { useBoolean } from 'src/hooks/use-boolean';
+import { EditClaim } from './ContractClaimsTable/EditClaim';
 
 // ----------------------------------------------------------------------
 
-export default function AppNewInvoice2({ title, subheader,tableData,contract_id, tableLabels, ...other }) {
+export default function AppNewInvoice2({ title, subheader, tableData, contract_id, setTableData, tableLabels, ...other }) {
   // const { claims } = useGetClaim();
 
   return (
@@ -41,12 +45,12 @@ export default function AppNewInvoice2({ title, subheader,tableData,contract_id,
 
       <TableContainer sx={{ overflow: 'unset' }}>
         <Scrollbar>
-          <Table sx={{ }}>
+          <Table sx={{}}>
             <TableHeadCustom headLabel={tableLabels} />
 
             <TableBody>
               {tableData?.map((row) => (
-                <AppNewInvoiceRow key={row.id} row={row}  />
+                <AppNewInvoiceRow key={row.id} setTableData={setTableData} contract_id={contract_id} row={row} />
               ))}
             </TableBody>
           </Table>
@@ -77,9 +81,12 @@ AppNewInvoice2.propTypes = {
 
 // ----------------------------------------------------------------------
 
-function AppNewInvoiceRow({row,clausable}) {
+function AppNewInvoiceRow({ row, clausable, contract_id, setTableData }) {
   const popover = usePopover();
   const router = useRouter();
+
+  const completed = useBoolean();
+  const edit = useBoolean();
 
   const handleDownload = () => {
     popover.onClose();
@@ -102,9 +109,9 @@ function AppNewInvoiceRow({row,clausable}) {
   };
   const handleViewClausable = () => {
     console.log(row);
-    if(row?.clauseable_type == "car"){
+    if (row?.clauseable_type == "car") {
       router.push(paths.dashboard.vehicle.details(row?.clauseable_id));
-    }else{
+    } else {
       router.push(paths.dashboard.drivers.details(row?.clauseable_id));
     }
     console.info('DELETE', row.id);
@@ -122,14 +129,14 @@ function AppNewInvoiceRow({row,clausable}) {
         <TableCell>{fDate(row?.paiment_date)}</TableCell>
 
         <TableCell>
-            {row?.status?.translations[0]?.name}
+          {row?.status?.translations[0]?.name}
         </TableCell>
 
-        {/* <TableCell align="right" sx={{ pr: 1 }}>
+        <TableCell align="right" sx={{ pr: 1 }}>
           <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
             <Iconify icon="eva:more-vertical-fill" />
           </IconButton>
-        </TableCell> */}
+        </TableCell>
       </TableRow>
 
       <CustomPopover
@@ -138,28 +145,37 @@ function AppNewInvoiceRow({row,clausable}) {
         arrow="right-top"
         sx={{ width: 160 }}
       >
-        <MenuItem onClick={handleDownload}>
-          <Iconify icon="eva:cloud-download-fill" />
-          Download
+        {
+          row?.status?.key !== "paid_claim" ?
+            <MenuItem onClick={() => { completed.onTrue();popover.onClose(); }}>
+              <Iconify icon="duo-icons:folder-open" />
+              {t("close_claim")}
+            </MenuItem>
+            :
+            null
+        }
+        <MenuItem onClick={() => { edit.onTrue();popover.onClose(); }}>
+          <Iconify icon="solar:pen-bold" />
+          {t("edit")}
         </MenuItem>
 
-        <MenuItem onClick={handlePrint}>
-          <Iconify icon="solar:printer-minimalistic-bold" />
-          Print
-        </MenuItem>
-
-        <MenuItem onClick={handleShare}>
-          <Iconify icon="solar:share-bold" />
-          Share
-        </MenuItem>
-
-        <Divider sx={{ borderStyle: 'dashed' }} />
-
-        <MenuItem onClick={handleDelete} sx={{ color: 'error.main' }}>
-          <Iconify icon="solar:trash-bin-trash-bold" />
-          Delete
-        </MenuItem>
       </CustomPopover>
+      <ContentDialog
+        open={completed.value}
+        onClose={completed.onFalse}
+        title={t("")}
+        content={
+          <CloseClaim claim_id={row?.id} contract_id={contract_id} setTableData={setTableData} close={() => { completed?.onFalse(); popover.onClose }} />
+        }
+      />
+      <ContentDialog
+        open={edit.value}
+        onClose={edit.onFalse}
+        title={t("")}
+        content={
+          <EditClaim claim_id={row?.id} contract_id={contract_id} setTableData={setTableData} close={() => { edit?.onFalse(); popover.onClose }} />
+        }
+      />
     </>
   );
 }

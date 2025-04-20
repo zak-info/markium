@@ -148,6 +148,7 @@
   "contactDate": "تاريخ الحلول",
   "status": "الحالة",
   "amount": "المبلغ",
+  "new_amount": "المبلغ الجديد",
   "client": "العميل",
   "addNewContract": "إضافة عقد جديد",
   "payingOff": "الدفع",
@@ -222,7 +223,7 @@
   "payment_method": "طريقة الدفع",
   "payments": "المدفوعات",
   "remaining": "المتبقي",
-  "paid": "المدفوع",
+  "paid": "مدفوع",
   "paiment_date": "تاريخ الدفع",
   "release_date": "تاريخ الإصدار",
   "expiry_date": "تاريخ الانتهاء",
@@ -323,6 +324,10 @@
   "car_status": "حالة السيارة",
   "logs": "سجل العمليات",
   "completed": "مكتمل",
-  "gender":"الجنس"
+  "gender":"الجنس",
+  "close_claim":"إغلاق المطالبة",
+  "discount":"الخصم",
+  "not_yet":"ليس بعد",
+  "add_discount":"إضافة خصم"
 
 }

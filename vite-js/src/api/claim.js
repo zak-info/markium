@@ -61,6 +61,11 @@ export async function createClaim(body) {
 }
 
 export async function editClaims(id, body) {
-    const URL = endpoints.contracts.claims + '/' + id;
+    const URL = endpoints.claims.edit(id);
     return await axios.put(URL, body);
 }
+
+export async function markClaimAsPaid(id,body) {
+    const URL = endpoints.claims.paid(id);
+    return await axios.post(URL, body);
+  }

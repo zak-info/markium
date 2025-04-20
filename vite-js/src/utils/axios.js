@@ -111,7 +111,9 @@ export const endpoints = {
   claims: {
     list: '/contract/1/claims',
     new:"/contract/claims",
-    logs:"/contract/claims/logs"
+    logs:"/contract/claims/logs",
+    edit: (id) => `/contract/claims/${id}`,
+    paid: (id) => `/contract/claims/${id}/paid`,    
   },
   settings: {
     mainspecs: '/maintenance/specifications',

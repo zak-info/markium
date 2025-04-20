@@ -24,10 +24,14 @@ import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
+import ContentDialog from 'src/components/custom-dialog/content-dialog';
+import { MarkAsCompletedForm } from 'src/sections/maintain/order-table-row';
+import { CloseClaim } from './CloseClaim';
+import { t } from 'i18next';
 
 // ----------------------------------------------------------------------
 
-export default function OrderTableRow({ row,clausable, onCreateRow, selected, onViewRow, onSelectRow, onDeleteRow }) {
+export default function OrderTableRow({ row, clausable, onCreateRow, selected, onViewRow, onSelectRow, onDeleteRow }) {
   const { items, status, orderNumber, createdAt, customer, totalQuantity, subTotal } = row;
 
   const confirm = useBoolean();
@@ -36,6 +40,7 @@ export default function OrderTableRow({ row,clausable, onCreateRow, selected, on
 
   const popover = usePopover();
   const router = useRouter();
+  const completed = useBoolean();
 
 
   const handleViewClausable = () => {
@@ -77,8 +82,8 @@ export default function OrderTableRow({ row,clausable, onCreateRow, selected, on
         {row?.cost * row?.duration}.00
       </TableCell>
 
-      {/* <TableCell align="start" sx={{ px: 1 }}>
-        <IconButton
+      <TableCell align="start" sx={{ px: 1 }}>
+        {/* <IconButton
           color={collapse.value ? 'inherit' : 'default'}
           onClick={collapse.onToggle}
           sx={{
@@ -88,12 +93,12 @@ export default function OrderTableRow({ row,clausable, onCreateRow, selected, on
           }}
         >
           <Iconify icon="eva:arrow-ios-downward-fill" />
-        </IconButton>
+        </IconButton> */}
 
         <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
           <Iconify icon="eva:more-vertical-fill" />
         </IconButton>
-      </TableCell> */}
+      </TableCell>
     </TableRow>
   );
 
@@ -161,21 +166,17 @@ export default function OrderTableRow({ row,clausable, onCreateRow, selected, on
           <Iconify icon="solar:trash-bin-trash-bold" />
           Delete
         </MenuItem> */}
-        {
-          row?.action == 'action_required' &&
-          <MenuItem
-            onClick={() => {
-              onCreateRow();
-              popover.onClose();
-            }}
-          >
-            <Iconify icon="duo-icons:add-circle" />
-            create maintenance
-          </MenuItem>
-        }
 
 
         <MenuItem
+          onClick={() => {
+            completed.onTrue();
+          }}
+        >
+          <Iconify icon="duo-icons:folder-open" />
+          {t("close_claim")}
+        </MenuItem>
+        {/* <MenuItem
           onClick={() => {
             onViewRow();
             popover.onClose();
@@ -183,8 +184,17 @@ export default function OrderTableRow({ row,clausable, onCreateRow, selected, on
         >
           <Iconify icon="solar:eye-bold" />
           View
-        </MenuItem>
+        </MenuItem> */}
       </CustomPopover>
+
+      <ContentDialog
+        open={completed.value}
+        onClose={completed.onFalse}
+        title={t("")}
+        content={
+          <CloseClaim maintenanceId={row?.id} close={() => completed?.onFalse()} />
+        }
+      />
 
       <ConfirmDialog
         open={confirm.value}

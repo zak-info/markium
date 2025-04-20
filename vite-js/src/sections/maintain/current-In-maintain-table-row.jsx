@@ -202,7 +202,7 @@ export default function OrderTableRow({ row, maintenance, selected, onViewRow, o
               {t("release_car")}
             </MenuItem>
             :
-            row?.car?.status?.key == "under_preparation" ?
+            row?.car?.status?.key != "under_maintenance" ?
               <MenuItem
                 onClick={() => {
                   completed.onTrue();
@@ -265,7 +265,7 @@ export default function OrderTableRow({ row, maintenance, selected, onViewRow, o
         content="Are you sure want to delete?"
         action={
           <Button variant="contained" color="error" onClick={onDeleteRow}>
-            Delete
+            {t("delete")}
           </Button>
         }
       />

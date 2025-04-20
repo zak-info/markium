@@ -39,6 +39,7 @@ export default function ProfileHome({ info, posts, contract, client, location })
   const [tableData, setTableData] = useState(claims?.filter(item => item.contract_id == contract?.id))
   useEffect(() => {
     setTableData(claims?.filter(item => item.contract_id == contract?.id))
+    console.log("claims  sss",claims?.filter(item => item.contract_id == contract?.id));
   }, [claims])
 
   const { t } = useTranslation();
@@ -240,6 +241,7 @@ export default function ProfileHome({ info, posts, contract, client, location })
               <AppNewInvoice2
 
                 tableData={tableData}
+                setTableData={setTableData}
                 sx={{ mt: "10px" }}
                 title={t('claims')}
                 contract_id={contract?.id}

@@ -265,5 +265,11 @@
   "car_status":"Car Status",
   "logs":"Logs",
   "completed":"completed",
-  "gender":"gender"
+  "gender":"gender",
+  "close_claim":"Close Claim",
+  "discount":"Discount",
+  "not_yet_paid":"Not Yet",
+  "add_discount":"Add Discount",
+  "new_amount":"New Amount"
+
 }
