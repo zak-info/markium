@@ -95,9 +95,9 @@ export default function ClaimNewEditForm({ currentClause,setTableData,contract_i
         await createClaim({contract_id,...body});
       }
       reset();
-      enqueueSnackbar(currentClause?.id ? 'Update success!' : 'Create success!');
+      enqueueSnackbar(t("operation_success"), { variant: 'success' });
       // router.push(paths.dashboard.clients.claims);
-      setTableData(prev=> prev?.length > 0 ? [...prev,{contract_id,...body,created_at:new Date(),status:{translations:[{name:t("not_yet")}]}}] : [{contract_id,...body,created_at:new Date(),status:{translations:[{name:'created'}]}}])
+      setTableData(prev=> prev?.length > 0 ? [...prev,{contract_id,...body,created_at:new Date(),status:{translations:[{name:t("not_yet")}]}}] : [{contract_id,...body,created_at:new Date(),status:{translations:[{name:t("not_yet")}]}}])
     } catch (error) {
       console.error(error);
       Object.values(error?.data).forEach(array => {
