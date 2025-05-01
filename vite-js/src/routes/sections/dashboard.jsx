@@ -34,13 +34,7 @@ const MainSpecCreatePage = lazy(() => import('src/pages/dashboard/settings/pm-ne
 const MainSpecEditPage = lazy(() => import('src/pages/dashboard/settings/edit'));
 
 // states system settings 
-const StatesListPage = lazy(() => import('src/pages/dashboard/settings/states/states'));
-const StatesCreatePage = lazy(() => import('src/pages/dashboard/settings/states/states-new'));
-const StatesEditPage = lazy(() => import('src/pages/dashboard/settings/states/states-edit'));
 // colors system settings 
-const ColorsListPage = lazy(() => import('src/pages/dashboard/settings/colors/colors'));
-const ColorsCreatePage = lazy(() => import('src/pages/dashboard/settings/colors/colors-new'));
-const ColorsEditPage = lazy(() => import('src/pages/dashboard/settings/colors/colors-edit'));
 // countries system settings 
 const CountriesListPage = lazy(() => import('src/pages/dashboard/settings/countries/countries'));
 const CountriesCreatePage = lazy(() => import('src/pages/dashboard/settings/countries/countries-new'));
