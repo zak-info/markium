@@ -16,6 +16,7 @@ import Logo from 'src/components/logo';
 import { HEADER } from '../config-layout';
 import HeaderShadow from './header-shadow';
 import SettingsButton from './settings-button';
+import { t } from 'i18next';
 
 // ----------------------------------------------------------------------
 
@@ -51,14 +52,13 @@ export default function HeaderSimple() {
 
         <Stack direction="row" alignItems="center" spacing={1}>
           <SettingsButton />
-
           <Link
             href={paths.faqs}
             component={RouterLink}
             color="inherit"
             sx={{ typography: 'subtitle2' }}
           >
-            Need help?
+            {t("need_help")}
           </Link>
         </Stack>
       </Toolbar>

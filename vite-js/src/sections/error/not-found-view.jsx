@@ -9,6 +9,8 @@ import CompactLayout from 'src/layouts/compact';
 import { PageNotFoundIllustration } from 'src/assets/illustrations';
 
 import { varBounce, MotionContainer } from 'src/components/animate';
+import { paths } from 'src/routes/paths';
+import { t } from 'i18next';
 
 // ----------------------------------------------------------------------
 
@@ -18,14 +20,13 @@ export default function NotFoundView() {
       <MotionContainer>
         <m.div variants={varBounce().in}>
           <Typography variant="h3" sx={{ mb: 2 }}>
-            Sorry, Page Not Found!
+            {t("notFoundTitle")}
           </Typography>
         </m.div>
 
         <m.div variants={varBounce().in}>
           <Typography sx={{ color: 'text.secondary' }}>
-            Sorry, we couldn’t find the page you’re looking for. Perhaps you’ve mistyped the URL? Be
-            sure to check your spelling.
+            {t("notFoundDescription")}
           </Typography>
         </m.div>
 
@@ -38,8 +39,8 @@ export default function NotFoundView() {
           />
         </m.div>
 
-        <Button component={RouterLink} href="/" size="large" variant="contained">
-          Go to Home
+        <Button component={RouterLink} href={paths.dashboard.root} size="large" variant="contained">
+          {t("goHome")}
         </Button>
       </MotionContainer>
     </CompactLayout>

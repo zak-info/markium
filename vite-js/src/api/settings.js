@@ -63,3 +63,35 @@ export async function editMainSpec(id, body) {
     const URL = endpoints.settings?.mainspecs+'/' + id;
     return await axios.put(URL, body);
 }
+
+
+export function useGetSystemVisibleItem(type) {
+    const { data, isLoading, error, isValidating, mutate } = useSWR(
+        endpoints.settings?.items+"/"+type,
+        fetcher,
+        options
+    );
+
+    const memoizedValue = useMemo(
+        () => ({
+            items: data?.data || [],
+            itemsLoading: isLoading,
+            itemsError: error,
+            itemsValidating: isValidating,
+            itemsEmpty: !isLoading && !data?.data?.length,
+            mutate,
+        }),
+        [data, error, isLoading, isValidating]
+    );
+
+    return memoizedValue;
+}
+
+export async function createItemInSettings(body) {
+    const URL = endpoints.settings.items;
+    return await axios.post(URL, body);
+}
+export async function changeItemVisibilityInSettings(body) {
+    const URL = endpoints.settings.visibility;
+    return await axios.post(URL, body);
+}

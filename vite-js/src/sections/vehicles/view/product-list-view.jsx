@@ -46,10 +46,13 @@ import { RouterLink } from 'src/routes/components';
 import { useGetCar, deleteCar, AddCarToMentainance, markCarAsAvailable } from 'src/api/car';
 import { useValues } from 'src/api/utils';
 import { useGetContracts } from 'src/api/contract';
+import { useGetCompany } from 'src/api/company';
+import { useGetClients } from 'src/api/client';
 // ----------------------------------------------------------------------
 
 const defaultFilters = {
   plat_number: '',
+  rented: '',
   production_year: "",
   status: 'All',
   startDate: null,
@@ -64,13 +67,10 @@ export default function OrderListView() {
   const { t } = useTranslate();
 
   const { car, mutate } = useGetCar();
+  console.log("car : car : ", car);
   const { data } = useValues()
-  // const { SystemData } = useContext(DataContext);
-  // const [data, setData] = useState(SystemData);
-  // useEffect(() => {
-  //   setData(SystemData)
-  // }, [SystemData])
   const { contracts } = useGetContracts()
+  const { clients } = useGetClients()
 
   const TABLE_HEAD = [
     // { id: 'orderNumber', label: t('company'), width: 116 },
@@ -80,8 +80,9 @@ export default function OrderListView() {
     // { id: 'color', label: t('vehcileColor'), width: 120 },
     { id: 'vehicleCondition', label: t('vehicleCondition'), width: 120 },
     { id: 'driver', label: t('driver'), width: 180 },
-    { id: 'contract', label: t('contract'), width: 60,align: "center" },
-    { id: 'actions', label: t('actions'), width: 60,align:"right" },
+    { id: 'company', label: t('client'), width: 180, align: "start" },
+    { id: 'contract', label: t('contract'), width: 60, align: "start" },
+    { id: 'actions', label: t('actions'), width: 60, align: "right" },
     // { id: '', width: 88 },
   ];
 
@@ -158,9 +159,9 @@ export default function OrderListView() {
   const handleAddCarToMentainance = useCallback(
     async (id) => {
       const result = await AddCarToMentainance(id)
-      .then(() => {
-        enqueueSnackbar(t('operation_success'));
-        "Operation success"
+        .then(() => {
+          enqueueSnackbar(t('operation_success'));
+          "Operation success"
           mutate();
         })
         .catch((err) => {
@@ -217,6 +218,13 @@ export default function OrderListView() {
     [router]
   );
 
+  const handleViewCompanyRow = useCallback(
+    (id) => {
+      router.push(paths.dashboard.clients.details(id));
+    },
+    [router]
+  );
+
   const handleEditRow = useCallback(
     (id) => {
       router.push(paths.dashboard.vehicle.edit(id));
@@ -226,7 +234,11 @@ export default function OrderListView() {
 
   const handleFilterStatus = useCallback(
     (event, newValue) => {
+      // if (newValue == "rented") {
+      //   handleFilters('rented', newValue);
+      // } else {
       handleFilters('status', newValue);
+      // }
     },
     [handleFilters]
   );
@@ -285,7 +297,7 @@ export default function OrderListView() {
                 </Label>
               }
             />
-            {data?.car_statuses?.map((tab) => (
+            {data?.car_statuses?.map(item => ({...item,translations:item?.key == "under_maintenance" ? [{name:"تحت الصيانة"}]:item?.translations}))?.map((tab) => (
               <Tab
                 key={tab.key}
                 iconPosition="end"
@@ -298,20 +310,34 @@ export default function OrderListView() {
                     }
                     color={
                       (tab.key === 'available' && 'success') ||
-                      (tab.key === 'underProcessing' && 'warning') ||
+                      (tab.key === 'under_preparation' && 'secondary') ||
                       (tab.key === 'under_maintenance' && 'error') ||
                       'default'
                     }
                   >
-                    {['available', 'under_preparation', 'under_maintenance', 'rented'].includes(
-                      tab.key
-                    )
+                    {['available', 'under_preparation', 'under_maintenance'].includes(tab.key)
                       ? car.filter((user) => user.status?.key === tab.key).length
-                      : car.length}
+                      : car.length
+
+                    }
                   </Label>
                 }
               />
             ))}
+            <Tab
+              key={"rented"}
+              iconPosition="end"
+              value={"rented"}
+              label={t("rented")}
+              icon={
+                <Label
+                  variant={'soft'}
+                  color={'warning'}
+                >
+                  {car.filter((user) => user?.is_rented).length}
+                </Label>
+              }
+            />
           </Tabs>
 
           <OrderTableToolbar
@@ -380,12 +406,14 @@ export default function OrderListView() {
                         key={row.id}
                         row={row}
                         contract={contracts.find(contract => contract.clauses.some(clause => clause.clauseable_type == "car" && clause.clauseable_id == row?.id))}
+                        companies={clients}
                         selected={table.selected.includes(row.id)}
                         onSelectRow={() => table.onSelectRow(row.id)}
                         onDeleteRow={() => handleDeleteRow(row.id)}
                         onViewRow={() => handleViewRow(row.id)}
                         onDriverViewRow={() => handleViewDriverRow(row?.driver?.id)}
                         onContractViewRow={(id) => handleViewContractRow(id)}
+                        onCompanyViewRow={(id) => handleViewCompanyRow(id)}
                         onEditRow={() => handleEditRow(row.id)}
                         onAddCarToMentainance={() => handleAddCarToMentainance(row.id)}
                         onMarkCarAsAvailable={() => handleMarkCarAsAvailable(row.id)}
@@ -445,7 +473,7 @@ export default function OrderListView() {
 // ----------------------------------------------------------------------
 
 function applyFilter({ inputData, comparator, filters, dateError }) {
-  const { status, plat_number, production_year } = filters;
+  const { status, plat_number, production_year, rented } = filters;
 
   const stabilizedThis = inputData.map((el, index) => [el, index]);
 
@@ -467,29 +495,25 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
       order?.production_year?.includes(searchTerm)
     );
   }
+  if (rented) {
+    if (rented == "rented") {
+      inputData = inputData.filter(order =>
+        order?.is_rented
+      );
+    }
+  }
   if (status) {
     if (status == "All") {
       inputData = inputData;
+    } else if (status == "rented") {
+      inputData = inputData.filter(order =>
+        order?.is_rented
+      );
     } else {
       inputData = inputData.filter(order =>
         order?.status?.key?.includes(status)
       );
     }
   }
-  // if (production_year) {
-  //   const searchTerm = production_year;
-  //   inputData = inputData.filter(order => 
-  //     order?.production_year?.includes(searchTerm)
-  //   );
-  // }
-
-
-
-  // if (!dateError) {
-  //   if (startDate && endDate) {
-  //     inputData = inputData.filter((order) => isBetween(order.createdAt, startDate, endDate));
-  //   }
-  // }
-
   return inputData;
 }

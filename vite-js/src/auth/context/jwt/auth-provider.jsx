@@ -7,6 +7,7 @@ import axios, { endpoints } from 'src/utils/axios';
 
 import { AuthContext } from './auth-context';
 import { setSession, isValidToken, jwtDecode } from './utils';
+import { useValues } from 'src/api/utils';
 
 // ----------------------------------------------------------------------
 /**
@@ -164,10 +165,13 @@ export function AuthProvider({ children }) {
 
   const status = state.loading ? 'loading' : checkAuthenticated;
 
+  // const {data} = useValues();
+
   const memoizedValue = useMemo(
     () => ({
       user: state.user,
       method: 'jwt',
+      // system_data:data,
       loading: status === 'loading',
       authenticated: status === 'authenticated',
       unauthenticated: status === 'unauthenticated',

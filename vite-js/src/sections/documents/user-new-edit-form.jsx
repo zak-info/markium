@@ -159,29 +159,6 @@ export default function UserNewEditForm({ currentDocument }) {
                   </MenuItem>
                 ))}
               </RHFSelect>
-              {/* <RHFSelect disabled={!attachableType} required name="attachable_id" label={t('attachable')}>
-                <Divider sx={{ borderStyle: 'dashed' }} />
-                {(values.attachable_type == "car" ? [...car] : [...drivers])?.map((item) => (
-                  <MenuItem key={item?.id} value={item.id}>
-                    {
-                      values.attachable_type == "car" ?
-                        <ListItemText
-                          primary={item?.plat_number}
-                          secondary={item?.model?.company?.translations?.name}
-                          primaryTypographyProps={{ typography: 'body2', noWrap: true }}
-                          secondaryTypographyProps={{
-                            mt: 0.5,
-                            component: 'span',
-                            typography: 'caption',
-                          }}
-                        />
-                        :
-                        item?.name
-                    }
-                  </MenuItem>
-                ))}
-              </RHFSelect> */}
-              {/* disabled={!attachableType} */}
               {
                 values.attachable_type == "car" ?
                   <CarsAutocomplete required options={car} name="attachable_id" label={t('car')} placeholder={t(t('search_by') + " " + t('plateNumber'))} />
@@ -197,15 +174,7 @@ export default function UserNewEditForm({ currentDocument }) {
                         </MenuItem>
                       </RHFSelect>
               }
-
-              {/* <RHFSelect required name="attachment_type_id" label={t('document_type')}>
-                <Divider sx={{ borderStyle: 'dashed' }} />
-                {data?.attachment_types?.map((type) => (
-                  <MenuItem key={type?.id} value={type.id}>
-                    {type?.translations[0]?.name || type.key}
-                  </MenuItem>
-                ))}
-              </RHFSelect> */}
+              
               <FlexibleAutocomplete
                 name="attachment_name_id"
                 label={t('document_name')}
@@ -243,8 +212,8 @@ export default function UserNewEditForm({ currentDocument }) {
               />
               <RHFTextField name="note" label={t('note')} />
               {/* <p style={{ color: "gray" }}>.</p> */}
-              <RHFUpload name="attachment" placeholder={"upload_document"} lable={t("upload_document")} />
-              <RHFUpload name="invoice" placeholder={"upload_invoice_file"} lable={t("upload_invoice_file")} />
+              <RHFUpload name="attachment" placeholder={"upload_document"} lable={t("upload_document")}  accept={".jpg,.jpeg,.png,.pdf,.doc,.docx"} />
+              <RHFUpload name="invoice" placeholder={"upload_invoice_file"} lable={t("upload_invoice_file")} accept={".jpg,.jpeg,.png,.pdf,.doc,.docx"} />
             </Box>
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>

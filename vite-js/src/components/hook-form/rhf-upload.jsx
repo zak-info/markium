@@ -55,7 +55,7 @@ RHFUploadBox.propTypes = {
 
 // ----------------------------------------------------------------------
 
-export function RHFUpload({ name, multiple = false, label,placeholder, helperText, ...other }) {
+export function RHFUpload({ name, multiple = false, label,placeholder, helperText,accept, ...other }) {
   const { control, setValue } = useFormContext();
 
   return (
@@ -70,6 +70,7 @@ export function RHFUpload({ name, multiple = false, label,placeholder, helperTex
           files={multiple ? field.value || [] : undefined}
           file={!multiple ? field.value : undefined}
           error={!!error}
+          accept={accept}
           onChange={(selectedFiles) => {
             if (multiple) {
               setValue(name, selectedFiles);

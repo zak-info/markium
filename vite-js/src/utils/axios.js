@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { root } from 'postcss';
 import { HOST_API } from 'src/config-global';
 
 // ----------------------------------------------------------------------
@@ -116,6 +117,8 @@ export const endpoints = {
     paid: (id) => `/contract/claims/${id}/paid`,    
   },
   settings: {
+    items: '/system-settings/items',
+    visibility: '/system-settings/visibility',
     mainspecs: '/maintenance/specifications',
     new:"/contract/claims",
     logs:"/contract/claims/logs"

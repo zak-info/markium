@@ -28,10 +28,39 @@ const ProductEditPage = lazy(() => import('src/pages/dashboard/product/edit'));
 const OrderListPage = lazy(() => import('src/pages/dashboard/order/list'));
 const OrderDetailsPage = lazy(() => import('src/pages/dashboard/order/details'));
 // ORDER
-const MainSpecListPage = lazy(() => import('src/pages/dashboard/settings/claims'));
+const MainSpecListPage = lazy(() => import('src/pages/dashboard/settings/pm'));
 const ClaimCreatePage = lazy(() => import('src/pages/dashboard/clients/claims-new'));
-const MainSpecCreatePage = lazy(() => import('src/pages/dashboard/settings/claims-new'));
+const MainSpecCreatePage = lazy(() => import('src/pages/dashboard/settings/pm-new'));
 const MainSpecEditPage = lazy(() => import('src/pages/dashboard/settings/edit'));
+
+// states system settings 
+const StatesListPage = lazy(() => import('src/pages/dashboard/settings/states/states'));
+const StatesCreatePage = lazy(() => import('src/pages/dashboard/settings/states/states-new'));
+const StatesEditPage = lazy(() => import('src/pages/dashboard/settings/states/states-edit'));
+// colors system settings 
+const ColorsListPage = lazy(() => import('src/pages/dashboard/settings/colors/colors'));
+const ColorsCreatePage = lazy(() => import('src/pages/dashboard/settings/colors/colors-new'));
+const ColorsEditPage = lazy(() => import('src/pages/dashboard/settings/colors/colors-edit'));
+// countries system settings 
+const CountriesListPage = lazy(() => import('src/pages/dashboard/settings/countries/countries'));
+const CountriesCreatePage = lazy(() => import('src/pages/dashboard/settings/countries/countries-new'));
+const CountriesEditPage = lazy(() => import('src/pages/dashboard/settings/countries/countries-edit'));
+// car models system settings 
+const CarModelsListPage = lazy(() => import('src/pages/dashboard/settings/car_models/car_models'));
+const CarModelsCreatePage = lazy(() => import('src/pages/dashboard/settings/car_models/car_models-new'));
+const CarModelsEditPage = lazy(() => import('src/pages/dashboard/settings/car_models/car_models-edit'));
+// document system settings 
+const DocumentListPage = lazy(() => import('src/pages/dashboard/settings/documents/documents'));
+const DocumentCreatePage = lazy(() => import('src/pages/dashboard/settings/documents/documents-new'));
+const DocumentEditPage = lazy(() => import('src/pages/dashboard/settings/documents/documents-edit'));
+// Neighborhood system settings 
+const NeighborhoodListPage = lazy(() => import('src/pages/dashboard/settings/neighborhood/neighborhood'));
+const NeighborhoodCreatePage = lazy(() => import('src/pages/dashboard/settings/neighborhood/neighborhood-new'));
+const NeighborhoodEditPage = lazy(() => import('src/pages/dashboard/settings/neighborhood/neighborhood-edit'));
+// system item  settings 
+const SystemItemListPage = lazy(() => import('src/pages/dashboard/settings/items/items'));
+const SystemItemCreatePage = lazy(() => import('src/pages/dashboard/settings/items/items-new'));
+const SystemItemEditPage = lazy(() => import('src/pages/dashboard/settings/items/items-edit'));
 // INVOICE
 const InvoiceListPage = lazy(() => import('src/pages/dashboard/invoice/list'));
 const InvoiceDetailsPage = lazy(() => import('src/pages/dashboard/invoice/details'));
@@ -258,9 +287,42 @@ export const dashboardRoutes = [
         path: 'settings',
         children: [
           { element: <SettingsView />, index: true },
-          { path: "pm", element: <MainSpecListPage />, index: true },
-          { path: 'pm/new', element: <MainSpecCreatePage /> },
-          { path: 'pm/:id/edit', element: <MainSpecEditPage /> },
+          { path: "pm", element: <SystemItemListPage collection={{metadata:"Maintenance Specification",type:"maintenance_specification"}} />, index: true },
+          { path: 'pm/new', element: <SystemItemCreatePage collection={{metadata:"Maintenance Specification",type:"maintenance_specification"}} /> },
+          { path: 'pm/:id/edit', element: <SystemItemEditPage collection={{metadata:"Maintenance Specification",type:"maintenance_specification"}} /> },
+          { path: "attachment_names", element: <SystemItemListPage collection={{metadata:"Attachment Names",type:"attachment_name"}} />, index: true },
+          { path: 'attachment_names/new', element: <SystemItemCreatePage collection={{metadata:"Attachment Names",type:"attachment_name"}} /> },
+          { path: 'attachment_names/:id/edit', element: <SystemItemEditPage collection={{metadata:"Attachment Names",type:"attachment_name"}} /> },
+          { path: "specs", element: <SystemItemListPage collection={{metadata:"Specs",type:"spec"}} />, index: true },
+          { path: 'specs/new', element: <SystemItemCreatePage collection={{metadata:"Specs",type:"spec"}} /> },
+          { path: 'specs/:id/edit', element: <SystemItemEditPage collection={{metadata:"Specs",type:"spec"}} /> },
+          { path: "license_types", element: <SystemItemListPage collection={{metadata:"License Type",type:"license_type"}} />, index: true },
+          { path: 'license_types/new', element: <SystemItemCreatePage collection={{metadata:"License Type",type:"license_type"}} /> },
+          { path: 'license_types/:id/edit', element: <SystemItemEditPage collection={{metadata:"License Type",type:"license_type"}} /> },
+          { path: "payment_methods", element: <SystemItemListPage collection={{metadata:"Payment Method",type:"payment_method"}} />, index: true },
+          { path: 'payment_methods/new', element: <SystemItemCreatePage collection={{metadata:"Payment Method",type:"payment_method"}} /> },
+          { path: 'payment_methods/:id/edit', element: <SystemItemEditPage collection={{metadata:"Payment Method",type:"payment_method"}} /> },
+          { path: "states", element: <SystemItemListPage collection={{metadata:"States",type:"state"}} />, index: true },
+          { path: 'states/new', element: <SystemItemCreatePage collection={{metadata:"States",type:"state"}} /> },
+          { path: 'states/:id/edit', element: <SystemItemEditPage collection={{metadata:"States",type:"state"}} /> },
+          { path: "colors", element: <SystemItemListPage collection={{metadata:"Colors",type:"color"}} />, index: true },
+          { path: 'colors/new', element: <SystemItemCreatePage collection={{metadata:"Colors",type:"color"}} /> },
+          { path: 'colors/:id/edit', element: <SystemItemEditPage collection={{metadata:"Colors",type:"color"}} /> },
+          { path: "countries", element: <SystemItemListPage collection={{metadata:"Countries",type:"country"}} />, index: true },
+          { path: 'countries/new', element: <SystemItemCreatePage collection={{metadata:"Countries",type:"country"}} /> },
+          { path: 'countries/:id/edit', element: <SystemItemEditPage /> },
+          { path: "car_models", element: <SystemItemListPage collection={{metadata:"Car Model",type:"car_model"}} />, index: true },
+          { path: 'car_models/new', element: <SystemItemCreatePage collection={{metadata:"Car Model",type:"car_model"}} /> },
+          { path: 'car_models/:id/edit', element: <SystemItemEditPage collection={{metadata:"Car Model",type:"car_model"}} /> },
+          { path: "car_companies", element: <SystemItemListPage collection={{metadata:"Car Company",type:"car_company"}} />, index: true },
+          { path: 'car_companies/new', element: <SystemItemCreatePage collection={{metadata:"Car Company",type:"car_company"}} /> },
+          { path: 'car_companies/:id/edit', element: <SystemItemEditPage collection={{metadata:"Car Company",type:"car_company"}} /> },
+          { path: "documents", element: <DocumentListPage />, index: true },
+          { path: 'documents/new', element: <DocumentCreatePage /> },
+          { path: 'documents/:id/edit', element: <DocumentEditPage /> },
+          { path: "neighborhood", element: <SystemItemListPage collection={{metadata:"Neighborhood",type:"neighborhood"}} />, index: true },
+          { path: 'neighborhood/new', element: <SystemItemCreatePage collection={{metadata:"Neighborhood",type:"neighborhood"}} /> },
+          { path: 'neighborhood/:id/edit', element: <SystemItemEditPage collection={{metadata:"Neighborhood",type:"neighborhood"}} /> },
         ],
       },
 

@@ -108,11 +108,11 @@ export default function OrderTableRow({ row, payment_method, client, selected, o
         />
       </TableCell>
 
-      <TableCell align="start" sx={{ px: 1, whiteSpace: 'nowrap' }}>
+      {/* <TableCell align="start" sx={{ px: 1, whiteSpace: 'nowrap' }}>
         <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
           <Iconify icon="eva:more-vertical-fill" />
         </IconButton>
-      </TableCell>
+      </TableCell> */}
 
     </TableRow>
   );

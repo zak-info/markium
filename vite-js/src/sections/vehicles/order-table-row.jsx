@@ -24,6 +24,8 @@ import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import { useTranslate } from 'src/locales';
 import { Grid, Link } from '@mui/material';
+import { paths } from 'src/routes/paths';
+import ExpandableText from '../maintain/ExpandableText';
 
 // ----------------------------------------------------------------------
 
@@ -31,12 +33,14 @@ export default function OrderTableRow({
   row,
   contract,
   selected,
+  companies,
   onViewRow,
   onSelectRow,
   onDeleteRow,
   onEditRow,
   onDriverViewRow,
   onContractViewRow,
+  onCompanyViewRow,
   onAddCarToMentainance,
   onMarkCarAsAvailable,
 }) {
@@ -58,6 +62,9 @@ export default function OrderTableRow({
   const collapse = useBoolean();
 
   const popover = usePopover();
+
+  const company = companies?.find(c => c.id == contract?.company_id)
+  console.log("company , ", company);
 
   const statusString = status?.translations?.[0]?.name;
 
@@ -135,25 +142,25 @@ export default function OrderTableRow({
 
       <TableCell direction="column" >
         <Grid container spacing={1} >
-          <Label
-            variant="soft"
-            color={
-              (status?.key === 'available' && 'success') ||
-              (status?.key === 'pending' && 'warning') ||
-              (status?.key === 'under_maintenance' && 'error') ||
-              (status?.key === 'under_preparation' && 'secondary') ||
-              'default'
-            }
-          >
-            {status?.translations?.name}
-          </Label>
           {
             contract?.ref ?
               <Label color={"warning"} sx={{ cursor: 'pointer', marginStart: "10px" }}>
-                {t("rented")}
+                {status?.translations?.name+" / "+t("rented")}
               </Label>
               :
-              null}
+              <Label
+                variant="soft"
+                color={
+                  (status?.key === 'available' && 'success') ||
+                  (status?.key === 'pending' && 'warning') ||
+                  (status?.key === 'under_maintenance' && 'error') ||
+                  (status?.key === 'under_preparation' && 'secondary') ||
+                  'default'
+                }
+              >
+                {status?.translations?.name}
+              </Label>
+          }
         </Grid>
       </TableCell>
       {/*  */}
@@ -175,27 +182,68 @@ export default function OrderTableRow({
             "-"
         }
       </TableCell>
+      <TableCell align="start" >
+        {
+          row?.is_rented ?
 
-      <TableCell align="center" >
-        <Box
-          onClick={() => onContractViewRow(contract?.id)}
-          sx={{
-            cursor: 'pointer',
-            '&:hover': {
-              textDecoration: 'underline',
-            },
-          }}
-        >
-          {
-            contract?.ref ?
-              <Label color={"warning"} sx={{ cursor: 'pointer' }}>
-                {contract?.ref}
-              </Label>
-              :
-              "-"}
-        </Box>
-
+            <Box
+              display={"flex"}
+              flexDirection={"row"}
+              onClick={() => onCompanyViewRow(company?.id)}
+              sx={{
+                cursor: 'pointer',
+                '&:hover': {
+                  textDecoration: 'underline',
+                },
+              }}
+            >
+              <ExpandableText text={company?.name} length={3} />
+            </Box>
+            :
+            "--"
+        }
       </TableCell>
+      <TableCell align="start" >
+        {
+          row?.is_rented ?
+            <Box
+              onClick={() => onContractViewRow(contract?.id)}
+              sx={{
+                cursor: 'pointer',
+                '&:hover': {
+                  textDecoration: 'underline',
+                },
+              }}
+            >
+              {contract?.ref}
+            </Box>
+            :
+            "--"
+        }
+      </TableCell>
+
+      {/* <TableCell align="center" >
+        <>
+
+          <Box
+            onClick={() => onContractViewRow(contract?.id)}
+            sx={{
+              cursor: 'pointer',
+              '&:hover': {
+                textDecoration: 'underline',
+              },
+            }}
+          >
+            {
+              contract?.ref ?
+                <Label color={"warning"} sx={{ cursor: 'pointer' }}>
+                  {contract?.ref}
+                </Label>
+                :
+                "-"}
+          </Box>
+        </>
+      </TableCell> */}
 
       <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
         {/* <IconButton

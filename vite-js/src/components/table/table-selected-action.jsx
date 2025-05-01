@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Stack from '@mui/material/Stack';
 import Checkbox from '@mui/material/Checkbox';
 import Typography from '@mui/material/Typography';
+import { t } from 'i18next';
 
 // ----------------------------------------------------------------------
 
@@ -57,7 +58,7 @@ export default function TableSelectedAction({
           }),
         }}
       >
-        {numSelected} selected
+        {numSelected} { numSelected > 1 && numSelected < 11  ?  t("selected_items") : t("selected_item")}
       </Typography>
 
       {action && action}

@@ -29,6 +29,7 @@ export default function Upload({
   onRemove,
   onRemoveAll,
   sx,
+  accept,
   ...other
 }) {
   const [previewFiles, setPreviewFiles] = useState(multiple ? files || [] : file || null);
@@ -84,7 +85,7 @@ export default function Upload({
           ...(hasFile && { padding: '24% 0' }),
         }}
       >
-        <input {...getInputProps()} name={name} />
+        <input {...getInputProps()} name={name} accept={accept} />
 
         {hasFile ? (
           <SingleFilePreview imgUrl={URL.createObjectURL(previewFiles)} filename={previewFiles.name} />

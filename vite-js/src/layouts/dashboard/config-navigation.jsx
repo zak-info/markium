@@ -162,26 +162,30 @@ export function useNavData() {
 
       // DEMO MENU STATES
       {
-        subheader: t(t('other_cases')),
+        subheader: t('other_cases'),
         items: [
-          // {
-          //   title: t('settings'),
-          //   path: paths.dashboard.settings.root,
-          //   icon: ICONS.settings,
-          //   roles: ['admin', 'manager'],
-          // },
+          {
+            title: t('settings'),
+            path: paths.dashboard.settings.root,
+            icon: ICONS.settings,
+            roles: ['admin', 'manager'],
+          },
           // {
           //   title: t('reports'),
           //   path: paths.dashboard.permission,
           //   icon: ICONS.blog,
           //   roles: ['admin', 'manager'],
           // },
-          // {
-          //   title: t('users'),
-          //   path: paths.dashboard.user.list,
-          //   icon: ICONS.lock,
-          //   roles: ['admin', 'manager'],
-          // },
+          {
+            title: t('users'),
+            path: paths.dashboard.user.list,
+            icon: ICONS.lock,
+            roles: ['admin', 'manager'],
+            children: [
+              { title: t('roles'), path: paths.dashboard.user.roles },
+              { title: t('users'), path: paths.dashboard.user.list },
+            ],
+          },
         ],
       },
     ],

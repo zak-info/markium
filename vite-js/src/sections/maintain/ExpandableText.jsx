@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Typography, Button, Box } from "@mui/material";
 import { t } from "i18next";
 
-const ExpandableText = ({ text }) => {
+const ExpandableText = ({ text, length = 8 }) => {
   const [expanded, setExpanded] = useState(false);
 
   const handleToggle = (event) => {
@@ -13,8 +13,8 @@ const ExpandableText = ({ text }) => {
   // Function to limit the text to 8 words
   const getShortText = (text) => {
     const words = text?.split(" ");
-    if (words?.length > 8) {
-      return words.slice(0, 8).join(" ") + " ...";
+    if (words?.length > length) {
+      return words.slice(0, length).join(" ") + " ...";
     }
     return text;
   };
@@ -30,8 +30,7 @@ const ExpandableText = ({ text }) => {
       >
         {expanded ? text : getShortText(text)}
       </Typography>
-      {text?.split(" ").length > 8 && (
-        // <Button>
+      {text?.split(" ").length > length && (
         <Box
           onClick={handleToggle}
           sx={{
@@ -41,22 +40,13 @@ const ExpandableText = ({ text }) => {
             },
           }}
         >
-          {/* onClick={handleToggle}
-    size="small"
-    sx={{
-      textTransform: "none",
-      fontSize: 12,
-      ml: 1, // Adds some spacing between text and button
-      display: "inline",
-      minWidth: "unset", // Ensures button is inline
-      padding: 0, // Removes padding to keep it inline
-    }}
-    > */}
-          {expanded ? t("show_less") : t("show_more")}
-          {/* </Button> */}
+          <p style={{ fontSize: "12px" }}>
+            {expanded ? t("show_less") : t("show_more")}
+          </p>
+
         </Box>
       )}
-    </Box >
+    </Box>
   );
 };
 
