@@ -113,7 +113,7 @@ export default function UserNewEditForm({ currentDocument }) {
       formData.append("expiry_date", format(new Date(data.expiry_date), 'yyyy-MM-dd'));
       formData.append("attachment_name_id", Number(data?.attachment_name_id));
       formData.append("attachable_id", Number(data?.attachable_id));
-      formData.append("attachable_type", Number(data?.attachable_type));
+      formData.append("attachable_type", data?.attachable_type);
       formData.append("note", data?.note);
       formData.append("attachment_type_id", 1);
       // formData.append("document_duration_days", data?.document_duration_days);

@@ -43,7 +43,7 @@ import {
 import OrderTableRow from '../contracts-table-row';
 import OrderTableToolbar from '../contracts-table-toolbar';
 import OrderTableFiltersResult from '../contracts-table-filters-result';
-import { useTranslate } from 'src/locales';
+import { useLocales, useTranslate } from 'src/locales';
 import { useGetClients } from 'src/api/client';
 import { useGetContracts } from 'src/api/contract';
 import { useValues } from 'src/api/utils';
@@ -87,14 +87,18 @@ export default function OrderListView() {
 
   const confirm = useBoolean();
 
-  const {clients} = useGetClients()
-  const {contracts} = useGetContracts()
-  const {data} = useValues()
+  const { clients } = useGetClients()
+  const { contracts } = useGetContracts()
+  console.log("contracts : ",contracts);
+  const { data } = useValues()
+  const payment_methodes = [{ name: "deferred", lable: { ar: "دفعات", en: "deferred" } }, { name: "cash", lable: { ar: "نقدا", en: "cash" } }]
+  const { currentLang } = useLocales()
+
 
   const [tableData, setTableData] = useState(contracts);
-  useEffect(()=>{
+  useEffect(() => {
     setTableData(contracts)
-  },[contracts])
+  }, [contracts])
 
   const [filters, setFilters] = useState(defaultFilters);
 
@@ -201,7 +205,7 @@ export default function OrderListView() {
           action={
             <Button
               component={RouterLink}
-              href={paths.dashboard.clients.contracts+"/new"}
+              href={paths.dashboard.clients.contracts + "/new"}
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
             >
@@ -281,7 +285,8 @@ export default function OrderListView() {
                         key={row.id}
                         client={clients?.find(item => item.id == row?.client_id)}
                         row={row}
-                        payment_method={data?.payment_method_enum?.find(item => item?.key == row?.payment_method).translations[0]?.name}
+                        // payment_method={data?.payment_methods?.find(item => item?.name == row?.payment_method)}
+                        payment_method={payment_methodes?.find(i => i?.name == row?.payment_method?.name )?.lable[currentLang.value] || row?.payment_method?.name}
                         selected={table.selected.includes(row.id)}
                         onSelectRow={() => table.onSelectRow(row.id)}
                         onDeleteRow={() => handleDeleteRow(row.id)}
@@ -342,7 +347,7 @@ export default function OrderListView() {
 
 // ----------------------------------------------------------------------
 
-function applyFilter({ inputData, comparator, filters, dateError,clients }) {
+function applyFilter({ inputData, comparator, filters, dateError, clients }) {
   const { status, name, startDate, endDate } = filters;
 
   const stabilizedThis = inputData.map((el, index) => [el, index]);
@@ -359,7 +364,7 @@ function applyFilter({ inputData, comparator, filters, dateError,clients }) {
     inputData = inputData.filter(
       (order) =>
         clients?.find(item => item.id == order?.client_id)?.name?.toLowerCase()?.includes(name.toLowerCase()) ||
-        order?.payment_method?.toLowerCase()?.includes(name.toLowerCase())||
+        order?.payment_method?.toLowerCase()?.includes(name.toLowerCase()) ||
         order?.paid_amount?.toString()?.includes(name)
     );
   }

@@ -47,6 +47,7 @@ import { useTranslate } from 'src/locales';
 
 import { useGetDrivers, deleteDriver } from 'src/api/drivers';
 import { useValues } from 'src/api/utils';
+import PermissionsContext from 'src/auth/context/permissions/permissions-context';
 
 // ----------------------------------------------------------------------
 
@@ -66,8 +67,8 @@ export default function OrderListView() {
   const { t } = useTranslate();
 
   const { drivers, mutate } = useGetDrivers();
-  const {data} = useValues()
-  console.log("drivers : ",drivers);
+  const { data } = useValues()
+  console.log("drivers : ", drivers);
 
   const TABLE_HEAD = [
     { id: 'orderNumber', label: t('driver'), width: 116 },
@@ -194,14 +195,18 @@ export default function OrderListView() {
             { name: t('driversList') },
           ]}
           action={
-            <Button
-              component={RouterLink}
-              href={paths.dashboard.drivers.new}
-              variant="contained"
-              startIcon={<Iconify icon="mingcute:add-line" />}
-            >
-              {t('addNewDriver')}
-            </Button>
+            <>
+              <PermissionsContext action={"create.driver"} >
+                <Button
+                  component={RouterLink}
+                  href={paths.dashboard.drivers.new}
+                  variant="contained"
+                  startIcon={<Iconify icon="mingcute:add-line" />}
+                >
+                  {t('addNewDriver')}
+                </Button>
+              </PermissionsContext>
+            </>
           }
           sx={{
             mb: { xs: 3, md: 5 },
@@ -388,10 +393,10 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
 
   if (name) {
     inputData = inputData.filter(
-      (order) => 
-        order.name.toLowerCase().includes(name.toLowerCase())  ||
+      (order) =>
+        order.name.toLowerCase().includes(name.toLowerCase()) ||
         order.residence_permit_number.includes(name) ||
-        order.phone_number.includes(name) !== -1 
+        order.phone_number.includes(name) !== -1
     );
   }
 

@@ -49,6 +49,7 @@ import { useGetMaintenance, deleteMaintenance } from 'src/api/maintainance';
 import { useGetCar } from 'src/api/car';
 import { useValues } from 'src/api/utils';
 import { useGetDrivers } from 'src/api/drivers';
+import PermissionsContext from 'src/auth/context/permissions/permissions-context';
 
 // ----------------------------------------------------------------------
 
@@ -232,14 +233,17 @@ export default function OrderListView() {
             { name: t('maintainList') },
           ]}
           action={
-            <Button
-              component={RouterLink}
-              href={paths.dashboard.maintenance.new}
-              variant="contained"
-              startIcon={<Iconify icon="mingcute:add-line" />}
-            >
-              {t('addMaintain')}
-            </Button>
+
+            <PermissionsContext action={"create.maintenance"} >
+              <Button
+                component={RouterLink}
+                href={paths.dashboard.maintenance.new}
+                variant="contained"
+                startIcon={<Iconify icon="mingcute:add-line" />}
+              >
+                {t('addMaintain')}
+              </Button>
+            </PermissionsContext>
           }
           sx={{
             mb: {

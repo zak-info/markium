@@ -123,6 +123,17 @@ export const endpoints = {
     new:"/contract/claims",
     logs:"/contract/claims/logs"
   },
+  users: {
+    root: '/auth/registerCompanyEmployeer',
+    users: '/users',
+    roles: '/roles',
+    permissions: '/permissions',
+    user_permissions: '/auth/permissions',
+    visibility: '/system-settings/visibility',
+    mainspecs: '/maintenance/specifications',
+    new:"/contract/claims",
+    logs:"/contract/claims/logs"
+  },
   documents: {
     list: '/attachments',
   },

@@ -54,7 +54,7 @@ const reducer = (state, action) => {
 
 const STORAGE_KEY = 'accessToken';
 
-const USER_STORAGE_KEY = 'zaity-user-info';
+export const USER_STORAGE_KEY = 'zaity-user-info';
 
 export function AuthProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -111,7 +111,7 @@ export function AuthProvider({ children }) {
     const { token, user } = response.data.data;
 
     setSession(token);
-    localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
+    localStorage.setItem(USER_STORAGE_KEY, JSON.stringify({...user}));
 
     dispatch({
       type: 'LOGIN',

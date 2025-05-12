@@ -60,10 +60,11 @@ export default function ContractNewEditForm({ contract }) {
   const { currentLang } = useLocales()
   const attachables = [{ name: "car", id: 1, lable: { ar: "سيارة", en: "car" } }, { name: "driver", id: 2, lable: { ar: "سائق", en: "driver" } }]
   const attachables2 = { car: { ar: "سيارة", en: "car" }, driver: { ar: "سائق", en: "driver" } }
+  const payment_methodes = [{ name: "deferred", lable: { ar: "دفعات", en: "deferred" } }, { name: "cash", lable: { ar: "نقدا", en: "cash" } }]
 
   const NewUserSchema = Yup.object().shape({
     client_id: Yup.number().required('client is required'),
-    payment_method: Yup.string().required('payment method is required'),
+    payment_method_id: Yup.number().required('payment method is required'),
     duration: Yup.number(),
     clauseable_id: Yup.number(),
     clauseable_type: Yup.string(),
@@ -76,8 +77,8 @@ export default function ContractNewEditForm({ contract }) {
   const defaultValues = useMemo(
     () => ({
       client_id: contract?.client_id || '',
-      payment_method: contract?.payment_method || '',
-      duration: contract?.duration || 0,
+      payment_method_id: contract?.payment_method_id || "",
+      // duration: c0ontract?.duration || 0,
       // clauseable_id: contract?.clauseable_id || '',
       // clauseable_type: contract?.clauseable_type || '',
       starting_from: contract?.starting_from || new Date(),
@@ -124,7 +125,8 @@ export default function ContractNewEditForm({ contract }) {
       // reset();
       console.log(data);
       delete data?.id;
-      let body = { client_id: data?.client_id, payment_method: data?.payment_method, clauses: clauses.map(({ id, ...rest }) => rest) }
+      let body = { client_id: data?.client_id, payment_method_id: data?.payment_method_id, clauses: clauses.map(({ id, ...rest }) => rest) }
+      console.log("body  : ",body);
       const response = contract?.id ? await editContracts(contract?.id, body) : await createContracts(body);
       enqueueSnackbar(contract ? 'Update success!' : 'Create success!');
       router.push(paths.dashboard.clients.contracts);
@@ -163,11 +165,12 @@ export default function ContractNewEditForm({ contract }) {
                 placeholder={t('choose_client')}
               />
 
-              <RHFSelect required name="payment_method" label={t('payment_method')}>
+              <RHFSelect required name="payment_method_id" label={t('payment_method')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
-                {[{ name: "deferred", lable: { ar: "دفعات", en: "deferred" } }, { name: "cash", lable: { ar: "نقدا", en: "cash" } }]?.map((type) => (
-                  <MenuItem key={type?.name} value={type.name}>
-                    {type?.lable[currentLang.value]}
+                {/* {[{ name: "deferred", lable: { ar: "دفعات", en: "deferred" } }, { name: "cash", lable: { ar: "نقدا", en: "cash" } }]?.map((type) => ( */}
+                {data?.payment_methods?.map((type) => (
+                  <MenuItem key={type?.id} value={type.id}>
+                    {payment_methodes?.find(item => item?.name == type?.name )?.lable[currentLang.value] || type?.name}
                   </MenuItem>
                 ))}
               </RHFSelect>

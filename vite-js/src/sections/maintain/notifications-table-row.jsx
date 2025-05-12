@@ -24,6 +24,7 @@ import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import { t } from 'i18next';
 import { useLocales } from 'src/locales';
+import PermissionsContext from 'src/auth/context/permissions/permissions-context';
 
 // ----------------------------------------------------------------------
 
@@ -174,16 +175,18 @@ export default function OrderTableRow({ row, onCreateRow, car, action, selected,
           row?.action !== 'action_required' || !row?.enabled ?
             null
             :
-            <MenuItem
-              onClick={() => {
-                onCreateRow();
-                popover.onClose();
-              }}
-              disabled={row?.action !== 'action_required' || !row?.enabled}
-            >
-              <Iconify icon="duo-icons:add-circle" />
-              {t("create_maintenance")}
-            </MenuItem>
+            <PermissionsContext action={"create.maintenance"} >
+              <MenuItem
+                onClick={() => {
+                  onCreateRow();
+                  popover.onClose();
+                }}
+                disabled={row?.action !== 'action_required' || !row?.enabled}
+              >
+                <Iconify icon="duo-icons:add-circle" />
+                {t("create_maintenance")}
+              </MenuItem>
+            </PermissionsContext>
 
         }
         {/* } */}

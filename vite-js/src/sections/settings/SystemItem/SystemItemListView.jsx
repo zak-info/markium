@@ -5,6 +5,7 @@ import { enqueueSnackbar } from 'notistack';
 import { useEffect, useState } from 'react';
 import { changeItemVisibilityInSettings, useGetMainSpecs } from 'src/api/settings'; // [keep for later use]
 import { useValues } from 'src/api/utils';
+import PermissionsContext from 'src/auth/context/permissions/permissions-context';
 import { fileData } from 'src/components/file-thumbnail'; // [keep for later use]
 import Iconify from 'src/components/iconify';
 import { RouterLink } from 'src/routes/components';
@@ -58,7 +59,7 @@ const types = {
                 ? data?.[keyInValues]?.map((item) => ({
                     ...item,
                     name: item?.translations?.[0]?.name,
-                    object_type:[{ name: "car", lable: { ar: "سيارة", en: "car" }, id: 1 }, { name: "driver", lable: { ar: "سائق", en: "driver" }, id: 2 }, { name: "client", lable: { ar: "عميل", en: "client" }, id: 3 }, { name: "other", lable: { ar: "اخرى", en: "other" }, id: 4 }].find(i => i.name == item.object_type).lable.ar,
+                    object_type: [{ name: "car", lable: { ar: "سيارة", en: "car" }, id: 1 }, { name: "driver", lable: { ar: "سائق", en: "driver" }, id: 2 }, { name: "client", lable: { ar: "عميل", en: "client" }, id: 3 }, { name: "other", lable: { ar: "اخرى", en: "other" }, id: 4 }].find(i => i.name == item.object_type).lable.ar,
                 }))
                 : [];
         },
@@ -185,7 +186,7 @@ const types = {
         add_new_item_lable: "add_new_color",
         keyInValues: "colors",
         TABLE_HEAD: [
-            { id: 'name', label: t('color'), type: "text", width: 290,align:'start' },
+            { id: 'name', label: t('color'), type: "text", width: 290, align: 'start' },
             // { id: 'actions', label: t('actions'), type: "threeDots", width: 88, align: "right" },
         ],
         href: paths.dashboard.settings.colorsNew,
@@ -265,11 +266,11 @@ export default function SystemItemListView({ collection }) {
     }
 
     useEffect(() => {
-        const items = types[currentType]?.tableElements(data, currentKeyInValue)?.map(item => ({ ...item, status: item?.system_settings == null || item?.system_settings?.is_selected ? "selected" : "not_selected", enable: item?.system_settings == null || item?.system_settings?.is_selected ? "selected" : "not_selected", enabled: item?.system_settings == null || item?.system_settings?.is_selected ? t("enabled") : t("not_enabled"),color: item?.system_settings == null || item?.system_settings?.is_selected ? "success" : "error" })) || [];
+        const items = types[currentType]?.tableElements(data, currentKeyInValue)?.map(item => ({ ...item, status: item?.system_settings == null || item?.system_settings?.is_selected ? "selected" : "not_selected", enable: item?.system_settings == null || item?.system_settings?.is_selected ? "selected" : "not_selected", enabled: item?.system_settings == null || item?.system_settings?.is_selected ? t("enabled") : t("not_enabled"), color: item?.system_settings == null || item?.system_settings?.is_selected ? "success" : "error" })) || [];
         setDataFiltered(items?.map(item => ({ ...item, component: <EnableDisableItem configurable_type={collection?.type} item={item} setTableData={setDataFiltered} data={tableData} /> }))?.reverse());
     }, [data, collection]);
     useEffect(() => {
-        const items = types[currentType]?.tableElements(data, currentKeyInValue).map(item => ({ ...item, status: item?.system_settings == null || item?.system_settings?.is_selected ? "selected" : "not_selected", enable: item?.system_settings == null || item?.system_settings?.is_selected ? "selected" : "not_selected", enabled: item?.system_settings == null || item?.system_settings?.is_selected ? t("enabled") : t("not_enabled"),color: item?.system_settings == null || item?.system_settings?.is_selected ? "success" : "error" })) || [];
+        const items = types[currentType]?.tableElements(data, currentKeyInValue).map(item => ({ ...item, status: item?.system_settings == null || item?.system_settings?.is_selected ? "selected" : "not_selected", enable: item?.system_settings == null || item?.system_settings?.is_selected ? "selected" : "not_selected", enabled: item?.system_settings == null || item?.system_settings?.is_selected ? t("enabled") : t("not_enabled"), color: item?.system_settings == null || item?.system_settings?.is_selected ? "success" : "error" })) || [];
         setTableData(items?.map(item => ({ ...item, component: <EnableDisableItem configurable_type={collection?.type} item={item} setTableData={setDataFiltered} data={tableData} /> }))?.reverse());
         console.log("collection:", collection);
         console.log("currentKeyInValue:", currentKeyInValue);
@@ -281,14 +282,16 @@ export default function SystemItemListView({ collection }) {
             <ZaityHeadContainer
                 heading={t(currentSystemItem?.item_settings_lable)}
                 action={
-                    <Button
-                        component={RouterLink}
-                        href={currentSystemItem?.href}
-                        variant="contained"
-                        startIcon={<Iconify icon="mingcute:add-line" />}
-                    >
-                        {t(currentSystemItem?.add_new_item_lable)}
-                    </Button>
+                    <PermissionsContext action={"create." + collection?.type} >
+                        <Button
+                            component={RouterLink}
+                            href={currentSystemItem?.href}
+                            variant="contained"
+                            startIcon={<Iconify icon="mingcute:add-line" />}
+                        >
+                            {t(currentSystemItem?.add_new_item_lable)}
+                        </Button>
+                    </PermissionsContext>
                 }
                 links={[
                     { name: t('dashboard'), href: paths.dashboard.root },
@@ -299,7 +302,7 @@ export default function SystemItemListView({ collection }) {
                 <Card>
                     <ZaityTableTabs data={tableData} items={items} defaultFilters={{ status: 'all' }} setTableDate={setDataFiltered} filterFunction={filterFunction}>
                         <ZaityTableFilters defaultFilters={defaultFilters} dataFiltered={tableData}>
-                            <ZaityListView TABLE_HEAD={[...currentSystemItem?.TABLE_HEAD, { id: 'enabled', label: t('selected'), type: "label", width: collection.type =="maintenance_specification" ? 120: 350 }, { id: 'enable', label: t('enable'), type: "component", width: 40, align: "center" }]} dense="small" zaityTableDate={dataFiltered || []} onSelectedRows={({ data, setTableData }) => { return <onSelectedRowsComponent configurable_type={collection?.type} setTableData={setTableData} data={data} /> }} />
+                            <ZaityListView TABLE_HEAD={[...currentSystemItem?.TABLE_HEAD, { id: 'enabled', label: t('selected'), type: "label", width: collection.type == "maintenance_specification" ? 120 : 350 }, { id: 'enable', label: t('enable'), type: "component", width: 40, align: "center" }]} dense="small" zaityTableDate={dataFiltered || []} onSelectedRows={({ data, setTableData }) => { return <onSelectedRowsComponent configurable_type={collection?.type} setTableData={setTableData} data={data} /> }} />
                         </ZaityTableFilters>
                     </ZaityTableTabs>
                 </Card>
@@ -322,7 +325,7 @@ const EnableDisableItem = ({ item, configurable_type, setTableData, data }) => {
         setTableData(prev =>
             prev?.map(i => {
                 if (i.key == item.key) {
-                    const updated = { ...i, enable: status,enabled,color, system_settings: { is_selected: event.target.checked } };
+                    const updated = { ...i, enable: status, enabled, color, system_settings: { is_selected: event.target.checked } };
                     console.log("Updated item: ", updated);
                     return updated;
                 }
@@ -374,7 +377,7 @@ const onSelectedRowsComponent = ({ configurable_type, setTableData, data }) => {
                 />
             </FormGroup> */}
             <Tooltip title="Delete">
-                <IconButton color="primary" onClick={()=>{}}>
+                <IconButton color="primary" onClick={() => { }}>
                     <Iconify icon="solar:trash-bin-trash-bold" />
                 </IconButton>
             </Tooltip>

@@ -18,6 +18,7 @@ import { paths } from 'src/routes/paths';
 import { useBoolean } from 'src/hooks/use-boolean';
 import ContentDialog from 'src/components/custom-dialog/content-dialog';
 import { EditODO } from './EditODO';
+import PermissionsContext from 'src/auth/context/permissions/permissions-context';
 
 // ----------------------------------------------------------------------
 
@@ -86,12 +87,16 @@ export default function OrderDetailsToolbar({
         >
 
 
-          <Button component={RouterLink} href={paths.dashboard.vehicle.edit(idCar)} color="inherit" variant="contained" startIcon={<Iconify icon="solar:pen-bold" />}>
-            {t("edit")}
-          </Button>
-          <Button onClick={() => { completed.onTrue(); popover.onClose(); }} color="inherit" variant="contained" startIcon={<Iconify icon="solar:pen-bold" />}>
-            {t("odometer")}
-          </Button>
+          <PermissionsContext action={'update.car'}>
+            <Button component={RouterLink} href={paths.dashboard.vehicle.edit(idCar)} color="inherit" variant="contained" startIcon={<Iconify icon="solar:pen-bold" />}>
+              {t("edit")}
+            </Button>
+          </PermissionsContext>
+          <PermissionsContext action={'put.car.odometer'}>
+            <Button onClick={() => { completed.onTrue(); popover.onClose(); }} color="inherit" variant="contained" startIcon={<Iconify icon="solar:pen-bold" />}>
+              {t("odometer")}
+            </Button>
+          </PermissionsContext>
         </Stack>
       </Stack>
 

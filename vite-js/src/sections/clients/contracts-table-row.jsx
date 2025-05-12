@@ -26,7 +26,7 @@ import { t } from 'i18next';
 
 // ----------------------------------------------------------------------
 
-export default function OrderTableRow({ row, payment_method, client, selected, onViewRow, onSelectRow, onDeleteRow ,onEditRow}) {
+export default function OrderTableRow({ row, payment_method, client, selected, onViewRow, onSelectRow, onDeleteRow, onEditRow }) {
   const { clauses, status, orderNumber, createdAt, customer, totalQuantity, subTotal } = row;
 
   const confirm = useBoolean();
@@ -34,7 +34,7 @@ export default function OrderTableRow({ row, payment_method, client, selected, o
   const collapse = useBoolean();
 
   const popover = usePopover();
-
+  console.log(" row : row :", row);
   const renderPrimary = (
     <TableRow hover selected={selected}>
       <TableCell padding="checkbox">
@@ -86,8 +86,8 @@ export default function OrderTableRow({ row, payment_method, client, selected, o
         <Label
           variant="soft"
           color={
-            (row?.payment_method === 'cash' && 'success') ||
-            (row?.payment_method === 'deferred' && 'warning') ||
+            (row?.payment_method.name === 'cash' && 'success') ||
+            (row?.payment_method.name === 'deferred' && 'warning') ||
             (row?.payment_method === 'bill' && 'error') ||
             'default'
           }

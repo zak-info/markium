@@ -23,6 +23,7 @@ import Iconify from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import { useTranslate } from 'src/locales';
+import PermissionsContext from 'src/auth/context/permissions/permissions-context';
 
 // ----------------------------------------------------------------------
 
@@ -90,29 +91,29 @@ export default function OrderTableRow({
 
       <TableCell>{state}</TableCell>
       <TableCell>
-      {!!row?.car?.id ?
-        <Box
-          onClick={onViewCar}
-          sx={{
-            cursor: 'pointer',
-            '&:hover': {
-              textDecoration: 'underline',
-            },
-          }}
-        >
-          <ListItemText
-            primary={carModel?.translations[0]?.name}
-            secondary={row?.car?.plat_number}
-            primaryTypographyProps={{ typography: 'body2', noWrap: true }}
-            secondaryTypographyProps={{
-              mt: 0.5,
-              component: 'span',
-              typography: 'caption',
+        {!!row?.car?.id ?
+          <Box
+            onClick={onViewCar}
+            sx={{
+              cursor: 'pointer',
+              '&:hover': {
+                textDecoration: 'underline',
+              },
             }}
-          />
-        </Box>
-        : "-"
-      }
+          >
+            <ListItemText
+              primary={carModel?.translations[0]?.name}
+              secondary={row?.car?.plat_number}
+              primaryTypographyProps={{ typography: 'body2', noWrap: true }}
+              secondaryTypographyProps={{
+                mt: 0.5,
+                component: 'span',
+                typography: 'caption',
+              }}
+            />
+          </Box>
+          : "-"
+        }
       </TableCell>
       <TableCell>
         <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
@@ -186,25 +187,29 @@ export default function OrderTableRow({
         arrow="right-top"
         sx={{ width: 140 }}
       >
-        <MenuItem
-          onClick={() => {
-            confirm.onTrue();
-            popover.onClose();
-          }}
-          sx={{ color: 'error.main' }}
-        >
-          <Iconify icon="solar:trash-bin-trash-bold" />
-          {t('delete')}
-        </MenuItem>
-        <MenuItem
-          onClick={() => {
-            handleEditRow();
-            popover.onClose();
-          }}
-        >
-          <Iconify icon="solar:pen-bold" />
-          {t('edit')}
-        </MenuItem>
+        <PermissionsContext action={"delete.driver"} >
+          <MenuItem
+            onClick={() => {
+              confirm.onTrue();
+              popover.onClose();
+            }}
+            sx={{ color: 'error.main' }}
+          >
+            <Iconify icon="solar:trash-bin-trash-bold" />
+            {t('delete')}
+          </MenuItem>
+        </PermissionsContext>
+        <PermissionsContext action={"update.driver"} >
+          <MenuItem
+            onClick={() => {
+              handleEditRow();
+              popover.onClose();
+            }}
+          >
+            <Iconify icon="solar:pen-bold" />
+            {t('edit')}
+          </MenuItem>
+        </PermissionsContext>
         <MenuItem
           onClick={() => {
             onViewRow();

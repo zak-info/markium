@@ -48,6 +48,7 @@ import { useGetDocuments } from 'src/api/document';
 import { useValues } from 'src/api/utils';
 import { useGetCar } from 'src/api/car';
 import { useGetDrivers } from 'src/api/drivers';
+import PermissionsContext from 'src/auth/context/permissions/permissions-context';
 
 // ----------------------------------------------------------------------
 
@@ -88,14 +89,14 @@ export default function OrderListView() {
 
   const confirm = useBoolean();
 
-  
+
   const { car } = useGetCar()
   const { drivers } = useGetDrivers()
   const { data } = useValues();
 
   const { documents, mutate } = useGetDocuments()
   console.log("documents : ", documents);
-  
+
   const [tableData, setTableData] = useState(documents);
   useEffect(() => {
     setTableData(documents);
@@ -179,7 +180,7 @@ export default function OrderListView() {
 
   const handleFilterStatus = useCallback(
     (event, newValue) => {
-      handleFilters('status', newValue );
+      handleFilters('status', newValue);
     },
     [handleFilters]
   );
@@ -201,14 +202,16 @@ export default function OrderListView() {
             { name: t('documents') },
           ]}
           action={
-            <Button
-              component={RouterLink}
-              href={paths.dashboard.documents.new}
-              variant="contained"
-              startIcon={<Iconify icon="mingcute:add-line" />}
-            >
-              {t('addNewDocument')}
-            </Button>
+            <PermissionsContext action={"create.attachment"} >
+              <Button
+                component={RouterLink}
+                href={paths.dashboard.documents.new}
+                variant="contained"
+                startIcon={<Iconify icon="mingcute:add-line" />}
+              >
+                {t('addNewDocument')}
+              </Button>
+            </PermissionsContext>
           }
           sx={{
             mb: { xs: 3, md: 5 },
@@ -341,7 +344,7 @@ export default function OrderListView() {
 
 // ----------------------------------------------------------------------
 
-function applyFilter({ inputData, comparator, filters, dateError,data }) {
+function applyFilter({ inputData, comparator, filters, dateError, data }) {
   const { status, attachment_name_id, release_date, expiry_date } = filters;
 
   const stabilizedThis = inputData.map((el, index) => [el, index]);
@@ -358,7 +361,7 @@ function applyFilter({ inputData, comparator, filters, dateError,data }) {
     inputData = inputData.filter(
       (item) =>
         // item.attachment_name_id.toString().toLowerCase().includes(attachment_name_id.toLowerCase())
-      data?.attachmenat_names?.find(i => i?.id == item?.attachment_name_id)?.translations[0]?.name.toLowerCase().includes(attachment_name_id.toLowerCase())
+        data?.attachmenat_names?.find(i => i?.id == item?.attachment_name_id)?.translations[0]?.name.toLowerCase().includes(attachment_name_id.toLowerCase())
     );
   }
   if (release_date) {

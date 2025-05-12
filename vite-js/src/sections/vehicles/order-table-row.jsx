@@ -26,6 +26,7 @@ import { useTranslate } from 'src/locales';
 import { Grid, Link } from '@mui/material';
 import { paths } from 'src/routes/paths';
 import ExpandableText from '../maintain/ExpandableText';
+import PermissionsContext from 'src/auth/context/permissions/permissions-context';
 
 // ----------------------------------------------------------------------
 
@@ -141,27 +142,32 @@ export default function OrderTableRow({
       {/* <TableCell> {color?.translations?.name} </TableCell> */}
 
       <TableCell direction="column" >
-        <Grid container spacing={1} >
+        {/* <Grid container spacing={1} > */}
           {
-            contract?.ref ?
+            row?.status?.key == "rented" ?
               <Label color={"warning"} sx={{ cursor: 'pointer', marginStart: "10px" }}>
-                {status?.translations?.name+" / "+t("rented")}
-              </Label>
-              :
-              <Label
-                variant="soft"
-                color={
-                  (status?.key === 'available' && 'success') ||
-                  (status?.key === 'pending' && 'warning') ||
-                  (status?.key === 'under_maintenance' && 'error') ||
-                  (status?.key === 'under_preparation' && 'secondary') ||
-                  'default'
-                }
-              >
                 {status?.translations?.name}
               </Label>
+              :
+              contract?.ref && status != "rented" ?
+                <Label color={"warning"} sx={{ cursor: 'pointer', marginStart: "10px" }}>
+                  {status?.translations?.name + " / " + t("rented")}
+                </Label>
+                :
+                <Label
+                  variant="soft"
+                  color={
+                    (status?.key === 'available' && 'success') ||
+                    (status?.key === 'rented' && 'warning') ||
+                    (status?.key === 'under_maintenance' && 'error') ||
+                    (status?.key === 'under_preparation' && 'secondary') ||
+                    'default'
+                  }
+                >
+                  {status?.translations?.name}
+                </Label>
           }
-        </Grid>
+        {/* </Grid> */}
       </TableCell>
       {/*  */}
       <TableCell >
@@ -329,26 +335,29 @@ export default function OrderTableRow({
         arrow="right-top"
         sx={{ width: 200 }}
       >
-        <MenuItem
-          onClick={() => {
-            confirm.onTrue();
-            popover.onClose();
-          }}
-          sx={{ color: 'error.main' }}
-        >
-          <Iconify icon="solar:trash-bin-trash-bold" />
-          {t('delete')}
-        </MenuItem>
-
-        <MenuItem
-          onClick={() => {
-            onEditRow();
-            popover.onClose();
-          }}
-        >
-          <Iconify icon="solar:pen-bold" />
-          {t('edit')}
-        </MenuItem>
+        <PermissionsContext action={'delete.car'}>
+          <MenuItem
+            onClick={() => {
+              confirm.onTrue();
+              popover.onClose();
+            }}
+            sx={{ color: 'error.main' }}
+          >
+            <Iconify icon="solar:trash-bin-trash-bold" />
+            {t('delete')}
+          </MenuItem>
+        </PermissionsContext>
+        <PermissionsContext action={'update.car'}>
+          <MenuItem
+            onClick={() => {
+              onEditRow();
+              popover.onClose();
+            }}
+          >
+            <Iconify icon="solar:pen-bold" />
+            {t('edit')}
+          </MenuItem>
+        </PermissionsContext>
 
         <MenuItem
           onClick={() => {

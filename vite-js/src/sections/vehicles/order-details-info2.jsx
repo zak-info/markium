@@ -16,6 +16,7 @@ import Iconify from 'src/components/iconify';
 import Label from 'src/components/label';
 import CarDettachForm from './view/car-dettach-form';
 import CarAttachForm from './view/car-attach-form';
+import PermissionsContext from 'src/auth/context/permissions/permissions-context';
 
 // ----------------------------------------------------------------------
 
@@ -77,7 +78,12 @@ export default function OrderDetailsInfo2({ carDetails, delivery, payment, shipp
   return (
     <Card>
       {renderDelivery}
-      {!carDetails?.driver?.id && <CarAttachForm car_id={carDetails?.id} />}
+      {!carDetails?.driver?.id &&
+        <PermissionsContext action={'put.car.driver_id'}>
+          <CarAttachForm car_id={carDetails?.id} />
+        </PermissionsContext>
+
+      }
       {/* <Divider sx={{ borderStyle: 'dashed' }} />
       {renderCustomer} */}
 

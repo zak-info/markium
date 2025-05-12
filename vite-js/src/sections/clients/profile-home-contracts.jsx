@@ -69,7 +69,7 @@ export default function ProfileHome({ info, posts, contract, client, location })
             <Box sx={{ typography: 'body2' }}>
               {t(`net`) + "  "}
               <Link variant="subtitle2" color="inherit">
-                {contract?.net}.00
+                {contract?.total_cost}.00
               </Link>
             </Box>
           </Stack>

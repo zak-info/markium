@@ -1,3 +1,5 @@
+
+
 /* eslint-disable perfectionist/sort-imports */
 import 'src/global.css';
 
@@ -23,6 +25,7 @@ import { CheckoutProvider } from 'src/sections/checkout/context';
 
 import { AuthProvider } from 'src/auth/context/jwt';
 import { DataContextProvider } from './context/system-data/DataContext';
+import { PermissionProvider } from './auth/context/jwt/PermissionContext';
 // import { AuthProvider } from 'src/auth/context/auth0';
 // import { AuthProvider } from 'src/auth/context/amplify';
 // import { AuthProvider } from 'src/auth/context/firebase';
@@ -35,32 +38,34 @@ export default function App() {
 
   return (
     <AuthProvider>
-      <LocalizationProvider>
-        <SettingsProvider
-          defaultSettings={{
-            themeMode: 'light', // 'light' | 'dark'
-            themeDirection: 'ltr', //  'rtl' | 'ltr'
-            themeContrast: 'default', // 'default' | 'bold'
-            themeLayout: 'horizontal', // 'vertical' | 'horizontal' | 'mini'
-            themeColorPresets: 'default', // 'default' | 'cyan' | 'purple' | 'blue' | 'orange' | 'red'
-            themeStretch: false,
-          }}
-        >
+      {/* <PermissionProvider> */}
+        <LocalizationProvider>
+          <SettingsProvider
+            defaultSettings={{
+              themeMode: 'light', // 'light' | 'dark'
+              themeDirection: 'ltr', //  'rtl' | 'ltr'
+              themeContrast: 'default', // 'default' | 'bold'
+              themeLayout: 'horizontal', // 'vertical' | 'horizontal' | 'mini'
+              themeColorPresets: 'default', // 'default' | 'cyan' | 'purple' | 'blue' | 'orange' | 'red'
+              themeStretch: false,
+            }}
+          >
             <ThemeProvider>
               <MotionLazy>
                 <SnackbarProvider>
-          {/* <DataContextProvider> */}
                   <CheckoutProvider>
                     <SettingsDrawer />
                     <ProgressBar />
+                    {/* <DataContextProvider> */}
                     <Router />
+                    {/* </DataContextProvider> */}
                   </CheckoutProvider>
-          {/* </DataContextProvider> */}
                 </SnackbarProvider>
               </MotionLazy>
             </ThemeProvider>
-        </SettingsProvider>
-      </LocalizationProvider>
+          </SettingsProvider>
+        </LocalizationProvider>
+      {/* </PermissionProvider> */}
     </AuthProvider>
   );
 }

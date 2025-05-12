@@ -8,11 +8,13 @@ import { usePathname } from 'src/routes/hooks';
 import { useActiveLink } from 'src/routes/hooks/use-active-link';
 
 import NavItem from './nav-item';
+import PermissionsContext from 'src/auth/context/permissions/permissions-context';
 
 // ----------------------------------------------------------------------
 
-export default function NavList({ data, depth, slotProps }) {
+export default function NavList({ item, data, depth, slotProps }) {
   const navRef = useRef(null);
+  console.log("item : ", item);
 
   const pathname = usePathname();
 
@@ -39,6 +41,8 @@ export default function NavList({ data, depth, slotProps }) {
 
   return (
     <>
+      {/* <PermissionsContext action={item?.permissions?.[0]}> */}
+
       <NavItem
         ref={navRef}
         open={openMenu}
@@ -62,6 +66,7 @@ export default function NavList({ data, depth, slotProps }) {
         className={active ? 'active' : ''}
         sx={depth === 1 ? slotProps?.rootItem : slotProps?.subItem}
       />
+      {/* </PermissionsContext> */}
 
       {!!data.children && (
         <Popover
@@ -109,11 +114,13 @@ NavList.propTypes = {
 
 // ----------------------------------------------------------------------
 
-function NavSubList({ data, depth, slotProps }) {
+function NavSubList({ item, data, depth, slotProps }) {
   return (
     <Stack spacing={0.5}>
-      {data.map((list) => (
-        <NavList key={list.title} data={list} depth={depth + 1} slotProps={slotProps} />
+      {data.map((list,index) => (
+        <PermissionsContext key={index} action={list?.permissions}>
+          <NavList key={list.title} data={list} depth={depth + 1} slotProps={slotProps} />
+        </PermissionsContext>
       ))}
     </Stack>
   );

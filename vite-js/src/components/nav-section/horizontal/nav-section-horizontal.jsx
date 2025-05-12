@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import Stack from '@mui/material/Stack';
 
 import NavList from './nav-list';
+import PermissionsContext from 'src/auth/context/permissions/permissions-context';
 
 // ----------------------------------------------------------------------
 
@@ -41,8 +42,10 @@ export default memo(NavSectionHorizontal);
 function Group({ items, slotProps }) {
   return (
     <>
-      {items.map((list) => (
-        <NavList key={list.title} data={list} depth={1} slotProps={slotProps} />
+      {items.map((list,index) => (
+        <PermissionsContext key={index}  action={list?.permissions}  >
+          <NavList item={list} key={list.title} data={list} depth={1} slotProps={slotProps} />
+        </PermissionsContext>
       ))}
     </>
   );

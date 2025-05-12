@@ -48,6 +48,7 @@ import { useValues } from 'src/api/utils';
 import { useGetContracts } from 'src/api/contract';
 import { useGetCompany } from 'src/api/company';
 import { useGetClients } from 'src/api/client';
+import PermissionsContext from 'src/auth/context/permissions/permissions-context';
 // ----------------------------------------------------------------------
 
 const defaultFilters = {
@@ -257,14 +258,18 @@ export default function OrderListView() {
             { name: t('vehiclesList') },
           ]}
           action={
-            <Button
-              component={RouterLink}
-              href={paths.dashboard.vehicle.new}
-              variant="contained"
-              startIcon={<Iconify icon="mingcute:add-line" />}
-            >
-              {t('addVehicle')}
-            </Button>
+            <>
+              <PermissionsContext action={'create.car'}>
+                <Button
+                  component={RouterLink}
+                  href={paths.dashboard.vehicle.new}
+                  variant="contained"
+                  startIcon={<Iconify icon="mingcute:add-line" />}
+                >
+                  {t('addVehicle')}
+                </Button>
+              </PermissionsContext>
+            </>
           }
           sx={{
             mb: {
@@ -297,7 +302,7 @@ export default function OrderListView() {
                 </Label>
               }
             />
-            {data?.car_statuses?.map(item => ({...item,translations:item?.key == "under_maintenance" ? [{name:"تحت الصيانة"}]:item?.translations}))?.map((tab) => (
+            {data?.car_statuses?.map(item => ({ ...item, translations: item?.key == "under_maintenance" ? [{ name: "تحت الصيانة" }] : item?.translations }))?.map((tab) => (
               <Tab
                 key={tab.key}
                 iconPosition="end"

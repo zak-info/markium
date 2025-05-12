@@ -1,0 +1,281 @@
+import * as Yup from 'yup';
+import PropTypes from 'prop-types';
+import { useMemo, useCallback, useEffect, useState } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { format, getTime, formatDistanceToNow } from 'date-fns';
+
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
+import Switch from '@mui/material/Switch';
+import Grid from '@mui/material/Unstable_Grid2';
+import Divider from '@mui/material/Divider';
+import MenuItem from '@mui/material/MenuItem';
+import LoadingButton from '@mui/lab/LoadingButton';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+
+import { paths } from 'src/routes/paths';
+import { useRouter } from 'src/routes/hooks';
+
+import { fData } from 'src/utils/format-number';
+
+import { useSnackbar } from 'src/components/snackbar';
+import FormProvider, { RHFTextField, RHFSelect } from 'src/components/hook-form';
+
+import { useLocales, useTranslate } from 'src/locales';
+
+import { addNewDriver, editDriver } from 'src/api/drivers';
+
+import { useValues } from 'src/api/utils';
+import { useGetCar } from 'src/api/car';
+import { createRole, editRole, usePermissions } from 'src/api/users';
+import { CardContent, CardHeader, Typography } from '@mui/material';
+import PermissionsGroupCard from './PermissionsGroupCard';
+import PermissionsGroupCard2 from './PermissionsGroupCard2';
+import { Container } from 'postcss';
+import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import { useSettingsContext } from 'src/components/settings';
+
+// ----------------------------------------------------------------------
+
+export default function RolesCreateView({ currentRole }) {
+    const router = useRouter();
+    const { enqueueSnackbar } = useSnackbar();
+    const { t } = useTranslate();
+    const { permissions } = usePermissions()
+    const { currentLang } = useLocales()
+
+
+    // const extractModelName = (table) => {
+    //     const parts = table.split('\\');
+    //     return parts[parts.length - 1];
+    // };
+
+    function extractModelName(tablePath) {
+        const parts = tablePath.split('\\'); // handles "App\\Models\\Car"
+        return parts[parts.length - 1].toLowerCase(); // "Car" -> "car"
+    }
+
+
+    const groups = [
+        { id: "vehicles", models: ["car"], read_tags: ["car", "vehicle", "car_log"], label: t("vehicles") },
+        { id: "maintenance", models: ["maintenance"], read_tags: ["maintenance", "maintenance_log"], label: t("maintenance") },
+        { id: "documents", models: ["document", "attachment"], read_tags: ["documents", "attachment", "documents_log"], label: t("documents") },
+        { id: "drivers", models: ["driver"], read_tags: ["driver", "drivers_log"], label: t("drivers") },
+        { id: "clients", models: ["client", "contract", "claim"], read_tags: ["client", "contract", "client_log", "claim"], label: t("clients") },
+        { id: "system_settings", models: ["system_setting"], read_tags: ["car_company", "car_model", "country", "color", "state", "neighborhood", "maintenance_specification", "attachment_name", "payment_method", "license_type", "spec"], label: t("system_settings") },
+        { id: "users", models: ["user", "role"], read_tags: ["user", "role"], label: t("users") },
+    ]
+
+
+    function groupPermissionsByTags(permissions) {
+        const result = {};
+
+        groups.forEach((group) => {
+            result[group.id] = {
+                label: group.label,
+                actions: [],
+                columns: [],
+            };
+        });
+
+        permissions.forEach((perm) => {
+            const parts = perm.key.split('.');
+            const action = parts[0]?.toLowerCase();  // e.g., 'read'
+            const modelTag = parts[1]?.toLowerCase();  // e.g., 'car'
+
+            if (!action || !modelTag) return;
+
+            // Find the matching group
+            const group = groups.find(g => g.read_tags.includes(modelTag));
+
+            if (!group) return; // No matching group
+
+            const target = result[group.id];
+
+            if (action == 'read' || (parts?.length == 2 && group.models.find(g => g == modelTag))) {
+                target.actions.push(perm);
+            } else {
+                target.columns.push(perm);
+            }
+        });
+
+        return result;
+    }
+
+
+
+
+    const grouped = groupPermissionsByTags(permissions);
+    console.log("grouped : ", grouped);
+
+    const [selectedPermissions, setSelectedPermissions] = useState([]);
+
+    const togglePermission = (item) => {
+        setSelectedPermissions((prev) =>
+            prev?.includes(item?.id)
+                ? prev?.filter(i => i != item?.id)
+                : [...(prev?.length > 0 ? prev : []), item?.id]
+        );
+    };
+
+    const toggleGroupPermissions = (groupTitle) => {
+        const group = grouped[groupTitle];
+        if (!group) return selectedPermissions;
+
+        const allGroupIds = [
+            ...(group.actions || []),
+            ...(group.columns || [])
+        ].map(p => p.id);
+
+        const allIncluded = allGroupIds.every(id => selectedPermissions?.includes(id));
+        console.log("allIncluded : ", allIncluded);
+
+        if (allIncluded) {
+            // Remove all if already included
+            setSelectedPermissions(selectedPermissions.filter(id => !allGroupIds.includes(id)));
+        } else {
+            // Add missing ones
+            const newSet = new Set([
+                ...(selectedPermissions?.length > 0 ? selectedPermissions : []),
+                ...allGroupIds
+              ]);
+              
+            setSelectedPermissions(Array.from(newSet));
+        }
+    };
+
+
+
+    const validationSchema = Yup.object({
+
+    });
+
+    const defaultValues = useMemo(
+        () => ({
+
+        }),
+
+        [currentRole]
+    );
+
+
+
+
+    const methods = useForm({
+        resolver: yupResolver(validationSchema),
+        defaultValues,
+    });
+
+    const {
+        reset,
+        watch,
+        control,
+        setValue,
+        handleSubmit,
+        formState: { isSubmitting, errors },
+    } = methods;
+
+    const values = watch();
+    useEffect(() => {
+        if (currentRole?.id) {
+            setValue('nameEn', currentRole?.translations[0]?.name);
+            setValue('nameAr', currentRole?.translations[1]?.name);
+            setSelectedPermissions(currentRole?.permissions)
+        }
+    }, [currentRole, setValue]);
+
+
+
+    const onSubmit = handleSubmit(async (data) => {
+        try {
+            let body = { permissions: selectedPermissions, nameAr: data?.nameAr, nameEn: data?.nameEn }
+            currentRole?.id ? await editRole(currentRole?.id, body) : await createRole(body)
+            console.log("body : ", body);
+            reset();
+            enqueueSnackbar(t("operation_success"));
+            router.push(paths.dashboard.user.roles);
+        } catch (error) {
+            console.error(error);
+            Object.values(error?.data).forEach(array => {
+                array.forEach(text => {
+                    enqueueSnackbar(text, { variant: 'error' });
+                });
+            });
+
+        }
+    });
+
+    return (
+
+
+        <FormProvider methods={methods} onSubmit={onSubmit}>
+            <Grid container spacing={3}>
+                <Grid xs={12} md={16} >
+                    <Box
+                        rowGap={3}
+                        columnGap={2}
+                        display="grid"
+                        gridTemplateColumns={{
+                            xs: 'repeat(1, 1fr)',
+                            sm: 'repeat(2, 1fr)',
+                        }}
+                    >
+                        <Card sx={{ p: 3 }}>
+                            <Box
+                                rowGap={3}
+                                columnGap={2}
+                                display="grid"
+                                gridTemplateColumns={{
+                                    xs: 'repeat(1, 1fr)',
+                                    sm: 'repeat(2, 1fr)',
+                                }}
+                            >
+                                <RHFTextField name="nameAr" label={t('name_ar')} />
+                                <RHFTextField name="nameEn" label={t('name_en')} />
+                            </Box>
+                        </Card>
+                    </Box>
+                    <Box
+                        rowGap={3}
+                        columnGap={2}
+                        sx={{ mt: 8 }}
+                        display="grid"
+                        gridTemplateColumns={{
+                            xs: 'repeat(1, 1fr)',
+                            sm: 'repeat(2, 1fr)',
+                        }}
+                    >
+                        {/* {Object.entries(grouped).map(([model, perms]) => (
+                            <PermissionsGroupCard model={model} perms={perms} selectedPermissions={selectedPermissions} togglePermission={togglePermission} />
+                        ))} */}
+                        {
+                            Object.keys(grouped)?.map((card, index) => (
+                                <PermissionsGroupCard2
+                                    model={card.toLowerCase()}
+                                    perms={grouped[card]}
+                                    key={index}
+                                    selectedPermissions={selectedPermissions}
+                                    toggleGroupPermissions={toggleGroupPermissions}
+                                    togglePermission={togglePermission}
+                                />
+                            ))
+                        }
+                    </Box>
+                    <Stack alignItems="flex-end" sx={{ mt: 3 }}>
+                        <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
+                            {!currentRole ? t('create') : t('saveChange')}
+                        </LoadingButton>
+                    </Stack>
+                </Grid>
+            </Grid>
+        </FormProvider>
+    );
+}
+
+RolesCreateView.propTypes = {
+    currentRole: PropTypes.object,
+};

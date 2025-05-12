@@ -20,6 +20,7 @@ export function RHFSelect({
   helperText,
   children,
   PaperPropsSx,
+  multiple,
   ...other
 }) {
   const { control } = useFormContext();
@@ -82,23 +83,23 @@ export function RHFMultiSelect({
   const { control } = useFormContext();
 
   const renderValues = (selectedIds) => {
-    const selectedItems = options.filter((item) => selectedIds.includes(item.value));
+    const selectedItems = options?.filter((item) => selectedIds.includes(item.value));
 
-    if (!selectedItems.length && placeholder) {
+    if (!selectedItems?.length && placeholder) {
       return <Box sx={{ color: 'text.disabled' }}>{placeholder}</Box>;
     }
 
     if (chip) {
       return (
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-          {selectedItems.map((item) => (
+          {selectedItems?.map((item) => (
             <Chip key={item.value} size="small" label={item.label} />
           ))}
         </Box>
       );
     }
 
-    return selectedItems.map((item) => item.label).join(', ');
+    return selectedItems?.map((item) => item.label).join(', ');
   };
 
   return (
@@ -118,7 +119,7 @@ export function RHFMultiSelect({
             label={label}
             renderValue={renderValues}
           >
-            {options.map((option) => {
+            {options?.map((option) => {
               const selected = field.value.includes(option.value);
 
               return (

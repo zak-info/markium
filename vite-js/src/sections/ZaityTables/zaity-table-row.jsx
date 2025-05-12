@@ -19,8 +19,8 @@ export default function OrderTableRow({ TABLE_HEAD, row, unit, pv, currentLang, 
   const popover = usePopover();
   const renderPrimary = (
     <TableRow hover selected={selected}>
-      <TableCell align='start' sx={{width:"100px"}} padding="checkbox" >
-        <Checkbox checked={selected} onClick={onSelectRow}  />
+      <TableCell align='start' sx={{ width: "100px" }} padding="checkbox" >
+        <Checkbox checked={selected} onClick={onSelectRow} />
       </TableCell>
 
       {TABLE_HEAD.map((head_row, index) => (
@@ -36,7 +36,7 @@ export default function OrderTableRow({ TABLE_HEAD, row, unit, pv, currentLang, 
       {renderPrimary}
 
       <CustomPopover open={popover.open} onClose={popover.onClose} arrow="right-top" sx={{ width: 140 }}>
-        { row?.actions && row?.actions(() => { popover.onClose() })}
+        {row?.actions && row?.actions(() => { popover.onClose() })}
       </CustomPopover>
 
 
@@ -95,15 +95,13 @@ function renderCell(head_row, row, popover) {
       );
     case "threeDots":
       return (
-        <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
-          <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
-            <Iconify icon="eva:more-vertical-fill" />
-          </IconButton>
+        <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap', display: "flex", justifyContent: 'end' }}>
+          {head_row?.component(row)}
         </TableCell>
       );
     case 'component':
       return (
-        <TableCell align="center" sx={{whiteSpace: 'nowrap',display:"flex", justifyContent:"end" }}>
+        <TableCell align="center" sx={{ whiteSpace: 'nowrap', display: "flex", justifyContent: "end" }}>
           {row?.component}
         </TableCell>
       );

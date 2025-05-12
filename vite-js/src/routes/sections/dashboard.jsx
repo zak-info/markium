@@ -33,12 +33,12 @@ const ClaimCreatePage = lazy(() => import('src/pages/dashboard/clients/claims-ne
 const MainSpecCreatePage = lazy(() => import('src/pages/dashboard/settings/pm-new'));
 const MainSpecEditPage = lazy(() => import('src/pages/dashboard/settings/edit'));
 
-// states system settings 
-// colors system settings 
-// countries system settings 
-const CountriesListPage = lazy(() => import('src/pages/dashboard/settings/countries/countries'));
-const CountriesCreatePage = lazy(() => import('src/pages/dashboard/settings/countries/countries-new'));
-const CountriesEditPage = lazy(() => import('src/pages/dashboard/settings/countries/countries-edit'));
+// roles
+const RolesListPage = lazy(() => import('src/pages/dashboard/user/roles/roles'));
+const RolesCreatePage = lazy(() => import('src/pages/dashboard/user/roles/roles-new'));
+const RolesEditPage = lazy(() => import('src/pages/dashboard/user/roles/roles-edit'));
+// users
+const UsersListPage = lazy(() => import('src/pages/dashboard/user/users/users'));
 // car models system settings 
 const CarModelsListPage = lazy(() => import('src/pages/dashboard/settings/car_models/car_models'));
 const CarModelsCreatePage = lazy(() => import('src/pages/dashboard/settings/car_models/car_models-new'));
@@ -66,6 +66,8 @@ const UserCardsPage = lazy(() => import('src/pages/dashboard/user/cards'));
 const UserListPage = lazy(() => import('src/pages/dashboard/user/list'));
 const UserAccountPage = lazy(() => import('src/pages/dashboard/user/account'));
 const UserCreatePage = lazy(() => import('src/pages/dashboard/user/new'));
+const UsersCreatePage = lazy(() => import('src/pages/dashboard/user/users/users-new'));
+const UsersEditPage = lazy(() => import('src/pages/dashboard/user/users/users-edit'));
 const UserEditPage = lazy(() => import('src/pages/dashboard/user/edit'));
 // BLOG
 const BlogPostsPage = lazy(() => import('src/pages/dashboard/post/list'));
@@ -182,10 +184,13 @@ export const dashboardRoutes = [
           { element: <UserProfilePage />, index: true },
           { path: 'profile', element: <UserProfilePage /> },
           { path: 'cards', element: <UserCardsPage /> },
-          { path: 'list', element: <UserListPage /> },
-          { path: 'new', element: <UserCreatePage /> },
-          { path: ':id/edit', element: <UserEditPage /> },
+          { path: 'list', element: <UsersListPage /> },
+          { path: 'new', element: <UsersCreatePage /> },
+          { path: ':id/edit', element: <UsersEditPage /> },
           { path: 'account', element: <UserAccountPage /> },
+          { path: 'roles', element: <RolesListPage /> },
+          { path: 'roles/new', element: <RolesCreatePage /> },
+          { path: 'roles/:id/edit', element: <RolesEditPage /> },
         ],
       },
       {
