@@ -51,7 +51,6 @@ export default function OrderTableRow({ row, clausable, onCreateRow, selected, o
     }
   };
 
-
   const renderPrimary = (
     <TableRow hover selected={selected}>
       <TableCell>

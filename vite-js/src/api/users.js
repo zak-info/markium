@@ -161,8 +161,18 @@ export async function deleteUser(id) {
     const URL = endpoints.users.root;
     return await axios.delete(URL);
 }
+
 export async function updateUser(id,body) {
     const URL = endpoints.users.root+"/"+id;
+    return await axios.put(URL, body);
+}
+
+export async function changeUserPassword(body) {
+    const URL = endpoints.auth.changePassword;
+    return await axios.post(URL, body);
+}
+export async function changeUserPasswordByAdmin(body) {
+    const URL = endpoints.auth.changePasswordByAdmin;
     return await axios.post(URL, body);
 }
 

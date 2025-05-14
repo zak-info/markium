@@ -55,6 +55,8 @@ export const endpoints = {
     me: '/api/auth/me',
     login: '/auth/login',
     register: '/api/auth/register',
+    changePassword: '/auth/changePassword',
+    changePasswordByAdmin: '/auth/changePasswordByAdmin',
   },
   clauses: {
     list:(id) => `/maintenance/${id}/clauses`,

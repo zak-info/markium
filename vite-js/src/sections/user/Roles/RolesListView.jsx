@@ -52,7 +52,7 @@ export default function RolesListView({ }) {
 
     let TABLE_HEAD = [
         { id: 'name', label: t('role'), type: "text", width: 140 },
-        { id: 'nb_users', label: t('nb_users'), type: "number", width: 140 },
+        { id: 'users_count', label: t('nb_users'), type: "number", width: 140 },
         { id: 'actions', label: t('actions'), type: "threeDots", component: (item) => <ElementActions item={item} />, width: 400, align: "right" },
     ]
 
@@ -71,7 +71,7 @@ export default function RolesListView({ }) {
     }
 
     const RformulateTable = (data) => {
-        return data?.map(item => ({ ...item, name: item?.translations[1]?.name, nb_users: 0 })) || [];
+        return data?.map(item => ({ ...item, name: item?.translations[1]?.name})) || [];
     }
 
     useEffect(() => {

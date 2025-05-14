@@ -33,6 +33,8 @@ import { TableNoData } from 'src/components/table';
 import EmptyContent from 'src/components/empty-content';
 import { useGetStatistics } from 'src/api/statistics';
 import { useLocales } from 'src/locales';
+import PermissionsContext from 'src/auth/context/permissions/permissions-context';
+import { Box } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -64,183 +66,149 @@ export default function OverviewAppView() {
 
 
   return (
-    <Container maxWidth={settings.themeStretch ? false : 'xl'}>
-      <Grid container spacing={3}>
-        {/* <Grid xs={12} md={8}>
-          <AppWelcome
-            title={`Welcome back 👋 \n ${user?.displayName}`}
-            description="If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything."
-            img={<SeoIllustration />}
-            action={
-              <Button variant="contained" color="primary">
-                Go Now
-              </Button>
-            }
-          />
-        </Grid>
+    <Container rowGa maxWidth={settings.themeStretch ? false : 'xl'}>
+      {/* <Grid container spacing={3}> */}
 
-        <Grid xs={12} md={4}>
-          <AppFeatured list={_appFeatured} />
-        </Grid> */}
+      <Box
+        // rowGap={3}
+        columnGap={2}
+        width={"100%"}
+        display="grid"
+        gridTemplateColumns={{
+          xs: 'repeat(1, 1fr)',
+          sm: 'repeat(3, 1fr)',
+        }}
+      >
+        <PermissionsContext action={'read.car'}>
+          <Grid xs={12} md={4}>
+            <AppWidgetSummary
+              title={t('vehicles')}
+              percent={2.6}
+              total={statistics?.counts?.cars}
+              chart={{
+                series: [5, 18, 12, 51, 68, 11, 39, 37, 27, 20],
+              }}
+            />
+          </Grid>
+        </PermissionsContext>
+        <PermissionsContext action={'read.claim'}>
+          <Grid xs={12} md={4}>
+            <AppWidgetSummary
+              title={t('claims')}
+              percent={0.2}
+              total={statistics?.counts?.claims}
+              chart={{
+                colors: [theme.palette.info.light, theme.palette.info.main],
+                series: [20, 41, 63, 33, 28, 35, 50, 46, 11, 26],
+              }}
+            />
+          </Grid>
+          </PermissionsContext>
+        <PermissionsContext action={'read.driver'}>
+          <Grid xs={12} md={4}>
+            <AppWidgetSummary
+              title={t('drivers')}
+              percent={-0.1}
+              total={statistics?.counts?.drivers}
+              chart={{
+                colors: [theme.palette.warning.light, theme.palette.warning.main],
+                series: [8, 9, 31, 8, 16, 37, 8, 33, 46, 31],
+              }}
+            />
+          </Grid>
+          </PermissionsContext>
+      </Box>
+      <Box
+        // rowGap={3}
+        mt={3}
+        columnGap={2}
+        width={"100%"}
+        display="grid"
+        gridTemplateColumns={{
+          xs: 'repeat(1, 1fr)',
+          sm: 'repeat(3, 1fr)',
+        }}
+      >
+        <PermissionsContext action={'read.car'}>
+          <Grid xs={12} md={6} lg={4}>
+            <AppCurrentDownload
+              title={t('vehicles')}
+              // series: [
+              //   { label: t("available"), value: car?.filter(item => item?.status?.key == "available").length },
+              //   { label: t("under_preparation"), value: car?.filter(item => item?.status?.key == "under_preparation").length },
+              //   { label: t("rented"), value: car?.filter(item => item?.status?.key == "rented").length },
+              //   { label: t("under_maintenance"), value: car?.filter(item => item?.status?.key == "under_maintenance").length },
+              // ],
+              chart={{
+                series: statistics?.cars_by_status?.map(item => ({
+                  label: item?.status?.translations[langsNum[currentLang.value]]?.name,
+                  value: item?.count
+                })) || []
+              }}
 
-        <Grid xs={12} md={4}>
-          <AppWidgetSummary
-            title={t('vehicles')}
-            percent={2.6}
-            total={statistics?.counts?.cars}
-            chart={{
-              series: [5, 18, 12, 51, 68, 11, 39, 37, 27, 20],
-            }}
-          />
-        </Grid>
+            />
+          </Grid>
+        </PermissionsContext>
+        <PermissionsContext action={'read.claim'}>
+          <Grid xs={12} md={6} lg={4}>
+            <LineChart
+              title={t('claims')}
+              chart={{
+                series: [
+                  { label: t('not_yet_claim'), value: claims?.filter(item => item?.status?.key == "not_yet_claim").length },
+                  { label: t('due_claim'), value: claims?.filter(item => item?.status?.key == "due_claim").length },
+                  { label: t('overdue_claim'), value: claims?.filter(item => item?.status?.key == "overdue_claim").length },
+                  { label: t('severely_overdue_claim'), value: claims?.filter(item => item?.status?.key == "severely_overdue_claim").length },
+                  { label: t('paid_claim'), value: claims?.filter(item => item?.status?.key == "paid_claim").length },
+                ],
+              }}
+              chartss={{
+                series: statistics?.claims_by_status?.map(item => ({
+                  label: item?.status?.translations[langsNum[currentLang.value]]?.name,
+                  value: item?.count
+                })) || []
+              }}
+            />
+          </Grid>
+        </PermissionsContext>
+        <PermissionsContext action={'read.driver'}>
+          <Grid xs={12} md={6} lg={4}>
+            {
+              drivers?.length > 0 ?
+                <AppCurrentDownload
+                  title={t('drivers')}
+                  chart={{
+                    series: [
+                      { label: t('not_rented'), value: statistics?.drivers_by_rental?.not_rented },
+                      { label: t('rented'), value: statistics?.drivers_by_rental?.rented },
+                    ],
+                  }}
 
-        <Grid xs={12} md={4}>
-          <AppWidgetSummary
-            title={t('claims')}
-            percent={0.2}
-            total={statistics?.counts?.claims}
-            chart={{
-              colors: [theme.palette.info.light, theme.palette.info.main],
-              series: [20, 41, 63, 33, 28, 35, 50, 46, 11, 26],
-            }}
-          />
-        </Grid>
-
-        <Grid xs={12} md={4}>
-          <AppWidgetSummary
-            title={t('drivers')}
-            percent={-0.1}
-            total={statistics?.counts?.drivers}
-            chart={{
-              colors: [theme.palette.warning.light, theme.palette.warning.main],
-              series: [8, 9, 31, 8, 16, 37, 8, 33, 46, 31],
-            }}
-          />
-        </Grid>
-
-        <Grid xs={12} md={6} lg={4}>
-          <AppCurrentDownload
-            title={t('vehicles')}
-            // series: [
-            //   { label: t("available"), value: car?.filter(item => item?.status?.key == "available").length },
-            //   { label: t("under_preparation"), value: car?.filter(item => item?.status?.key == "under_preparation").length },
-            //   { label: t("rented"), value: car?.filter(item => item?.status?.key == "rented").length },
-            //   { label: t("under_maintenance"), value: car?.filter(item => item?.status?.key == "under_maintenance").length },
-            // ],
-            chart={{
-              series: statistics?.cars_by_status?.map(item => ({
-                label: item?.status?.translations[langsNum[currentLang.value]]?.name,
-                value: item?.count
-              })) || []
-            }}
-
-          />
-        </Grid>
-
-        <Grid xs={12} md={6} lg={4}>
-          <LineChart
-            title={t('claims')}
-            chart={{
-              series: [
-                { label: t('not_yet_claim'), value: claims?.filter(item => item?.status?.key == "not_yet_claim").length },
-                { label: t('due_claim'), value: claims?.filter(item => item?.status?.key == "due_claim").length },
-                { label: t('overdue_claim'), value: claims?.filter(item => item?.status?.key == "overdue_claim").length },
-                { label: t('severely_overdue_claim'), value: claims?.filter(item => item?.status?.key == "severely_overdue_claim").length },
-                { label: t('paid_claim'), value: claims?.filter(item => item?.status?.key == "paid_claim").length },
-              ],
-            }}
-            chartss={{
-              series: statistics?.claims_by_status?.map(item => ({
-                label: item?.status?.translations[langsNum[currentLang.value]]?.name,
-                value: item?.count
-              })) || []
-            }}
-          />
-        </Grid>
-
-        <Grid xs={12} md={6} lg={4}>
-          {
-            drivers?.length > 0 ?
-              <AppCurrentDownload
-                title={t('drivers')}
-                chart={{
-                  series: [
-                    { label: t('not_rented'), value: statistics?.drivers_by_rental?.not_rented },
-                    { label: t('rented'), value: statistics?.drivers_by_rental?.rented },
-                  ],
-                }}
-
-                chartssss={{
-                  series: [
-                    { lable: t("rented"), value: statistics?.drivers_by_rental?.rented },
-                    { lable: t("not_rented"), value: statistics?.drivers_by_rental?.not_rented }
-                  ]
-                }}
-              />
-              :
-              <>
-
-                {/* <TableNoData notFound={true} /> */}
-                <EmptyContent
-                  filled
-                  title={t("no_data")}
-                  sx={{
-                    py: 10,
+                  chartssss={{
+                    series: [
+                      { lable: t("rented"), value: statistics?.drivers_by_rental?.rented },
+                      { lable: t("not_rented"), value: statistics?.drivers_by_rental?.not_rented }
+                    ]
                   }}
                 />
-              </>
-          }
-        </Grid>
+                :
+                <>
 
-        {/* <Grid xs={12} lg={8}>
-          <AppNewInvoice
-            title={t('allNoti')}
-            tableData={_appInvoices}
-            tableLabels={[
-              { id: 'id', label: 'Invoice ID' },
-              { id: 'category', label: 'Category' },
-              { id: 'price', label: 'Price' },
-              { id: 'status', label: 'Status' },
-              { id: '' },
-            ]}
-          />
-        </Grid>
+                  {/* <TableNoData notFound={true} /> */}
+                  <EmptyContent
+                    filled
+                    title={t("no_data")}
+                    sx={{
+                      py: 10,
+                    }}
+                  />
+                </>
+            }
+          </Grid>
+        </PermissionsContext>
+      </Box>
 
-        <Grid xs={12} md={6} lg={4}>
-          <AppTopAuthors title={t('log')} list={_appAuthors} />
-        </Grid> */}
-
-        {/* <Grid xs={12} md={6} lg={4}>
-          <AppTopInstalledCountries title="Top Installed Countries" list={_appInstalled} />
-        </Grid>
-
-        <Grid xs={12} md={6} lg={4}>
-          <AppTopAuthors title="Top Authors" list={_appAuthors} />
-        </Grid> */}
-
-        {/* <Grid xs={12} md={6} lg={4}>
-          <Stack spacing={3}>
-            <AppWidget
-              title="Conversion"
-              total={38566}
-              icon="solar:user-rounded-bold"
-              chart={{
-                series: 48,
-              }}
-            />
-
-            <AppWidget
-              title="Applications"
-              total={55566}
-              icon="fluent:mail-24-filled"
-              color="info"
-              chart={{
-                series: 75,
-              }}
-            />
-          </Stack>
-        </Grid> */}
-      </Grid>
+      {/* </Grid> */}
     </Container>
   );
 }

@@ -4,10 +4,11 @@ import { set } from 'lodash'; // [keep for later use]
 import { enqueueSnackbar } from 'notistack';
 import { useCallback, useEffect, useState } from 'react';
 import { changeItemVisibilityInSettings, useGetMainSpecs } from 'src/api/settings'; // [keep for later use]
-import { createUser, useRoles, useUsers } from 'src/api/users';
+import { createUser, deleteUser, useRoles, useUsers } from 'src/api/users';
 import { useValues } from 'src/api/utils';
 import PermissionsContext from 'src/auth/context/permissions/permissions-context';
 import { ConfirmDialog } from 'src/components/custom-dialog';
+import ContentDialog from 'src/components/custom-dialog/content-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import { fileData } from 'src/components/file-thumbnail'; // [keep for later use]
 import Iconify from 'src/components/iconify';
@@ -36,6 +37,7 @@ export default function UsersListView({ }) {
         { id: 'username', label: t('username'), type: "text", width: 140 },
         { id: 'email', label: t('email'), type: "text", width: 140 },
         { id: 'phone_number', label: t('phone_number'), type: "text", width: 140 },
+        { id: 'status', label: t('status'), type: "text", width: 140 },
         { id: 'role', label: t('role'), type: "text", width: 140 },
         { id: 'actions', label: t('actions'), type: "threeDots", component: (item) => <ElementActions item={item} />, width: 400, align: "right" },
     ]
@@ -102,12 +104,14 @@ export default function UsersListView({ }) {
 // ----------------------------------------------------------------------
 
 
+import ChangePasswordView from 'src/sections/user/Users/changePasswordView';
 
 
 const ElementActions = ({ item }) => {
     const popover = usePopover();
     const confirm = useBoolean();
     const ban = useBoolean();
+    const completed = useBoolean();
     const router = useRouter();
     const onViewRow = useCallback(
         (id) => {
@@ -127,25 +131,91 @@ const ElementActions = ({ item }) => {
     );
     return (
         <Box display={"flex"} rowGap={"10px"} sx={{ gap: '10px' }} >
-            <PermissionsContext action={"update.user"} >
+            {/* <PermissionsContext action={"update.user"} >
                 <Button onClick={() => { onViewRow(item?.id) }} variant="outlined" startIcon={<Iconify icon="solar:pen-bold" />}>
                     {t("edit")}
                 </Button>
-            </PermissionsContext>
-            <PermissionsContext action={"update.user"} >
-                <Button onClick={() => { ban.onTrue()}} variant="outlined" color="warning" startIcon={<Iconify icon="material-symbols-light:shield-locked-rounded" />}>
+            </PermissionsContext> */}
+            {/* <PermissionsContext action={"update.user"} >
+                <Button onClick={() => { ban.onTrue() }} variant="outlined" color="warning" startIcon={<Iconify icon="material-symbols-light:shield-locked-rounded" />}>
                     {t("ban")}
                 </Button>
-            </PermissionsContext>
-            <PermissionsContext action={"delete.user"} >
+            </PermissionsContext> */}
+            {/* <PermissionsContext action={"delete.user"} >
                 <Button onClick={() => { confirm.onTrue() }} variant="outlined" color="error" startIcon={<Iconify icon="solar:trash-bin-trash-bold" />}>
                     {t("delete")}
                 </Button>
-            </PermissionsContext>
+            </PermissionsContext> */}
 
-            {/* <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
+            <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
                 <Iconify icon="eva:more-vertical-fill" />
-            </IconButton> */}
+            </IconButton>
+
+            <CustomPopover
+                open={popover.open}
+                onClose={popover.onClose}
+                arrow="right-top"
+                sx={{ width: 200 }}
+            >
+                <PermissionsContext action={"put.user.password"} >
+                    <MenuItem
+                        onClick={() => {
+                            // onViewRow(item?.id);
+                            completed.onTrue();
+                            popover.onClose();
+                        }}
+                    >
+                        <Iconify icon="material-symbols-light:shield-locked-rounded" />
+                        {t('edit_password')}
+                    </MenuItem>
+                </PermissionsContext>
+                <PermissionsContext action={"update.user"} >
+                    <MenuItem
+                        onClick={() => {
+                            onViewRow(item?.id);
+                            popover.onClose();
+                        }}
+                    >
+                        <Iconify icon="solar:pen-bold" />
+                        {t('edit')}
+                    </MenuItem>
+                </PermissionsContext>
+                <PermissionsContext action={"delete.user"} >
+                    <MenuItem
+                        onClick={() => {
+                            confirm.onTrue();
+                            popover.onClose();
+                        }}
+                        sx={{ color: 'error.main' }}
+                    >
+                        <Iconify icon="solar:trash-bin-trash-bold" />
+                        {t('delete')}
+                    </MenuItem>
+                </PermissionsContext>
+                <PermissionsContext action={"update.user"} >
+                    <MenuItem
+                        onClick={() => {
+                            ban.onTrue();
+                            popover.onClose();
+                        }}
+                        sx={{ color: 'warning.main' }}
+                    >
+                        <Iconify icon="material-symbols-light:shield-locked-rounded" />
+                        {t('ban')}
+                    </MenuItem>
+                </PermissionsContext>
+            </CustomPopover>
+            
+            <ContentDialog
+            
+                open={completed.value}
+                onClose={completed.onFalse}
+                title={t("edit_password")}
+                content={
+                    <ChangePasswordView currentUser={item} onClose={()=>{completed.onFalse()}} />
+                }
+            />
+            {/* 9ugpv2h2 */}
 
             <ConfirmDialog
                 open={confirm.value}

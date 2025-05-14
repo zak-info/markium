@@ -25,21 +25,25 @@ import { useTranslate } from 'src/locales';
 
 const OPTIONS = [
   {
-    label: 'Home',
-    linkTo: '/',
+    label: t('home'),
+    linkTo: '/dashboard',
   },
-  {
-    label: 'Profile',
-    linkTo: paths.dashboard.user.profile,
-  },
-  {
-    label: 'Settings',
-    linkTo: paths.dashboard.user.account,
-  },
+  // {
+  //   label: t('profile'),
+  //   linkTo: paths.dashboard.user.profile,
+  // },
+  // {
+  //   label: 'Settings',
+  //   linkTo: paths.dashboard.user.account,
+  // },
 ];
 
 import { useContext } from 'react';
 import { AuthContext } from 'src/auth/context/jwt';
+import { t } from 'i18next';
+import ContentDialog from 'src/components/custom-dialog/content-dialog';
+import ChangePasswordView from 'src/sections/user/Users/changePasswordView';
+import { useBoolean } from 'src/hooks/use-boolean';
 // import { AuthContext } from 'path-to-auth-context/auth-context'; // Adjust the path accordingly
 
 
@@ -48,17 +52,19 @@ import { AuthContext } from 'src/auth/context/jwt';
 export default function AccountPopover() {
   const router = useRouter();
   const { user } = useContext(AuthContext);
-  console.log("user : ",user);
+
+  console.log("user : ", user);
   // const { user } = useMockedUser();
 
 
   const { logout } = useAuthContext();
 
-  const {t} = useTranslate();
+  const { t } = useTranslate();
 
   const { enqueueSnackbar } = useSnackbar();
 
   const popover = usePopover();
+  const complete = useBoolean()
 
   const handleLogout = async () => {
     try {
@@ -121,11 +127,14 @@ export default function AccountPopover() {
         <Divider sx={{ borderStyle: 'dashed' }} />
 
         <Stack sx={{ p: 1 }}>
-          {/* {OPTIONS.map((option) => (
+          {OPTIONS.map((option) => (
             <MenuItem key={option.label} onClick={() => handleClickItem(option.linkTo)}>
               {option.label}
             </MenuItem>
-          ))} */}
+          ))}
+          <MenuItem key={"change_password"} onClick={() => {complete.onTrue(); popover.onClose()}}>
+            {t("edit_password")}
+          </MenuItem>
         </Stack>
 
         <Divider sx={{ borderStyle: 'dashed' }} />
@@ -137,6 +146,15 @@ export default function AccountPopover() {
           {t("logout")}
         </MenuItem>
       </CustomPopover>
+      <ContentDialog
+
+        open={complete.value}
+        onClose={complete.onFalse}
+        title={t("edit_password")}
+        content={
+          <ChangePasswordView selfAccount={true} currentUser={user} onClose={() => { complete.onFalse() }} />
+        }
+      />
     </>
   );
 }

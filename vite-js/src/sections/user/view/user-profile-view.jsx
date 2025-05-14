@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useContext } from 'react';
 
 import Tab from '@mui/material/Tab';
 import Card from '@mui/material/Card';
@@ -20,6 +20,8 @@ import ProfileCover from '../profile-cover';
 import ProfileFriends from '../profile-friends';
 import ProfileGallery from '../profile-gallery';
 import ProfileFollowers from '../profile-followers';
+import { AuthContext } from 'src/auth/context/jwt';
+import { t } from 'i18next';
 
 // ----------------------------------------------------------------------
 
@@ -51,7 +53,9 @@ const TABS = [
 export default function UserProfileView() {
   const settings = useSettingsContext();
 
-  const { user } = useMockedUser();
+  // const { user } = useMockedUser();
+  const { user } = useContext(AuthContext);
+
 
   const [searchFriends, setSearchFriends] = useState('');
 
@@ -68,10 +72,10 @@ export default function UserProfileView() {
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
       <CustomBreadcrumbs
-        heading="Profile"
+        heading={t("profile")}
         links={[
-          { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'User', href: paths.dashboard.user.root },
+          { name: t('dashboard'), href: paths.dashboard.root },
+          { name: t('user'), href: paths.dashboard.user.root },
           { name: user?.displayName },
         ]}
         sx={{
@@ -86,13 +90,13 @@ export default function UserProfileView() {
         }}
       >
         <ProfileCover
-          role={_userAbout.role}
-          name={user?.displayName}
+          role={user.roles[0]?.key}
+          name={user?.name}
           avatarUrl={user?.photoURL}
           coverUrl={_userAbout.coverUrl}
         />
 
-        <Tabs
+        {/* <Tabs
           value={currentTab}
           onChange={handleChangeTab}
           sx={{
@@ -113,10 +117,10 @@ export default function UserProfileView() {
           {TABS.map((tab) => (
             <Tab key={tab.value} value={tab.value} icon={tab.icon} label={tab.label} />
           ))}
-        </Tabs>
+        </Tabs> */}
       </Card>
 
-      {currentTab === 'profile' && <ProfileHome info={_userAbout} posts={_userFeeds} />}
+      {currentTab === 'profile' && <ProfileHome user={user} info={_userAbout} posts={_userFeeds} />}
 
       {currentTab === 'followers' && <ProfileFollowers followers={_userFollowers} />}
 

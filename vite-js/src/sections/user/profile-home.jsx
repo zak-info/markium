@@ -20,10 +20,14 @@ import { _socials } from 'src/_mock';
 import Iconify from 'src/components/iconify';
 
 import ProfilePostItem from './profile-post-item';
+import { t } from 'i18next';
+import UsersCreateView from './Users/UsersCreateView';
+import SelfUsersCreateView from './view/SelfUsersCreateView';
+import SelfUsersChangePassword from './view/SelfUsersChangePassword';
 
 // ----------------------------------------------------------------------
 
-export default function ProfileHome({ info, posts }) {
+export default function ProfileHome({ user,info, posts }) {
   const fileRef = useRef(null);
 
   const handleAttach = () => {
@@ -60,45 +64,45 @@ export default function ProfileHome({ info, posts }) {
       <CardHeader title="About" />
 
       <Stack spacing={2} sx={{ p: 3 }}>
-        <Box sx={{ typography: 'body2' }}>{info.quote}</Box>
+        {/* <Box sx={{ typography: 'body2' }}>{info.quote}</Box> */}
 
         <Stack direction="row" spacing={2}>
-          <Iconify icon="mingcute:location-fill" width={24} />
-
+          <Iconify icon="duo-icons:user" width={24} />
+          {t("name")+": "}
           <Box sx={{ typography: 'body2' }}>
-            {`Live at `}
             <Link variant="subtitle2" color="inherit">
-              {info.country}
+              {user.name}
+            </Link>
+          </Box>
+        </Stack>
+        <Stack direction="row" spacing={2}>
+          <Iconify icon="duo-icons:user" width={24} />
+          <Box sx={{ typography: 'body2' }}>
+          {t("username")+": "}
+            <Link variant="subtitle2" color="inherit">
+              {user.username}
+            </Link>
+          </Box>
+        </Stack>
+        <Stack direction="row" spacing={2}>
+          <Iconify icon="material-symbols-light:stacked-email" width={24} />
+          <Box sx={{ typography: 'body2' }}>
+          {t("email")+": "}
+            <Link variant="subtitle2" color="inherit">
+              {user.email}
+            </Link>
+          </Box>
+        </Stack>
+        <Stack direction="row" spacing={2}>
+          <Iconify icon="lets-icons:phone-duotone" width={24} />
+          <Box sx={{ typography: 'body2' }}>
+          {t("phone")+": "}
+            <Link variant="subtitle2" color="inherit">
+              {user.phone_number}
             </Link>
           </Box>
         </Stack>
 
-        <Stack direction="row" sx={{ typography: 'body2' }}>
-          <Iconify icon="fluent:mail-24-filled" width={24} sx={{ mr: 2 }} />
-          {info.email}
-        </Stack>
-
-        <Stack direction="row" spacing={2}>
-          <Iconify icon="ic:round-business-center" width={24} />
-
-          <Box sx={{ typography: 'body2' }}>
-            {info.role} {`at `}
-            <Link variant="subtitle2" color="inherit">
-              {info.company}
-            </Link>
-          </Box>
-        </Stack>
-
-        <Stack direction="row" spacing={2}>
-          <Iconify icon="ic:round-business-center" width={24} />
-
-          <Box sx={{ typography: 'body2' }}>
-            {`Studied at `}
-            <Link variant="subtitle2" color="inherit">
-              {info.school}
-            </Link>
-          </Box>
-        </Stack>
       </Stack>
     </Card>
   );
@@ -174,21 +178,22 @@ export default function ProfileHome({ info, posts }) {
     <Grid container spacing={3}>
       <Grid xs={12} md={4}>
         <Stack spacing={3}>
-          {renderFollows}
+          {/* {renderFollows} */}
 
           {renderAbout}
 
-          {renderSocials}
+          {/* {renderSocials} */}
         </Stack>
       </Grid>
 
       <Grid xs={12} md={8}>
         <Stack spacing={3}>
-          {renderPostInput}
-
-          {posts.map((post) => (
+          {/* {renderPostInput} */}
+          {/* {posts.map((post) => (
             <ProfilePostItem key={post.id} post={post} />
-          ))}
+          ))} */}
+          <SelfUsersChangePassword currentUser={user} />
+          <SelfUsersCreateView currentUser={user} />
         </Stack>
       </Grid>
     </Grid>

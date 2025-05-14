@@ -18,29 +18,11 @@ export default function UsersEditPage() {
 
   return (
     <>
-      <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-        <CustomBreadcrumbs
-          heading={t('edit_user')}
-          links={[
-            {
-              name: t('dashboard'),
-              href: paths.dashboard.root,
-            },
-            {
-              name: t('users'),
-              href: paths.dashboard.user.roles,
-            },
-            { name: t('edit_user') },
-          ]}
-          sx={{
-            mb: { xs: 3, md: 5 },
-          }}
-        />
+     
         <Helmet>
           <title> System: Edit a user</title>
         </Helmet>
         <UsersCreateView id={id} currentUser={user} />
-      </Container>
     </>
   );
 }

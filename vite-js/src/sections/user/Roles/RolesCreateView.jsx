@@ -38,6 +38,7 @@ import PermissionsGroupCard2 from './PermissionsGroupCard2';
 import { Container } from 'postcss';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import { useSettingsContext } from 'src/components/settings';
+import showError from 'src/utils/show_error';
 
 // ----------------------------------------------------------------------
 
@@ -200,11 +201,7 @@ export default function RolesCreateView({ currentRole }) {
             router.push(paths.dashboard.user.roles);
         } catch (error) {
             console.error(error);
-            Object.values(error?.data).forEach(array => {
-                array.forEach(text => {
-                    enqueueSnackbar(text, { variant: 'error' });
-                });
-            });
+            showError(error)
 
         }
     });

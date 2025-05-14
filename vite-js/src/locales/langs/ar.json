@@ -53,7 +53,7 @@
   "general": "عام",
   "banking": "مصرفية",
   "booking": "حجز",
-  "profile": "ملف تعريف",
+  "profile": " الحساب الشخصي",
   "account": "حساب",
   "product": "منتج",
   "invoice": "فاتورة",
@@ -487,9 +487,9 @@
   "data": "البيانات",
   "clauseable": "قابل للبند",
   "clauseable_type": "نوع القابل للبند",
-  "isMale": "ذكر",
-  "phone_number": "رقم الهاتف",
-  "code": "الرمز",
+  "isMale":"ذكر",
+  "phone_number":"رقم الهاتف",
+  "code":"الرمز",
   "entry_date": "تاريخ الدخول",
   "entry_odometer": "عداد الدخول",
   "exit_date": "تاريخ الخروج",
@@ -518,6 +518,11 @@
   "months":"أشهر",
   "ban":"تعطيل",
   "are_you_sure_want_to_delete":"هل أنت متأكد أنك تريد الحذف ؟",
-  "are_you_sure_want_to_ban":"هل أنت متأكد أنك تريد تعطيل هذا المستخدم؟"
-
+  "are_you_sure_want_to_ban":"هل أنت متأكد أنك تريد تعطيل هذا المستخدم؟",
+  "home":"الصفحة الرئيسية",
+  "current_password":"كلمة المرور الحالية",
+  "new_password":"كلمة المرور الجديدة",
+  "confirm_password":"تأكيد كلمة المرور",
+  "passwords_must_match":"يجب أن تتطابق كلمتا المرور",
+  "edit_password":"تعديل كلمة المرور"
 }

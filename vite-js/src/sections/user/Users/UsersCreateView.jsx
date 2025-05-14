@@ -31,15 +31,18 @@ import { addNewDriver, editDriver } from 'src/api/drivers';
 
 import { useValues } from 'src/api/utils';
 import { useGetCar } from 'src/api/car';
-import { createUser, updateUser, useRoles } from 'src/api/users';
+import { changeUserPasswordByAdmin, createUser, updateUser, useRoles } from 'src/api/users';
 import Label from 'src/components/label';
 import showError from 'src/utils/show_error';
+import { useSettingsContext } from 'src/components/settings';
+import { Container } from '@mui/material';
+import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 
 // ----------------------------------------------------------------------
 
 export default function UsersCreateView({ currentUser }) {
   const router = useRouter();
-
+  const settings = useSettingsContext();
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslate();
   const { roles } = useRoles()
@@ -52,13 +55,21 @@ export default function UsersCreateView({ currentUser }) {
     username: Yup.string().required('Name is required'),
     email: Yup.string().required('Name is required'),
     phone_number: Yup.string().required('Name is required'),
-    // password: Yup.string().required('Name is required'),
-    // role_id: Yup.number().required('Salary is required').typeError('Salary must be a number'),
+    password: Yup.string().when('$currentUser', {
+      is: (val) => !val, // when currentUser is falsy (e.g., null or undefined)
+      then: (schema) => schema.required('Password is required'),
+      otherwise: (schema) => schema.notRequired()
+    }),
+    password_confirmation: Yup.string().when('$currentUser', {
+      is: (val) => !val,
+      then: (schema) => schema.required('Password confirmation is required'),
+      otherwise: (schema) => schema.notRequired()
+    }),
     role_id: Yup.array().min(1, 'At least one role is required'),
-
-
-
-
+  });
+  const passwordValidationSchema = Yup.object({
+    new_password: Yup.string().required('new password is required'),
+    confirm_password: Yup.string().required('confirm password is required'),
   });
 
   const defaultValues = useMemo(
@@ -70,9 +81,6 @@ export default function UsersCreateView({ currentUser }) {
       // password: currentUser?.password || '',
       // role_id: currentUser?.role_id || "",
       role_id: currentUser?.role_id || [],
-
-
-
     }),
     [currentUser]
   );
@@ -80,6 +88,10 @@ export default function UsersCreateView({ currentUser }) {
 
   const methods = useForm({
     resolver: yupResolver(validationSchema),
+    defaultValues,
+  });
+  const methods2 = useForm({
+    resolver: yupResolver(passwordValidationSchema),
     defaultValues,
   });
 
@@ -91,13 +103,13 @@ export default function UsersCreateView({ currentUser }) {
     handleSubmit,
     formState: { isSubmitting, errors },
   } = methods;
-
-  const values = watch();
-
-  // const [selectedRoles, setSelectedRoles] = useState([])
+  const {
+    handleSubmit: handlePasswordSubmit,
+    formState: { isSubmitting: isPasswordSubmitting },
+  } = methods2;
 
   useEffect(() => {
-    if (currentUser?.id ) {
+    if (currentUser?.id) {
       setValue('name', currentUser?.name);
       setValue('username', currentUser?.username);
       setValue('email', currentUser?.email);
@@ -109,23 +121,17 @@ export default function UsersCreateView({ currentUser }) {
 
   }, [currentUser, setValue]);
 
-  const selectedRoleIds = watch("role_id");
-
-  const selectedRoles = roles?.filter((role) =>
-    selectedRoleIds?.includes(role.id)
-  );
-
-
   const onSubmit = handleSubmit(async (data) => {
     try {
       const body = data;
-      
+
       if (currentUser?.id) {
-        console.log("currentUser?.id : ",currentUser?.id);
-        const res = await updateUser(currentUser?.id,body)
+        console.log("currentUser?.id : ", currentUser?.id);
+        const res = await updateUser(currentUser?.id, body)
       } else {
+        console.log("body :", body);
         const res = await createUser(body)
-        console.log("res : ",res);
+        console.log("res : ", res);
       }
       reset();
       enqueueSnackbar(t("operation_success"));
@@ -137,63 +143,153 @@ export default function UsersCreateView({ currentUser }) {
     }
   });
 
+  const onPasswordSubmit = handlePasswordSubmit(async (data) => {
+    try {
+      const body = data;
+      console.log("currentUser?.id : ", currentUser?.id);
+      const res = await changeUserPasswordByAdmin({ user_id: currentUser?.id, password: body?.new_password, password_confirmation: body?.confirm_password })
+      reset();
+      enqueueSnackbar(t("operation_success"));
+      router.push(paths.dashboard.user.list);
+      // v9W6FPLF hamed
+    } catch (error) {
+      console.error(error);
+      showError(error);
+    }
+  });
+
   return (
-    <FormProvider methods={methods} onSubmit={onSubmit}>
-      <Grid container spacing={3}>
-        <Grid xs={12} md={8}>
-          <Card sx={{ p: 3 }}>
-            <Box
-              rowGap={3}
-              columnGap={2}
-              display="grid"
-              gridTemplateColumns={{
-                xs: 'repeat(1, 1fr)',
-                sm: 'repeat(2, 1fr)',
-              }}
-            >
-              {/* Name */}
-              <RHFTextField name="name" label={t('name')} />
-              <RHFTextField name="username" label={t('username')} />
-              <RHFTextField name="email" label={t('email')} type="email" />
-              <RHFTextField name="phone_number" label={t('phone_number')} />
-              {/* <RHFTextField name="password" label={t('password')} /> */}
-            </Box>
-            <Box
-              rowGap={3}
-              columnGap={2}
-              display="grid"
-              mt={4}
-              gridTemplateColumns={{
-                xs: 'repeat(1, 1fr)',
-                sm: 'repeat(2, 1fr)',
-              }}
-            >
-             
-              <RHFMultiSelect
-                name="role_id"
-                label={t('role')}
-                placeholder={t('select_roles')}
-                chip
-                checkbox
-                options={roles?.map((option) => ({
-                  value: option.id,
-                  label: option?.translations[1]?.name,
-                }))}
-              />
+    <>
+      <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+        <CustomBreadcrumbs
+          heading={t('edit_user')}
+          links={[
+            {
+              name: t('dashboard'),
+              href: paths.dashboard.root,
+            },
+            {
+              name: t('users'),
+              href: paths.dashboard.user.root,
+            },
+            { name: t('edit_user') },
+          ]}
+          sx={{
+            mb: { xs: 3, md: 5 },
+          }}
+        />
+        <FormProvider methods={methods} onSubmit={onSubmit}>
+          <Grid container spacing={3}>
+            <Grid xs={12} md={8}>
+              <Card sx={{ p: 3 }}>
+                <Box
+                  rowGap={3}
+                  columnGap={2}
+                  display="grid"
+                  gridTemplateColumns={{
+                    xs: 'repeat(1, 1fr)',
+                    sm: 'repeat(2, 1fr)',
+                  }}
+                >
+                  {/* Name */}
+                  <RHFTextField name="name" label={t('name')} />
+                  <RHFTextField name="username" label={t('username')} />
+                  <RHFTextField name="email" label={t('email')} type="email" />
+                  <RHFTextField name="phone_number" label={t('phone_number')} />
+                  {currentUser ? null : <RHFTextField name="password" label={t('password')} />}
+                  {currentUser ? null : <RHFTextField name="password_confirmation" label={t('confirm_password')} />}
+                </Box>
+                <Box
+                  rowGap={3}
+                  columnGap={2}
+                  display="grid"
+                  mt={4}
+                  gridTemplateColumns={{
+                    xs: 'repeat(1, 1fr)',
+                    sm: 'repeat(2, 1fr)',
+                  }}
+                >
 
-            </Box>
-            
+                  <RHFMultiSelect
+                    name="role_id"
+                    label={t('role')}
+                    placeholder={t('select_roles')}
+                    chip
+                    checkbox
+                    options={roles?.map((option) => ({
+                      value: option.id,
+                      label: option?.translations[1]?.name,
+                    }))}
+                  />
+
+                </Box>
 
 
-            <Stack alignItems="flex-end" sx={{ mt: 3 }}>
-              <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                {!currentUser ? t('create') : t('saveChange')}
-              </LoadingButton>
-            </Stack>
-          </Card>
-        </Grid>
-      </Grid>
-    </FormProvider>
+
+                <Stack alignItems="flex-end" sx={{ mt: 3 }}>
+                  <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
+                    {!currentUser ? t('create') : t('saveChange')}
+                  </LoadingButton>
+                </Stack>
+              </Card>
+            </Grid>
+          </Grid>
+        </FormProvider>
+      </Container>
+      {/* <Container sx={{mt:4}} maxWidth={settings.themeStretch ? false : 'lg'}>
+        <CustomBreadcrumbs
+          heading={t('edit_password')}
+          links={[
+            {
+              name: t('dashboard'),
+              href: paths.dashboard.root,
+            },
+            {
+              name: t('users'),
+              href: paths.dashboard.user.root,
+            },
+            { name: t('edit_password') },
+          ]}
+          sx={{
+            mb: { xs: 3, md: 5 },
+          }}
+        />
+        {
+          currentUser ?
+            <FormProvider methods={methods2} onSubmit={onPasswordSubmit}>
+              <Grid container spacing={3}>
+                <Grid xs={12} md={8}>
+                  <Card sx={{ p: 3 }}>
+                    <Box
+                      rowGap={3}
+                      columnGap={2}
+                      display="grid"
+                      gridTemplateColumns={{
+                        xs: 'repeat(1, 1fr)',
+                        sm: 'repeat(2, 1fr)',
+                      }}
+                    >
+                      <RHFTextField name="new_password" label={t('new_password')} />
+                      <RHFTextField name="confirm_password" label={t('confirm_password')} />
+                    </Box>
+
+
+
+
+                    <Stack alignItems="flex-end" sx={{ mt: 3 }}>
+                      <LoadingButton type="submit" variant="contained" loading={isPasswordSubmitting}>
+                        {!currentUser ? t('create') : t('saveChange')}
+                      </LoadingButton>
+                    </Stack>
+                  </Card>
+                </Grid>
+              </Grid>
+            </FormProvider>
+            :
+            null
+        }
+      </Container> */}
+    </>
   );
 }
 
