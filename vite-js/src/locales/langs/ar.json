@@ -524,5 +524,7 @@
   "new_password":"كلمة المرور الجديدة",
   "confirm_password":"تأكيد كلمة المرور",
   "passwords_must_match":"يجب أن تتطابق كلمتا المرور",
-  "edit_password":"تعديل كلمة المرور"
+  "edit_password":"تعديل كلمة المرور",
+  "username_is_required":" اسم المستخدم مطلوب",
+  "password_is_required":"كلمة المرور مطلوبة"
 }

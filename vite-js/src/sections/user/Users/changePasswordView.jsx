@@ -35,8 +35,10 @@ import { changeUserPassword, changeUserPasswordByAdmin, createUser, updateUser, 
 import Label from 'src/components/label';
 import showError from 'src/utils/show_error';
 import { useSettingsContext } from 'src/components/settings';
-import { Container } from '@mui/material';
+import { Container, IconButton, InputAdornment } from '@mui/material';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import Iconify from 'src/components/iconify';
+import { useBoolean } from 'src/hooks/use-boolean';
 
 // ----------------------------------------------------------------------
 
@@ -44,6 +46,9 @@ export default function ChangePasswordView({ currentUser, onClose, selfAccount }
     const router = useRouter();
     const { enqueueSnackbar } = useSnackbar();
     const { t } = useTranslate();
+     const password = useBoolean();
+     const password2 = useBoolean();
+     const password3 = useBoolean();
     console.log(" currentUser : ", currentUser);
 
     const validationSchema = Yup.object({
@@ -115,13 +120,53 @@ export default function ChangePasswordView({ currentUser, onClose, selfAccount }
                                 sm: 'repeat(1, 1fr)',
                             }}
                         >
-                            {
-                                selfAccount && (
-                                    <RHFTextField name="current_password" label={t('current_password')} />
-                                )
+                         {
+                            selfAccount && (
+                            <RHFTextField
+                                name="current_password"
+                                label={t('current_password')}
+                                type={password.value ? 'text' : 'password'}
+                                InputProps={{
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            <IconButton onClick={password.onToggle} edge="end">
+                                                <Iconify icon={password.value ? 'solar:eye-bold' : 'solar:eye-closed-bold'} />
+                                            </IconButton>
+                                        </InputAdornment>
+                                    ),
+                                }}
+                            />
+                             )
                             }
-                            <RHFTextField name="new_password" label={t('new_password')} />
-                            <RHFTextField name="confirm_password" label={t('confirm_password')} />
+                             <RHFTextField
+                                name="new_password"
+                                label={t('new_password')}
+                                type={password2.value ? 'text' : 'password'}
+                                InputProps={{
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            <IconButton onClick={password2.onToggle} edge="end">
+                                                <Iconify icon={password2.value ? 'solar:eye-bold' : 'solar:eye-closed-bold'} />
+                                            </IconButton>
+                                        </InputAdornment>
+                                    ),
+                                }}
+                            />
+                             <RHFTextField
+                                name="confirm_password"
+                                label={t('confirm_password')}
+                                type={password3.value ? 'text' : 'password'}
+                                InputProps={{
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            <IconButton onClick={password3.onToggle} edge="end">
+                                                <Iconify icon={password3.value ? 'solar:eye-bold' : 'solar:eye-closed-bold'} />
+                                            </IconButton>
+                                        </InputAdornment>
+                                    ),
+                                }}
+                            />
+                            
                         </Box>
                         <Stack alignItems="flex-end" sx={{ mt: 3 }}>
                             <LoadingButton type="submit" variant="contained" loading={isSubmitting}>

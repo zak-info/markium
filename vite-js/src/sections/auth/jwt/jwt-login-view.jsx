@@ -59,8 +59,8 @@ export default function JwtLoginView() {
   };
 
   const LoginSchema = Yup.object().shape({
-    username: Yup.string().required('Username is required'),
-    password: Yup.string().required('Password is required'),
+    username: Yup.string().required(t('username_is_required')),
+    password: Yup.string().required(t('password_is_required')),
   });
 
   const defaultValues = {
@@ -81,9 +81,11 @@ export default function JwtLoginView() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await login?.(data.username, data.password);
-
+      const res = await login?.(data.username, data.password);
+      // if (!returnTo) {
       router.push(returnTo || PATH_AFTER_LOGIN);
+      // }
+
     } catch (error) {
       console.error(error);
       reset();
@@ -150,6 +152,7 @@ export default function JwtLoginView() {
           {errorMsg}
         </Alert>
       )}
+
 
       <FormProvider methods={methods} onSubmit={onSubmit}>
         {renderForm}

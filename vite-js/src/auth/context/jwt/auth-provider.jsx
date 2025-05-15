@@ -8,6 +8,7 @@ import axios, { endpoints } from 'src/utils/axios';
 import { AuthContext } from './auth-context';
 import { setSession, isValidToken, jwtDecode } from './utils';
 import { useValues } from 'src/api/utils';
+import showError from 'src/utils/show_error';
 
 // ----------------------------------------------------------------------
 /**
@@ -106,22 +107,24 @@ export function AuthProvider({ children }) {
       username,
       password,
     };
-    const response = await axios.post(endpoints.auth.login, body);
-
-    const { token, user } = response.data.data;
-
-    setSession(token);
-    localStorage.setItem(USER_STORAGE_KEY, JSON.stringify({...user}));
-
-    dispatch({
-      type: 'LOGIN',
-      payload: {
-        user: {
-          ...user,
-          token,
+    try {
+      const response = await axios.post(endpoints.auth.login, body);
+      const { token, user } = response.data.data;
+      setSession(token);
+      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify({ ...user }));
+      dispatch({
+        type: 'LOGIN',
+        payload: {
+          user: {
+            ...user,
+            token,
+          },
         },
-      },
-    });
+      });
+    } catch (error) {
+      console.error('Login failed:', error);  // Don't refresh the page here
+      throw new Error('Invalid credentials');  // Propagate error to display in the UI
+    }
   }, []);
 
   // REGISTER
