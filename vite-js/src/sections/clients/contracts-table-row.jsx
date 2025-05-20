@@ -127,7 +127,7 @@ export default function OrderTableRow({ row, payment_method, client, selected, o
           sx={{ bgcolor: 'background.neutral' }}
         >
           <Stack component={Paper} sx={{ m: 1.5 }}>
-            {clauses.map((item) => (
+            {clauses?.map((item) => (
               <Stack
                 key={item.id}
                 direction="row"

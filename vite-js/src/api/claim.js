@@ -32,6 +32,27 @@ export function useGetClaim(id) {
 
     return memoizedValue;
 }
+export function useGetClauses(id) {
+    const { data, isLoading, error, isValidating, mutate } = useSWR(
+        endpoints.contracts.clauses(id),
+        fetcher,
+        options
+    );
+
+    const memoizedValue = useMemo(
+        () => ({
+            clauses: data?.data || [],
+            clausesLoading: isLoading,
+            clausesError: error,
+            clausesValidating: isValidating,
+            clausesEmpty: !isLoading && !data?.data?.length,
+            mutate,
+        }),
+        [data, error, isLoading, isValidating]
+    );
+
+    return memoizedValue;
+}
 
 export function useGetAllClaim() {
     const { data, isLoading, error, isValidating, mutate } = useSWR(

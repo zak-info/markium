@@ -11,12 +11,16 @@ import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import ExpandableText from '../maintain/ExpandableText';
+import { useCallback } from 'react';
+import { useRouter } from 'src/routes/hooks';
+import { Box } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
 export default function OrderTableRow({ TABLE_HEAD, row, unit, pv, currentLang, selected, onSelectRow, actions }) {
 
   const popover = usePopover();
+  const router = useRouter();
   const renderPrimary = (
     <TableRow hover selected={selected}>
       <TableCell align='start' sx={{ width: "100px" }} padding="checkbox" >
@@ -25,7 +29,7 @@ export default function OrderTableRow({ TABLE_HEAD, row, unit, pv, currentLang, 
 
       {TABLE_HEAD.map((head_row, index) => (
         <TableCell key={index}>
-          {renderCell(head_row, row, popover)}
+          {renderCell(head_row, row, popover, router)}
         </TableCell>
       ))}
     </TableRow>
@@ -54,7 +58,13 @@ OrderTableRow.propTypes = {
 
 
 
-function renderCell(head_row, row, popover) {
+function renderCell(head_row, row, popover, router) {
+  const handleViewRow = useCallback(
+    (link) => {
+      router.push(link);
+    },
+    [router]
+  );
   switch (head_row.type) {
     case 'text':
       return row?.[head_row.id] || '--';
@@ -72,6 +82,28 @@ function renderCell(head_row, row, popover) {
             color: 'text.disabled',
           }}
         />
+      );
+    case 'two-lines-link':
+      return (
+        <Box
+          onClick={()=>handleViewRow(head_row?.link(row))}
+          sx={{
+            cursor: 'pointer',
+            '&:hover': {
+              textDecoration: 'underline',
+            },
+          }}
+        >
+          <ListItemText
+            primary={head_row?.first(row)}
+            secondary={head_row?.second(row)}
+            primaryTypographyProps={{ typography: 'body2' }}
+            secondaryTypographyProps={{
+              component: 'span',
+              color: 'text.disabled',
+            }}
+          />
+        </Box>
       );
 
     case 'label':

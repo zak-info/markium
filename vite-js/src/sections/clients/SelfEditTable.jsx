@@ -84,9 +84,9 @@ export default function SelfEditTable({
   };
 
   return (
-    <Card {...other}>
+    <>
+      {/* <Card {...other}> */}
       <CardHeader title={title} subheader={subheader} sx={{ mb: 3 }} />
-
       <TableContainer component={Paper} sx={{ overflow: "unset" }}>
         <Scrollbar>
           <Table sx={{ minWidth: 680 }}>
@@ -130,7 +130,8 @@ export default function SelfEditTable({
           </LoadingButton>
         </Stack>
       )} */}
-    </Card>
+      {/* </Card> */}
+    </>
   );
 }
 
@@ -153,19 +154,19 @@ import UserNewEditForm from "../clause/user-new-edit-form";
 import CarsAutocomplete from "src/components/hook-form/rhf-CarsAutocomplete";
 // import ExpandableText from "./ExpandableText";
 
-function AppNewInvoiceRow({ row, tableLabels, editing, handleEdit, handleChange, handleBlur,setTableData }) {
+function AppNewInvoiceRow({ row, tableLabels, editing, handleEdit, handleChange, handleBlur, setTableData }) {
   const popover = usePopover();
 
   const handleDelete = () => {
-    setTableData(prev => prev?.filter(item => 
+    setTableData(prev => prev?.filter(item =>
       !(item?.clauseable_type === row?.clauseable_type && item?.clauseable_id === row?.clauseable_id)
     ));
     console.log("deleted");
-    
+
     popover.onClose();
     console.info("DELETE", row.id);
   };
-  
+
 
   return (
     <>
@@ -175,7 +176,7 @@ function AppNewInvoiceRow({ row, tableLabels, editing, handleEdit, handleChange,
             {editing.rowId === row.id && editing.field === id ? (
               editable ? (
                 type === "car_autocomplete" ?
-                  <CarsAutocomplete options={options} name={key_to_update} label={t('car')} placeholder={t("search_by")+" ..."} />
+                  <CarsAutocomplete options={options} name={key_to_update} label={t('car')} placeholder={t("search_by") + " ..."} />
                   :
                   type === "select" ? (
                     <Select
@@ -210,7 +211,7 @@ function AppNewInvoiceRow({ row, tableLabels, editing, handleEdit, handleChange,
                 row[id] || "--"
               )
             ) : (
-             row[id] || "--"
+              row[id] || "--"
             )}
           </TableCell>
         ))}
@@ -225,7 +226,7 @@ function AppNewInvoiceRow({ row, tableLabels, editing, handleEdit, handleChange,
 
       <CustomPopover open={popover.open} onClose={popover.onClose} arrow="right-top" sx={{ width: 160 }}>
         <Divider sx={{ borderStyle: "dashed" }} />
-        <MenuItem onClick={()=>handleDelete()} sx={{ color: "error.main" }}>
+        <MenuItem onClick={() => handleDelete()} sx={{ color: "error.main" }}>
           <Iconify icon="solar:trash-bin-trash-bold" />
           {t("delete")}
         </MenuItem>

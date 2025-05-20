@@ -75,10 +75,12 @@ export default function OrderTableRow({ row, clausable, onCreateRow, selected, o
           />
         </Box>
       </TableCell>
-      <TableCell>{row?.cost}.00</TableCell>
-      <TableCell>{row?.duration} {row?.duration > 1 ? t("months") : t("month")}</TableCell>
+      <TableCell>{row?.cost}</TableCell>
+      <TableCell>{fDate(row?.start_date)}</TableCell>
+      <TableCell>{fDate(row?.end_date)}</TableCell>
+      {/* <TableCell>{row?.duration} {row?.duration > 1 ? t("months") : t("month")}</TableCell> */}
       <TableCell>
-        {row?.cost * row?.duration}.00
+        {row?.total_cost}
       </TableCell>
 
       <TableCell align="start" sx={{ px: 1 }}>

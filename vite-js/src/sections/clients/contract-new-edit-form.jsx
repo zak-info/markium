@@ -37,7 +37,7 @@ import { useValues } from 'src/api/utils';
 import SimpleAutocomplete from 'src/components/hook-form/rhf-simple-autocomplete';
 import { createClient, useGetClients } from 'src/api/client';
 import Iconify from 'src/components/iconify';
-import { Divider, ListItemText, MenuItem, Table, TableBody, TableCell, TableRow } from '@mui/material';
+import { Divider, FormGroup, ListItemText, MenuItem, Table, TableBody, TableCell, TableRow } from '@mui/material';
 import { TableHeadCustom } from 'src/components/table';
 import CarsAutocomplete from 'src/components/hook-form/rhf-CarsAutocomplete';
 import { useGetCar } from 'src/api/car';
@@ -45,6 +45,8 @@ import { useGetDrivers } from 'src/api/drivers';
 import { createContracts, editContracts } from 'src/api/contract';
 import SelfEditTable from './SelfEditTable';
 import { fDate } from 'src/utils/format-time';
+import { height } from '@mui/system';
+import { format } from 'date-fns';
 
 // ----------------------------------------------------------------------
 
@@ -105,9 +107,15 @@ export default function ContractNewEditForm({ contract }) {
 
   const values = watch();
 
+  const [checked, setChecked] = useState(false);
+
+  const handleChange = (event) => {
+    setChecked(event.target.checked);
+  };
+
   const [clauses, setClauses] = useState(contract?.clauses ? [...contract?.clauses] : [])
   const handleAddClause = () => {
-    setClauses([...clauses, { id: clauses?.length > 0 ? clauses[clauses.length - 1].id + 1 : 1, clauseable_id: values.clauseable_id, clauseable_type: values.clauseable_type, duration: values.duration, cost: values.cost, starting_from: values?.starting_from }])
+    setClauses([...clauses, { id: clauses?.length > 0 ? clauses[clauses.length - 1].id + 1 : 1, clauseable_id: values.clauseable_id, clauseable_type: values.clauseable_type, cost: values.cost, start_date: format(new Date(values.start_date), 'yyyy-MM-dd'), end_date: format(new Date(values.end_date), 'yyyy-MM-dd') }])
     setValue("clauseable_id", 0)
     setValue("clauseable_type", " ")
     setValue("cost", 0)
@@ -123,10 +131,40 @@ export default function ContractNewEditForm({ contract }) {
     try {
       // await new Promise((resolve) => setTimeout(resolve, 500));
       // reset();
-      console.log(data);
       delete data?.id;
-      let body = { client_id: data?.client_id, payment_method_id: data?.payment_method_id, clauses: clauses.map(({ id, ...rest }) => rest) }
-      console.log("body  : ",body);
+      let body = data
+      if (body?.auto_renewal_deactivation_unity == "month" && body?.auto_renewal_deactivation > 0) {
+        body.auto_renewal_deactivation_months = Number(body?.auto_renewal_deactivation)
+        body.auto_renewal_deactivation_days = 0
+      } else if (body?.auto_renewal_deactivation_unity == "day" && body?.auto_renewal_deactivation > 0) {
+        body.auto_renewal_deactivation_days = Number(body?.auto_renewal_deactivation)
+        body.auto_renewal_deactivation_months = 0
+      }
+      delete body?.auto_renewal_deactivation_unity
+      delete body?.auto_renewal_deactivation
+
+      if (body?.auto_renewal_duration_unity == "month" && body?.auto_renewal_duration > 0) {
+        body.auto_renewal_duration_months = Number(body?.auto_renewal_duration)
+        body.auto_renewal_duration_days = 0
+      } else if (body?.auto_renewal_duration_unity == "day" && body?.auto_renewal_duration > 0) {
+        body.auto_renewal_duration_days = Number(body?.auto_renewal_duration)
+        body.auto_renewal_duration_months = 0
+      }
+      delete body?.auto_renewal_duration_unity
+      delete body?.auto_renewal_duration
+
+      delete body.cost
+      delete body.clauseable_type
+      delete body.clauseable_id
+      delete body.duration
+      delete body.starting_from
+
+      body.start_date = format(new Date(body.start_date), 'yyyy-MM-dd')
+      body.end_date = format(new Date(body.end_date), 'yyyy-MM-dd')
+
+
+      body = { ...body, clauses: clauses.map(({ id, ...rest }) => rest) }
+      console.log("body :", body);
       const response = contract?.id ? await editContracts(contract?.id, body) : await createContracts(body);
       enqueueSnackbar(contract ? 'Update success!' : 'Create success!');
       router.push(paths.dashboard.clients.contracts);
@@ -170,13 +208,112 @@ export default function ContractNewEditForm({ contract }) {
                 {/* {[{ name: "deferred", lable: { ar: "دفعات", en: "deferred" } }, { name: "cash", lable: { ar: "نقدا", en: "cash" } }]?.map((type) => ( */}
                 {data?.payment_methods?.map((type) => (
                   <MenuItem key={type?.id} value={type.id}>
-                    {payment_methodes?.find(item => item?.name == type?.name )?.lable[currentLang.value] || type?.name}
+                    {payment_methodes?.find(item => item?.name == type?.name)?.lable[currentLang.value] || type?.name}
                   </MenuItem>
                 ))}
               </RHFSelect>
-
-
+              <DatePicker
+                required
+                name="start_date"
+                label={t('start_date')}
+                format="dd/MM/yyyy"
+                value={contract?.start_date ? new Date(contract?.start_date) : values?.start_date ? new Date(values?.start_date) : new Date()}
+                onChange={(date) => setValue('start_date', date)}
+                slotProps={{
+                  textField: {
+                    fullWidth: true,
+                  },
+                }}
+              />
+              <DatePicker
+                required
+                name="end_date"
+                label={t('end_date')}
+                format="dd/MM/yyyy"
+                value={contract?.end_date ? new Date(contract?.end_date) : values?.end_date ? new Date(values?.end_date) : new Date()}
+                onChange={(date) => setValue('end_date', date)}
+                slotProps={{
+                  textField: {
+                    fullWidth: true,
+                  },
+                }}
+              />
+              <RHFSelect required name="type" label={t('type')}>
+                <Divider sx={{ borderStyle: 'dashed' }} />
+                {[{ id: "monthly", lable: t("monthly") }, { id: "daily", lable: t("daily") }]?.map((type) => (
+                  <MenuItem key={type?.id} value={type.id}>
+                    {type?.lable}
+                  </MenuItem>
+                ))}
+              </RHFSelect>
             </Box>
+            <Box
+              my={3}
+              rowGap={3}
+              columnGap={2}
+              display="grid"
+              gridTemplateColumns={{
+                xs: 'repeat(1, 1fr)',
+                sm: 'repeat(2, 1fr)',
+              }}
+            >
+              {/* <RHFSelect required name="auto_renewal" label={t('auto_renewal')}>
+                <Divider sx={{ borderStyle: 'dashed' }} />
+                {[{ id: true, lable: t("yes") }, { id: false, lable: t("no") }]?.map((type) => (
+                  <MenuItem key={type?.id} value={type.id}>
+                    {type?.lable}
+                  </MenuItem>
+                ))}
+              </RHFSelect> */}
+              <FormGroup>
+                <FormControlLabel control={<Switch checked={checked} onChange={handleChange} />} label={t("auto_renewal")} />
+              </FormGroup>
+            </Box>
+            {
+              checked ?
+                <Box
+                  rowGap={3}
+                  columnGap={2}
+                  display="grid"
+                  gridTemplateColumns={{
+                    xs: 'repeat(1, 1fr)',
+                    sm: 'repeat(2, 1fr)',
+                  }}
+                >
+                  <Box
+                    rowGap={3}
+                    columnGap={2}
+                    display={"flex"}
+                  >
+                    <RHFTextField name="auto_renewal_deactivation" type={"number"} label={t('auto_renewal_ractivation_mohla')} sx={{ height: "100%" }} />
+                    <RHFSelect required name="auto_renewal_deactivation_unity" label={t('unity')} sx={{ width: "150px" }}>
+                      <Divider sx={{ borderStyle: 'dashed' }} />
+                      {[{ id: "month", lable: t("month") }, { id: "day", lable: t("day") }]?.map((type) => (
+                        <MenuItem key={type?.id} value={type.id}>
+                          {type?.lable}
+                        </MenuItem>
+                      ))}
+                    </RHFSelect>
+                  </Box>
+                  <Box
+                    rowGap={3}
+                    columnGap={2}
+                    display={"flex"}
+                  >
+                    <RHFTextField name="auto_renewal_duration" type={"number"} label={t('auto_renewal_duration')} sx={{ height: "100%" }} />
+                    <RHFSelect required name="auto_renewal_duration_unity" label={t('unity')} sx={{ width: "150px" }}>
+                      <Divider sx={{ borderStyle: 'dashed' }} />
+                      {[{ id: "month", lable: t("month") }, { id: "day", lable: t("day") }]?.map((type) => (
+                        <MenuItem key={type?.id} value={type.id}>
+                          {type?.lable}
+                        </MenuItem>
+                      ))}
+                    </RHFSelect>
+                  </Box>
+                </Box>
+                :
+                null
+            }
 
             <Grid xs={12} md={12}>
               <SelfEditTable
@@ -195,12 +332,13 @@ export default function ContractNewEditForm({ contract }) {
                 }))}
                 setTableData={setClauses}
                 tableLabels={[
-                  { id: "clauseableType", key_to_update: "clauseable_type", label: t("attachment_type"), editable: false, creatable: true, type: "select", options: attachables?.map((item) => ({ value: item?.name, lable: item?.lable[currentLang.value] })), width: 160 },
-                  { id: "clauseable", key_to_update: "clauseable_id", label: t("car"), editable: false, creatable: true, type: "car_autocomplete", options: car, width: 240 },
-                  { id: "cost", key_to_update: "cost", label: t("cost"), editable: true, creatable: true, type: "number", width: 160 },
-                  { id: "duration", key_to_update: "duration", label: t("duration"), editable: true, creatable: true, type: "number", width: 120 },
-                  { id: "total", key_to_update: "total", label: t("total"), editable: false, creatable: false, type: "number", width: 160 },
-                  { id: "startingFrom", key_to_update: "starting_from", label: t("starting_from"), editable: true, creatable: true, type: "date", width: 180 },
+                  { id: "clauseableType", key_to_update: "clauseable_type", label: t("clause_type"), editable: false, creatable: true, type: "select", options: attachables?.map((item) => ({ value: item?.name, lable: item?.lable[currentLang.value] })), width: 160 },
+                  { id: "clauseable", key_to_update: "clauseable_id", label: t("clause"), editable: false, creatable: true, type: "car_autocomplete", options: car, width: 240 },
+                  { id: "cost", key_to_update: "cost", label: t("cost")+" ("+t(values?.type =="monthly" ?"month":"day" )+")", editable: true, creatable: true, type: "number", width: 160 },
+                  // { id: "duration", key_to_update: "duration", label: t("duration"), editable: true, creatable: true, type: "number", width: 120 },
+                  // { id: "total", key_to_update: "total", label: t("total"), editable: false, creatable: false, type: "number", width: 160 },
+                  { id: "end_date", key_to_update: "end_date", label: t("end_date"), editable: true, creatable: true, type: "date", width: 180 },
+                  { id: "start_date", key_to_update: "start_date", label: t("start_date"), editable: true, creatable: true, type: "date", width: 180 },
                 ]}
               />
             </Grid>
@@ -236,7 +374,7 @@ export default function ContractNewEditForm({ contract }) {
               sx={{ marginTop: "30px" }}
             >
 
-              <RHFSelect name="clauseable_type" label={t('attachment_type')}>
+              <RHFSelect name="clauseable_type" label={t('clause_type')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
                 {attachables?.map((type) => (
                   <MenuItem key={type?.id} value={type.name}>
@@ -250,22 +388,35 @@ export default function ContractNewEditForm({ contract }) {
                   : values.clauseable_type == "driver" ?
                     <SimpleAutocomplete options={drivers} name="clauseable_id" label={t('drivers')} placeholder='filter with name' />
                     :
-                    <RHFSelect disabled={!values.clauseable_type} name="clauseable_id" label={t('attachable')}>
+                    <RHFSelect disabled={!values.clauseable_type} name="clauseable_id" label={t('clause')}>
                       <Divider sx={{ borderStyle: 'dashed' }} />
                       <MenuItem value={"1"}>
                         name
                       </MenuItem>
                     </RHFSelect>
               }
-              <RHFTextField name="duration" label={t('duration')} />
+              {/* <RHFTextField name="duration" label={t('duration')} /> */}
               <RHFTextField name="cost" label={t('cost')} type={"number"} />
               <DatePicker
                 required
-                name="starting_from"
-                label={t('starting_from')}
+                name="start_date"
+                label={t('start_date')}
                 format="dd/MM/yyyy"
-                value={values?.starting_from || new Date()}
-                onChange={(date) => setValue('starting_from', date)}
+                value={values?.start_date || new Date()}
+                onChange={(date) => setValue('start_date', date)}
+                slotProps={{
+                  textField: {
+                    fullWidth: true,
+                  },
+                }}
+              />
+              <DatePicker
+                required
+                name="end_date"
+                label={t('end_date')}
+                format="dd/MM/yyyy"
+                value={values?.end_date || new Date()}
+                onChange={(date) => setValue('end_date', date)}
                 slotProps={{
                   textField: {
                     fullWidth: true,

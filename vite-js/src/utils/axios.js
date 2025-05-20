@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { root } from 'postcss';
+
 import { HOST_API } from 'src/config-global';
 
 // ----------------------------------------------------------------------
@@ -59,9 +60,9 @@ export const endpoints = {
     changePasswordByAdmin: '/auth/changePasswordByAdmin',
   },
   clauses: {
-    list:(id) => `/maintenance/${id}/clauses`,
-    add:`/maintenance/clauses`,
-    edit:(id) => `/maintenance/clauses/${id}`,
+    list: (id) => `/maintenance/${id}/clauses`,
+    add: `/maintenance/clauses`,
+    edit: (id) => `/maintenance/clauses/${id}`,
 
   },
   mail: {
@@ -83,14 +84,14 @@ export const endpoints = {
   utils: { values: '/values' },
   company: {
     list: '/company',
-    statistics:"/company/statistics"
+    statistics: "/company/statistics"
   },
   maintenance: {
     list: '/maintenance',
-    specs:"/maintenance/specifications",
-    complete:(id)=>`/maintenance/${id}/complete`,
-    release:(id)=>`/maintenance/${id}/car_release`,
-    logs:"/maintenance/logs",
+    specs: "/maintenance/specifications",
+    complete: (id) => `/maintenance/${id}/complete`,
+    release: (id) => `/maintenance/${id}/car_release`,
+    logs: "/maintenance/logs",
   },
   cars: {
     list: '/car',
@@ -99,31 +100,37 @@ export const endpoints = {
     attach: '/car/driver/attach',
     detach: '/car/driver/detach',
     under_maintainance: '/car/under_maintainance',
-    pm:(id)=> `/car/${id}/maintenance/periodic`,
+    pm: (id) => `/car/${id}/maintenance/periodic`,
   },
   clients: {
     list: '/client',
-    client:(id)=> `/client/`+id
+    client: (id) => `/client/` + id
   },
   contracts: {
     list: '/contract',
-    claims:(id)=>`/contract/${id}/claims`,
-    allclaims:`/contract/claims/all`,
-    logs:"/contract/claims/logs"
+    claims: (id) => `/contract/${id}/claims`,
+    clauses: (id) => `/contract/${id}/clauses`,
+    cancleClause: (id) => `/contract/clauses/${id}/cancle`,
+    allclaims: `/contract/claims/all`,
+    logs: "/contract/claims/logs",
+    clause:{
+      root:"/contract/clauses",
+      replace:(id) => `/contract/clauses/${id}/replace`,
+    }
   },
   claims: {
     list: '/contract/1/claims',
-    new:"/contract/claims",
-    logs:"/contract/claims/logs",
+    new: "/contract/claims",
+    logs: "/contract/claims/logs",
     edit: (id) => `/contract/claims/${id}`,
-    paid: (id) => `/contract/claims/${id}/paid`,    
+    paid: (id) => `/contract/claims/${id}/paid`,
   },
   settings: {
     items: '/system-settings/items',
     visibility: '/system-settings/visibility',
     mainspecs: '/maintenance/specifications',
-    new:"/contract/claims",
-    logs:"/contract/claims/logs"
+    new: "/contract/claims",
+    logs: "/contract/claims/logs"
   },
   users: {
     root: '/auth/registerCompanyEmployeer',
@@ -133,8 +140,8 @@ export const endpoints = {
     user_permissions: '/auth/permissions',
     visibility: '/system-settings/visibility',
     mainspecs: '/maintenance/specifications',
-    new:"/contract/claims",
-    logs:"/contract/claims/logs"
+    new: "/contract/claims",
+    logs: "/contract/claims/logs"
   },
   documents: {
     list: '/attachments',

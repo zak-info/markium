@@ -64,3 +64,18 @@ export async function editContracts(id, body) {
     const URL = endpoints.contracts.list + '/' + id;
     return await axios.put(URL, body);
 }
+
+
+export async function cancleContractClause(id,body) {
+  const URL = endpoints.contracts.cancleClause(id)
+  return await axios.post(URL, body);
+}
+export async function replaceContractClause(id,body) {
+  const URL = endpoints.contracts.clause.replace(id)
+  return await axios.post(URL, body);
+}
+
+export async function deleteContractClause(id) {
+  const URL = endpoints.contracts.clause.root+"/"+id
+  return await axios.post(URL);
+}

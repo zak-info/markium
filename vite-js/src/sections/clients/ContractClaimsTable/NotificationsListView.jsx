@@ -69,7 +69,8 @@ export default function ContractClaimsListView({ id,claims }) {
   const TABLE_HEAD = [
     { id: 'clausable', label: t('attachable') },
     { id: 'cost', label: t('cost') },
-    { id: 'duration', label: t('duration') },
+    { id: 'start_date', label: t('start_date') },
+    { id: 'end_date', label: t('end_date') },
     { id: 'total', label: t('total') },
     { id: '' },
   ];

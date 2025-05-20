@@ -26,23 +26,40 @@ import { useTranslation } from 'react-i18next';
 import { fDate } from 'src/utils/format-time';
 import AppNewInvoice2 from './app-new-invoice2';
 import ClaimNewEditForm from './claim-new-edit-form';
-import { useGetClaim } from 'src/api/claim';
+import { useGetClaim, useGetClauses } from 'src/api/claim';
 import { Tab, Tabs } from '@mui/material';
 import ContractClaimsListView from './ContractClaimsTable/NotificationsListView';
+import ContractClausesListView from './ContractClauses/ContractClausesListView';
+import { useGetCar } from 'src/api/car';
+import { useGetDrivers } from 'src/api/drivers';
+import { secondary } from 'src/theme/palette';
 
 // ----------------------------------------------------------------------
 
 export default function ProfileHome({ info, posts, contract, client, location }) {
   const fileRef = useRef(null);
-
+  const { t } = useTranslation();
   const { claims } = useGetClaim(contract?.id);
-  const [tableData, setTableData] = useState(claims?.filter(item => item.contract_id == contract?.id))
+  const {car}= useGetCar()
+  const {drivers} = useGetDrivers()
+  const { clauses } = useGetClauses(contract?.id);
+  console.log("car : ", car);
+  console.log("drivers : ", drivers);
+  const [tableData, setTableData] = useState(claims)
   useEffect(() => {
-    setTableData(claims?.filter(item => item.contract_id == contract?.id))
-    console.log("claims  sss",claims?.filter(item => item.contract_id == contract?.id));
+    setTableData(claims)
   }, [claims])
 
-  const { t } = useTranslation();
+  const formulateClauses = (list) => {
+    return list?.map(item => ({ ...item, status: t("under_rent"),clausable:{first:item?.clauseable_type == "car"?car?.find(i => i.id == item?.clauseable_id)?.model?.translations?.name:drivers?.find(i => i.id == item?.clauseable_id)?.name,second:item?.clauseable_type == "car" ? car?.find(i => i.id == item?.clauseable_id)?.plat_number:drivers?.find(i => i.id == item?.clauseable_id)?.phone_number} ,start_date: fDate(item?.start_date), end_date: fDate(item?.end_date), color: "success" }))
+  }
+  const [clausesTableData, setClausesTableData] = useState(formulateClauses(clauses))
+  // const [clausesTableData, setClausesTableData] = useState(clauses)
+  useEffect(() => {
+    setClausesTableData(formulateClauses(clauses))
+  }, [clauses])
+
+
 
   const handleAttach = () => {
     if (fileRef.current) {
@@ -53,6 +70,17 @@ export default function ProfileHome({ info, posts, contract, client, location })
 
   const handleTabChange = (event, newValue) => {
     setSection(newValue);
+  };
+
+  const [periods, setPeriods] = useState(0);
+  const [period, setPeriod] = useState( periods == 0 ? contract?.period : contract?.periods[periods]);
+
+  useEffect(()=>{
+    setPeriod(periods == 0 ? contract?.period : contract?.periods[periods])
+  },[periods])
+
+  const handlePeriodTabChange = (event, newValue) => {
+    setPeriods(newValue);
   };
 
   const renderAbout = (
@@ -99,7 +127,7 @@ export default function ProfileHome({ info, posts, contract, client, location })
             <Box sx={{ typography: 'body2' }}>
               {t(`date`) + "  "}
               <Link variant="subtitle2" color="inherit">
-              {fDate(contract?.created_at)}
+                {fDate(contract?.created_at)}
               </Link>
             </Box>
           </Stack>
@@ -108,9 +136,9 @@ export default function ProfileHome({ info, posts, contract, client, location })
             <Iconify icon="ic:round-business-center" width={24} />
 
             <Box sx={{ typography: 'body2' }}>
-              {t(`clauses_number`)+"  "}
+              {t(`clauses_number`) + "  "}
               <Link variant="subtitle2" color="inherit">
-                {contract?.clauses?.length}
+                {clauses?.length}
               </Link>
             </Box>
           </Stack>
@@ -210,51 +238,120 @@ export default function ProfileHome({ info, posts, contract, client, location })
           textColor="primary"
         >
           <Tab icon={<Iconify icon="duo-icons:settings" />} iconPosition="start" label={t("contract_clauses")} />
+          {/* <Tab icon={<Iconify icon="duo-icons:bell" />} iconPosition="start" label={t("periods")} /> */}
           <Tab icon={<Iconify icon="lets-icons:file-dock-search-fill" />} iconPosition="start" label={t("claims")} />
           <Tab icon={<Iconify icon="lets-icons:alarm-fill" />} iconPosition="start" label={t("claims_logs")} />
-          {/* <Tab icon={<Iconify icon="lets-icons:alarm-fill" />} iconPosition="start" label="logs" />
-          <Tab icon={<Iconify icon="lets-icons:refresh" />} iconPosition="start" label="periodic maintenances" />
-          <Tab icon={<Iconify icon="solar:dollar-line-duotone" />} iconPosition="start" label="cost & inputs" /> */}
         </Tabs>
       </Card>
 
       {
-        section === 0 ?
-
-          <Grid xs={12} md={12}>
-            {/* <AppNewInvoice
-          title={t('contractItems')}
-          tableData={contract?.clauses}
-          tableLabels={[
-            { id: 'clausable', label: 'Clausable' },
-            { id: 'cost', label: 'Cost' },
-            { id: 'duration', label: 'Duration' },
-            { id: 'total', label: 'Total' },
-            { id: '' },
-          ]}
-        /> */}
-            {contract?.clauses ? <ContractClaimsListView claims={contract?.clauses} /> : null}
-          </Grid>
-          : section === 1 ?
-            <Grid xs={12} md={12}>
-              <ClaimNewEditForm setTableData={setTableData} contract_id={contract?.id} />
-              <AppNewInvoice2
-
-                tableData={tableData}
-                setTableData={setTableData}
-                sx={{ mt: "10px" }}
-                title={t('claims')}
-                contract_id={contract?.id}
-                tableLabels={[
-                  { id: 'Amount', label: t('amount') },
-                  { id: 'Create_at', label: t('date') },
-                  { id: 'Payment', label: t('payment_at') },
-                  { id: 'status', label: t('status') },
-                  { id: '' },
-                ]}
-              />
+        section === 1 ?
+          <>
+            <Grid xs={12} md={8}>
+              <Card sx={{ m: 2, px: 2, pt: 2, pb: 1 }}>
+                <Tabs
+                  value={periods}
+                  onChange={handlePeriodTabChange}
+                  aria-label="icon position tabs example"
+                  textColor="primary"
+                >
+                  <Tab icon={<Iconify icon="duo-icons:bell" />} iconPosition="start" label={t("current_period")} />
+                  {
+                    contract?.periods?.map((item, index) => (
+                      <Tab icon={<Iconify icon="duo-icons:bell" />} iconPosition="start" label={t("period") + ` ${index + 2}`} />
+                    ))
+                  }
+                </Tabs>
+              </Card>
             </Grid>
-            : null
+            <Grid xs={12} md={12}>
+              <Card>
+                <CardHeader title={t('period_details')} />
+
+                <Stack spacing={2} sx={{ p: 3 }}>
+                  {/* <Box sx={{ typography: 'body2' }}>{info.quote}</Box> */}
+
+                  <Stack direction="row" spacing={2}>
+                    <Iconify icon="mingcute:coin-fill" width={24} />
+                    <Box sx={{ typography: 'body2' }}>
+                      {t(`net`) + "  "}
+                      <Link variant="subtitle2" color="inherit">
+                        {contract?.total_cost}.00
+                      </Link>
+                    </Box>
+                  </Stack>
+                  <Stack direction="row" spacing={2}>
+                    <Iconify icon="mingcute:coin-fill" width={24} />
+
+                    <Box sx={{ typography: 'body2' }}>
+                      {t(`paid`) + "  "}
+                      <Link variant="subtitle2" color="inherit">
+                        {contract?.paid_amount}.00
+                      </Link>
+                    </Box>
+                  </Stack>
+                  <Stack direction="row" spacing={2}>
+                    <Iconify icon="mingcute:coin-fill" width={24} />
+
+                    <Box sx={{ typography: 'body2' }}>
+                      {t(`unclaimed`) + "  "}
+                      <Link variant="subtitle2" color="inherit">
+                        {contract?.remaining_unclaimed_amount}.00
+                      </Link>
+                    </Box>
+                  </Stack>
+
+                  <Stack direction="row" sx={{ typography: 'body2' }}>
+                    <Iconify icon="heroicons-solid:calendar" width={24} sx={{ mr: 2 }} />
+                    <Box sx={{ typography: 'body2' }}>
+                      {t(`date`) + "  "}
+                      <Link variant="subtitle2" color="inherit">
+                        {fDate(contract?.created_at)}
+                      </Link>
+                    </Box>
+                  </Stack>
+
+                  <Stack direction="row" spacing={2}>
+                    <Iconify icon="ic:round-business-center" width={24} />
+
+                    <Box sx={{ typography: 'body2' }}>
+                      {t(`clauses_number`) + "  "}
+                      <Link variant="subtitle2" color="inherit">
+                        {clauses?.length}
+                      </Link>
+                    </Box>
+                  </Stack>
+                </Stack>
+              </Card>
+            </Grid>
+          </>
+          :
+          section === 0 ?
+
+            <Grid xs={12} md={12}>
+              {/* <ContractClaimsListView claims={clauses} /> */}
+              <ContractClausesListView data={clausesTableData} />
+            </Grid>
+            : section === 1 ?
+              <Grid xs={12} md={12}>
+                <ClaimNewEditForm setTableData={setTableData} contract_id={contract?.id} />
+                <AppNewInvoice2
+
+                  tableData={tableData}
+                  setTableData={setTableData}
+                  sx={{ mt: "10px" }}
+                  title={t('claims')}
+                  contract_id={contract?.id}
+                  tableLabels={[
+                    { id: 'Amount', label: t('amount') },
+                    { id: 'Create_at', label: t('date') },
+                    { id: 'Payment', label: t('payment_at') },
+                    { id: 'status', label: t('status') },
+                    { id: '' },
+                  ]}
+                />
+              </Grid>
+              : null
       }
 
       {/* </Box> */}

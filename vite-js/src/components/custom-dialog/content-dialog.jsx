@@ -9,15 +9,15 @@ import { useTranslate } from 'src/locales';
 
 // ----------------------------------------------------------------------
 
-export default function ContentDialog({ title, content, action, open, onClose, ...other }) {
+export default function ContentDialog({ title,maxWidth="xs", content, action, open, onClose, ...other }) {
   const { t } = useTranslate();
 
   return (
-    <Dialog fullWidth maxWidth="xs" open={open} onClose={onClose} {...other}>
+    <Dialog fullWidth maxWidth={maxWidth} open={open} onClose={onClose} {...other} sx={{ overflow: 'hidden'}} >
       <DialogTitle sx={{ pb: 2 }}>{title}</DialogTitle>
 
       {content && 
-      <DialogContent sx={{ typography: 'body2', pb: 1 }}>
+      <DialogContent sx={{ typography: 'body2', pb: 2 }}>
 
         {content}
 
