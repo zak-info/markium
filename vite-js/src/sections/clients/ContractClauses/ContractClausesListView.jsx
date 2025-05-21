@@ -33,7 +33,7 @@ export default function ContractClausesListView({ data }) {
     const [dataFiltered, setDataFiltered] = useState([]);
 
     let TABLE_HEAD = [
-        { id: 'clausable', label: t('item'), type: "two-lines-link", first: (row) => row?.clausable?.first, second: (row) => row?.clausable?.second, link: (row) => { return paths.dashboard.vehicle.details(row?.id) }, width: 140 },
+        { id: 'clausable', label: t('clause'), type: "two-lines-link", first: (row) => row?.clausable?.first, second: (row) => row?.clausable?.second, link: (row) => { return paths.dashboard.vehicle.details(row?.id) }, width: 140 },
         { id: 'cost', label: t('cost'), type: "text", width: 140 },
         { id: 'total_cost', label: t('total'), type: "text", width: 140 },
         { id: 'status', label: t('status'), type: "label", color: "error", width: 140 },

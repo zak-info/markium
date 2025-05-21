@@ -52,11 +52,12 @@ export default function ChangePasswordView({ currentUser, onClose, selfAccount }
     console.log(" currentUser : ", currentUser);
 
     const validationSchema = Yup.object({
-        current_password: Yup.string().when('$selfAccount', {
-            is: (val) => !val, // when currentUser is falsy (e.g., null or undefined)
-            then: (schema) => schema.required('Password is required'),
-            otherwise: (schema) => schema.notRequired()
-        }),
+        current_password: Yup.string(),
+        // .when('$selfAccount', {
+        //     is: (val) => !val, // when currentUser is falsy (e.g., null or undefined)
+        //     then: (schema) => schema.required('Password is required'),
+        //     otherwise: (schema) => schema.notRequired()
+        // }),
         new_password: Yup.string().required('new password is required'),
         confirm_password: Yup.string().required('confirm password is required'),
     });
