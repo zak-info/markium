@@ -245,7 +245,7 @@ export default function ProfileHome({ info, posts, contract, client, location })
       </Card>
 
       {
-        section === 1 ?
+        section === 100 ?
           <>
             <Grid xs={12} md={8}>
               <Card sx={{ m: 2, px: 2, pt: 2, pb: 1 }}>
