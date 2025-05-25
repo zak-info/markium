@@ -74,6 +74,10 @@ export async function replaceContractClause(id,body) {
   const URL = endpoints.contracts.clause.replace(id)
   return await axios.post(URL, body);
 }
+export async function createContractClause(body) {
+  const URL = endpoints.contracts.clause.root
+  return await axios.post(URL, body);
+}
 
 export async function deleteContractClause(id) {
   const URL = endpoints.contracts.clause.root+"/"+id

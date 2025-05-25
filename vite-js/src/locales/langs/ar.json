@@ -546,5 +546,6 @@
   "reason":"السبب",
   "delay_days":"مدة التأخير",
   "cancle_at":"تاريخ الإلغاء",
-  "original_cost":"التكلفة الاصلية"
+  "original_cost":"التكلفة الاصلية",
+  "addNewClause":"اظافة بند جديد"
 }

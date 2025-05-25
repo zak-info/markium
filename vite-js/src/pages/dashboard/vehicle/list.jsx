@@ -1,4 +1,5 @@
 import { Helmet } from 'react-helmet-async';
+import CarsListView from 'src/sections/vehicles/CarListView/CarsListView';
 
 import { ProductListView } from 'src/sections/vehicles/view';
 
@@ -11,7 +12,8 @@ export default function ProductListPage() {
         <title> Dashboard: Vehicles List</title>
       </Helmet>
 
-      <ProductListView />
+      {/* <ProductListView /> */}
+      <CarsListView />
     </>
   );
 }

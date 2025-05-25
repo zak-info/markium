@@ -8,6 +8,7 @@ const ZaityTableTabs = ({
   children,
   data = [],
   items = [],
+  key = "status",
   setTableDate,
   dateError,
   defaultFilters = {},
@@ -24,12 +25,12 @@ const ZaityTableTabs = ({
       [name]: value,
     }));
   }, [data]);
-  
 
-  
+
+
   const handleFilterStatus = useCallback(
     (event, newValue) => {
-      handleFilters('status', newValue);
+      handleFilters(key, newValue);
     },
     [handleFilters]
   );
@@ -39,23 +40,14 @@ const ZaityTableTabs = ({
     comparator: getComparator(table.order, table.orderBy),
     filters,
     dateError,
+    currentKey:key,
   });
 
-  useEffect(()=>{
+  useEffect(() => {
     setTableDate(dataFiltered)
-  },[filters])
+  }, [filters])
 
-  // useEffect(() => {
-  //   const filteredData = applyFilter({
-  //     inputData: data,
-  //     comparator: getComparator(table.order, table.orderBy),
-  //     filters,
-  //     filterFunction,
-  //   });
-
-  //   setTableDate(filteredData);
-  // }, [data, table.order, table.orderBy, filters, setTableDate, filterFunction]);
-
+ 
   return (
     <>
       <Tabs
@@ -67,21 +59,8 @@ const ZaityTableTabs = ({
         }}
       >
 
-        {/* <Tab
-          key={"all"}
-          iconPosition="end"
-          value={"All"}
-          label={t("all")}
-          icon={
-            <Label
-              variant={'soft'}
-              color={'default'}
-            >
-              {data?.length}
-            </Label>
-          }
-        /> */}
-        {items.map((tab, index) => {
+       
+        {items?.map((tab, index) => {
           const count = tab.count ?? data.filter((item) => tab.match?.(item, filters)).length;
 
           return (
@@ -92,7 +71,7 @@ const ZaityTableTabs = ({
               label={tab.label}
               icon={
                 <Label
-                  variant={tab.key === filters.tabKey ? 'filled' : 'soft'}
+                  variant={tab.key === filters[key] ? 'filled' : 'soft'}
                   color={tab.color || 'default'}
                 >
                   {count}
@@ -112,9 +91,8 @@ export default ZaityTableTabs;
 
 // ———————————————
 
-
-function applyFilter({ inputData, comparator, filters, dateError }) {
-  const { status } = filters;
+function applyFilter({ inputData, comparator, filters,currentKey }) {
+  // Sort data stably
   const stabilizedThis = inputData.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
@@ -124,14 +102,30 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
 
   inputData = stabilizedThis.map((el) => el[0]);
 
-  if (status) {
-    if (status == "All" || status == "all") {
-      inputData = inputData;
-    } else {
-      inputData = inputData.filter(order =>
-        order?.status?.includes(status)
-      );
-    }
-  }
+  // Apply dynamic filters
+  Object.entries(filters).forEach(([key, value]) => {
+    if (!value || value === 'all' || value === 'All') return;
+
+    inputData = inputData.filter((item) => {
+      const fieldValue = item?.[key];
+
+      // Special case for status key
+      if (key == currentKey) {
+        return item?.status?.key === value;
+      }
+      
+
+      if (typeof fieldValue === 'string') {
+        return fieldValue.toLowerCase().includes(value.toLowerCase());
+      }
+
+      if (Array.isArray(fieldValue)) {
+        return fieldValue.includes(value);
+      }
+
+      return fieldValue == value;
+    });
+  });
+
   return inputData;
 }

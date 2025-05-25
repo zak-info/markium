@@ -18,26 +18,28 @@ export default function UserCreateView() {
 
 
   return (
-    <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-      <CustomBreadcrumbs
-        heading={t('addNewVehicle')}
-        links={[
-          {
-            name: t('dashboard'),
-            href: paths.dashboard.root,
-          },
-          {
-            name: t('vehicles'),
-            href: paths.dashboard.vehicle.root,
-          },
-          { name: t('addNewVehicle') },
-        ]}
-        sx={{
-          mb: { xs: 3, md: 5 },
-        }}
-      />
+    <>
+      <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+        <CustomBreadcrumbs
+          heading={t('addNewVehicle')}
+          links={[
+            {
+              name: t('dashboard'),
+              href: paths.dashboard.root,
+            },
+            {
+              name: t('vehicles'),
+              href: paths.dashboard.vehicle.root,
+            },
+            { name: t('addNewVehicle') },
+          ]}
+          sx={{
+            mb: { xs: 3, md: 5 },
+          }}
+        />
 
-      <UserNewEditForm />
-    </Container>
+        <UserNewEditForm />
+      </Container>
+    </>
   );
 }

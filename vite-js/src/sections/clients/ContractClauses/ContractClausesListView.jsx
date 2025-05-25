@@ -1,4 +1,4 @@
-import { Box, Button, Card, FormControlLabel, FormGroup, IconButton, MenuItem, Switch, Tooltip, Typography } from '@mui/material';
+import { Box, Button, Card, FormControlLabel, FormGroup, IconButton, MenuItem, Stack, Switch, Tooltip, Typography } from '@mui/material';
 import { t } from 'i18next';
 import { set } from 'lodash'; // [keep for later use]
 import { enqueueSnackbar } from 'notistack';
@@ -33,7 +33,7 @@ export default function ContractClausesListView({ data }) {
     const [dataFiltered, setDataFiltered] = useState([]);
 
     let TABLE_HEAD = [
-        { id: 'clausable', label: t('clause'), type: "two-lines-link", first: (row) => row?.clausable?.first, second: (row) => row?.clausable?.second, link: (row) => { return paths.dashboard.vehicle.details(row?.id) }, width: 140 },
+        { id: 'clausable', label: t('clause'), type: "two-lines-link", first: (row) => row?.clausable?.first, second: (row) => row?.clausable?.second, link: (row) => { return row?.clausable_type == "car" ? paths.dashboard.vehicle.details(row?.id) :paths.dashboard.drivers.details(row?.id) }, width: 140 },
         { id: 'cost', label: t('cost'), type: "text", width: 140 },
         { id: 'total_cost', label: t('total'), type: "text", width: 140 },
         { id: 'status', label: t('status'), type: "label", color: "error", width: 140 },
@@ -89,6 +89,7 @@ export default function ContractClausesListView({ data }) {
                     { name: t('list') },
                 ]}
             > */}
+           <AddClause contract_id={data[0]?.contract_id} setTableData={setDataFiltered}  />
             <Card>
                 {/* <ZaityTableTabs data={tableData} items={items} defaultFilters={{ status: 'all' }} setTableDate={setDataFiltered} filterFunction={filterFunction}> */}
                 {/* <ZaityTableFilters defaultFilters={defaultFilters} dataFiltered={tableData}> */}
@@ -108,6 +109,7 @@ export default function ContractClausesListView({ data }) {
 import { CancleClause } from './CancleClause';
 import { deleteContractClause } from 'src/api/contract';
 import ReplaceClause from './ReplaceClause';
+import AddClause from './AddClause';
 
 
 

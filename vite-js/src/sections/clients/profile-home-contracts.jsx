@@ -51,7 +51,7 @@ export default function ProfileHome({ info, posts, contract, client, location })
   }, [claims])
 
   const formulateClauses = (list) => {
-    return list?.map(item => ({ ...item, status: t("under_rent"),clausable:{first:item?.clauseable_type == "car"?car?.find(i => i.id == item?.clauseable_id)?.model?.translations?.name:drivers?.find(i => i.id == item?.clauseable_id)?.name,second:item?.clauseable_type == "car" ? car?.find(i => i.id == item?.clauseable_id)?.plat_number:drivers?.find(i => i.id == item?.clauseable_id)?.phone_number} ,start_date: fDate(item?.start_date), end_date: fDate(item?.end_date), color: "success" }))
+    return list?.map(item => ({ ...item, status: t("under_rent"),clausable:{first:item?.clauseable_type == "car"? car?.find(i => i.id == item?.clauseable_id)?.model?.translations?.name:drivers?.find(i => i.id == item?.clauseable_id)?.name,second:item?.clauseable_type == "car" ? car?.find(i => i.id == item?.clauseable_id)?.plat_number:drivers?.find(i => i.id == item?.clauseable_id)?.phone_number} ,start_date: fDate(item?.start_date), end_date: fDate(item?.end_date), color: "success" }))
   }
   const [clausesTableData, setClausesTableData] = useState(formulateClauses(clauses))
   // const [clausesTableData, setClausesTableData] = useState(clauses)

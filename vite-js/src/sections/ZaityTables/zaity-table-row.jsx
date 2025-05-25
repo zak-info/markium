@@ -69,7 +69,7 @@ function renderCell(head_row, row, popover, router) {
     case 'text':
       return row?.[head_row.id] || '--';
     case 'long_text':
-      return <ExpandableText text={row?.[head_row.id]} /> || '--';
+      return <ExpandableText text={row?.[head_row.id]} length={head_row?.length} /> || '--';
 
     case 'two-lines':
       return (
@@ -108,8 +108,8 @@ function renderCell(head_row, row, popover, router) {
 
     case 'label':
       return (
-        <Label variant={row.variant || 'soft'} color={row.color || 'default'}>
-          {row?.[head_row.id]}
+        <Label variant={row?.variant || 'soft'} color={row?.color || 'default'}>
+          {row?.[head_row?.id]}
         </Label>
       );
 

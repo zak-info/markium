@@ -90,16 +90,20 @@ export function CancleClause({ id, close, }) {
     formState: { isSubmitting, errors },
   } = methods;
 
+  const values = watch()
+
   const onSubmit = handleSubmit(async (data) => {
     try {
-      let body = data
-      body.cancel_at = format(new Date(values?.cancle_at), "yyyy-mm-dd")
-      console.log("body : ", body);
+      let body = {reason : data?.reason ,cancel_at:format(new Date(data?.cancle_at), "yyyy-mm-dd")}
+      // body.cancel_at = format(new Date(values?.cancle_at), "yyyy-mm-dd")
 
-      const response = await cancleContractClause(id, body);
+      console.log("body : ",body);
+      console.log("id : ",id);
+
+      // const response = await cancleContractClause(id, body);
       enqueueSnackbar(t("operation_success"), { variant: 'success' });
       // setTableData(prev => prev.map(item => item.id !== claim_id ? item : { ...item, status: { translations: [{ name: t("paid") }] } }));
-      close();
+      // close();
     } catch (error) {
       console.error(error);
       showError(error)

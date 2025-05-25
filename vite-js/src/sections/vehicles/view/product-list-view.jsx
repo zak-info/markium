@@ -235,11 +235,7 @@ export default function OrderListView() {
 
   const handleFilterStatus = useCallback(
     (event, newValue) => {
-      // if (newValue == "rented") {
-      //   handleFilters('rented', newValue);
-      // } else {
       handleFilters('status', newValue);
-      // }
     },
     [handleFilters]
   );
@@ -407,22 +403,24 @@ export default function OrderListView() {
                       table.page * table.rowsPerPage + table.rowsPerPage
                     )
                     .map((row) => (
-                      <OrderTableRow
-                        key={row.id}
-                        row={row}
-                        contract={contracts.find(contract => contract.clauses.some(clause => clause.clauseable_type == "car" && clause.clauseable_id == row?.id))}
-                        companies={clients}
-                        selected={table.selected.includes(row.id)}
-                        onSelectRow={() => table.onSelectRow(row.id)}
-                        onDeleteRow={() => handleDeleteRow(row.id)}
-                        onViewRow={() => handleViewRow(row.id)}
-                        onDriverViewRow={() => handleViewDriverRow(row?.driver?.id)}
-                        onContractViewRow={(id) => handleViewContractRow(id)}
-                        onCompanyViewRow={(id) => handleViewCompanyRow(id)}
-                        onEditRow={() => handleEditRow(row.id)}
-                        onAddCarToMentainance={() => handleAddCarToMentainance(row.id)}
-                        onMarkCarAsAvailable={() => handleMarkCarAsAvailable(row.id)}
-                      />
+                      <>
+                        <OrderTableRow
+                          key={row.id}
+                          row={row}
+                          contract={contracts.find(contract => contract?.clauses?.some(clause => clause.clauseable_type == "car" && clause.clauseable_id == row?.id))}
+                          companies={clients}
+                          selected={table.selected.includes(row.id)}
+                          onSelectRow={() => table.onSelectRow(row.id)}
+                          onDeleteRow={() => handleDeleteRow(row.id)}
+                          onViewRow={() => handleViewRow(row.id)}
+                          onDriverViewRow={() => handleViewDriverRow(row?.driver?.id)}
+                          onContractViewRow={(id) => handleViewContractRow(id)}
+                          onCompanyViewRow={(id) => handleViewCompanyRow(id)}
+                          onEditRow={() => handleEditRow(row.id)}
+                          onAddCarToMentainance={() => handleAddCarToMentainance(row.id)}
+                          onMarkCarAsAvailable={() => handleMarkCarAsAvailable(row.id)}
+                        />
+                      </>
                     ))}
 
                   <TableEmptyRows
