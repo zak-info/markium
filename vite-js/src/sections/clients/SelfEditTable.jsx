@@ -51,9 +51,9 @@ export default function SelfEditTable({
     setEditing({ rowId, field });
   };
 
-  const handleChange = (event, rowId, field) => {
+  const handleChange = (event, rowId, field, type) => {
     setTableData((prev) =>
-      prev.map((row) => (row.id === rowId ? { ...row, [field]: event.target.value, new: row?.new == "true" ? "true" : "false" } : row))
+      prev.map((row) => (row.id === rowId ? { ...row, [field]: type == "date" ? fDate(event.target.value) : event.target.value, new: row?.new == "true" ? "true" : "false" } : row))
     );
   };
 
@@ -152,6 +152,7 @@ import { LoadingButton } from "@mui/lab";
 import { enqueueSnackbar } from "notistack";
 import UserNewEditForm from "../clause/user-new-edit-form";
 import CarsAutocomplete from "src/components/hook-form/rhf-CarsAutocomplete";
+import { fDate } from "src/utils/format-time";
 // import ExpandableText from "./ExpandableText";
 
 function AppNewInvoiceRow({ row, tableLabels, editing, handleEdit, handleChange, handleBlur, setTableData }) {
@@ -192,12 +193,27 @@ function AppNewInvoiceRow({ row, tableLabels, editing, handleEdit, handleChange,
                       ))}
                     </Select>
                   ) : type === "date" ? (
-                    <DatePicker
+                    <>
+                      {/* <DatePicker
                       value={row[id] || null}
                       format="dd/MM/yyyy"
-                      onChange={(newValue) => handleChange({ target: { value: newValue } }, row.id, key_to_update)}
+                      onChange={(newValue) => handleChange({ target: { value: newValue } }, row.id, key_to_update,'date')}
                       onBlur={handleBlur}
-                    />
+                    /> */}
+                      <DatePicker
+                        name="date"
+                        label={row?.label}
+                        format="dd/MM/yyyy"
+                        // value={contract?.cancle_at ? new Date(contract?.cancle_at) : values?.start_date ? new Date(values?.start_date) : new Date()}
+                        // onChange={(date) => setValue('cancel_at', date)}
+                        onChange={(newValue) => handleChange({ target: { value: newValue } }, row.id, key_to_update,'date')}
+                        slotProps={{
+                          textField: {
+                            fullWidth: true,
+                          },
+                        }}
+                      />
+                    </>
                   ) : (
                     <TextField
                       value={row[id] || ""}

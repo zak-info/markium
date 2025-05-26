@@ -33,21 +33,22 @@ export default function ContractClausesListView({ data }) {
     const [dataFiltered, setDataFiltered] = useState([]);
 
     let TABLE_HEAD = [
-        { id: 'clausable', label: t('clause'), type: "two-lines-link", first: (row) => row?.clausable?.first, second: (row) => row?.clausable?.second, link: (row) => { return row?.clausable_type == "car" ? paths.dashboard.vehicle.details(row?.id) :paths.dashboard.drivers.details(row?.id) }, width: 140 },
+        { id: 'clausable', label: t('clause'), type: "two-lines-link", first: (row) => row?.clausable?.first, second: (row) => row?.clausable?.second, link: (row) => { return row?.clausable_type == "car" ? paths.dashboard.vehicle.details(row?.id) : paths.dashboard.drivers.details(row?.id) }, width: 140 },
         { id: 'cost', label: t('cost'), type: "text", width: 140 },
         { id: 'total_cost', label: t('total'), type: "text", width: 140 },
         { id: 'status', label: t('status'), type: "label", color: "error", width: 140 },
         { id: 'start_date', label: t('start_date'), type: "text", width: 140 },
         { id: 'end_date', label: t('end_date'), type: "text", width: 140 },
-        { id: 'actions', label: t('actions'), type: "threeDots", component: (item) => <ElementActions item={item} />, width: 400, align: "right" },
+        { id: 'actions', label: t('actions'), type: "threeDots", component: (item) => <ElementActions item={item} setDataFiltered={setDataFiltered} />, width: 400, align: "right" },
     ]
 
 
     const defaultFilters = { status: 'all', name: "" };
     const items = [
         { key: 'all', label: t('all'), match: () => true },
-        { key: 'selected', label: t('selected'), match: (item) => item?.status == "selected", color: 'primary' },
-        { key: 'not_selected', label: t('not_selected'), match: (item) => item?.status == "not_selected", color: 'warning' },
+        { key: 'under_rent', label: t('under_rent'), match: (item) => item?.gstatus == "under_rent", color: 'primary' },
+        { key: 'cancelled', label: t('cancelled'), match: (item) => item?.gstatus == "cancelled", color: 'warning' },
+        { key: 'replaced', label: t('replaced'), match: (item) => item?.gstatus == "replaced", color: 'secondary' },
     ];
     const filterFunction = (data, filters) => {
         const activeTab = filters.tabKey;
@@ -56,9 +57,30 @@ export default function ContractClausesListView({ data }) {
         return data;
     }
 
-    const RformulateTable = (data) => {
-        return data?.map(item => ({ ...item })) || [];
-    }
+    const RformulateTable = (data = []) => {
+        return data.map(item => {
+            let gstatus = "under_rent";
+            let statusLabel = t("under_rent");
+            let color = "success";
+
+            if (item?.replaced_by_clause_id) {
+                gstatus = "replaced";
+                statusLabel = t("replaced");
+                color = "secondary";
+            } else if (item?.cancelled_at) {
+                gstatus = "cancelled";
+                statusLabel = t("cancelled");
+                color = "error";
+            }
+
+            return {
+                ...item,
+                gstatus,
+                status: statusLabel,
+                color,
+            };
+        });
+    };
 
     useEffect(() => {
         setDataFiltered(RformulateTable(data));
@@ -69,35 +91,12 @@ export default function ContractClausesListView({ data }) {
 
     return (
         <>
-            {/* <ZaityHeadContainer
-                heading={t("contract_clauses")}
-                action={
-                    <PermissionsContext action={"create.contract"} >
-                        <Button
-                            component={RouterLink}
-                            href={paths.dashboard.user.new}
-                            variant="contained"
-                            startIcon={<Iconify icon="mingcute:add-line" />}
-                        >
-                            {t("add_clause")}
-                        </Button>
-                    </PermissionsContext>
-                }
-                links={[
-                    { name: t('dashboard'), href: paths.dashboard.root },
-                    { name: t("contract_clauses"), href: paths.dashboard.user.new },
-                    { name: t('list') },
-                ]}
-            > */}
-           <AddClause contract_id={data[0]?.contract_id} setTableData={setDataFiltered}  />
+            <AddClause contract_id={data[0]?.contract_id} setTableData={setDataFiltered} />
             <Card>
-                {/* <ZaityTableTabs data={tableData} items={items} defaultFilters={{ status: 'all' }} setTableDate={setDataFiltered} filterFunction={filterFunction}> */}
-                {/* <ZaityTableFilters defaultFilters={defaultFilters} dataFiltered={tableData}> */}
-                <ZaityListView TABLE_HEAD={[...TABLE_HEAD]} dense="medium" zaityTableDate={dataFiltered || []} onSelectedRows={({ data, setTableData }) => { return <onSelectedRowsComponent configurable_type={"roles"} setTableData={setTableData} data={data} /> }} />
-                {/* </ZaityTableFilters> */}
-                {/* </ZaityTableTabs> */}
+                <ZaityTableTabs data={tableData} items={items} defaultFilters={{ gstatus: 'all' }} setTableDate={setDataFiltered} filterFunction={filterFunction}>
+                    <ZaityListView TABLE_HEAD={[...TABLE_HEAD]} dense="medium" zaityTableDate={dataFiltered || []} onSelectedRows={({ data, setTableData }) => { return <onSelectedRowsComponent configurable_type={"roles"} setTableData={setTableData} data={data} /> }} />
+                </ZaityTableTabs>
             </Card>
-            {/* </ZaityHeadContainer> */}
         </>
     );
 }
@@ -113,7 +112,7 @@ import AddClause from './AddClause';
 
 
 
-const ElementActions = ({ item }) => {
+const ElementActions = ({ item, setDataFiltered }) => {
     const popover = usePopover();
     const confirm = useBoolean();
     const ban = useBoolean();
@@ -150,49 +149,26 @@ const ElementActions = ({ item }) => {
                 sx={{ width: 200 }}
             >
 
-                <PermissionsContext action={"update.user"} >
-                    <MenuItem
-                        onClick={() => {
-                            onViewRow(item?.id);
-                            popover.onClose();
-                        }}
-                    >
+                <PermissionsContext action={"update.clause"} >
+                    <MenuItem onClick={() => {onViewRow(item?.id);popover.onClose() }}>
                         <Iconify icon="solar:pen-bold" />
                         {t('edit')}
                     </MenuItem>
                 </PermissionsContext>
-                <PermissionsContext action={"update.user"} >
-                    <MenuItem
-                        onClick={() => {
-                            // onViewRow(item?.id);
-                            replace.onTrue()
-                            popover.onClose();
-                        }}
-                    >
+                <PermissionsContext action={"update.clause"} >
+                    <MenuItem disabled={item?.replaced_by_clause_id} onClick={() => {replace.onTrue();popover.onClose()}} >
                         <Iconify icon="material-symbols:change-circle-rounded" />
                         {t('replace')}
                     </MenuItem>
                 </PermissionsContext>
-                <PermissionsContext action={"delete.user"} >
-                    <MenuItem
-                        onClick={() => {
-                            confirm.onTrue();
-                            popover.onClose();
-                        }}
-                        sx={{ color: 'error.main' }}
-                    >
+                <PermissionsContext action={"delete.clause"} >
+                    <MenuItem onClick={() => {confirm.onTrue();popover.onClose()}} sx={{ color: 'error.main' }} >
                         <Iconify icon="solar:trash-bin-trash-bold" />
                         {t('delete')}
                     </MenuItem>
                 </PermissionsContext>
-                <PermissionsContext action={"update.user"} >
-                    <MenuItem
-                        onClick={() => {
-                            cancle.onTrue();
-                            popover.onClose();
-                        }}
-                        sx={{ color: 'warning.main' }}
-                    >
+                <PermissionsContext action={"update.clause"} >
+                    <MenuItem disabled={item?.cancelled_at} onClick={() => {cancle.onTrue();popover.onClose()}} sx={{ color: 'warning.main' }} >
                         <Iconify icon="material-symbols-light:shield-locked-rounded" />
                         {t('cancle')}
                     </MenuItem>
@@ -201,13 +177,12 @@ const ElementActions = ({ item }) => {
 
 
             <ContentDialog
-
                 open={cancle.value}
                 onClose={cancle.onFalse}
                 title={t("cancle_clause")}
                 content={
                     <>
-                        <CancleClause id={item?.id} close={() => { cancle.onFalse() }} />
+                        <CancleClause setDataFiltered={setDataFiltered} id={item?.id} close={() => { cancle.onFalse() }} />
                     </>
                 }
             />

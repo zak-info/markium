@@ -110,7 +110,7 @@ export const endpoints = {
     list: '/contract',
     claims: (id) => `/contract/${id}/claims`,
     clauses: (id) => `/contract/${id}/clauses`,
-    cancleClause: (id) => `/contract/clauses/${id}/cancle`,
+    cancleClause: (id) => `/contract/clauses/${id}/cancel`,
     allclaims: `/contract/claims/all`,
     logs: "/contract/claims/logs",
     clause:{

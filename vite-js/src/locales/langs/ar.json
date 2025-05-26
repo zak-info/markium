@@ -272,7 +272,7 @@
   "total_claims": "إجمالي المطالبات",
   "unpaied_claims": "المطالبات غير المدفوعة",
   "contact_number": "رقم الاتصال",
-  "ref": "ريفيرنس",
+  "ref": "رقم العقد",
   "status_description": "وصف الحالة",
   "representor_name": "اسم الممثل",
   "representor_contact_number": "رقم اتصال الممثل",
@@ -540,6 +540,7 @@
   "add_clause":"اظافة بند",
   "under_rent":"قيد التأجير",
   "replace":"استبدال",
+  "replace_date":"تاريخ استبدال",
   "cancle":"إلغاء",
   "cancle_clause":"إلغاء بند",
   "replace_clause":"استبدال بند",
@@ -547,5 +548,8 @@
   "delay_days":"مدة التأخير",
   "cancle_at":"تاريخ الإلغاء",
   "original_cost":"التكلفة الاصلية",
-  "addNewClause":"اظافة بند جديد"
+  "addNewClause":"اظافة بند جديد",
+  "add":"إضافة",
+  "cancelled":"ملغاة",
+  "replaced":"مستبدل"
 }

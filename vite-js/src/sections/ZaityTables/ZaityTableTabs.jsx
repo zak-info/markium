@@ -40,14 +40,15 @@ const ZaityTableTabs = ({
     comparator: getComparator(table.order, table.orderBy),
     filters,
     dateError,
-    currentKey:key,
+    currentKey: key,
+    items
   });
 
   useEffect(() => {
     setTableDate(dataFiltered)
   }, [filters])
 
- 
+
   return (
     <>
       <Tabs
@@ -59,9 +60,9 @@ const ZaityTableTabs = ({
         }}
       >
 
-       
+
         {items?.map((tab, index) => {
-          const count = tab.count ?? data.filter((item) => tab.match?.(item, filters)).length;
+          const count = tab.count ?? data.filter((item) => tab.match?.(item)).length;
 
           return (
             <Tab
@@ -91,7 +92,7 @@ export default ZaityTableTabs;
 
 // ———————————————
 
-function applyFilter({ inputData, comparator, filters,currentKey }) {
+function applyFilter({ inputData, comparator, filters, currentKey, items }) {
   // Sort data stably
   const stabilizedThis = inputData.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
@@ -105,15 +106,18 @@ function applyFilter({ inputData, comparator, filters,currentKey }) {
   // Apply dynamic filters
   Object.entries(filters).forEach(([key, value]) => {
     if (!value || value === 'all' || value === 'All') return;
+    const matcherTab = items?.find(i => i.key == filters?.[currentKey])
+    console.log("matcherTab : ", matcherTab);
 
     inputData = inputData.filter((item) => {
       const fieldValue = item?.[key];
 
       // Special case for status key
       if (key == currentKey) {
-        return item?.status?.key === value;
+        // return condition(item);
+        return matcherTab?.match(item)
       }
-      
+
 
       if (typeof fieldValue === 'string') {
         return fieldValue.toLowerCase().includes(value.toLowerCase());

@@ -334,7 +334,7 @@ export default function ProfileHome({ info, posts, contract, client, location })
             </Grid>
             : section === 1 ?
               <Grid xs={12} md={12}>
-                <ClaimNewEditForm setTableData={setTableData} contract_id={contract?.id} />
+                <ClaimNewEditForm setTableData={setTableData} contract={contract} contract_id={contract?.id} />
                 <AppNewInvoice2
 
                   tableData={tableData}

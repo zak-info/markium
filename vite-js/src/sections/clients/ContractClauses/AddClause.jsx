@@ -25,7 +25,7 @@ const AddClause = ({contract_id,setTableData}) => {
                 maxWidth={"md"}
                 open={confirm.value}
                 onClose={confirm.onFalse}
-                title={t("replace_clause")}
+                title={t("addClause")}
                 content={
                     <>
                         <AddClauseForm setTableData={setTableData} item={{}} id={contract_id} close={() => { confirm.onFalse() }} />

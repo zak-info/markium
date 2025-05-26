@@ -111,6 +111,7 @@ export default function AddClauseForm({ setTableData, item, id, currentClause, c
         status: t('under_rent'), // Or { label: 'New', color: 'primary' } if your table supports label+color
         start_date: format(new Date(data.start_date), 'yyyy-MM-dd'),
         end_date: format(new Date(data.end_date), 'yyyy-MM-dd'),
+        color:"success"
       };
       setTableData(prev => [item, ...prev])
       enqueueSnackbar(t("operation_success"));
@@ -187,7 +188,7 @@ export default function AddClauseForm({ setTableData, item, id, currentClause, c
           </Box>
           <Stack alignItems="flex-end" sx={{ mt: 3 }}>
             <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-              {!contract ? t('addNewClause') : t('saveChange')}
+              {!contract ? t('add') : t('saveChange')}
             </LoadingButton>
           </Stack>
 

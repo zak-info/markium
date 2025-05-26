@@ -81,13 +81,13 @@ export default function OrderTableRow({ row, payment_method, client, selected, o
         /> */}
         {fDate(row?.created_at)}
       </TableCell>
-      <TableCell align="start"> {row?.net}.00</TableCell>
+      <TableCell align="start"> {row?.total_cost}.00</TableCell>
       <TableCell>
         <Label
           variant="soft"
           color={
             (row?.payment_method.name === 'cash' && 'success') ||
-            (row?.payment_method.name === 'deferred' && 'warning') ||
+            (row?.payment_method.name === 'deferred' && 'secondary') ||
             (row?.payment_method === 'bill' && 'error') ||
             'default'
           }

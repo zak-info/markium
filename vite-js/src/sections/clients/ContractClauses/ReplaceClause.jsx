@@ -79,12 +79,12 @@ export default function ReplaceClause({ item, currentClause, close }) {
   const values = watch();
 
 
-    const [checked, setChecked] = useState(true);
-  
-    const handleChange = (event) => {
-      setChecked(event.target.checked);
-    };
-  
+  const [checked, setChecked] = useState(true);
+
+  const handleChange = (event) => {
+    setChecked(event.target.checked);
+  };
+
 
   useEffect(() => {
     setValue('cost', Number(item.cost)); // Set the selected car's ID to car_id
@@ -95,10 +95,12 @@ export default function ReplaceClause({ item, currentClause, close }) {
   const onSubmit = handleSubmit(async (data) => {
     try {
       console.log("lest edit driver");
-      const body = data;
-      body.cancel_at = format(new Date(values?.cancel_at), 'yyyy-MM-dd');
-      body.is_urgent = false;
-      body.delay_days = 0;
+      const body = {
+        ...data,
+        is_urgent: false,
+        delay_days: 1,
+        cancel_at : format(new Date(values?.cancel_at), 'yyyy-MM-dd')
+      };
       console.log("body :", body);
       // reset();
       const responce = await replaceContractClause(item?.id, body)
@@ -142,11 +144,11 @@ export default function ReplaceClause({ item, currentClause, close }) {
             <RHFTextarea name="reason" label={t('reason')} />
             <DatePicker
               required
-              name="cancle_at"
-              label={t('cancle_at')}
+              name="cancel_at"
+              label={t('date')}
               format="dd/MM/yyyy"
               // value={contract?.cancle_at ? new Date(contract?.cancle_at) : values?.start_date ? new Date(values?.start_date) : new Date()}
-              onChange={(date) => setValue('cancle_at', date)}
+              onChange={(date) => setValue('cancel_at', date)}
               slotProps={{
                 textField: {
                   fullWidth: true,
@@ -154,9 +156,9 @@ export default function ReplaceClause({ item, currentClause, close }) {
               }}
             />
 
-            <FormGroup>
+            {/* <FormGroup>
               <FormControlLabel control={<Switch checked={checked} onChange={handleChange} />} label={t("original_cost")} />
-            </FormGroup>
+            </FormGroup> */}
             {
               !checked ?
                 <RHFTextField name="cost" label={t('cost')} type={"number"} />

@@ -70,7 +70,9 @@ export default function CarsListView({ }) {
             const statusKey = item?.status?.key;
             const statusName = item?.status?.translations?.name || "--";
             const contract = contracts.find((contract) =>contract?.clauses?.some((clause) =>clause.clauseable_type === "car" &&clause.clauseable_id === item?.id));
+            console.log('contracts.find : ',contracts);
             const company = clients?.find((c) => c.id === contract?.company_id);
+            console.log('company.find : ',company);
             let condition;
             if (statusKey === "rented") {
                 condition = statusName;

@@ -47,6 +47,7 @@ import SelfEditTable from './SelfEditTable';
 import { fDate } from 'src/utils/format-time';
 import { height } from '@mui/system';
 import { format } from 'date-fns';
+import showError from 'src/utils/show_error';
 
 // ----------------------------------------------------------------------
 
@@ -152,6 +153,8 @@ export default function ContractNewEditForm({ contract }) {
       }
       delete body?.auto_renewal_duration_unity
       delete body?.auto_renewal_duration
+      
+
 
       delete body.cost
       delete body.clauseable_type
@@ -162,24 +165,16 @@ export default function ContractNewEditForm({ contract }) {
       body.start_date = format(new Date(body.start_date), 'yyyy-MM-dd')
       body.end_date = format(new Date(body.end_date), 'yyyy-MM-dd')
 
-
-      body = { ...body, clauses: clauses.map(({ id, ...rest }) => rest) }
+      body = { ...body, auto_renewal : checked,clauses: clauses.map(({ id, ...rest }) => rest)}
       console.log("body :", body);
       const response = contract?.id ? await editContracts(contract?.id, body) : await createContracts(body);
-      enqueueSnackbar(contract ? 'Update success!' : 'Create success!');
+      enqueueSnackbar(t("operation_success"), { variant: 'success' });
       router.push(paths.dashboard.clients.contracts);
     } catch (error) {
-      Object.values(error?.data).forEach(array => {
-        array.forEach(text => {
-          enqueueSnackbar(text, { variant: 'error' });
-        });
-      });
-      console.error(error);
+      showError(error);
     }
   });
 
-
-  const options = ['نيسان', 'تويتا'];
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>
       <Grid container spacing={3}>

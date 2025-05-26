@@ -61,7 +61,7 @@ import { cancleContractClause } from 'src/api/contract';
 
 
 
-export function CancleClause({ id, close, }) {
+export function CancleClause({ id, close,setDataFiltered }) {
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslate();
   const NewUserSchema = Yup.object().shape({
@@ -94,16 +94,17 @@ export function CancleClause({ id, close, }) {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      let body = {reason : data?.reason ,cancel_at:format(new Date(data?.cancle_at), "yyyy-mm-dd")}
+      let body = {reason : data?.reason ,cancel_at:format(new Date(data?.cancle_at), "yyyy-MM-dd")}
       // body.cancel_at = format(new Date(values?.cancle_at), "yyyy-mm-dd")
 
       console.log("body : ",body);
       console.log("id : ",id);
 
-      // const response = await cancleContractClause(id, body);
+      const response = await cancleContractClause(id, body);
+      console.log("response :",response);
       enqueueSnackbar(t("operation_success"), { variant: 'success' });
-      // setTableData(prev => prev.map(item => item.id !== claim_id ? item : { ...item, status: { translations: [{ name: t("paid") }] } }));
-      // close();
+      setDataFiltered(prev => prev.map(item => item.id !== id ? item : { ...item, gstatus:"cancelled",status: t("cancelled"),color:"error" }));
+      close();
     } catch (error) {
       console.error(error);
       showError(error)

@@ -43,7 +43,7 @@ import { createClaim } from 'src/api/claim';
 
 // ----------------------------------------------------------------------
 
-export default function ClaimNewEditForm({ currentClause,setTableData,contract_id }) {
+export default function ClaimNewEditForm({ contract,currentClause,setTableData,contract_id }) {
   const router = useRouter();
   console.log(contract_id);
 
@@ -87,12 +87,9 @@ export default function ClaimNewEditForm({ currentClause,setTableData,contract_i
     try {
       const body = data;
       console.log("data : ", data);
-
       if (currentClause?.id) {
-
       } else {
-
-        await createClaim({contract_id,...body});
+        await createClaim({contract_id,...body,contract_period_id:contract?.period?.id});
       }
       reset();
       enqueueSnackbar(t("operation_success"), { variant: 'success' });
@@ -105,24 +102,10 @@ export default function ClaimNewEditForm({ currentClause,setTableData,contract_i
           enqueueSnackbar(text, { variant: 'error' });
         });
       });
-
     }
   });
 
-  const handleDrop = useCallback(
-    (acceptedFiles) => {
-      const file = acceptedFiles[0];
-
-      const newFile = Object.assign(file, {
-        preview: URL.createObjectURL(file),
-      });
-
-      if (file) {
-        setValue('avatarUrl', newFile, { shouldValidate: true });
-      }
-    },
-    [setValue]
-  );
+  
 
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>
