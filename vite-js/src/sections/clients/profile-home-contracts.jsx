@@ -28,11 +28,12 @@ import AppNewInvoice2 from './app-new-invoice2';
 import ClaimNewEditForm from './claim-new-edit-form';
 import { useGetClaim, useGetClauses } from 'src/api/claim';
 import { Tab, Tabs } from '@mui/material';
-import ContractClaimsListView from './ContractClaimsTable/NotificationsListView';
+
 import ContractClausesListView from './ContractClauses/ContractClausesListView';
 import { useGetCar } from 'src/api/car';
 import { useGetDrivers } from 'src/api/drivers';
 import { secondary } from 'src/theme/palette';
+import ContractClaimsListView from './ContractClaimsTable/ContractClaimsListView';
 
 // ----------------------------------------------------------------------
 
@@ -45,9 +46,19 @@ export default function ProfileHome({ info, posts, contract, client, location })
   const { clauses } = useGetClauses(contract?.id);
   console.log("car : ", car);
   console.log("drivers : ", drivers);
-  const [tableData, setTableData] = useState(claims)
+
+  const formulateClaims = (list) => {
+    return list.map(item => ({
+      ...item,
+      payment_date: fDate(new Date(item?.paiment_date)),
+      date: fDate(new Date(item?.created_at)),
+      gstatus: item?.status?.translations[0]?.name
+    }))
+  }
+
+  const [tableData, setTableData] = useState(formulateClaims(claims))
   useEffect(() => {
-    setTableData(claims)
+    setTableData(formulateClaims(claims))
   }, [claims])
 
   const formulateClauses = (list) => {
@@ -75,7 +86,7 @@ export default function ProfileHome({ info, posts, contract, client, location })
       start_date: fDate(item?.start_date),
       end_date: fDate(item?.end_date),
       color: "success"
-    })).filter(item => !item?.replaced_by_clause_id );
+    })).filter(item => !item?.replaced_by_clause_id);
   };
 
   const [clausesTableData, setClausesTableData] = useState(formulateClauses(clauses))
@@ -354,14 +365,13 @@ export default function ProfileHome({ info, posts, contract, client, location })
           section === 0 ?
 
             <Grid xs={12} md={12}>
-              {/* <ContractClaimsListView claims={clauses} /> */}
+
               <ContractClausesListView data={clausesTableData} />
             </Grid>
             : section === 1 ?
-              <Grid xs={12} md={12}>
+              <Grid display={"flex"} flexDirection={"column"} rowGap={4} xs={12} md={12}>
                 <ClaimNewEditForm setTableData={setTableData} contract={contract} contract_id={contract?.id} />
-                <AppNewInvoice2
-
+                {/* <AppNewInvoice2
                   tableData={tableData}
                   setTableData={setTableData}
                   sx={{ mt: "10px" }}
@@ -374,7 +384,8 @@ export default function ProfileHome({ info, posts, contract, client, location })
                     { id: 'status', label: t('status') },
                     { id: '' },
                   ]}
-                />
+                /> */}
+                <ContractClaimsListView data={tableData} contract_id={contract?.id} />
               </Grid>
               : null
       }
