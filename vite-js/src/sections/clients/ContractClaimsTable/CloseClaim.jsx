@@ -53,6 +53,7 @@ import { markMaintenanceAsCompeleted, releaseCar } from 'src/api/maintainance';
 import { markClaimAsPaid } from 'src/api/claim';
 import { useRouter } from 'src/routes/hooks';
 import { paths } from 'src/routes/paths';
+import showError from 'src/utils/show_error';
 
 
 // ----------------------------------------------------------------------
@@ -105,15 +106,14 @@ export function CloseClaim({ claim_id, close, contract_id, setTableData }) {
         formData.append("discount", Number(data?.discount));
         formData.append("note", data?.note);
       }
-      if (Array.isArray(data.invoice)) {
-        data.invoice.forEach((file) => {
-          formData.append("invoice[]", file);
-        });
-      } else {
-        formData.append("invoice[]", data.invoice);
-      }
-      console.log(formData);
-      console.log("data", data);
+      // if (Array.isArray(data.invoice)) {
+      //   data.invoice.forEach((file) => {
+      //     formData.append("invoice[]", file);
+      //   });
+      // } else {
+        formData.append("invoice", data.invoice);
+      // }
+      console.log("formData : ",formData);
       const response = await markClaimAsPaid(claim_id, formData);
       enqueueSnackbar(t("operation_success"), { variant: 'success' });
       setTableData(prev => prev.map(item => item.id !== claim_id ? item : { ...item, status: { translations: [{ name: t("paid") }] } }));
@@ -121,14 +121,7 @@ export function CloseClaim({ claim_id, close, contract_id, setTableData }) {
       //  router.push(paths.dashboard.clients.contractsDetails(contract_id));
     } catch (error) {
       console.error(error);
-      Object.values(error?.data || {}).forEach(array => {
-        array.forEach(text => {
-          enqueueSnackbar(text, { variant: 'error' });
-        });
-      });
-      if (error?.message) {
-        enqueueSnackbar(error?.message, { variant: 'error' });
-      }
+      showError(error)
     }
   });
 
@@ -153,12 +146,12 @@ export function CloseClaim({ claim_id, close, contract_id, setTableData }) {
             <FormGroup>
               <FormControlLabel control={<Switch checked={checked} onChange={handleChange} />} label={t("add_discount")} />
             </FormGroup>
-            
+
             {
               checked ?
                 <>
-                  <RHFTextField name="note" label={t('note')} />
                   <RHFTextField name="discount" label={t('discount')} type="number" />
+                  <RHFTextField name="note" label={t('note')} />
                 </>
                 :
                 null

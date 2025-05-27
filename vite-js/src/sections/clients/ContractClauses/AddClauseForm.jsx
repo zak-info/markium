@@ -34,7 +34,7 @@ import { useGetCar } from 'src/api/car';
 import CarsAutocomplete from 'src/components/hook-form/rhf-CarsAutocomplete';
 import SimpleAutocomplete from 'src/components/hook-form/rhf-simple-autocomplete';
 import showError from 'src/utils/show_error';
-import { cancleContractClause, createContractClause, replaceContractClause } from 'src/api/contract';
+import { cancleContractClause, createContractClause, editContractClause, replaceContractClause } from 'src/api/contract';
 import RHFTextarea from 'src/components/hook-form/RHFTextarea';
 import { FormGroup } from '@mui/material';
 
@@ -90,30 +90,40 @@ export default function AddClauseForm({ setTableData, item, id, currentClause, c
 
 
   useEffect(() => {
-    setValue('cost', Number(item.cost)); // Set the selected car's ID to car_id
-    // }
-
-  }, [item, setValue]);
+    if(currentClause.id){
+      setValue('clauseable_type', currentClause?.clauseable_type); // Set the selected car's ID to car_id
+      setValue('clauseable_id', currentClause?.clauseable_id); // Set the selected car's ID to car_id
+      setValue('start_date', new Date(currentClause?.start_date)); // Set the selected car's ID to car_id
+      setValue('end_date', new Date(currentClause?.end_date)); // Set the selected car's ID to car_id
+      setValue('cost', Number(currentClause.cost)); // Set the selected car's ID to car_id
+    }
+  }, [currentClause, setValue]);
 
   const onSubmit = handleSubmit(async (data) => {
     try {
       let body = { contract_id: id, clauseable_id: data.clauseable_id, clauseable_type: data.clauseable_type, cost: data.cost, start_date: format(new Date(data.start_date), 'yyyy-MM-dd'), end_date: format(new Date(data.end_date), 'yyyy-MM-dd') }
       console.log("body :", body);
-      const responce = await createContractClause(body);
-      const item = {
-        id: Math.random().toString(), // Or use the returned ID from backend
-        clausable: {
-          first: data?.clauseable_type == "car" ? car.find(c => c.id == data?.clauseable_id).plat_number : drivers.find(d => d.id == data?.clauseable_id).name, // Or more meaningful info
-          second: data?.clauseable_type == "car" ? car.find(c => c.id == data?.clauseable_id).model?.translations[0]?.name : drivers.find(d => d.id == data?.clauseable_id).phone_number, // Or more meaningful info
-        },
-        cost: data?.cost,
-        total_cost: data?.cost, // Or calculate if needed
-        status: t('under_rent'), // Or { label: 'New', color: 'primary' } if your table supports label+color
-        start_date: format(new Date(data.start_date), 'yyyy-MM-dd'),
-        end_date: format(new Date(data.end_date), 'yyyy-MM-dd'),
-        color:"success"
-      };
-      setTableData(prev => [item, ...prev])
+      if(currentClause?.id){
+        let reqData = {cost: data.cost}
+        const responce = await editContractClause(currentClause?.id,reqData);
+        setTableData(prev => prev?.map(item => item.id == currentClause?.id ? {...item,...reqData} : item  ))
+      }else{
+        const responce = await createContractClause(body);
+        const item = {
+          id: Math.random().toString(), // Or use the returned ID from backend
+          clausable: {
+            first: data?.clauseable_type == "car" ? car.find(c => c.id == data?.clauseable_id).plat_number : drivers.find(d => d.id == data?.clauseable_id).name, // Or more meaningful info
+            second: data?.clauseable_type == "car" ? car.find(c => c.id == data?.clauseable_id).model?.translations[0]?.name : drivers.find(d => d.id == data?.clauseable_id).phone_number, // Or more meaningful info
+          },
+          cost: data?.cost,
+          total_cost: data?.cost, // Or calculate if needed
+          status: t('under_rent'), // Or { label: 'New', color: 'primary' } if your table supports label+color
+          start_date: format(new Date(data.start_date), 'yyyy-MM-dd'),
+          end_date: format(new Date(data.end_date), 'yyyy-MM-dd'),
+          color:"success"
+        };
+        setTableData(prev => [item, ...prev])
+      }
       enqueueSnackbar(t("operation_success"));
       close()
     } catch (error) {
@@ -139,7 +149,7 @@ export default function AddClauseForm({ setTableData, item, id, currentClause, c
             <RHFSelect name="clauseable_type" label={t('clause_type')}>
               <Divider sx={{ borderStyle: 'dashed' }} />
               {attachables?.map((type) => (
-                <MenuItem key={type?.id} value={type.name}>
+                <MenuItem key={type?.name} value={type.name}>
                   {type?.lable[currentLang.value]}
                 </MenuItem>
               ))}

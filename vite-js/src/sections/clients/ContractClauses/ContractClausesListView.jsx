@@ -63,7 +63,7 @@ export default function ContractClausesListView({ data }) {
             let statusLabel = t("under_rent");
             let color = "success";
 
-            if (item?.replaced_by_clause_id) {
+            if (item?.replacer) {
                 gstatus = "replaced";
                 statusLabel = t("replaced");
                 color = "secondary";
@@ -91,7 +91,7 @@ export default function ContractClausesListView({ data }) {
 
     return (
         <>
-            <AddClause contract_id={data[0]?.contract_id} setTableData={setDataFiltered} />
+            <AddClause contract_id={data?.length >0 ? data[0]?.contract_id : 0} setTableData={setDataFiltered} />
             <Card>
                 <ZaityTableTabs data={tableData} items={items} defaultFilters={{ gstatus: 'all' }} setTableDate={setDataFiltered} filterFunction={filterFunction}>
                     <ZaityListView TABLE_HEAD={[...TABLE_HEAD]} dense="medium" zaityTableDate={dataFiltered || []} onSelectedRows={({ data, setTableData }) => { return <onSelectedRowsComponent configurable_type={"roles"} setTableData={setTableData} data={data} /> }} />
@@ -109,19 +109,20 @@ import { CancleClause } from './CancleClause';
 import { deleteContractClause } from 'src/api/contract';
 import ReplaceClause from './ReplaceClause';
 import AddClause from './AddClause';
+import AddClauseForm from './AddClauseForm';
 
 
 
 const ElementActions = ({ item, setDataFiltered }) => {
     const popover = usePopover();
     const confirm = useBoolean();
-    const ban = useBoolean();
+    const edit = useBoolean();
     const replace = useBoolean();
     const cancle = useBoolean();
     const router = useRouter();
     const onViewRow = useCallback(
         (id) => {
-            router.push(paths.dashboard.user.edit(id));
+            // router.push(paths.dashboard.user.edit(id));
         },
         [router]
     );
@@ -150,13 +151,13 @@ const ElementActions = ({ item, setDataFiltered }) => {
             >
 
                 <PermissionsContext action={"update.clause"} >
-                    <MenuItem onClick={() => {onViewRow(item?.id);popover.onClose() }}>
+                    <MenuItem onClick={() => {edit.onTrue();popover.onClose() }}>
                         <Iconify icon="solar:pen-bold" />
                         {t('edit')}
                     </MenuItem>
                 </PermissionsContext>
                 <PermissionsContext action={"update.clause"} >
-                    <MenuItem disabled={item?.replaced_by_clause_id} onClick={() => {replace.onTrue();popover.onClose()}} >
+                    <MenuItem disabled={item?.replaced_by_clause_idd } onClick={() => {replace.onTrue();popover.onClose()}} >
                         <Iconify icon="material-symbols:change-circle-rounded" />
                         {t('replace')}
                     </MenuItem>
@@ -168,7 +169,7 @@ const ElementActions = ({ item, setDataFiltered }) => {
                     </MenuItem>
                 </PermissionsContext>
                 <PermissionsContext action={"update.clause"} >
-                    <MenuItem disabled={item?.cancelled_at} onClick={() => {cancle.onTrue();popover.onClose()}} sx={{ color: 'warning.main' }} >
+                    <MenuItem disabled={item?.cancelled_at  } onClick={() => {cancle.onTrue();popover.onClose()}} sx={{ color: 'warning.main' }} >
                         <Iconify icon="material-symbols-light:shield-locked-rounded" />
                         {t('cancle')}
                     </MenuItem>
@@ -183,6 +184,17 @@ const ElementActions = ({ item, setDataFiltered }) => {
                 content={
                     <>
                         <CancleClause setDataFiltered={setDataFiltered} id={item?.id} close={() => { cancle.onFalse() }} />
+                    </>
+                }
+            />
+
+            <ContentDialog
+                open={edit.value}
+                onClose={edit.onFalse}
+                title={t("cancle_clause")}
+                content={
+                    <>
+                       <AddClauseForm setTableData={setDataFiltered} currentClause={item}  close={() => { edit.onFalse() }} />
                     </>
                 }
             />

@@ -40,8 +40,8 @@ export default function ProfileHome({ info, posts, contract, client, location })
   const fileRef = useRef(null);
   const { t } = useTranslation();
   const { claims } = useGetClaim(contract?.id);
-  const {car}= useGetCar()
-  const {drivers} = useGetDrivers()
+  const { car } = useGetCar()
+  const { drivers } = useGetDrivers()
   const { clauses } = useGetClauses(contract?.id);
   console.log("car : ", car);
   console.log("drivers : ", drivers);
@@ -51,8 +51,33 @@ export default function ProfileHome({ info, posts, contract, client, location })
   }, [claims])
 
   const formulateClauses = (list) => {
-    return list?.map(item => ({ ...item, status: t("under_rent"),clausable:{first:item?.clauseable_type == "car"? car?.find(i => i.id == item?.clauseable_id)?.model?.translations?.name:drivers?.find(i => i.id == item?.clauseable_id)?.name,second:item?.clauseable_type == "car" ? car?.find(i => i.id == item?.clauseable_id)?.plat_number:drivers?.find(i => i.id == item?.clauseable_id)?.phone_number} ,start_date: fDate(item?.start_date), end_date: fDate(item?.end_date), color: "success" }))
-  }
+    // Step 1: Mark items with `replacer: true`
+    list?.forEach(item => {
+      if (item?.replaced_by_clause_id) {
+        const target = list?.find(targetItem => targetItem.id === item.replaced_by_clause_id);
+        if (target) {
+          target.replacer = true;
+        }
+      }
+    });
+
+    // Step 2: Transform and return the updated list
+    return list?.map(item => ({
+      ...item,
+      clausable: {
+        first: item?.clauseable_type === "car"
+          ? car?.find(i => i.id === item?.clauseable_id)?.model?.translations?.name
+          : drivers?.find(i => i.id === item?.clauseable_id)?.name,
+        second: item?.clauseable_type === "car"
+          ? car?.find(i => i.id === item?.clauseable_id)?.plat_number
+          : drivers?.find(i => i.id === item?.clauseable_id)?.phone_number
+      },
+      start_date: fDate(item?.start_date),
+      end_date: fDate(item?.end_date),
+      color: "success"
+    })).filter(item => !item?.replaced_by_clause_id );
+  };
+
   const [clausesTableData, setClausesTableData] = useState(formulateClauses(clauses))
   // const [clausesTableData, setClausesTableData] = useState(clauses)
   useEffect(() => {
@@ -73,11 +98,11 @@ export default function ProfileHome({ info, posts, contract, client, location })
   };
 
   const [periods, setPeriods] = useState(0);
-  const [period, setPeriod] = useState( periods == 0 ? contract?.period : contract?.periods[periods]);
+  const [period, setPeriod] = useState(periods == 0 ? contract?.period : contract?.periods[periods]);
 
-  useEffect(()=>{
+  useEffect(() => {
     setPeriod(periods == 0 ? contract?.period : contract?.periods[periods])
-  },[periods])
+  }, [periods])
 
   const handlePeriodTabChange = (event, newValue) => {
     setPeriods(newValue);
