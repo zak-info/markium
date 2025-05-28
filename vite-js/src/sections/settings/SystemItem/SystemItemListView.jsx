@@ -322,16 +322,29 @@ const EnableDisableItem = ({ item, configurable_type, setTableData, data }) => {
         let color = ischkd ? "success" : "error";
         console.log("status : ", status);
         await changeItemVisibilityInSettings({ configurable_type, configurable_id: item.id, is_selected: event.target.checked, is_private: false })
-        setTableData(prev =>
-            prev?.map(i => {
-                if (i.key == item.key) {
-                    const updated = { ...i, enable: status, enabled, color, system_settings: { is_selected: event.target.checked } };
-                    console.log("Updated item: ", updated);
-                    return updated;
-                }
-                return i;
-            })
-        );
+        if (configurable_type == "maintenance_specification") {
+            setTableData(prev =>
+                prev?.map(i => {
+                    if (i.id == item.id) {
+                        const updated = { ...i, enable: status, enabled, color, system_settings: { is_selected: event.target.checked } };
+                        console.log("Updated item: ", updated);
+                        return updated;
+                    }
+                    return i;
+                })
+            );
+        } else {
+            setTableData(prev =>
+                prev?.map(i => {
+                    if (i.key == item.key) {
+                        const updated = { ...i, enable: status, enabled, color, system_settings: { is_selected: event.target.checked } };
+                        console.log("Updated item: ", updated);
+                        return updated;
+                    }
+                    return i;
+                })
+            );
+        }
         setIsChecked(status == "selected")
         enqueueSnackbar(t("operation_success"), { variant: 'success' });
     };
