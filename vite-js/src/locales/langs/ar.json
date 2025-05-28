@@ -551,5 +551,7 @@
   "addNewClause":"اظافة بند جديد",
   "add":"إضافة",
   "cancelled":"ملغاة",
-  "replaced":"مستبدل"
+  "replaced":"مستبدل",
+  "preview_invoice":"عرض الفاتورة",
+  "p_paiment_date":"تاريخ الاستحقاق"
 }

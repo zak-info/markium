@@ -46,23 +46,23 @@ export default function TableHeadCustom({
           </TableCell>
         )}
 
-        {headLabel.map((headCell) => (
+        {headLabel?.map((headCell) => (
           <TableCell
-            key={headCell.id}
-            align={headCell.align || 'left'}
-            sortDirection={orderBy === headCell.id ? order : false}
-            sx={{ width: headCell.width, minWidth: headCell.minWidth }}
+            key={headCell?.id}
+            align={headCell?.align || 'left'}
+            sortDirection={orderBy === headCell?.id ? order : false}
+            sx={{ width: headCell?.width, minWidth: headCell?.minWidth }}
           >
             {onSort ? (
               <TableSortLabel
                 hideSortIcon
-                active={orderBy === headCell.id}
-                direction={orderBy === headCell.id ? order : 'asc'}
-                onClick={() => onSort(headCell.id)}
+                active={orderBy === headCell?.id}
+                direction={orderBy === headCell?.id ? order : 'asc'}
+                onClick={() => onSort(headCell?.id)}
               >
-                {headCell.label}
+                {headCell?.label}
 
-                {orderBy === headCell.id ? (
+                {orderBy === headCell?.id ? (
                   <Box sx={{ ...visuallyHidden }}>
                     {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
                   </Box>

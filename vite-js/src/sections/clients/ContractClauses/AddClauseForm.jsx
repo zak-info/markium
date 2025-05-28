@@ -90,7 +90,7 @@ export default function AddClauseForm({ setTableData, item, id, currentClause, c
 
 
   useEffect(() => {
-    if(currentClause.id){
+    if(currentClause?.id){
       setValue('clauseable_type', currentClause?.clauseable_type); // Set the selected car's ID to car_id
       setValue('clauseable_id', currentClause?.clauseable_id); // Set the selected car's ID to car_id
       setValue('start_date', new Date(currentClause?.start_date)); // Set the selected car's ID to car_id

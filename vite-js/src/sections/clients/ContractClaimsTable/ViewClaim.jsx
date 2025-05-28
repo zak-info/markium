@@ -57,6 +57,7 @@ import showError from 'src/utils/show_error';
 import { STORAGE_API } from 'src/config-global';
 import { SingleFilePreview } from 'src/components/upload';
 import Image from 'src/components/image';
+import { RouterLink } from 'src/routes/components';
 
 
 // ----------------------------------------------------------------------
@@ -131,15 +132,15 @@ export function ViewClaim({ claim }) {
           >
             {/* <RHFUpload name="invoice" lable={"Upload Invoice File"} placeholder={"upload_invoice_file"} /> */}
             {/* <SingleFilePreview imgUrl={STORAGE_API+"/"+claim?.invoice_path} /> */}
-            <Image
+            {/* <Image
               alt="file preview"
-              src={STORAGE_API+"/"+claim?.invoice_path}
+              src={STORAGE_API + "/" + claim?.invoice_path}
               sx={{
                 width: 1,
                 height: 1,
                 borderRadius: 1,
               }}
-            />
+            /> */}
             <Stack direction="row" spacing={2}>
               <Iconify icon="mingcute:coin-fill" width={24} />
               <Box sx={{ typography: 'body2' }}>
@@ -150,43 +151,7 @@ export function ViewClaim({ claim }) {
               </Box>
             </Stack>
             <Stack direction="row" spacing={2}>
-              <Iconify icon="mingcute:coin-fill" width={24} />
-              <Box sx={{ typography: 'body2' }}>
-                {t(`discount`) + "  "}
-                <Link variant="subtitle2" color="inherit">
-                  {claim?.discount}
-                </Link>
-              </Box>
-            </Stack>
-            <Stack direction="row" spacing={2}>
-              <Iconify icon="material-symbols:calendar-clock" width={24} />
-              <Box sx={{ typography: 'body2' }}>
-                {t(`paiment_date`) + "  "}
-                <Link variant="subtitle2" color="inherit">
-                  {claim?.payment_date}
-                </Link>
-              </Box>
-            </Stack>
-            <Stack direction="row" spacing={2}>
               <Iconify icon="material-symbols:stylus-note" width={24} />
-              <Box sx={{ typography: 'body2' }}>
-                {t(`note`) + "  "}
-                <Link variant="subtitle2" color="inherit">
-                  {claim?.note || "--"}
-                </Link>
-              </Box>
-            </Stack>
-            <Stack direction="row" spacing={2}>
-              <Iconify icon="material-symbols:stylus-note" width={24} />
-              <Box sx={{ typography: 'body2' }}>
-                {t(`status_description`) + " :  "}
-                <Link variant="subtitle2" color="inherit">
-                  {claim?.status_description || "--"}
-                </Link>
-              </Box>
-            </Stack>
-            <Stack direction="row" spacing={2}>
-              <Iconify icon="mingcute:coin-fill" width={24} />
               <Box sx={{ typography: 'body2' }}>
                 {t(`status`) + " :  "}
                 <Link variant="subtitle2" color="inherit">
@@ -194,15 +159,80 @@ export function ViewClaim({ claim }) {
                 </Link>
               </Box>
             </Stack>
+            {
+              claim?.status?.key == "due_claim" ?
+                <Stack direction="row" spacing={2}>
+                  <Iconify icon="material-symbols:stylus-note" width={24} />
+                  <Box sx={{ typography: 'body2' }}>
+                    {t(`status_description`) + " :  "}
+                    <Link variant="subtitle2" color="inherit">
+                      {claim?.status_description || "--"}
+                    </Link>
+                  </Box>
+                </Stack>
+                :
+                null
+            }
+            {
+              claim?.status?.key != "due_claim" ?
+                <Stack direction="row" spacing={2}>
+                  <Iconify icon="mingcute:coin-fill" width={24} />
+                  <Box sx={{ typography: 'body2' }}>
+                    {t(`discount`) + "  "}
+                    <Link variant="subtitle2" color="inherit">
+                      {claim?.discount}
+                    </Link>
+                  </Box>
+                </Stack>
+                :
+                null
+            }
+            <Stack direction="row" spacing={2}>
+              <Iconify icon="material-symbols:calendar-clock" width={24} />
+              <Box sx={{ typography: 'body2' }}>
+                {(claim?.status?.key != "due_claim" ? t(`paiment_date`) : t("p_paiment_date")) + "  "}
+                <Link variant="subtitle2" color="inherit">
+                  {claim?.payment_date}
+                </Link>
+              </Box>
+            </Stack>
+            {
+              claim?.status?.key != "due_claim" ?
+                <Stack direction="row" spacing={2}>
+                  <Iconify icon="material-symbols:stylus-note" width={24} />
+                  <Box sx={{ typography: 'body2' }}>
+                    {t(`note`) + "  "}
+                    <Link variant="subtitle2" color="inherit">
+                      {claim?.note || "--"}
+                    </Link>
+                  </Box>
+                </Stack>
+                :
+                null
+            }
+
+
+
 
           </Box>
-          {/* <Stack alignItems="flex-end" sx={{ mt: 3 }}>
-            <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-              {t("submit")}
-            </LoadingButton>
-          </Stack> */}
+          {
+            claim?.status?.key != "due_claim" ?
+              <Stack alignItems="flex-end" sx={{ mt: 3 }}>
+                <Button
+                  component={RouterLink}
+                  href={STORAGE_API + "/" + claim?.invoice_path}
+                  target='_blanc'
+                  variant="contained"
+                  startIcon={<Iconify icon="material-symbols:search-rounded" />}
+                >
+                  {t('preview_invoice')}
+                </Button>
+              </Stack>
+              :
+              null
+          }
         </Grid>
-      </Grid>
+      </Grid >
       {/* </FormProvider> */}
     </>
   )

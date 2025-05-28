@@ -2,7 +2,7 @@ import { Box, Button, Card, FormControlLabel, FormGroup, IconButton, MenuItem, S
 import { t } from 'i18next';
 import { set } from 'lodash'; // [keep for later use]
 import { enqueueSnackbar } from 'notistack';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { changeItemVisibilityInSettings, useGetMainSpecs } from 'src/api/settings'; // [keep for later use]
 import { createUser, deleteUser, useRoles, useUsers } from 'src/api/users';
 import { useValues } from 'src/api/utils';
@@ -26,29 +26,83 @@ import { ViewClaim } from './ViewClaim';
 // ----------------------------------------------------------------------
 
 
-export default function ContractClaimsListView({ data }) {
-    // const { users } = useUsers();
-    // const users = [
-    //     { id: 1, name: "zaki", username: "zak-info", email: "zaki@gmail.com", phone_number: "075912431", role: "super admin" }
-    // ]
+export default function ContractClaimsListView({ data, with_contracts }) {
     const [tableData, setTableData] = useState([]);
     const [dataFiltered, setDataFiltered] = useState([]);
 
-    let TABLE_HEAD = [
-        // { id: 'clausable', label: t('clause'), type: "two-lines-link", first: (row) => row?.clausable?.first, second: (row) => row?.clausable?.second, link: (row) => { return row?.clausable_type == "car" ? paths.dashboard.vehicle.details(row?.id) : paths.dashboard.drivers.details(row?.id) }, width: 140 },
-        { id: 'amount', label: t('amount'), type: "text", width: 140 },
-        { id: 'date', label: t('date'), type: "text", width: 140 },
-        { id: 'payment_date', label: t('paiment_date'), type: "text", width: 140 },
-        { id: 'gstatus', label: t('status'), type: "label", color: "error", width: 140 },
-        { id: 'actions', label: t('actions'), type: "threeDots", component: (item) => <ElementActions item={item} setDataFiltered={setDataFiltered} />, width: 400, align: "right" },
-    ]
+    // let TABLE_HEAD = [
+    //     { id: 'ref', label: t('ref'), type: "two-lines-link", first: (row) => row?.contract, second: (row) => { }, link: (row) => { return paths.dashboard.clients.contractsDetails(row.contract_id) }, width: 140 },
+    //     { id: 'client', label: t('client'), type: "two-lines-link", first: (row) => row?.client, second: (row) => { }, link: (row) => { return paths.dashboard.clients.details(row.client_id) }, width: 200 },
+    //     { id: 'amount', label: t('amount'), type: "text", width: 140 },
+    //     { id: 'date', label: t('date'), type: "text", width: 140 },
+    //     { id: 'payment_date', label: t('paiment_date'), type: "text", width: 140 },
+    //     { id: 'gstatus', label: t('status'), type: "label", color: "error", width: 140 },
+    //     { id: 'actions', label: t('actions'), type: "threeDots", component: (item) => <ElementActions item={item} setDataFiltered={setDataFiltered} />, width: 400, align: "right" },
+    // ]
+    const TABLE_HEAD = useMemo(() => {
+        if (with_contracts) {
+            return [
+                {
+                    id: 'ref',
+                    label: t('ref'),
+                    type: 'two-lines-link',
+                    first: (row) => row?.contract,
+                    second: () => { },
+                    link: (row) => paths.dashboard.clients.contractsDetails(row.contract_id),
+                    width: 140,
+                },
+                {
+                    id: 'client',
+                    label: t('client'),
+                    type: 'two-lines-link',
+                    first: (row) => row?.client,
+                    second: () => { },
+                    link: (row) => paths.dashboard.clients.details(row.client_id),
+                    width: 200,
+                },
+                { id: 'amount', label: t('amount'), type: 'text', width: 140 },
+                { id: 'date', label: t('date'), type: 'text', width: 140 },
+                { id: 'payment_date', label: t('paiment_date'), type: 'text', width: 140 },
+                { id: 'gstatus', label: t('status'), type: 'label', color: 'error', width: 140 },
+                {
+                    id: 'actions',
+                    label: t('actions'),
+                    type: 'threeDots',
+                    component: (item) => <ElementActions item={item} setDataFiltered={setDataFiltered} />,
+                    width: 400,
+                    align: 'right',
+                },
+            ];
+        } else {
+            return [
+                { id: 'amount', label: t('amount'), type: 'text', width: 140 },
+                { id: 'date', label: t('date'), type: 'text', width: 140 },
+                { id: 'payment_date', label: t('paiment_date'), type: 'text', width: 140 },
+                { id: 'gstatus', label: t('status'), type: 'label', color: 'error', width: 140 },
+                {
+                    id: 'actions',
+                    label: t('actions'),
+                    type: 'threeDots',
+                    component: (item) => <ElementActions item={item} setDataFiltered={setDataFiltered} />,
+                    width: 400,
+                    align: 'right',
+                },
+            ];
+        }
+    }, [with_contracts, setDataFiltered]);
+
+
+
+
+
+
 
 
     const defaultFilters = { status: 'all', name: "" };
     const items = [
         { key: 'all', label: t('all'), match: () => true },
-        { key: 'paid_claim', label: t('paid_claim'), match: (item) => item?.gstatus == "paid_claim", color: 'primary' },
-        { key: 'due_claim', label: t('due_claim'), match: (item) => item?.gstatus == "due_claim", color: 'warning' },
+        { key: 'paid_claim', label: t('paid_claim'), match: (item) => item?.status?.key == "paid_claim", color: 'primary' },
+        { key: 'due_claim', label: t('due_claim'), match: (item) => item?.status?.key == "due_claim", color: 'warning' },
         // { key: 'replaced', label: t('replaced'), match: (item) => item?.gstatus == "replaced", color: 'secondary' },
     ];
     const filterFunction = (data, filters) => {
@@ -59,7 +113,7 @@ export default function ContractClaimsListView({ data }) {
     }
 
     const RformulateTable = (data = []) => {
-        return data.map(item => {
+        return data?.map(item => {
             // let gstatus = "under_rent";
             // let statusLabel = t("under_rent");
             let color = "secondary";
@@ -153,12 +207,17 @@ const ElementActions = ({ item, setDataFiltered }) => {
                         {t('edit')}
                     </MenuItem>
                 </PermissionsContext> */}
-                <PermissionsContext action={"update.claim"} >
-                    <MenuItem disabled={item?.status?.key == "paid_claim"} onClick={() => { replace.onTrue(); popover.onClose() }} >
-                        <Iconify icon="duo-icons:folder-open" />
-                        {t('close_claim')}
-                    </MenuItem>
-                </PermissionsContext>
+                {
+                    item?.status?.key != "paid_claim" ?
+                        <PermissionsContext action={"update.claim"} >
+                            <MenuItem disabled={item?.status?.key == "paid_claim"} onClick={() => { replace.onTrue(); popover.onClose() }} >
+                                <Iconify icon="duo-icons:folder-open" />
+                                {t('close_claim')}
+                            </MenuItem>
+                        </PermissionsContext>
+                        :
+                        null
+                }
                 <PermissionsContext action={"delete.claim"} >
                     <MenuItem onClick={() => { confirm.onTrue(); popover.onClose() }} sx={{ color: 'error.main' }} >
                         <Iconify icon="solar:trash-bin-trash-bold" />

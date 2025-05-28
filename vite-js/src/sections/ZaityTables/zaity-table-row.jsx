@@ -27,7 +27,7 @@ export default function OrderTableRow({ TABLE_HEAD, row, unit, pv, currentLang, 
         <Checkbox checked={selected} onClick={onSelectRow} />
       </TableCell>
 
-      {TABLE_HEAD.map((head_row, index) => (
+      {TABLE_HEAD?.map((head_row, index) => (
         <TableCell key={index}>
           {renderCell(head_row, row, popover, router)}
         </TableCell>
@@ -65,16 +65,16 @@ function renderCell(head_row, row, popover, router) {
     },
     [router]
   );
-  switch (head_row.type) {
+  switch (head_row?.type) {
     case 'text':
-      return row?.[head_row.id] || '--';
+      return row?.[head_row?.id] || '--';
     case 'long_text':
-      return <ExpandableText text={row?.[head_row.id]} length={head_row?.length} /> || '--';
+      return <ExpandableText text={row?.[head_row?.id]} length={head_row?.length} /> || '--';
 
     case 'two-lines':
       return (
         <ListItemText
-          primary={row?.[head_row.id]}
+          primary={row?.[head_row?.id]}
           secondary={row?.second_item}
           primaryTypographyProps={{ typography: 'body2' }}
           secondaryTypographyProps={{
@@ -114,15 +114,15 @@ function renderCell(head_row, row, popover, router) {
       );
 
     case 'date':
-      return fDate(row?.[head_row.id]);
+      return fDate(row?.[head_row?.id]);
 
     case 'time':
-      return fTime(row?.[head_row.id]);
+      return fTime(row?.[head_row?.id]);
 
     case 'link':
       return (
-        <MuiLink href={row?.[head_row.id]} color="primary" underline="hover">
-          {row?.[head_row.id]}
+        <MuiLink href={row?.[head_row?.id]} color="primary" underline="hover">
+          {row?.[head_row?.id]}
         </MuiLink>
       );
     case "threeDots":
@@ -139,6 +139,6 @@ function renderCell(head_row, row, popover, router) {
       );
 
     default:
-      return row?.[head_row.id] ?? '--';
+      return row?.[head_row?.id] ?? '--';
   }
 }

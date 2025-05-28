@@ -52,7 +52,7 @@ export default function ProfileHome({ info, posts, contract, client, location })
       ...item,
       payment_date: fDate(new Date(item?.paiment_date)),
       date: fDate(new Date(item?.created_at)),
-      gstatus: item?.status?.translations[0]?.name
+      gstatus: item?.status?.translations[0]?.name,
     }))
   }
 
@@ -94,6 +94,8 @@ export default function ProfileHome({ info, posts, contract, client, location })
   useEffect(() => {
     setClausesTableData(formulateClauses(clauses))
   }, [clauses])
+
+  
 
 
 
@@ -385,7 +387,7 @@ export default function ProfileHome({ info, posts, contract, client, location })
                     { id: '' },
                   ]}
                 /> */}
-                <ContractClaimsListView data={tableData} contract_id={contract?.id} />
+                <ContractClaimsListView data={tableData} with_contracts={false} contract_id={contract?.id} />
               </Grid>
               : null
       }
