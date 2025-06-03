@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
 import {
   Box,
@@ -42,7 +42,7 @@ export default function AppNewInvoice3({
   useEffect(() => {
     setOriginalTableData(tableData);
   }, []);
-  
+
   // const hasChanges = () => {
   //   return JSON.stringify(originalTableData) !== JSON.stringify(tableData);
   // };
@@ -125,13 +125,7 @@ export default function AppNewInvoice3({
       setChangeSin(false)
       setIsChanging(false)
     } catch (error) {
-      console.error(error);
-      // enqueueSnackbar(error?.message ? error?.message : "Somthing Went Wrong", { variant: 'error' });
-      Object.values(error?.data).forEach(array => {
-        array.forEach(text => {
-          enqueueSnackbar(text, { variant: 'error' });
-        });
-      });
+      showError(error)
 
     }
     setPostloader(false)
@@ -153,6 +147,7 @@ export default function AppNewInvoice3({
               {tableData?.map((row) => (
                 <AppNewInvoiceRow
                   key={row.id}
+                  setTableData={setTableData}
                   tableLabels={tableLabels}
                   row={row}
                   editing={editing}
@@ -165,7 +160,6 @@ export default function AppNewInvoice3({
             </TableBody>
           </Table>
         </Scrollbar>
-
         {
           !addProcess ?
             <UserNewEditForm setAddProcess={setAddProcess} maintenance_id={maintenance_id} setTableData={setTableData} />
@@ -208,19 +202,44 @@ AppNewInvoice3.propTypes = {
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { Select } from "@mui/material";
 import Iconify from "src/components/iconify";
-import { addNewMaintenanceClause, EditMaintenanceClause } from "src/api/clauses";
+import { addNewMaintenanceClause, deleteMaintenanceClause, EditMaintenanceClause } from "src/api/clauses";
 import { LoadingButton } from "@mui/lab";
 import { enqueueSnackbar } from "notistack";
 import UserNewEditForm from "../clause/user-new-edit-form";
 import ExpandableText from "./ExpandableText";
+import showError from "src/utils/show_error";
+import { createMaintenance } from "src/api/maintainance";
+import { ConfirmDialog } from "src/components/custom-dialog";
+import { useBoolean } from "src/hooks/use-boolean";
 
-function AppNewInvoiceRow({ row, tableLabels, editing, handleEdit, handleChange, handleBlur }) {
+function AppNewInvoiceRow({ row, setTableData, tableLabels, editing, handleEdit, handleChange, handleBlur }) {
   const popover = usePopover();
+  const confirm = useBoolean();
+  // const loading = useBoolean(false);
+  const [loading,setLoading] = useState(false);
+  // useEffect(() => {
+  //   loading.onFalse()
+  // }, [])
 
-  const handleDelete = () => {
-    popover.onClose();
-    console.info("DELETE", row.id);
-  };
+  const handleDelete = useCallback(
+    async (id) => {
+      try {
+        // loading.onTrue()
+        setLoading(true)
+        await deleteMaintenanceClause(row?.id)
+        setTableData(prev => prev.filter(i => i.id != id));
+        confirm.onFalse();
+        setLoading(false)
+        // loading.onFalse()
+        enqueueSnackbar(t('operation_success'));
+        console.info("DELETE", row.id);
+      } catch (error) {
+        showError(error)
+      }
+    },
+    [enqueueSnackbar]
+  );
+
 
   return (
     <>
@@ -283,11 +302,29 @@ function AppNewInvoiceRow({ row, tableLabels, editing, handleEdit, handleChange,
 
       <CustomPopover open={popover.open} onClose={popover.onClose} arrow="right-top" sx={{ width: 160 }}>
         <Divider sx={{ borderStyle: "dashed" }} />
-        <MenuItem onClick={handleDelete} sx={{ color: "error.main" }}>
+        <MenuItem onClick={() => { confirm.onTrue(); popover.onClose() }} sx={{ color: "error.main" }}>
           <Iconify icon="solar:trash-bin-trash-bold" />
-          Delete
+          {t("delete")}
         </MenuItem>
       </CustomPopover>
+      <ConfirmDialog
+        open={confirm.value}
+        onClose={confirm.onFalse}
+        title={t('delete')}
+        content={t('deleteConfirm')}
+        action={
+          <LoadingButton
+            loading={loading}
+            variant="contained"
+            color="error"
+            onClick={() => {
+              handleDelete(row?.id);
+            }}
+          >
+            {t('delete')}
+          </LoadingButton>
+        }
+      />
     </>
   );
 }

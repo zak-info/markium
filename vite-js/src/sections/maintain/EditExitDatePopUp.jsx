@@ -23,7 +23,7 @@ const EditExitDatePopUp = ({ currentMentainance }) => {
       <ContentDialog
         open={completed.value}
         onClose={completed.onFalse}
-        title="Complete"
+        title={t("exit_date")}
         content={
           <div>
             {/* // <MarkAsCompletedForm maintenanceId={row?.id} close={() => completed?.onFalse()} /> */}

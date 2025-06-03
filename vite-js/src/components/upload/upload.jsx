@@ -13,6 +13,7 @@ import RejectionFiles from './errors-rejection-files';
 import { useState, useEffect } from 'react';
 import { t } from 'i18next';
 import { FormHelperText } from '@mui/material';
+import { STORAGE_API } from 'src/config-global';
 
 export default function Upload({
   disabled,
@@ -24,6 +25,7 @@ export default function Upload({
   label,
   file,
   files,
+  oldFileUrl,
   onChange,
   onDelete,
   onRemove,
@@ -55,7 +57,8 @@ export default function Upload({
     setPreviewFiles(multiple ? files || [] : file || null);
   }, [files, file, multiple]);
 
-  const hasFile = !!previewFiles && !multiple;
+  const hasFile = (!!previewFiles && !multiple) || (!!oldFileUrl && !multiple);
+
   const hasFiles = multiple && previewFiles.length > 0;
   const hasError = isDragReject || !!error;
 
@@ -87,8 +90,18 @@ export default function Upload({
       >
         <input {...getInputProps()} name={name} accept={accept} />
 
+        {/* <SingleFilePreview imgUrl={URL.createObjectURL(previewFiles)} filename={previewFiles.name} /> */}
         {hasFile ? (
-          <SingleFilePreview imgUrl={URL.createObjectURL(previewFiles)} filename={previewFiles.name} />
+          <SingleFilePreview
+            imgUrl={
+              previewFiles
+                ? URL.createObjectURL(previewFiles)
+                : STORAGE_API+"/"+oldFileUrl
+            }
+            filename={
+              previewFiles?.name || oldFileUrl?.split('/').pop()
+            }
+          />
         ) : (
           <Stack spacing={3} alignItems="center" justifyContent="center">
             <Typography variant="h6">{label ? label : t(placeholder)}</Typography>
@@ -125,7 +138,7 @@ export default function Upload({
 
       {hasFiles && (
         <Box sx={{ my: 3 }}>
-          <MultiFilePreview files={previewFiles} onRemove={(file)=>setPreviewFiles(previewFiles.filter((f) => f !== file))} />
+          <MultiFilePreview files={previewFiles} onRemove={(file) => setPreviewFiles(previewFiles.filter((f) => f !== file))} />
         </Box>
       )}
 

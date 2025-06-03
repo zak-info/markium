@@ -24,7 +24,7 @@ import Iconify from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import { useLocales, useTranslate } from 'src/locales';
-import { Card, Link } from '@mui/material';
+import { Card, FormHelperText, Link } from '@mui/material';
 
 import * as Yup from 'yup';
 import { useMemo, useCallback } from 'react';
@@ -43,10 +43,11 @@ import FormProvider, { RHFTextField, RHFUpload, } from 'src/components/hook-form
 
 import { markMaintenanceAsCompeleted } from 'src/api/maintainance';
 import { updateCarODO } from 'src/api/car';
+import showError from 'src/utils/show_error';
 
 
 
-export function EditODO({ odo, maintenanceId, close, idCar }) {
+export function EditODO({ odo, maintenanceId, close, idCar,setCarDetails }) {
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslate();
 
@@ -77,15 +78,12 @@ export function EditODO({ odo, maintenanceId, close, idCar }) {
   const onSubmit = handleSubmit(async (data) => {
     try {
       const response = await updateCarODO(idCar, data);
-      enqueueSnackbar('Update success!', { variant: 'success' });
+      setCarDetails(prev => ({...prev,odometer:data?.odometer}))
+      enqueueSnackbar(t("operation_success"), { variant: 'success' });
       close();
     } catch (error) {
       console.error(error);
-      Object.values(error?.data || {}).forEach(array => {
-        array.forEach(text => {
-          enqueueSnackbar(text, { variant: 'error' });
-        });
-      });
+      showError(error)
     }
   });
 
@@ -97,11 +95,14 @@ export function EditODO({ odo, maintenanceId, close, idCar }) {
     <FormProvider methods={methods} onSubmit={onSubmit}>
       <Grid container spacing={3}>
         <Grid xs={12} md={12} sx={{ mt: 3 }}>
-          <Stack direction="row" sx={{ px: '10px' }}>
-            <Box sx={{ width: 180, color: 'text.secondary' }}>{t('current_odometer')+" :"}</Box>
-            <Box sx={{ typography: 'subtitle2' }}>{odo}</Box>
+          <Stack direction="row" mb={2} sx={{ px: '10px' }}>
+            <Box sx={{ width: 150, color: 'text.secondary' }}>{t('current_odometer') + " :"}</Box>
+            <Box sx={{ typography: 'subtitle2' }}>{odo} {t("km")}</Box>
           </Stack>
-          <RHFTextField required type="number" name="odometer" label={t('odometer')} />
+          <RHFTextField required type="number" name="odometer" label={t('new_value')} />
+          <FormHelperText id="component-helper-text">
+            {t("must_be_grater_then_old")}
+          </FormHelperText>
           <Stack alignItems="flex-end" sx={{ mt: 3 }}>
             <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
               {t("submit")}

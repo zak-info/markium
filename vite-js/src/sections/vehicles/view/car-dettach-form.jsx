@@ -79,7 +79,6 @@ export default function CarDettachForm({ car_id,driver_id, currentClause }) {
     } catch (error) {
       console.error(error);
       enqueueSnackbar(error?.message ? error?.message : "Somthing Went Wrong", { variant: 'error' });
-
     }
   });
 

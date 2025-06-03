@@ -46,6 +46,7 @@ import SimpleAutocomplete from 'src/components/hook-form/rhf-simple-autocomplete
 import FileThumbnail from 'src/components/file-thumbnail';
 import FlexibleAutocomplete from 'src/components/hook-form/rhf-scalable-autocomplete';
 import { useGetClients } from 'src/api/client';
+import showError from 'src/utils/show_error';
 
 // ----------------------------------------------------------------------
 
@@ -79,6 +80,7 @@ export default function UserNewEditForm({ currentDocument }) {
       // document_duration_days: currentDocument?.document_duration_days || '',
       expiry_date: currentDocument?.expiry_date || new Date(),
       release_date: currentDocument?.release_date || new Date(),
+      note: currentDocument?.note || "",
     }),
     [currentDocument]
   );
@@ -107,6 +109,9 @@ export default function UserNewEditForm({ currentDocument }) {
   const onSubmit = handleSubmit(async (data) => {
     try {
       const formData = new FormData();
+      if(currentDocument?.id){
+        formData.append("file", data.attachment);
+      }
       formData.append("attachment", data.attachment);
       formData.append("invoice", data.invoice);
       formData.append("release_date", format(new Date(data.release_date), 'yyyy-MM-dd'));
@@ -126,12 +131,7 @@ export default function UserNewEditForm({ currentDocument }) {
       router.push(paths.dashboard.documents.root);
       // reset();
     } catch (error) {
-      console.error(error);
-      Object.values(error?.data).forEach(array => {
-        array.forEach(text => {
-          enqueueSnackbar(text, { variant: 'error' });
-        });
-      });
+      showError(error);
     }
   });
 
@@ -151,7 +151,7 @@ export default function UserNewEditForm({ currentDocument }) {
             >
 
 
-              <RHFSelect required name="attachable_type" label={t('attachment_type')}>
+              <RHFSelect required name="attachable_type" label={t('attachable_type')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
                 {[{ name: "car", lable: { ar: "سيارة", en: "car" }, id: 1 }, { name: "driver", lable: { ar: "سائق", en: "driver" }, id: 2 }, { name: "client", lable: { ar: "عميل", en: "client" }, id: 3 }, { name: "other", lable: { ar: "اخرى", en: "other" }, id: 4 }]?.map((type) => (
                   <MenuItem key={type?.id} value={type.name}>
@@ -174,7 +174,7 @@ export default function UserNewEditForm({ currentDocument }) {
                         </MenuItem>
                       </RHFSelect>
               }
-              
+
               <FlexibleAutocomplete
                 name="attachment_name_id"
                 label={t('document_name')}
@@ -212,13 +212,13 @@ export default function UserNewEditForm({ currentDocument }) {
               />
               <RHFTextField name="note" label={t('note')} />
               {/* <p style={{ color: "gray" }}>.</p> */}
-              <RHFUpload name="attachment" placeholder={"upload_document"} lable={t("upload_document")}  accept={".jpg,.jpeg,.png,.pdf,.doc,.docx"} />
-              <RHFUpload name="invoice" placeholder={"upload_invoice_file"} lable={t("upload_invoice_file")} accept={".jpg,.jpeg,.png,.pdf,.doc,.docx"} />
+              <RHFUpload name="attachment" placeholder={"upload_document"} lable={t("upload_document")} accept={".jpg,.jpeg,.png,.pdf,.doc,.docx"} oldFileUrl={currentDocument?.attachment_path}  />
+              <RHFUpload name="invoice" placeholder={"upload_invoice_file"} lable={t("upload_invoice_file")} accept={".jpg,.jpeg,.png,.pdf,.doc,.docx"} oldFileUrl={currentDocument?.invoice_path} />
             </Box>
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                {!currentDocument ? t('addNewDocument') : t('save_changes')}
+                {!currentDocument ? t('addNewDocument') : t('save_change')}
               </LoadingButton>
             </Stack>
           </Card>

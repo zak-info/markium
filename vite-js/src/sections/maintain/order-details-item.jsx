@@ -71,7 +71,7 @@ export default function OrderDetailsItems({
       sx={{ mb: 3, typography: 'body2' }}
       divider={<Divider />}
     >
-      <Stack spacing={1} sx={{  typography: 'body2' }}>
+      <Stack spacing={1} sx={{ typography: 'body2' }}>
         <Stack direction="row">
           <Box sx={{ width: 160, color: 'text.secondary' }}>{t('entryDate')}</Box>
           <Box sx={{ typography: 'subtitle2' }}>{fDate(currentMentainance?.entry_date)}</Box>
@@ -140,34 +140,36 @@ export default function OrderDetailsItems({
             borderBottom: (theme) => `dashed 2px ${theme.palette.background.neutral}`,
           }}
         >
-          <Box
-            onClick={() => handleViewCar(currentCar?.id)}
-            sx={{
-              cursor: 'pointer',
-              '&:hover': {
-                textDecoration: 'underline',
-              },
-            }}
-          >
-            <ListItemText
-              primary={currentCar?.model?.translations?.name + " - (" + currentCar?.model?.company?.translations?.name + ")"}
-              secondary={currentCar?.plat_number}
-              primaryTypographyProps={{
-                typography: 'body2',
+          <Box>
+            <Box
+              onClick={() => handleViewCar(currentCar?.id)}
+              sx={{
+                cursor: 'pointer',
+                '&:hover': {
+                  textDecoration: 'underline',
+                },
               }}
-              secondaryTypographyProps={{
-                component: 'span',
-                color: 'text.disabled',
-                mt: 0.5,
-              }}
-            />
+            >
+              <ListItemText
+                primary={currentCar?.model?.translations?.name + " - (" + currentCar?.model?.company?.translations?.name + ")"}
+                secondary={currentCar?.plat_number}
+                primaryTypographyProps={{
+                  typography: 'body2',
+                }}
+                secondaryTypographyProps={{
+                  component: 'span',
+                  color: 'text.disabled',
+                  mt: 0.5,
+                }}
+              />
+            </Box>
             <Stack direction="row">
               <Box sx={{ width: 120, color: 'text.secondary' }}>{t('contract')}</Box>
               <Box sx={{ typography: 'subtitle2' }}>{currentMentainance?.contract?.ref || "--"}</Box>
             </Stack>
             <Stack direction="row" >
               <Box sx={{ width: 120, color: 'text.secondary' }}>{t('driver')}</Box>
-              <Box sx={{ typography: 'subtitle2' }}>{driver?.name ? <Link onClick={()=>{handleViewDriver(driver?.id)}} href={""}>{driver?.name} </Link>:"--"} </Box>
+              <Box sx={{ typography: 'subtitle2' }}>{driver?.name ? <Link onClick={() => { handleViewDriver(driver?.id) }} href={""}>{driver?.name} </Link> : "--"} </Box>
             </Stack>
           </Box>
           <Divider orientation="vertical" flexItem />
@@ -196,7 +198,7 @@ export default function OrderDetailsItems({
 
           </Stack>
         </Stack>
-        {
+        {/* {
           driver ?
             <Stack
               direction="row"
@@ -232,7 +234,7 @@ export default function OrderDetailsItems({
             </Stack>
             :
             null
-        }
+        } */}
         {/* <Stack
             direction="row"
             alignItems="center"

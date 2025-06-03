@@ -19,6 +19,13 @@ import { useBoolean } from 'src/hooks/use-boolean';
 import ContentDialog from 'src/components/custom-dialog/content-dialog';
 import { EditODO } from './EditODO';
 import PermissionsContext from 'src/auth/context/permissions/permissions-context';
+import CarAttachForm from './view/car-attach-form';
+import CarDettachForm from './view/car-dettach-form';
+import { ConfirmDialog } from 'src/components/custom-dialog';
+import { detacheCarToDriver } from 'src/api/car';
+import showError from 'src/utils/show_error';
+import { useRouter } from 'src/routes/hooks';
+import { enqueueSnackbar } from 'notistack';
 
 // ----------------------------------------------------------------------
 
@@ -28,15 +35,30 @@ export default function OrderDetailsToolbar({
   backLink,
   createdAt,
   carDetails,
+  setCarDetails,
   orderNumber,
   statusOptions,
   onChangeStatus,
 }) {
   const popover = usePopover();
-
+  const router = useRouter()
   const { t } = useTranslation();
   const confirm = useBoolean();
   const completed = useBoolean();
+  const attache = useBoolean();
+  const dettache = useBoolean();
+
+
+  const dettacheDriver = async () => {
+    try {
+      await detacheCarToDriver({ car_id: carDetails?.id, driver_id: carDetails?.driver?.id });
+      enqueueSnackbar(t("operation_success"));
+      router.reload();
+    } catch (error) {
+      showError(error)
+    }
+  }
+
 
   return (
     <>
@@ -85,15 +107,26 @@ export default function OrderDetailsToolbar({
           alignItems="center"
           justifyContent="flex-end"
         >
-
-
+          <PermissionsContext action={'put.car.driver_id'}>
+            {
+              !carDetails?.driver?.id ?
+                <Button onClick={() => { attache.onTrue() }} color="inherit" variant="contained" startIcon={<Iconify icon="healthicons:truck-driver" />}>
+                  {t("attache_driver")}
+                </Button>
+                :
+                <Button onClick={() => { dettache.onTrue() }} color="inherit" variant="contained" startIcon={<Iconify icon="healthicons:truck-driver" />}>
+                  {t("dettache_driver")}
+                </Button>
+            }
+            {/* <CarDettachForm car_id={carDetails?.id} driver_id={carDetails?.driver?.id} /> */}
+          </PermissionsContext>
           <PermissionsContext action={'update.car'}>
-            <Button component={RouterLink} href={paths.dashboard.vehicle.edit(idCar)} color="inherit" variant="contained" startIcon={<Iconify icon="solar:pen-bold" />}>
+            <Button component={RouterLink} href={paths.dashboard.vehicle.edit(carDetails?.id)} color="inherit" variant="contained" startIcon={<Iconify icon="solar:pen-bold" />}>
               {t("edit")}
             </Button>
           </PermissionsContext>
           <PermissionsContext action={'put.car.odometer'}>
-            <Button onClick={() => { completed.onTrue(); popover.onClose(); }} color="inherit" variant="contained" startIcon={<Iconify icon="solar:pen-bold" />}>
+            <Button onClick={() => { completed.onTrue() }} color="inherit" variant="contained" startIcon={<Iconify icon="material-symbols:speed-rounded" />}>
               {t("odometer")}
             </Button>
           </PermissionsContext>
@@ -120,11 +153,38 @@ export default function OrderDetailsToolbar({
         ))}
       </CustomPopover>
       <ContentDialog
+        open={attache.value}
+        onClose={attache.onFalse}
+        title={t("attache_driver")}
+        content={
+          <CarAttachForm car_id={carDetails?.id} close={() => attache?.onFalse()} />
+        }
+      />
+      <ContentDialog
         open={completed.value}
         onClose={completed.onFalse}
         title={t("odometer")}
         content={
-          <EditODO odo={carDetails?.odometer} idCar={idCar} close={() => completed?.onFalse()} />
+          <EditODO setCarDetails={setCarDetails} odo={carDetails?.odometer} idCar={idCar} close={() => completed?.onFalse()} />
+        }
+      />
+
+      <ConfirmDialog
+        open={dettache.value}
+        onClose={dettache.onFalse}
+        title={t('remove')}
+        content={t('removeConfirm')}
+        action={
+          <Button
+            variant="contained"
+            color="error"
+            onClick={() => {
+              dettacheDriver();
+              dettache.onFalse();
+            }}
+          >
+            {t('remove')}
+          </Button>
         }
       />
     </>

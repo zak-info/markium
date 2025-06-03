@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
 import PropTypes from 'prop-types';
-import { useMemo, useCallback, useState } from 'react';
+import { useMemo, useCallback, useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
@@ -48,6 +48,7 @@ import { fDate } from 'src/utils/format-time';
 import { height } from '@mui/system';
 import { format } from 'date-fns';
 import showError from 'src/utils/show_error';
+import { includes } from 'lodash';
 
 // ----------------------------------------------------------------------
 
@@ -71,7 +72,10 @@ export default function ContractNewEditForm({ contract }) {
     duration: Yup.number(),
     clauseable_id: Yup.number(),
     clauseable_type: Yup.string(),
-    starting_from: Yup.string(),
+    start_date: Yup.string(),
+    end_date: Yup.string(),
+    c_start_date: Yup.string(),
+    c_end_date: Yup.string(),
     cost: Yup.number(),
     // rep_name: Yup.string(),
     // rep_contact_number: Yup.string(),
@@ -84,7 +88,10 @@ export default function ContractNewEditForm({ contract }) {
       // duration: c0ontract?.duration || 0,
       // clauseable_id: contract?.clauseable_id || '',
       // clauseable_type: contract?.clauseable_type || '',
-      starting_from: contract?.starting_from || new Date(),
+      start_date: contract?.start_date || new Date(),
+      end_date: contract?.end_date || new Date(),
+      c_start_date: contract?.c_start_date || new Date(),
+      c_end_date: contract?.c_end_date || new Date(),
       // cost: contract?.cost || 0,
       // rep_name: contract?.rep_name || '',
       // rep_contact_number: contract?.rep_contact_number || '',
@@ -108,6 +115,11 @@ export default function ContractNewEditForm({ contract }) {
 
   const values = watch();
 
+  useEffect(()=>{
+    setValue("c_start_date",values?.start_date)
+    setValue("c_end_date",values?.end_date)
+  },[values])
+
   const [checked, setChecked] = useState(false);
 
   const handleChange = (event) => {
@@ -116,12 +128,13 @@ export default function ContractNewEditForm({ contract }) {
 
   const [clauses, setClauses] = useState(contract?.clauses ? [...contract?.clauses] : [])
   const handleAddClause = () => {
-    setClauses([...clauses, { id: clauses?.length > 0 ? clauses[clauses.length - 1].id + 1 : 1, clauseable_id: values.clauseable_id, clauseable_type: values.clauseable_type, cost: values.cost, start_date: format(new Date(values.start_date), 'yyyy-MM-dd'), end_date: format(new Date(values.end_date), 'yyyy-MM-dd') }])
+    setClauses([...clauses, { id: clauses?.length > 0 ? clauses[clauses.length - 1].id + 1 : 1, clauseable_id: values.clauseable_id, clauseable_type: values.clauseable_type, cost: values.cost, start_date: format(new Date(values.c_start_date) || new Date(), 'yyyy-MM-dd'), end_date: format(new Date(values.c_end_date) || new Date(), 'yyyy-MM-dd') }])
     setValue("clauseable_id", 0)
-    setValue("clauseable_type", " ")
+    setValue("clauseable_type", values.clauseable_type)
     setValue("cost", 0)
     setValue("duration", 0)
-    setValue("starting_from", new Date())
+    setValue("start_date",values?.start_date ||  new Date())
+    setValue("end_date", values?.end_date ||  new Date())
 
   }
   const handleRemoveClause = (clauseable_id) => {
@@ -332,8 +345,8 @@ export default function ContractNewEditForm({ contract }) {
                   { id: "cost", key_to_update: "cost", label: t("cost")+" ("+t(values?.type =="monthly" ?"month":"day" )+")", editable: true, creatable: true, type: "number", width: 160 },
                   // { id: "duration", key_to_update: "duration", label: t("duration"), editable: true, creatable: true, type: "number", width: 120 },
                   // { id: "total", key_to_update: "total", label: t("total"), editable: false, creatable: false, type: "number", width: 160 },
-                  { id: "end_date", key_to_update: "end_date", label: t("end_date"), editable: true, creatable: true, type: "date", width: 180 },
                   { id: "start_date", key_to_update: "start_date", label: t("start_date"), editable: true, creatable: true, type: "date", width: 180 },
+                  { id: "end_date", key_to_update: "end_date", label: t("end_date"), editable: true, creatable: true, type: "date", width: 180 },
                 ]}
               />
             </Grid>
@@ -379,9 +392,9 @@ export default function ContractNewEditForm({ contract }) {
               </RHFSelect>
               {
                 values.clauseable_type == "car" ?
-                  <CarsAutocomplete options={car} name="clauseable_id" label={t('car')} placeholder='filter with plat_number' />
+                  <CarsAutocomplete options={car?.filter(i => i?.status?.key == "available" && !clauses?.map(ii => ii?.clauseable_type =="car")?.map(ii=>ii?.clauseable_id)?.includes(i?.id) )} name="clauseable_id" label={t('car')} placeholder={t('search_by')+" "+t("plateNumber")} />
                   : values.clauseable_type == "driver" ?
-                    <SimpleAutocomplete options={drivers} name="clauseable_id" label={t('drivers')} placeholder='filter with name' />
+                    <SimpleAutocomplete options={drivers?.filter(i => !i.is_rented)} name="clauseable_id" label={t('drivers')} placeholder={t('search_by')+" "+t("name")} />
                     :
                     <RHFSelect disabled={!values.clauseable_type} name="clauseable_id" label={t('clause')}>
                       <Divider sx={{ borderStyle: 'dashed' }} />
@@ -393,12 +406,12 @@ export default function ContractNewEditForm({ contract }) {
               {/* <RHFTextField name="duration" label={t('duration')} /> */}
               <RHFTextField name="cost" label={t('cost')} type={"number"} />
               <DatePicker
-                required
-                name="start_date"
+                // required
+                name="c_start_date"
                 label={t('start_date')}
                 format="dd/MM/yyyy"
-                value={values?.start_date || new Date()}
-                onChange={(date) => setValue('start_date', date)}
+                value={values?.c_start_date || values?.start_date || new Date()}
+                onChange={(date) => setValue('c_start_date', date || values.start_date )}
                 slotProps={{
                   textField: {
                     fullWidth: true,
@@ -406,12 +419,12 @@ export default function ContractNewEditForm({ contract }) {
                 }}
               />
               <DatePicker
-                required
-                name="end_date"
+                // required
+                name="c_end_date"
                 label={t('end_date')}
                 format="dd/MM/yyyy"
-                value={values?.end_date || new Date()}
-                onChange={(date) => setValue('end_date', date)}
+                value={values?.c_end_date || values?.end_date || new Date()}
+                onChange={(date) => setValue('c_end_date', date || values?.end_date )}
                 slotProps={{
                   textField: {
                     fullWidth: true,
@@ -420,9 +433,9 @@ export default function ContractNewEditForm({ contract }) {
               />
             </Box>
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>
-              <LoadingButton type="button" onClick={handleAddClause} variant="contained" loading={false}>
+              <Button type="button" onClick={handleAddClause} variant="contained" >
                 {t("addClause")}
-              </LoadingButton>
+              </Button>
             </Stack>
 
             {/* </div> */}
@@ -430,7 +443,7 @@ export default function ContractNewEditForm({ contract }) {
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                {!contract ? t('addNewContract') : t('saveChange')}
+                {!contract.id ? t('addNewContract') : t('saveChange')}
               </LoadingButton>
             </Stack>
 

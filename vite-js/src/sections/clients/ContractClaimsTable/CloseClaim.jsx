@@ -54,6 +54,7 @@ import { markClaimAsPaid } from 'src/api/claim';
 import { useRouter } from 'src/routes/hooks';
 import { paths } from 'src/routes/paths';
 import showError from 'src/utils/show_error';
+import { t } from 'i18next';
 
 
 // ----------------------------------------------------------------------
@@ -62,7 +63,7 @@ import showError from 'src/utils/show_error';
 
 export function CloseClaim({ claim_id, close, contract_id, setTableData }) {
   const { enqueueSnackbar } = useSnackbar();
-  const { t } = useTranslate();
+  // const { t } = useTranslate();
   const router = useRouter();
   const NewUserSchema = Yup.object().shape({
     invoice: Yup.mixed().nullable(),
@@ -116,7 +117,7 @@ export function CloseClaim({ claim_id, close, contract_id, setTableData }) {
       console.log("formData : ",formData);
       const response = await markClaimAsPaid(claim_id, formData);
       enqueueSnackbar(t("operation_success"), { variant: 'success' });
-      setTableData(prev => prev.map(item => item.id !== claim_id ? item : { ...item, status: { translations: [{ name: t("paid") }] } }));
+      setTableData(prev => prev.map(item => item.id !== claim_id ? item : { ...item, gstatus:t("paid_claim"),color:"success",status: { key:"paid_claim",translations: [{ name: t("paid_claim") }] } }));
       close();
       //  router.push(paths.dashboard.clients.contractsDetails(contract_id));
     } catch (error) {

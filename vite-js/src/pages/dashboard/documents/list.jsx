@@ -1,4 +1,5 @@
 import { Helmet } from 'react-helmet-async';
+import DocumentsListView from 'src/sections/documents/DocumentsListView/DocumentsListView';
 
 import { OrderListView } from 'src/sections/documents/view';
 
@@ -11,7 +12,8 @@ export default function InvoiceListPage() {
         <title> Dashboard: Documents Page</title>
       </Helmet>
 
-      <OrderListView />
+      {/* <OrderListView /> */}
+      <DocumentsListView />
     </>
   );
 }

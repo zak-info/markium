@@ -145,7 +145,7 @@ export default function ZaityListView({ TABLE_HEAD, dense, zaityTableDate, onSel
   return (
     <>
       <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
-        <TableSelectedAction
+        {/* <TableSelectedAction
           dense={table.dense ? "small":"small"}
           numSelected={table.selected.length}
           rowCount={dataFiltered.length}
@@ -157,15 +157,10 @@ export default function ZaityListView({ TABLE_HEAD, dense, zaityTableDate, onSel
           }
           action={
             <>
-                {/* <onSelectedRowsComponent data={table.selected} setTableData={setTableData} /> */}
-              {/* {onSelectedRows &&  */}
                 {onSelectedRows(table.selected,setTableData)}
-              {/* } */}
             </>
           }
-
-
-        />
+        /> */}
 
         <Scrollbar>
           <Table size={dense} sx={{ minWidth: 960 }}>
@@ -176,12 +171,12 @@ export default function ZaityListView({ TABLE_HEAD, dense, zaityTableDate, onSel
               rowCount={dataFiltered.length}
               numSelected={table.selected.length}
               onSort={table.onSort}
-              onSelectAllRows={(checked) =>
-                table.onSelectAllRows(
-                  checked,
-                  dataFiltered.map((row) => row.id)
-                )
-              }
+              // onSelectAllRows={(checked) =>
+              //   table.onSelectAllRows(
+              //     checked,
+              //     dataFiltered.map((row) => row.id)
+              //   )
+              // }
             />
 
             <TableBody>

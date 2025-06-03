@@ -40,7 +40,7 @@ export default function OrderTableRow({ row,payment_method, onCreateRow, selecte
 
       <TableCell>{row?.id}</TableCell>
       <TableCell>{row?.ref}</TableCell>
-      <TableCell>{row?.net + ".00 " + payment_method}</TableCell>
+      <TableCell>{row?.total_cost + ".00 "}</TableCell>
       <TableCell>{row?.paid_amount}.00</TableCell>
       {/* <TableCell>{fDate(row.created_at)}</TableCell> */}
       <TableCell>

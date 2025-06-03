@@ -40,10 +40,11 @@ import { useGetClients } from 'src/api/client';
 import SimpleAutocomplete from 'src/components/hook-form/rhf-simple-autocomplete';
 import { fDate } from 'src/utils/format-time';
 import { createClaim } from 'src/api/claim';
+import showError from 'src/utils/show_error';
 
 // ----------------------------------------------------------------------
 
-export default function CarAttachForm({ car_id, currentClause }) {
+export default function CarAttachForm({ car_id, currentClause,close }) {
   const router = useRouter();
 
   const { enqueueSnackbar } = useSnackbar();
@@ -81,29 +82,15 @@ export default function CarAttachForm({ car_id, currentClause }) {
       const body = {...data,car_id};
       console.log("data : ", body);
       await attacheCarToDriver(body);
-      enqueueSnackbar('Attached success!');
+      enqueueSnackbar(t("operation_success"));
+      close()
       router.reload();
     } catch (error) {
-      console.error(error);
-      enqueueSnackbar(error?.message ? error?.message : "Somthing Went Wrong", { variant: 'error' });
-
+      showError(error)
     }
   });
 
-  const handleDrop = useCallback(
-    (acceptedFiles) => {
-      const file = acceptedFiles[0];
-
-      const newFile = Object.assign(file, {
-        preview: URL.createObjectURL(file),
-      });
-
-      if (file) {
-        setValue('avatarUrl', newFile, { shouldValidate: true });
-      }
-    },
-    [setValue]
-  );
+  
 
   return (
     <FormProvider methods={methods} onSubmit={onSubmit} >
@@ -116,7 +103,7 @@ export default function CarAttachForm({ car_id, currentClause }) {
               display="grid"
               gridTemplateColumns={{
                 xs: 'repeat(1, 1fr)',
-                sm: 'repeat(2, 1fr)',
+                sm: 'repeat(1, 1fr)',
               }}
             >
               <SimpleAutocomplete
@@ -126,7 +113,7 @@ export default function CarAttachForm({ car_id, currentClause }) {
                 getOptionLabel={(option) => option?.name}
                 placeholder={t('attache_driver')}
               />
-              <Stack alignItems="flex-start" >
+              <Stack alignItems="flex-end" >
                 <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
                   {!currentClause ? t('attache_driver') : t('saveChange')}
                 </LoadingButton>

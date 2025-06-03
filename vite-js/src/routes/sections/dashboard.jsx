@@ -46,7 +46,7 @@ const CarModelsEditPage = lazy(() => import('src/pages/dashboard/settings/car_mo
 // document system settings 
 const DocumentListPage = lazy(() => import('src/pages/dashboard/settings/documents/documents'));
 const DocumentCreatePage = lazy(() => import('src/pages/dashboard/settings/documents/documents-new'));
-const DocumentEditPage = lazy(() => import('src/pages/dashboard/settings/documents/documents-edit'));
+const DocumentEditPage = lazy(() => import('src/pages/dashboard/documents/edit'));
 // Neighborhood system settings 
 const NeighborhoodListPage = lazy(() => import('src/pages/dashboard/settings/neighborhood/neighborhood'));
 const NeighborhoodCreatePage = lazy(() => import('src/pages/dashboard/settings/neighborhood/neighborhood-new'));
@@ -103,6 +103,7 @@ const ClauseEditPage = lazy(() => import('src/pages/dashboard/clause/edit'));
 // const MaintainDetailsPage = lazy(() => import('src/pages/dashboard/maintain/details'));
 
 // Documents
+const InvoicePreview = lazy(() => import('src/pages/dashboard/documents/preview'));
 const DocumentsListPage = lazy(() => import('src/pages/dashboard/documents/list'));
 const DocumentsNewPage = lazy(() => import('src/pages/dashboard/documents/new'));
 const DocumentsEditPage = lazy(() => import('src/pages/dashboard/documents/edit'));
@@ -236,10 +237,11 @@ export const dashboardRoutes = [
         path: 'documents',
         children: [
           { element: <DocumentsListPage />, index: true },
+          { path: 'preview', element: <InvoicePreview /> },
           { path: 'list', element: <DocumentsListPage /> },
           { path: ':id', element: <VehiclePage /> },
           { path: 'new', element: <DocumentsNewPage /> },
-          { path: 'edit', element: <DocumentsEditPage /> },
+          { path: ':id/edit', element: <DocumentsEditPage /> },
           { path: 'alerts', element: <NotificationDocumentsListView /> },
         ],
       },

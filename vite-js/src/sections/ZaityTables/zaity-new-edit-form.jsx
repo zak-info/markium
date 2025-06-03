@@ -59,7 +59,7 @@ export default function ZaityDynamicForm({ currentItem = {}, schema, fields, onS
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              {fields.map((field) => (
+              {fields?.map((field) => (
                 <DynamicFormField key={field.name} field={field} values={values}  setValue={setValue} />
               ))}
             </Box>

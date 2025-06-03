@@ -35,8 +35,10 @@ import { changeUserPasswordByAdmin, createUser, updateUser, useRoles } from 'src
 import Label from 'src/components/label';
 import showError from 'src/utils/show_error';
 import { useSettingsContext } from 'src/components/settings';
-import { Container } from '@mui/material';
+import { Container, IconButton, InputAdornment } from '@mui/material';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import { useBoolean } from 'src/hooks/use-boolean';
+import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
@@ -47,7 +49,8 @@ export default function UsersCreateView({ currentUser }) {
   const { t } = useTranslate();
   const { roles } = useRoles()
   const { currentLang } = useLocales()
-
+  const password2 = useBoolean();
+  const password3 = useBoolean();
 
 
   const validationSchema = Yup.object({
@@ -162,7 +165,7 @@ export default function UsersCreateView({ currentUser }) {
     <>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
-          heading={t('edit_user')}
+          heading={ currentUser?.id ?  t('edit_user') : t("add_user")}
           links={[
             {
               name: t('dashboard'),
@@ -172,7 +175,7 @@ export default function UsersCreateView({ currentUser }) {
               name: t('users'),
               href: paths.dashboard.user.root,
             },
-            { name: t('edit_user') },
+            { name: currentUser?.id ?  t('edit_user') : t("add_user") },
           ]}
           sx={{
             mb: { xs: 3, md: 5 },
@@ -196,8 +199,43 @@ export default function UsersCreateView({ currentUser }) {
                   <RHFTextField name="username" label={t('username')} />
                   <RHFTextField name="email" label={t('email')} type="email" />
                   <RHFTextField name="phone_number" label={t('phone_number')} />
-                  {currentUser ? null : <RHFTextField name="password" label={t('password')} />}
-                  {currentUser ? null : <RHFTextField name="password_confirmation" label={t('confirm_password')} />}
+                  {/* {currentUser ? null : <RHFTextField name="password" label={t('password')} />}
+                  {currentUser ? null : <RHFTextField name="password_confirmation" label={t('confirm_password')} />} */}
+                  {
+                    currentUser ?
+                      null
+                      :
+                      <>
+                        <RHFTextField
+                          name="password"
+                          label={t('password')}
+                          type={password2.value ? 'text' : 'password'}
+                          InputProps={{
+                            endAdornment: (
+                              <InputAdornment position="end">
+                                <IconButton onClick={password2.onToggle} edge="end">
+                                  <Iconify icon={password2.value ? 'solar:eye-bold' : 'solar:eye-closed-bold'} />
+                                </IconButton>
+                              </InputAdornment>
+                            ),
+                          }}
+                        />
+                        <RHFTextField
+                          name="password_confirmation"
+                          label={t('confirm_password')}
+                          type={password3.value ? 'text' : 'password'}
+                          InputProps={{
+                            endAdornment: (
+                              <InputAdornment position="end">
+                                <IconButton onClick={password3.onToggle} edge="end">
+                                  <Iconify icon={password3.value ? 'solar:eye-bold' : 'solar:eye-closed-bold'} />
+                                </IconButton>
+                              </InputAdornment>
+                            ),
+                          }}
+                        />
+                      </>
+                  }
                 </Box>
                 <Box
                   rowGap={3}

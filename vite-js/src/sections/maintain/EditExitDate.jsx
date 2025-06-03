@@ -42,6 +42,7 @@ import { ListItemText } from '@mui/material';
 import { format } from 'date-fns';
 import CarsAutocomplete from 'src/components/hook-form/rhf-CarsAutocomplete';
 import { useSearchParams } from 'react-router-dom';
+import showError from 'src/utils/show_error';
 
 // ----------------------------------------------------------------------
 
@@ -52,7 +53,7 @@ export default function EditExitDate({ currentMentainance,close }) {
   const { t } = useTranslate();
 
   const NewUserSchema = Yup.object({
-    exit_date: Yup.date().required('State ID is required') // Allowing an empty string for exit date (since it's not required)
+    // exit_date: Yup.date().required('State ID is required') // Allowing an empty string for exit date (since it's not required)
   });
   const defaultValues = useMemo(
     () => ({
@@ -86,16 +87,12 @@ export default function EditExitDate({ currentMentainance,close }) {
     try {
       let body = data
       body.exit_date = format(new Date(data.exit_date), 'yyyy-MM-dd')
+      console.log("body : ",{...body});
       const response = await editMaintenance(currentMentainance?.id, body);
-      enqueueSnackbar(currentMentainance ? 'Update success!' : 'Create success!');
+      enqueueSnackbar(t("operation_success"));
       close()
     } catch (error) {
-      console.error(error);
-      Object.values(error?.data).forEach(array => {
-        array.forEach(text => {
-          enqueueSnackbar(text, { variant: 'error' });
-        });
-      });
+      showError(error)
     }
   });
 
@@ -103,14 +100,15 @@ export default function EditExitDate({ currentMentainance,close }) {
     <FormProvider methods={methods} onSubmit={onSubmit}>
       <Grid container spacing={3}>
         <Grid xs={12} md={20}>
-          <Card sx={{ p: 3 }}>
+          {/* <Card sx={{ p: 3 }}> */}
             <Box
               rowGap={3}
               columnGap={2}
+              p={4}
               display="grid"
               gridTemplateColumns={{
                 xs: 'repeat(1, 1fr)',
-                sm: 'repeat(2, 1fr)',
+                sm: 'repeat(1, 1fr)',
               }}
             >
 
@@ -118,8 +116,8 @@ export default function EditExitDate({ currentMentainance,close }) {
                 label={t('exitDate')}
                 value={values.exit_date ? new Date(values.exit_date) : new Date()}
                 name="exit_date"
-                onChange={(newValue) => setValue('exit_date', fDate(newValue, 'dd/MM/yyyy'))}
-                format="dd/MM/yyyy"  
+                onChange={(newValue) => setValue('exit_date', newValue)}
+                // format="dd/MM/yyyy"  
                 slotProps={{
                   textField: {
                     fullWidth: true,
@@ -131,10 +129,10 @@ export default function EditExitDate({ currentMentainance,close }) {
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                {!currentMentainance ? t('addNewMaintain') : 'Save Changes'}
+                {!currentMentainance ? t('addNewMaintain') : t('save_change')}
               </LoadingButton>
             </Stack>
-          </Card>
+          {/* </Card> */}
         </Grid>
       </Grid>
     </FormProvider>

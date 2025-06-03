@@ -36,7 +36,7 @@ import { useValues } from 'src/api/utils';
 import SimpleAutocomplete from 'src/components/hook-form/rhf-simple-autocomplete';
 import { createClient, editClient } from 'src/api/client';
 import Iconify from 'src/components/iconify';
-import { Table, TableBody, TableCell, TableRow } from '@mui/material';
+import { FormHelperText, Table, TableBody, TableCell, TableRow } from '@mui/material';
 import { TableHeadCustom } from 'src/components/table';
 import { set } from 'lodash';
 
@@ -51,10 +51,15 @@ export default function UserNewEditForm({ currentClient }) {
 
   const NewUserSchema = Yup.object().shape({
     name: Yup.string().required('Name is required'),
-    commercial_registration_number: Yup.string().required('Name is required'),
-    tax_number: Yup.number(),
+    commercial_registration_number: Yup.string()
+      .required('Commercial registration number is required')
+      .length(10, t('commercial_registration_number_must_be_exactly_10_characters')),
+
+    tax_number: Yup.string()
+      .required('Tax number is required')
+      .length(15, t('tax_number_must_be_exactly_15_characters')),
     location_id: Yup.number(),
-    neighborhood_id: Yup.number(),
+    neighborhood_id: Yup.number().required(t('neighborhoodـisـrequired')),
     // rep_name: Yup.string(),
     // rep_contact_number: Yup.string(),
   });
@@ -64,8 +69,8 @@ export default function UserNewEditForm({ currentClient }) {
       name: currentClient?.name || '',
       commercial_registration_number: currentClient?.commercial_registration_number || '',
       tax_number: currentClient?.tax_number || '',
-      location_id: currentClient?.location_id || '',
-      neighborhood_id: currentClient?.neighborhood_id || '',
+      location_id: currentClient?.location_id || 0,
+      neighborhood_id: currentClient?.neighborhood_id || 0,
       // rep_name: currentClient?.rep_name || '',
       // rep_contact_number: currentClient?.rep_contact_number || '',
     }),
@@ -95,16 +100,9 @@ export default function UserNewEditForm({ currentClient }) {
       setValue("name", currentClient?.name)
       setValue("tax_number", currentClient?.tax_number)
       setValue("commercial_registration_number", currentClient?.commercial_registration_number)
-      setValue("state_id", currentClient?.state_id)
+      setValue("location_id", currentClient?.location_id)
       setValue("neighborhood_id", currentClient?.neighborhood_id)
       setRepresentors(currentClient?.representors)
-      // const state = data?.states?.find(
-      //   (option) =>
-      //     option?.id == currentClient?.state_id
-      // );
-      // if (state) {
-      //   setValue('state_id', selectedColor.id);
-      // }
     }
   }, [data, setValue]);
 
@@ -168,19 +166,29 @@ export default function UserNewEditForm({ currentClient }) {
               }}
             >
               <RHFTextField required name="name" label={t('name')} />
-              <RHFTextField required name="tax_number" label={t('tax_number')} />
-              <RHFTextField required name="commercial_registration_number" label={t('c_r_n')} />
+              <Box>
+                <RHFTextField required name="tax_number" label={t('tax_number')} />
+                <FormHelperText id="component-helper-text">
+                  {t("tax_number_must_be_exactly_15_characters")}
+                </FormHelperText>
+              </Box>
+              <Box>
+                <RHFTextField required name="commercial_registration_number" label={t('c_r_n')} />
+                <FormHelperText id="component-helper-text">
+                  {t("commercial_registration_number_must_be_exactly_10_characters")}
+                </FormHelperText>
+              </Box>
               <SimpleAutocomplete
                 name="location_id"
                 label={t('state')}
                 options={data?.states}
-                getOptionLabel={(option) => option?.key}
+                getOptionLabel={(option) => option?.translations[0]?.name}
                 placeholder={t('choose_state')}
               />
               <SimpleAutocomplete
                 name="neighborhood_id"
                 label={t('location')}
-                options={data?.neighborhoods}
+                options={data?.neighborhoods?.filter(item => item?.state_id == values?.location_id)}
                 getOptionLabel={(option) => option?.translations[0]?.name}
                 placeholder={t('choose_neighborhood')}
               />

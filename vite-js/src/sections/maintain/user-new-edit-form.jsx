@@ -42,6 +42,7 @@ import { ListItemText } from '@mui/material';
 import { format } from 'date-fns';
 import CarsAutocomplete from 'src/components/hook-form/rhf-CarsAutocomplete';
 import { useSearchParams } from 'react-router-dom';
+import showError from 'src/utils/show_error';
 
 // ----------------------------------------------------------------------
 
@@ -100,6 +101,7 @@ export default function UserNewEditForm({ currentMentainance }) {
   useEffect(() => {
     if (currentMentainance?.id) {
       setValue('car_plat_number', currentMentainance?.car?.plat_number);
+      setValue('car_id', currentMentainance?.car?.id);
       setValue('maintainance_type', currentMentainance?.maintainance_type);
       setValue('cause', currentMentainance?.cause);
       setValue('entry_date', currentMentainance?.entry_date ? new Date(currentMentainance?.entry_date) : new Date());
@@ -129,12 +131,7 @@ export default function UserNewEditForm({ currentMentainance }) {
       router.push(paths.dashboard.maintenance.root);
       console.info('DATA', body);
     } catch (error) {
-      console.error(error);
-      Object.values(error?.data).forEach(array => {
-        array.forEach(text => {
-          enqueueSnackbar(text, { variant: 'error' });
-        });
-      });
+      showError(error)
     }
   });
 
@@ -153,7 +150,7 @@ export default function UserNewEditForm({ currentMentainance }) {
               }}
             >
 
-              <CarsAutocomplete required options={car} name="car_id" label={t('car')} placeholder={t('search_by')+" "+t('plateNumber')}  car_id={searchParams.get("car_id")} disabled={searchParams.get("car_id") ? true:false} />
+              <CarsAutocomplete required options={car.filter(item => item?.status?.key != "under_maintenance")} name="car_id" label={t('car')} placeholder={t('search_by')+" "+t('plateNumber')}  car_id={searchParams.get("car_id")} disabled={searchParams.get("car_id") ? true:false} />
 
               <DatePicker
                 label={t('entryDate')}
@@ -218,7 +215,7 @@ export default function UserNewEditForm({ currentMentainance }) {
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                {!currentMentainance ? t('addNewMaintain') : 'Save Changes'}
+                {!currentMentainance ? t('addNewMaintain') : t('save_change')}
               </LoadingButton>
             </Stack>
           </Card>

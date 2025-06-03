@@ -41,7 +41,7 @@ import { FormGroup } from '@mui/material';
 // ----------------------------------------------------------------------
 
 export default function ReplaceClause({ item, currentClause, close }) {
-  const router = useRouter();
+  console.log("item  L",item);
 
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslate();
@@ -127,10 +127,10 @@ export default function ReplaceClause({ item, currentClause, close }) {
           >
 
             {
-              item.clauseable_type == "car" ?
-                <CarsAutocomplete options={car} name="new_clauseable_id" label={t('car')} placeholder='filter with plat_number' />
-                : values.clauseable_type == "driver" ?
-                  <SimpleAutocomplete options={drivers} name="new_clauseable_id" label={t('drivers')} placeholder='filter with name' />
+              item?.clauseable_type == "car" ?
+                <CarsAutocomplete options={car} name="new_clauseable_id" label={t('car')} placeholder={t("search_by")} />
+                : item.clauseable_type == "driver" ?
+                  <SimpleAutocomplete options={drivers} name="new_clauseable_id" label={t('drivers')} placeholder={t("search_by")}  />
                   :
                   <RHFSelect disabled={!values.clauseable_type} name="new_clauseable_id" label={t('attachable')}>
                     <Divider sx={{ borderStyle: 'dashed' }} />

@@ -33,7 +33,7 @@ export default function ContractClausesListView({ data }) {
     const [dataFiltered, setDataFiltered] = useState([]);
 
     let TABLE_HEAD = [
-        { id: 'clausable', label: t('clause'), type: "two-lines-link", first: (row) => row?.clausable?.first, second: (row) => row?.clausable?.second, link: (row) => { return row?.clausable_type == "car" ? paths.dashboard.vehicle.details(row?.id) : paths.dashboard.drivers.details(row?.id) }, width: 140 },
+        { id: 'clausable', label: t('clause'), type: "two-lines-link", first: (row) => row?.clausable?.first, second: (row) => row?.clausable?.second, link: (row) => { return row?.clauseable_type == "car" ? paths.dashboard.vehicle.details(row?.id) : paths.dashboard.drivers.details(row?.id) }, width: 240 },
         { id: 'cost', label: t('cost'), type: "text", width: 140 },
         { id: 'total_cost', label: t('total'), type: "text", width: 140 },
         { id: 'status', label: t('status'), type: "label", color: "error", width: 140 },
@@ -47,7 +47,7 @@ export default function ContractClausesListView({ data }) {
     const items = [
         { key: 'all', label: t('all'), match: () => true },
         { key: 'under_rent', label: t('under_rent'), match: (item) => item?.gstatus == "under_rent", color: 'primary' },
-        { key: 'cancelled', label: t('cancelled'), match: (item) => item?.gstatus == "cancelled", color: 'warning' },
+        { key: 'cancelled', label: t('cancelled'), match: (item) => item?.gstatus == "cancelled", color: 'error' },
         { key: 'replaced', label: t('replaced'), match: (item) => item?.gstatus == "replaced", color: 'secondary' },
     ];
     const filterFunction = (data, filters) => {

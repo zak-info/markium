@@ -23,6 +23,7 @@ import Iconify from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import { t } from 'i18next';
+import PermissionsContext from 'src/auth/context/permissions/permissions-context';
 
 // ----------------------------------------------------------------------
 
@@ -43,7 +44,7 @@ export default function OrderTableRow({ row, location, selected, onViewRow, onSe
 
       <TableCell>
         <Box
-          onClick={()=>onViewRow(row?.id)}
+          onClick={() => onViewRow(row?.id)}
           sx={{
             cursor: 'pointer',
             '&:hover': {
@@ -143,19 +144,22 @@ export default function OrderTableRow({ row, location, selected, onViewRow, onSe
         sx={{ width: 200 }}
       >
 
-        <MenuItem
-          onClick={() => {
-            onEditRow();
-            popover.onClose();
-          }}
-        >
-          <Iconify icon="solar:pen-bold" />
-          {t('edit')}
-        </MenuItem>
+        <PermissionsContext action={"update.client"} >
+          <MenuItem
+            onClick={() => {
+              onEditRow();
+              popover.onClose();
+            }}
+          >
+            <Iconify icon="solar:pen-bold" />
+            {t('edit')}
+          </MenuItem>
+        </PermissionsContext>
 
 
 
-        <MenuItem
+
+        {/* <MenuItem
           onClick={() => {
             confirm.onTrue();
             popover.onClose();
@@ -164,7 +168,7 @@ export default function OrderTableRow({ row, location, selected, onViewRow, onSe
         >
           <Iconify icon="solar:trash-bin-trash-bold" />
           {t('delete')}
-        </MenuItem>
+        </MenuItem> */}
 
 
         {/* <MenuItem

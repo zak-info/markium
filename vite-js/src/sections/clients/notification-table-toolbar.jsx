@@ -53,7 +53,7 @@ export default function OrderTableToolbar({ filters, onFilters, dateError }) {
           pr: { xs: 2.5, md: 1 },
         }}
       >
-        <DatePicker
+        {/* <DatePicker
           label={t("start_date")}
           value={filters.startDate}
           format="dd/MM/yyyy"  
@@ -87,13 +87,13 @@ export default function OrderTableToolbar({ filters, onFilters, dateError }) {
               bottom: { md: -40 },
             },
           }}
-        />
+        /> */}
 
         <Stack direction="row" alignItems="center" spacing={2} flexGrow={1} sx={{ width: 1 }}>
           <TextField
             fullWidth
             value={filters.name}
-            onChange={handleFilterName}
+            // onChange={handleFilterName}
             placeholder={t("search_by")+"..."}
             InputProps={{
               startAdornment: (
@@ -104,9 +104,9 @@ export default function OrderTableToolbar({ filters, onFilters, dateError }) {
             }}
           />
 
-          <IconButton onClick={popover.onOpen}>
+          {/* <IconButton onClick={popover.onOpen}>
             <Iconify icon="eva:more-vertical-fill" />
-          </IconButton>
+          </IconButton> */}
         </Stack>
       </Stack>
 

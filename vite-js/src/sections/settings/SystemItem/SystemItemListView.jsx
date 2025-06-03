@@ -53,7 +53,7 @@ const types = {
             { id: 'object_type', label: t('attachable'), type: "text", width: 140 },
             // { id: 'actions', label: t('actions'), type: "threeDots", width: 88, align: "right" },
         ],
-        href: paths.dashboard.settings.attachment_names,
+        href: paths.dashboard.settings.attachment_namesNew,
         tableElements: (data, keyInValues) => {
             return data?.[keyInValues]
                 ? data?.[keyInValues]?.map((item) => ({
@@ -258,6 +258,14 @@ export default function SystemItemListView({ collection }) {
         { key: 'selected', label: t('selected'), match: (item) => item?.status == "selected", color: 'primary' },
         { key: 'not_selected', label: t('not_selected'), match: (item) => item?.status == "not_selected", color: 'warning' },
     ];
+
+    const filters = [
+        { key: 'name', label: t('name'), match: (item, value) =>
+             item?.name?.toLowerCase().includes(value?.toLowerCase()) ,
+            },
+    ];
+
+
     const filterFunction = (data, filters) => {
         const activeTab = filters.tabKey;
         const item = tableData.find(i => i?.key === activeTab);
@@ -301,7 +309,7 @@ export default function SystemItemListView({ collection }) {
             >
                 <Card>
                     <ZaityTableTabs data={tableData} items={items} defaultFilters={{ status: 'all' }} setTableDate={setDataFiltered} filterFunction={filterFunction}>
-                        <ZaityTableFilters defaultFilters={defaultFilters} dataFiltered={tableData}>
+                        <ZaityTableFilters data={dataFiltered} tableData={tableData}  items={filters} setTableDate={setDataFiltered}  defaultFilters={defaultFilters} dataFiltered={tableData}>
                             <ZaityListView TABLE_HEAD={[...currentSystemItem?.TABLE_HEAD, { id: 'enabled', label: t('selected'), type: "label", width: collection.type == "maintenance_specification" ? 120 : 350 }, { id: 'enable', label: t('enable'), type: "component", width: 40, align: "center" }]} dense="small" zaityTableDate={dataFiltered || []} onSelectedRows={({ data, setTableData }) => { return <onSelectedRowsComponent configurable_type={collection?.type} setTableData={setTableData} data={data} /> }} />
                         </ZaityTableFilters>
                     </ZaityTableTabs>

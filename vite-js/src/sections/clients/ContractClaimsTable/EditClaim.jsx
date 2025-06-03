@@ -54,25 +54,25 @@ import { editClaims, markClaimAsPaid } from 'src/api/claim';
 import { useRouter } from 'src/routes/hooks';
 import { paths } from 'src/routes/paths';
 import { use } from 'react';
+import showError from 'src/utils/show_error';
 
 
 // ----------------------------------------------------------------------
 
 
 
-export function EditClaim({ claim_id, close, contract_id, setTableData ,paiment_date,amount}) {
+export function EditClaim({ claim_id, close, setTableData, item}) {
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslate();
   const router = useRouter();
   const NewUserSchema = Yup.object().shape({
     amount: Yup.number(),
-    paiment_date: Yup.string().required('paiment date is required'),
+    // paiment_date: Yup.string().required('paiment date is required'),
   });
 
   const defaultValues = useMemo(
     () => ({
-      amount: amount || 0,
-      paiment_date: paiment_date || new Date(),
+      amount: item?.amount || 0,
     }),
     []
   );
@@ -89,9 +89,9 @@ export function EditClaim({ claim_id, close, contract_id, setTableData ,paiment_
   });
 
   useEffect(() => {
-    setValue('amount', amount);
-    setValue('paiment_date', paiment_date);
-  }, [amount]);
+    setValue('amount', item?.amount);
+    // setValue('paiment_date', paiment_date);
+  }, [item]);
 
   const {
     reset,
@@ -107,19 +107,10 @@ export function EditClaim({ claim_id, close, contract_id, setTableData ,paiment_
       console.log("data id, ", data, claim_id);
       const response = await editClaims(claim_id, data);
       enqueueSnackbar(t("operation_success"), { variant: 'success' });
-      setTableData(prev => prev.map(item => item.id !== claim_id ? item : { ...item, amount: data.amount,paiment_date: data.paiment_date }));
+      setTableData(prev => prev.map(item => item.id !== claim_id ? item : { ...item, amount: data.amount }));
       close();
-      //  router.push(paths.dashboard.clients.contractsDetails(contract_id));
     } catch (error) {
-      console.error(error);
-      Object.values(error?.data || {}).forEach(array => {
-        array.forEach(text => {
-          enqueueSnackbar(text, { variant: 'error' });
-        });
-      });
-      if (error?.message) {
-        enqueueSnackbar(error?.message, { variant: 'error' });
-      }
+      showError(error)
     }
   });
 
@@ -143,7 +134,7 @@ export function EditClaim({ claim_id, close, contract_id, setTableData ,paiment_
           >
 
             <RHFTextField name="amount" required label={t('new_amount')} type="number" />
-            <DatePicker
+            {/* <DatePicker
               label={t('paiment_date')}
               value={paiment_date ? new Date(paiment_date) : new Date()}
               required
@@ -156,11 +147,11 @@ export function EditClaim({ claim_id, close, contract_id, setTableData ,paiment_
                 },
               }}
               minDate={new Date()}
-            />
+            /> */}
           </Box>
           <Stack alignItems="flex-end" sx={{ mt: 3 }}>
             <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-              {t("submit")}
+              {t("edit")}
             </LoadingButton>
           </Stack>
         </Grid>

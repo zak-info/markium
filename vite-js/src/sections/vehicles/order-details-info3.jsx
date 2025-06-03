@@ -21,20 +21,12 @@ export default function OrderDetailsInfo3({ carDetails, delivery, payment, shipp
 
   const renderDelivery = (
     <>
-      <CardHeader
-        title={t('specifications')}
-      // action={
-      //   <IconButton>
-      //     <Iconify icon="solar:pen-bold" />
-      //   </IconButton>
-      // }
-      />
+      {/* <CardHeader title={t('general_specifications')}/> */}
       <Stack spacing={1} sx={{ my: 2, typography: 'body2' }}>
         <Stack direction="row" sx={{ px: "10px" }}>
-          <Box sx={{ width: 120, color: 'text.secondary' }}>{t('vehcileColor')}</Box>
-          <Box sx={{ typography: 'subtitle2' }}>{carDetails?.color?.translations?.name}</Box>
+          <Box sx={{ width: 120, color: 'text.secondary' }}>{t('location')}</Box>
+          <Box sx={{ typography: 'subtitle2' }}>{carDetails?.state?.translations?.name}</Box>
         </Stack>
-
         <Stack direction="row" sx={{ px: "10px" }}>
           <Box sx={{ width: 120, color: 'text.secondary' }}>{t('manufacturingYear')}</Box>
           <Box sx={{ typography: 'subtitle2' }}>{carDetails?.production_year}</Box>

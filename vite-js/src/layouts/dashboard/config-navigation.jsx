@@ -157,7 +157,7 @@ export function useNavData() {
             permissions:["read.client"],
             children: [
               { title: t('clients'), permissions:"read.client",path: paths.dashboard.clients.root },
-              { title: t('alerts'), permissions:"read.client",path: paths.dashboard.clients.alerts },
+              // { title: t('alerts'), permissions:"read.client",path: paths.dashboard.clients.alerts },
               { title: t('contracts'),permissions:"read.contract", path: paths.dashboard.clients.contracts },
               { title: t('claims'), permissions:"read.claim",path: paths.dashboard.clients.claims },
             ],

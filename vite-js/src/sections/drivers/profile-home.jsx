@@ -69,74 +69,42 @@ export default function ProfileHome({ driver, posts }) {
     </Card>
   );
 
+  const items = [
+    { lable: t(`residence_permit_number`), value: driver?.residence_permit_number, icon: 'solar:paperclip-rounded-2-bold' },
+    { lable: t(`salary`), value: driver?.salary, icon: 'solar:dollar-bold' },
+    { lable: t(`phone_number`), value: driver?.phone_number, icon: 'solar:phone-rounded-bold-duotone' },
+    { lable: t(`birth_date`), value: driver?.birth_date, icon: 'solar:calendar-date-bold-duotone' },
+    { lable: t(`start_date`), value: driver?.start_date, icon: 'solar:calendar-date-bold-duotone' },
+    { lable: t(`state`), value: data?.states?.find(i => i.id == driver?.state_id).translations[0]?.name || driver?.state?.key, icon: "mingcute:location-fill" },
+    {
+      lable: t(`car`), value: !!driver?.car?.id ?
+        <Link href={paths?.dashboard?.vehicle.details(driver?.car?.id)} variant="subtitle2" color="inherit">
+          {data?.car_companies?.flatMap(item => item?.models)?.find(model => model.id == driver?.car?.car_model_id)?.translations[0]?.name + " " + driver?.car?.plat_number}
+        </Link>:"--"
+      , icon: "mingcute:car-fill"
+    },
+  ]
+
+
+
   const renderAbout = (
     <Card>
-      {/* <CardHeader title={t('driver')} /> */}
-      <CardHeader title={driver.name} />
-
+      <CardHeader title={t("info")} />
       <Stack spacing={2} sx={{ p: 3 }}>
-        <Stack direction="row">
-          <Box sx={{ width: 160, color: 'text.secondary' }}>{t('residence permit number')}</Box>
-          <Box sx={{ typography: 'subtitle2' }}>{driver?.residence_permit_number}</Box>
-        </Stack>
-        <Box sx={{ typography: 'body2' }}>{driver.quote}</Box>
-
-        <Stack direction="row" spacing={2}>
-          <Iconify icon="mingcute:location-fill" width={24} />
-
-          <Box sx={{ typography: 'body2' }}>
-            {`State `}
-            <Link variant="subtitle2" color="inherit">
-              Readh
-            </Link>
-          </Box>
-        </Stack>
-
-        <Stack direction="row" spacing={2}>
-          <Iconify icon="mingcute:car-fill" width={24} />
-
-          <Box sx={{ typography: 'body2' }}>
-            {`attached car `}
-            {
-              !!driver?.car?.id ?
-                <Link href={paths?.dashboard?.vehicle.details(driver?.car?.id)} variant="subtitle2" color="inherit">
-                  {data?.car_companies?.flatMap(item => item?.models)?.find(model => model.id == driver?.car?.car_model_id)?.translations[0]?.name + " " + driver?.car?.plat_number}
-                </Link>
-                :
+        {
+          items?.map((item, index) => (
+            <Stack direction="row" spacing={2}>
+              <Iconify icon={item.icon} width={24} />
+              <Box sx={{ typography: 'body2' }}>
+                {item.lable + " : "}
                 <Link variant="subtitle2" color="inherit">
-                  not attached
+                  {item?.value}
                 </Link>
-            }
-          </Box>
-        </Stack>
+              </Box>
+            </Stack>
+          ))
+        }
 
-        {/* <Stack direction="row" sx={{ typography: 'body2' }}>
-          <Iconify icon="fluent:mail-24-filled" width={24} sx={{ mr: 2 }} />
-          {driver.email}
-        </Stack> */}
-
-        {/* <Stack direction="row" spacing={2}>
-          <Iconify icon="ic:round-business-center" width={24} />
-
-          <Box sx={{ typography: 'body2' }}>
-            {`get  `}
-            <Link variant="subtitle2" color="inherit">
-              1200
-            </Link>
-            of salary
-          </Box>
-        </Stack> */}
-
-        {/* <Stack direction="row" spacing={2}>
-          <Iconify icon="ic:round-business-center" width={24} />
-
-          <Box sx={{ typography: 'body2' }}>
-            {`Studied at `}
-            <Link variant="subtitle2" color="inherit">
-              {driver.school}
-            </Link>
-          </Box>
-        </Stack> */}
       </Stack>
     </Card>
   );
@@ -179,12 +147,12 @@ export default function ProfileHome({ driver, posts }) {
   const renderSocials = (
     <AppNewInvoiceBreakdown
       style={{ marginTop: "20px" }}
-      title={t('Vehicul_Documents')}
+      title={t('documents')}
       tableData={driverDocuments}
       tableLabels={[
         { id: 'document', label: t('document') },
         { id: 'file', label: t('file') },
-        // { id: 'invoice', label: t('link') },
+        { id: 'invoice', label: t('invoice') },
         // { id: 'status', label: t('cost') },
       ]}
     />
@@ -206,7 +174,7 @@ export default function ProfileHome({ driver, posts }) {
         <Stack spacing={3}>
           {/* {renderFollows} */}
 
-          {renderAbout}
+          {/* {renderAbout} */}
 
           {/* <AppNewInvoice
             title={t('salaries')}

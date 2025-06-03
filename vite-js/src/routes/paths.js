@@ -165,6 +165,7 @@ export const paths = {
       root: `${ROOTS.DASHBOARD}/documents`,
       alerts: `${ROOTS.DASHBOARD}/documents/alerts`,
       new: `${ROOTS.DASHBOARD}/documents/new`,
+      preview: `${ROOTS.DASHBOARD}/documents/preview`,
       edit: (id) => `${ROOTS.DASHBOARD}/documents/${id}/edit`,
     },
     clients: {

@@ -17,14 +17,18 @@ import Label from 'src/components/label';
 import CarDettachForm from './view/car-dettach-form';
 import CarAttachForm from './view/car-attach-form';
 import PermissionsContext from 'src/auth/context/permissions/permissions-context';
+import ExpandableText from '../maintain/ExpandableText';
+import { paths } from 'src/routes/paths';
+import { useRouter } from 'src/routes/hooks';
 
 // ----------------------------------------------------------------------
 
 export default function OrderDetailsInfo2({ carDetails, delivery, payment, shippingAddress }) {
   const { t } = useTranslation();
+  const router = useRouter()
   const renderDelivery = (
     <>
-      {/* <CardHeader title={t('specifications')}/> */}
+      <CardHeader title={t('operation_specifications')}/>
       <Stack spacing={2} sx={{ my: 2, typography: 'body2' }}>
         <Stack direction="row" sx={{ px: '10px' }}>
           <Box sx={{ width: 120, color: 'text.secondary' }}>{t('company')}</Box>
@@ -36,16 +40,17 @@ export default function OrderDetailsInfo2({ carDetails, delivery, payment, shipp
         </Stack>
         <Stack direction="row" sx={{ px: '10px' }}>
           <Box sx={{ width: 120, color: 'text.secondary' }}>{t('odometer')}</Box>
-          <Box sx={{ typography: 'subtitle2' }}>{carDetails?.odometer}</Box>
+          <Box sx={{ typography: 'subtitle2' }}>{carDetails?.odometer} {t("km")}</Box>
         </Stack>
 
-        <Stack direction="row" sx={{ px: '10px' }}>
+        <Stack direction="row" maxWidth={"full"} sx={{ px: '10px' }}>
           <Box sx={{ width: 120, color: 'text.secondary' }}>{t('attached_driver')}</Box>
-          <Box sx={{ width: 120, typography: 'subtitle2' }}>
+          <Box sx={{ width: 220, typography: 'subtitle2' }}>
             {
               !!carDetails?.driver?.id ?
                 <Box
-                  onClick={() => handleViewRow(carDetails?.driver?.id)}
+                maxWidth={"full"}
+                  onClick={() => router.push( paths.dashboard.drivers.details(carDetails?.driver?.id))}
                   sx={{
                     cursor: 'pointer',
                     '&:hover': {
@@ -53,6 +58,7 @@ export default function OrderDetailsInfo2({ carDetails, delivery, payment, shipp
                     },
                   }}
                 >
+                  {/* <ExpandableText text={carDetails?.driver?.name} length={4} /> */}
                   {carDetails?.driver?.name}
                 </Box>
                 : "--"
@@ -62,12 +68,12 @@ export default function OrderDetailsInfo2({ carDetails, delivery, payment, shipp
           {/* t("not_yet_attached") */}
 
         </Stack>
-        {carDetails?.driver?.id &&
+        {/* {carDetails?.driver?.id &&
           <Stack direction="row" >
             <Box sx={{ width: 120, color: 'text.secondary' }}>
               <CarDettachForm car_id={carDetails?.id} driver_id={carDetails?.driver?.id} />
             </Box>
-          </Stack>}
+          </Stack>} */}
       </Stack>
     </>
   );
@@ -76,14 +82,14 @@ export default function OrderDetailsInfo2({ carDetails, delivery, payment, shipp
 
 
   return (
-    <Card>
+    <Card >
       {renderDelivery}
-      {!carDetails?.driver?.id &&
+      {/* {!carDetails?.driver?.id &&
         <PermissionsContext action={'put.car.driver_id'}>
           <CarAttachForm car_id={carDetails?.id} />
         </PermissionsContext>
 
-      }
+      } */}
       {/* <Divider sx={{ borderStyle: 'dashed' }} />
       {renderCustomer} */}
 

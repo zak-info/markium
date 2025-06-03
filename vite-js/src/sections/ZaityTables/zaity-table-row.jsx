@@ -23,9 +23,9 @@ export default function OrderTableRow({ TABLE_HEAD, row, unit, pv, currentLang, 
   const router = useRouter();
   const renderPrimary = (
     <TableRow hover selected={selected}>
-      <TableCell align='start' sx={{ width: "100px" }} padding="checkbox" >
+      {/* <TableCell align='start' sx={{ width: "100px" }} padding="checkbox" >
         <Checkbox checked={selected} onClick={onSelectRow} />
-      </TableCell>
+      </TableCell> */}
 
       {TABLE_HEAD?.map((head_row, index) => (
         <TableCell key={index}>

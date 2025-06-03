@@ -216,11 +216,11 @@ export function ViewClaim({ claim }) {
 
           </Box>
           {
-            claim?.status?.key != "due_claim" ?
+            claim?.status?.key != "due_claim" &&  claim?.invoice_path ?
               <Stack alignItems="flex-end" sx={{ mt: 3 }}>
                 <Button
                   component={RouterLink}
-                  href={STORAGE_API + "/invoices/" + claim?.invoice_path}
+                  href={paths.dashboard.documents.preview + `?url=${ "/invoices/" + claim?.invoice_path}`}
                   target='_blanc'
                   variant="contained"
                   startIcon={<Iconify icon="material-symbols:search-rounded" />}
@@ -232,7 +232,7 @@ export function ViewClaim({ claim }) {
               null
           }
         </Grid>
-      </Grid >
+      </Grid>
       {/* </FormProvider> */}
     </>
   )

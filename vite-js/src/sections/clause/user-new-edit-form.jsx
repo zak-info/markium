@@ -128,12 +128,10 @@ export default function UserNewEditForm({ maintenance_id, currentClause, setTabl
       clause_credentials = { is_periodic: false, related_id: body?.spec_id }
       maintenace_spec = data?.maintenance_specifications?.find(item => item.id = Number(body?.spec_id))
       delete body?.spec_or_period
-      console.log("body : ", body);
-      console.log("lets create :", body);
-      const dd = { ...body, cost: Number(credentials?.cost), quantity: Number(credentials?.quantity) }
+      const dd = { ...body, cost: Number(credentials?.cost), quantity: Number(credentials?.quantity),spec_id:Number(body?.spec_id) }
       console.log("dddddddddddddddd : ", dd);
       if (currentClause?.id) {
-      } else {
+      }else {
         await addNewMaintenanceClause(dd);
         const newClause = { cost: dd?.cost, is_periodic: maintenace_spec?.is_periodic ? 1 : 0, related_id: Number(dd.spec_id), quantity: dd?.quantity, piece_status: body?.piece_status, note: body?.note }
         // console.log("newClause : ", newClause);
@@ -144,7 +142,7 @@ export default function UserNewEditForm({ maintenance_id, currentClause, setTabl
       }
       // reset();
       enqueueSnackbar(t("operation_success"), { variant: 'success' });
-      setAddProcess(true);
+      // setAddProcess(true);
       router.reload();
     } catch (error) {
       console.error(error);

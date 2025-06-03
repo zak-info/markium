@@ -60,6 +60,7 @@ export const endpoints = {
     changePasswordByAdmin: '/auth/changePasswordByAdmin',
   },
   clauses: {
+    root: `/maintenance/clauses`,
     list: (id) => `/maintenance/${id}/clauses`,
     add: `/maintenance/clauses`,
     edit: (id) => `/maintenance/clauses/${id}`,

@@ -31,6 +31,7 @@ import { addNewDriver, editDriver } from 'src/api/drivers';
 
 import { useValues } from 'src/api/utils';
 import { useGetCar } from 'src/api/car';
+import showError from 'src/utils/show_error';
 
 // ----------------------------------------------------------------------
 
@@ -77,7 +78,7 @@ export default function UserNewEditForm({ currentDriver }) {
       phone_number: currentDriver?.phone_number || '',
       start_date: currentDriver?.start_date || new Date(),
       state_id: currentDriver?.state?.id || null,
-      isMale: currentDriver?.isMale ?? true, // default to true if undefined
+      isMale: currentDriver?.isMale == 0 ? false : true, // default to true if undefined
       birth_date: currentDriver?.birth_date || null,
     }),
     [currentDriver]
@@ -139,13 +140,7 @@ export default function UserNewEditForm({ currentDriver }) {
 
       router.push(paths.dashboard.drivers.root);
     } catch (error) {
-      console.error(error);
-      Object.values(error?.data).forEach(array => {
-        array.forEach(text => {
-          enqueueSnackbar(text, { variant: 'error' });
-        });
-      });
-
+     showError(error)
     }
   });
 
@@ -163,11 +158,8 @@ export default function UserNewEditForm({ currentDriver }) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              {/* Name */}
+             
               <RHFTextField name="name" label={t('name')} />
-
-              {/* Nationality ID */}
-
               <RHFSelect name="nationality_id"  label={t('nationality')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
                 {data?.countries?.map((option) => (
@@ -183,7 +175,7 @@ export default function UserNewEditForm({ currentDriver }) {
                   { value: true, label: { ar: 'ذكر', en: 'Male' } },
                   { value: false, label: { ar: 'أنثى', en: 'Female' } },
                 ].map((option) => (
-                  <MenuItem key={option.value.toString()} value={option.value}>
+                  <MenuItem key={option.value} value={option.value}>
                     {option.label[currentLang.value]}
                   </MenuItem>
                 ))}

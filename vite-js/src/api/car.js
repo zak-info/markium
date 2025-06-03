@@ -226,7 +226,6 @@ export async function editCar(id, body) {
 
 export async function deleteCar(id) {
   const URL = endpoints.cars.list + '/' + id;
-
   return await axios.delete(URL);
 }
 export async function AddCarToMentainance(id) {

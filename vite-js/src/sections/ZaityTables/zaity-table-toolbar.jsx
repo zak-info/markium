@@ -15,7 +15,7 @@ import { t } from 'i18next';
 
 // ----------------------------------------------------------------------
 
-export default function OrderTableToolbar({ filters, onFilters, dateError }) {
+export default function OrderTableToolbar({searchText, filters, onFilters, dateError }) {
   const popover = usePopover();
 
   const handleFilter = useCallback((event) => {
@@ -65,7 +65,7 @@ export default function OrderTableToolbar({ filters, onFilters, dateError }) {
             fullWidth
             // value={filters.name}
             onChange={handleFilter}
-            placeholder={t("search_by")+"..."}
+            placeholder={searchText || t("search_by")+"..."}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">

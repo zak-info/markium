@@ -34,16 +34,29 @@ export default function UsersListView({ }) {
 
     let TABLE_HEAD = [
         { id: 'name', label: t('name'), type: "text", width: 140 },
-        { id: 'username', label: t('username'), type: "text", width: 140 },
+        { id: 'username', label: t('username'), type: "text", width: 180 },
         { id: 'email', label: t('email'), type: "text", width: 140 },
         { id: 'phone_number', label: t('phone_number'), type: "text", width: 140 },
         { id: 'status', label: t('status'), type: "text", width: 140 },
-        { id: 'role', label: t('role'), type: "text", width: 140 },
+        { id: 'roles', label: t('roles'), type: "text", width: 140 },
         { id: 'actions', label: t('actions'), type: "threeDots", component: (item) => <ElementActions item={item} />, width: 400, align: "right" },
     ]
 
 
-    const defaultFilters = { status: 'all', name: "" };
+
+    const filters = [
+        {
+            key: 'name', label: t('name'), match: (item, value) =>
+                item?.name?.toLowerCase().includes(value?.toLowerCase()) ||
+                item?.username?.toLowerCase().includes(value?.toLowerCase()) ||
+                item?.email?.toLowerCase().includes(value?.toLowerCase()) ,
+        },
+    ];
+
+    const defaultFilters = {
+        name: '',
+    };
+
     const items = [
         { key: 'all', label: t('all'), match: () => true },
         { key: 'selected', label: t('selected'), match: (item) => item?.status == "selected", color: 'primary' },
@@ -56,8 +69,23 @@ export default function UsersListView({ }) {
         return data;
     }
 
+    function arrayToSentence(arr) {
+        if (arr.length === 0) return "";
+        if (arr.length === 1) return arr[0];
+        if (arr.length === 2) return `${arr[0]} and ${arr[1]}`;
+        return `${arr.slice(0, -1).join(", ")}, and ${arr[arr.length - 1]}`;
+    }
+
+    // arrayToSentence(["apples", "bananas", "oranges"]);
+    // Output: "apples, bananas, and oranges"
+
+
     const RformulateTable = (data) => {
-        return data?.map(item => ({ ...item })) || [];
+        return data?.map(item => ({
+            ...item,
+            roles: arrayToSentence(item.roles.map(i => i.key)),
+
+        })) || [];
     }
 
     useEffect(() => {
@@ -91,9 +119,9 @@ export default function UsersListView({ }) {
             >
                 <Card>
                     {/* <ZaityTableTabs data={tableData} items={items} defaultFilters={{ status: 'all' }} setTableDate={setDataFiltered} filterFunction={filterFunction}> */}
-                    {/* <ZaityTableFilters defaultFilters={defaultFilters} dataFiltered={tableData}> */}
-                    <ZaityListView TABLE_HEAD={[...TABLE_HEAD]} dense="medium" zaityTableDate={dataFiltered || []} onSelectedRows={({ data, setTableData }) => { return <onSelectedRowsComponent configurable_type={"roles"} setTableData={setTableData} data={users} /> }} />
-                    {/* </ZaityTableFilters> */}
+                    <ZaityTableFilters data={dataFiltered} tableData={tableData} setTableDate={setDataFiltered} items={filters} defaultFilters={defaultFilters} dataFiltered={tableData} searchText={t("search_by") + " " + t("name") + ", " + t("username") + ", " + t("email")+ ", " + t("phone") + " ..."} >
+                        <ZaityListView TABLE_HEAD={[...TABLE_HEAD]} dense="medium" zaityTableDate={dataFiltered || []} onSelectedRows={({ data, setTableData }) => { return <onSelectedRowsComponent configurable_type={"roles"} setTableData={setTableData} data={users} /> }} />
+                    </ZaityTableFilters>
                     {/* </ZaityTableTabs> */}
                 </Card>
             </ZaityHeadContainer>
@@ -205,14 +233,14 @@ const ElementActions = ({ item }) => {
                     </MenuItem>
                 </PermissionsContext>
             </CustomPopover>
-            
+
             <ContentDialog
-            
+
                 open={completed.value}
                 onClose={completed.onFalse}
                 title={t("edit_password")}
                 content={
-                    <ChangePasswordView currentUser={item} onClose={()=>{completed.onFalse()}} />
+                    <ChangePasswordView currentUser={item} onClose={() => { completed.onFalse() }} />
                 }
             />
             {/* 9ugpv2h2 */}

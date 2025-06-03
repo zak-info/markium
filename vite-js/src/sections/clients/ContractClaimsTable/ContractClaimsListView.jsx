@@ -22,6 +22,7 @@ import ZaityTableFilters from 'src/sections/ZaityTables/ZaityTableFilters';
 import ZaityTableTabs from 'src/sections/ZaityTables/ZaityTableTabs'; // [keep for later use]
 import { CloseClaim } from './CloseClaim';
 import { ViewClaim } from './ViewClaim';
+import { EditClaim } from './EditClaim';
 
 // ----------------------------------------------------------------------
 
@@ -37,7 +38,7 @@ export default function ContractClaimsListView({ data, with_contracts }) {
     //     { id: 'date', label: t('date'), type: "text", width: 140 },
     //     { id: 'payment_date', label: t('paiment_date'), type: "text", width: 140 },
     //     { id: 'gstatus', label: t('status'), type: "label", color: "error", width: 140 },
-    //     { id: 'actions', label: t('actions'), type: "threeDots", component: (item) => <ElementActions item={item} setDataFiltered={setDataFiltered} />, width: 400, align: "right" },
+    //     { id: 'actions', label: t('actions'), type: "threeDots", component: (item) => <ElementActions item={item} setTableData={setDataFiltered} />, width: 400, align: "right" },
     // ]
     const TABLE_HEAD = useMemo(() => {
         if (with_contracts) {
@@ -68,7 +69,7 @@ export default function ContractClaimsListView({ data, with_contracts }) {
                     id: 'actions',
                     label: t('actions'),
                     type: 'threeDots',
-                    component: (item) => <ElementActions item={item} setDataFiltered={setDataFiltered} />,
+                    component: (item) => <ElementActions item={item} setTableData={setDataFiltered} />,
                     width: 400,
                     align: 'right',
                 },
@@ -83,7 +84,7 @@ export default function ContractClaimsListView({ data, with_contracts }) {
                     id: 'actions',
                     label: t('actions'),
                     type: 'threeDots',
-                    component: (item) => <ElementActions item={item} setDataFiltered={setDataFiltered} />,
+                    component: (item) => <ElementActions item={item} setTableData={setDataFiltered} />,
                     width: 400,
                     align: 'right',
                 },
@@ -102,8 +103,10 @@ export default function ContractClaimsListView({ data, with_contracts }) {
     const items = [
         { key: 'all', label: t('all'), match: () => true },
         { key: 'paid_claim', label: t('paid_claim'), match: (item) => item?.status?.key == "paid_claim", color: 'primary' },
+        { key: 'not_yet_claim', label: t('not_yet_claim'), match: (item) => item?.status?.key == "not_yet_claim", color: 'secondary' },
         { key: 'due_claim', label: t('due_claim'), match: (item) => item?.status?.key == "due_claim", color: 'warning' },
-        // { key: 'replaced', label: t('replaced'), match: (item) => item?.gstatus == "replaced", color: 'secondary' },
+        { key: 'overdue_claim', label: t('overdue_claim'), match: (item) => item?.status?.key == "overdue_claim", color: 'error' },
+        { key: 'severely_overdue_claim', label: t('severely_overdue_claim'), match: (item) => item?.status?.key == "severely_overdue_claim", color: 'error' },
     ];
     const filterFunction = (data, filters) => {
         const activeTab = filters.tabKey;
@@ -157,7 +160,7 @@ export default function ContractClaimsListView({ data, with_contracts }) {
 
 
 
-const ElementActions = ({ item, setDataFiltered }) => {
+const ElementActions = ({ item, setTableData }) => {
     const popover = usePopover();
     const confirm = useBoolean();
     const edit = useBoolean();
@@ -201,6 +204,12 @@ const ElementActions = ({ item, setDataFiltered }) => {
                         {t('view')}
                     </MenuItem>
                 </PermissionsContext>
+                <PermissionsContext action={"update.claim"} >
+                    <MenuItem onClick={() => { edit.onTrue(); popover.onClose() }}>
+                        <Iconify icon="solar:clapperboard-edit-bold-duotone" />
+                        {t('edit')}
+                    </MenuItem>
+                </PermissionsContext>
                 {/* <PermissionsContext action={"update.claim"} >
                     <MenuItem onClick={() => { edit.onTrue(); popover.onClose() }}>
                         <Iconify icon="solar:pen-bold" />
@@ -224,23 +233,18 @@ const ElementActions = ({ item, setDataFiltered }) => {
                         {t('delete')}
                     </MenuItem>
                 </PermissionsContext>
-                {/* <PermissionsContext action={"update.clause"} >
-                    <MenuItem disabled={item?.cancelled_at  } onClick={() => {cancle.onTrue();popover.onClose()}} sx={{ color: 'warning.main' }} >
-                        <Iconify icon="material-symbols-light:shield-locked-rounded" />
-                        {t('cancle')}
-                    </MenuItem>
-                </PermissionsContext> */}
+
             </CustomPopover>
 
 
             <ContentDialog
-                open={cancle.value}
-                onClose={cancle.onFalse}
-                title={t("cancle_clause")}
+                open={edit.value}
+                onClose={edit.onFalse}
+                title={t("edit") + " " + t("claim")}
                 content={
                     <>
-                        {/* <CancleClause setDataFiltered={setDataFiltered} id={item?.id} close={() => { cancle.onFalse() }} /> */}
-                    </>
+                        <EditClaim claim_id={item?.id}  item={item} setTableData={setTableData} close={()=>{edit.onFalse()}}   />
+                    </> 
                 }
             />
 
@@ -258,20 +262,11 @@ const ElementActions = ({ item, setDataFiltered }) => {
                 onClose={replace.onFalse}
                 title={t("")}
                 content={
-                    <CloseClaim claim_id={item?.id} setTableData={setDataFiltered} close={() => { replace?.onFalse() }} />
+                    <CloseClaim claim_id={item?.id} setTableData={setTableData} close={() => { replace?.onFalse() }} />
                 }
             />
 
-            <ContentDialog
-                open={edit.value}
-                onClose={edit.onFalse}
-                title={t("cancle_clause")}
-                content={
-                    <>
-                        {/* <AddClauseForm setTableData={setDataFiltered} currentClause={item}  close={() => { edit.onFalse() }} /> */}
-                    </>
-                }
-            />
+
             {/* <ContentDialog
                 maxWidth={"md"}
                 open={replace.value}

@@ -11,8 +11,15 @@ import { useTranslate } from 'src/locales';
 import ZaityDynamicForm from 'src/sections/ZaityTables/zaity-new-edit-form';
 import { useValues } from 'src/api/utils';
 import { createItemInSettings } from 'src/api/settings';
+import { label } from 'yet-another-react-lightbox';
 
 // ----------------------------------------------------------------------
+const SystemItemCreateView = ({ collection }) => {
+    const settings = useSettingsContext();
+    const { t } = useTranslate();
+    const { data } = useValues();
+    const router = useRouter();
+
 
 const types = {
     payment_method: {
@@ -64,21 +71,25 @@ const types = {
             
         ],
     },
-    attachment_names: {
+    attachment_name: {
         add_new_item_label: "add_new_attachment_name",
         homeHref: paths.dashboard.settings.attachment_names,
         getAndSend: (data) => ({
             name_en: data.name,
             name_ar: data.name,
+            object_type: data.object_type,
             attachable: data.attachable,
             is_private: "1",
         }),
         schema: Yup.object().shape({
             name: Yup.string().required(),
+            object_type: Yup.string().required(),
             attachable: Yup.string().required(),
         }),
         fields: (t) => [
             { name: 'name', label: t('attachment_name'), type: 'text', required: true },
+            // { name: 'object_type', label: t('type'), type: 'select',data:[{ value: "card", label:  "كرت", id: 1 }, { value: "form", label: "استمارة", id: 2 }], required: true },
+            { name: 'object_type', label: t('type'), type: 'select',data:data?.attachment_types?.map(i => ({value:i.key,label:i.translations[0]?.name})), required: true },
             { name: 'attachable', label: t('attachable'), type: 'select',data:[{ value: "car", label:  "سيارة", id: 1 }, { value: "driver", label: "سائق", id: 2 }, { value: "client", label:  "عميل", id: 3 }, { value: "other", label:  "اخرى", id: 4 }], required: true },
             
         ],
@@ -252,11 +263,7 @@ const types = {
 
 // ----------------------------------------------------------------------
 
-const SystemItemCreateView = ({ collection }) => {
-    const settings = useSettingsContext();
-    const { t } = useTranslate();
-    const { data } = useValues();
-    const router = useRouter();
+
 
     const currentType = collection?.type; // fallback
     const currentSystemItem = types[currentType];
@@ -274,10 +281,10 @@ const SystemItemCreateView = ({ collection }) => {
     return (
         <Container maxWidth={settings.themeStretch ? false : 'lg'}>
             <CustomBreadcrumbs
-                heading={t(currentSystemItem.add_new_item_label)}
+                heading={t(currentSystemItem?.add_new_item_label)}
                 links={[
                     { name: t('dashboard'), href: paths.dashboard.root },
-                    { name: t(currentSystemItem.add_new_item_label), href: paths.dashboard.settings.root },
+                    { name: t(currentSystemItem?.add_new_item_label), href: paths.dashboard.settings.root },
                     { name: t('create') },
                 ]}
                 sx={{ mb: { xs: 3, md: 5 } }}
@@ -285,8 +292,8 @@ const SystemItemCreateView = ({ collection }) => {
 
             <ZaityDynamicForm
                 currentItem={{ name_en: '', name_ar: '', is_private: '0' }}
-                schema={currentSystemItem.schema}
-                fields={currentSystemItem.fields(t, data)}
+                schema={currentSystemItem?.schema}
+                fields={currentSystemItem?.fields(t, data)}
                 onSubmit={(data) => handleSubmitCreate(data)}
             />
         </Container>

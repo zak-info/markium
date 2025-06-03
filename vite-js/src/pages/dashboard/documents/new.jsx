@@ -8,7 +8,7 @@ export default function UserCreatePage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: Create a new document</title>
+        <title> Dashboard: Edit a  Document</title>
       </Helmet>
 
       <UserEditView />

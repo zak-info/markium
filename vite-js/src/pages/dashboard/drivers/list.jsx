@@ -1,4 +1,5 @@
 import { Helmet } from 'react-helmet-async';
+import DriverListView from 'src/sections/drivers/DriverListView/DriverListView';
 
 import { OrderListView } from 'src/sections/drivers/view';
 
@@ -11,7 +12,8 @@ export default function InvoiceListPage() {
         <title> Dashboard: Documents Page</title>
       </Helmet>
 
-      <OrderListView />
+      {/* <OrderListView /> */}
+      <DriverListView />
     </>
   );
 }

@@ -23,7 +23,7 @@ export default function UserCreateView({id}) {
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
       <CustomBreadcrumbs
-        heading={t('addNewDocument')}
+        heading={currentDocument ? t("editDocument"):t('addNewDocument')}
         links={[
           {
             name: t('dashboard'),
@@ -33,7 +33,7 @@ export default function UserCreateView({id}) {
             name: t('documentsList'),
             href: paths.dashboard.documents.root,
           },
-          { name: t('addNewDocument') },
+          { name: currentDocument ? t("editDocument"):t('addNewDocument') },
         ]}
         sx={{
           mb: { xs: 3, md: 5 },

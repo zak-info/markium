@@ -40,10 +40,11 @@ import { useGetClients } from 'src/api/client';
 import SimpleAutocomplete from 'src/components/hook-form/rhf-simple-autocomplete';
 import { fDate } from 'src/utils/format-time';
 import { createClaim } from 'src/api/claim';
+import { keyBy } from 'lodash';
 
 // ----------------------------------------------------------------------
 
-export default function ClaimNewEditForm({ contract,currentClause,setTableData,contract_id }) {
+export default function ClaimNewEditForm({ contract, currentClause, setTableData, contract_id }) {
   const router = useRouter();
   console.log(contract_id);
 
@@ -89,12 +90,27 @@ export default function ClaimNewEditForm({ contract,currentClause,setTableData,c
       console.log("data : ", data);
       if (currentClause?.id) {
       } else {
-        await createClaim({contract_id,...body,contract_period_id:contract?.period?.id});
+        await createClaim({ contract_id, ...body, contract_period_id: contract?.period?.id });
       }
       reset();
       enqueueSnackbar(t("operation_success"), { variant: 'success' });
       // router.push(paths.dashboard.clients.claims);
-      setTableData(prev=> prev?.length > 0 ? [...prev,{contract_id,...body,created_at:new Date(),status:{translations:[{name:t("not_yet")}]}}] : [{contract_id,...body,created_at:new Date(),status:{translations:[{name:t("not_yet")}]}}])
+      setTableData(prev => [
+        ...(prev || []),
+        {
+          contract_id,
+          ...body,
+          date:  fDate(new Date()),
+          payment_date: fDate(new Date(data?.paiment_date)),
+          status: {
+            key:'due_claim',
+            translations: [{ name: t("not_yet") }]
+          },
+          gstatus: t("not_yet"),
+
+        }
+      ]);
+
     } catch (error) {
       console.error(error);
       Object.values(error?.data).forEach(array => {
@@ -105,7 +121,7 @@ export default function ClaimNewEditForm({ contract,currentClause,setTableData,c
     }
   });
 
-  
+
 
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>
@@ -134,7 +150,7 @@ export default function ClaimNewEditForm({ contract,currentClause,setTableData,c
                 value={values?.paiment_date ? new Date(values?.paiment_date) : new Date()}
                 required
                 name="paiment_date"
-                format="dd/MM/yyyy"  
+                format="dd/MM/yyyy"
                 onChange={(newValue) => setValue('paiment_date', fDate(newValue, 'yyyy-MM-dd'))}
                 slotProps={{
                   textField: {

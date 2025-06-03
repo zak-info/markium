@@ -44,8 +44,8 @@ export default function ProfileHome({ info, posts, contract, client, location })
   const { car } = useGetCar()
   const { drivers } = useGetDrivers()
   const { clauses } = useGetClauses(contract?.id);
-  console.log("car : ", car);
-  console.log("drivers : ", drivers);
+
+  console.log("clauses : ", clauses);
 
   const formulateClaims = (list) => {
     return list.map(item => ({
@@ -63,30 +63,41 @@ export default function ProfileHome({ info, posts, contract, client, location })
 
   const formulateClauses = (list) => {
     // Step 1: Mark items with `replacer: true`
-    list?.forEach(item => {
-      if (item?.replaced_by_clause_id) {
-        const target = list?.find(targetItem => targetItem.id === item.replaced_by_clause_id);
-        if (target) {
-          target.replacer = true;
-        }
-      }
-    });
+    // list?.forEach(item => {
+    //   if (item?.replaced_by_clause_id) {
+    //     const target = list?.find(targetItem => targetItem.id === item.replaced_by_clause_id);
+    //     if (target) {
+    //       target.replacer = true;
+    //     }
+    //   }
+    // });
 
     // Step 2: Transform and return the updated list
     return list?.map(item => ({
       ...item,
-      clausable: {
-        first: item?.clauseable_type === "car"
-          ? car?.find(i => i.id === item?.clauseable_id)?.model?.translations?.name
-          : drivers?.find(i => i.id === item?.clauseable_id)?.name,
-        second: item?.clauseable_type === "car"
-          ? car?.find(i => i.id === item?.clauseable_id)?.plat_number
-          : drivers?.find(i => i.id === item?.clauseable_id)?.phone_number
-      },
+      clausable: item?.replaced_by_clause_id ?
+        {
+          first: item?.clauseable_type === "car"
+            ? car?.find(i => i.id === item?.clauseable_id)?.model?.translations?.name
+            : drivers?.find(i => i.id === item?.clauseable_id)?.name,
+          second: item?.clauseable_type === "car"
+            ? car?.find(i => i.id === item?.clauseable_id)?.plat_number
+            : drivers?.find(i => i.id === item?.clauseable_id)?.phone_number
+        }
+        :
+        {
+          first: item?.clauseable_type === "car"
+            ? car?.find(i => i.id === item?.clauseable_id)?.model?.translations?.name
+            : drivers?.find(i => i.id === item?.clauseable_id)?.name,
+          second: item?.clauseable_type === "car"
+            ? car?.find(i => i.id === item?.clauseable_id)?.plat_number
+            : drivers?.find(i => i.id === item?.clauseable_id)?.phone_number
+        },
       start_date: fDate(item?.start_date),
       end_date: fDate(item?.end_date),
       color: "success"
-    })).filter(item => !item?.replaced_by_clause_id);
+    }))
+    // .filter(item => !item?.replaced_by_clause_id);
   };
 
   const [clausesTableData, setClausesTableData] = useState(formulateClauses(clauses))
@@ -95,7 +106,7 @@ export default function ProfileHome({ info, posts, contract, client, location })
     setClausesTableData(formulateClauses(clauses))
   }, [clauses])
 
-  
+
 
 
 
@@ -149,7 +160,7 @@ export default function ProfileHome({ info, posts, contract, client, location })
               </Link>
             </Box>
           </Stack>
-          <Stack direction="row" spacing={2}>
+          {/* <Stack direction="row" spacing={2}>
             <Iconify icon="mingcute:coin-fill" width={24} />
 
             <Box sx={{ typography: 'body2' }}>
@@ -158,14 +169,32 @@ export default function ProfileHome({ info, posts, contract, client, location })
                 {contract?.remaining_unclaimed_amount}.00
               </Link>
             </Box>
-          </Stack>
+          </Stack> */}
 
-          <Stack direction="row" sx={{ typography: 'body2' }}>
+          {/* <Stack direction="row" sx={{ typography: 'body2' }}>
             <Iconify icon="heroicons-solid:calendar" width={24} sx={{ mr: 2 }} />
             <Box sx={{ typography: 'body2' }}>
               {t(`date`) + "  "}
               <Link variant="subtitle2" color="inherit">
                 {fDate(contract?.created_at)}
+              </Link>
+            </Box>
+          </Stack> */}
+          <Stack direction="row" sx={{ typography: 'body2' }}>
+            <Iconify icon="heroicons-solid:calendar" width={24} sx={{ mr: 2 }} />
+            <Box sx={{ typography: 'body2' }}>
+              {t(`start_date`) + "  "}
+              <Link variant="subtitle2" color="inherit">
+                {fDate(contract?.period?.start_date)}
+              </Link>
+            </Box>
+          </Stack>
+          <Stack direction="row" sx={{ typography: 'body2' }}>
+            <Iconify icon="heroicons-solid:calendar" width={24} sx={{ mr: 2 }} />
+            <Box sx={{ typography: 'body2' }}>
+              {t(`end_date`) + "  "}
+              <Link variant="subtitle2" color="inherit">
+                {fDate(contract?.period?.end_date)}
               </Link>
             </Box>
           </Stack>

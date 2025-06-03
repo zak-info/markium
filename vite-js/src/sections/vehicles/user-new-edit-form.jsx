@@ -34,28 +34,49 @@ import FormProvider, {
 import { useTranslate } from 'src/locales';
 
 import { useGetCompany } from 'src/api/company';
-import { createCar, editCar } from 'src/api/car';
+import { createCar, editCar, useGetCar } from 'src/api/car';
 import { useValues } from 'src/api/utils';
+import showError from 'src/utils/show_error';
 
 // ----------------------------------------------------------------------
 
 export default function UserNewEditForm({ currentCar }) {
   const router = useRouter();
-  console.log("currentCar : ", currentCar);
+  const { car } = useGetCar()
+  console.log("car : ", car);
+
   const { data } = useValues();
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslate();
 
   const NewUserSchema = Yup.object().shape({
     production_year: Yup.number().required('Production year is required').positive().integer(),
-    plat_number: Yup.string().required('Plate number is required'),
+    plat_number: Yup.string().required('Plate number is required').test(
+      'unique-plat',
+      t('plat_number_already_exists'),
+      function (value) {
+        return !car?.map(item => item?.plat_number)?.includes(value.trim());
+      }
+    ),
     chassis_number: Yup.string()
       .length(17, 'يجب أن يتكون الرقم الهيكل من 17 خانة ')
-      .required('Chassis number is required'),
+      .required('Chassis number is required').test(
+      'chassis-number',
+      t('chassis_number_already_exists'),
+      function (value) {
+        return !car?.map(item => item?.chassis_number)?.includes(value.trim());
+      }
+    ),
     vin: Yup.string()
-      .length(9, 'يجب أن يتكون الرقم التسلسلي من 9 خانة ')
+      // .length(9, 'يجب أن يتكون الرقم التسلسلي من 9 خانة ')
       .required('VIN is required')
-      .label('Vin'),
+      .label('Vin').test(
+      'vin',
+      t('vin_already_exists'),
+      function (value) {
+        return !car?.map(item => item?.vin)?.includes(value.trim());
+      }
+    ),
     passengers_capacity: Yup.number()
       .required('Passenger capacity is required')
       .positive()
@@ -94,6 +115,10 @@ export default function UserNewEditForm({ currentCar }) {
     [currentCar]
   );
 
+
+  const validateUnicity = (list,key,value)=>{
+    return list?.map(item => item?.[key])?.includes(value.trim())
+  }
 
   const methods = useForm({
     resolver: yupResolver(NewUserSchema),
@@ -161,17 +186,17 @@ export default function UserNewEditForm({ currentCar }) {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
+      if (car?.map(item => item?.plat_number)?.includes(data?.plat_number.trim())) {
+        enqueueSnackbar(t('plat_number_already_used'),{variant:'error'});
+        return;
+      }
       const response = currentCar?.id ? await editCar(currentCar?.id, data) : await createCar(data);
       enqueueSnackbar(t('operation_success'));
+
       router.push(paths.dashboard.vehicle.root);
       reset();
     } catch (error) {
-      console.error(error);
-      Object.values(error?.data).forEach(array => {
-        array.forEach(text => {
-          enqueueSnackbar(text, { variant: 'error' });
-        });
-      });
+      showError(error)
     }
   });
 
@@ -202,7 +227,7 @@ export default function UserNewEditForm({ currentCar }) {
                 <Divider sx={{ borderStyle: 'dashed' }} />
                 {data?.car_companies?.map((company) => (
                   <MenuItem key={company?.id} value={company.id}>
-                    {company?.translations?.name || company.key}
+                    {company?.translations[0]?.name || company.key}
                   </MenuItem>
                 ))}
               </RHFSelect>
@@ -214,27 +239,16 @@ export default function UserNewEditForm({ currentCar }) {
                 <Divider sx={{ borderStyle: 'dashed' }} />
                 {data?.car_companies?.find(item => item?.id == selectedCompanyId)?.models?.map((model) => (
                   <MenuItem key={model.id} value={model.id}>
-                    {model.translations?.name || model.key}
+                    {model.translations[0]?.name || model.key}
                   </MenuItem>
                 ))}
               </RHFSelect>
 
+              <RHFTextField required name="plat_number" label={t('plateNumber')} error={validateUnicity(car,"plat_number",values?.plat_number)} helperText={validateUnicity(car,"plat_number",values?.plat_number) ? t('plat_number_already_exists'):null} />
 
+              <RHFTextField required name="chassis_number" label={t('structureNo')} error={validateUnicity(car,"chassis_number",values?.chassis_number)} helperText={validateUnicity(car,"chassis_number",values?.vin) ? t('chassis_number_already_exists'):null} />
 
-              {/* <RHFSelect required name="car_model_id" label={t('model')}>
-                <Divider sx={{ borderStyle: 'dashed' }} />
-                {data?.car_model?.map((option) => (
-                  <MenuItem key={option?.translations?.name} value={option?.id}>
-                    {option?.translations?.name}
-                  </MenuItem>
-                ))}
-              </RHFSelect> */}
-
-              <RHFTextField required name="plat_number" label={t('plateNumber')} />
-
-              <RHFTextField required name="chassis_number" label={t('structureNo')} />
-
-              <RHFTextField required name="vin" label={t('serialNumber')} />
+              <RHFTextField required name="vin" label={t('serialNumber')} error={validateUnicity(car,"vin",values?.vin)} helperText={validateUnicity(car,"vin",values?.vin) ? t('vin_already_exists'):null} />
               <RHFTextField required name="odometer" label={t('odometer')} />
               {/* <RHFTextField name="depreciation" label={t('depreciation')} /> */}
               <RHFTextField

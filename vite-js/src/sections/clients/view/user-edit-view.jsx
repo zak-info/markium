@@ -23,17 +23,17 @@ export default function ClientEditView({id}) {
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
       <CustomBreadcrumbs
-        heading={t('addNewClient')}
+        heading={id  ?t('edit_client')  :t('addNewClient')}
         links={[
           {
             name: t('dashboard'),
             href: paths.dashboard.root,
           },
           {
-            name: t('ClientsList'),
+            name: t('clientsList'),
             href: paths.dashboard.clients.root,
           },
-          { name: t('addNewClient') },
+          { name:id  ?t('edit_client')  :t('addNewClient') },
         ]}
         sx={{
           mb: { xs: 3, md: 5 },

@@ -12,7 +12,7 @@ export default function UsersCreatePage({ }) {
    const settings = useSettingsContext();
   return (
     <>
-      <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+      {/* <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
           heading={t('add_user')}
           links={[
@@ -29,12 +29,12 @@ export default function UsersCreatePage({ }) {
           sx={{
             mb: { xs: 3, md: 5 },
           }}
-        />
+        /> */}
         <Helmet>
           <title> System: Users Page</title>
         </Helmet>
         <UsersCreateView />
-      </Container>
+      {/* </Container> */}
     </>
   );
 }

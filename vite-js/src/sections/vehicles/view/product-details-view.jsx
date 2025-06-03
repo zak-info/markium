@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
@@ -43,7 +43,11 @@ export default function OrderDetailsView({ id }) {
 
   const { t } = useTranslate();
 
-  const { carDetails } = useGetCompanyByID(id);
+  const { carDetails:c_d } = useGetCompanyByID(id);
+  const [carDetails , setCarDetails] = useState(c_d);
+  useEffect(()=>{
+    setCarDetails(c_d)
+  },[c_d])
   console.log("carDetails : ",carDetails);
   const { documents } = useGetDocuments()
   const carDocuments = documents.filter(item => item.attachable_id == id && item.attachable_type == "car")
@@ -76,6 +80,7 @@ export default function OrderDetailsView({ id }) {
         orderNumber={carDetails?.car_model_id}
         createdAt={carDetails?.created_at}
         status={carDetails?.status}
+        setCarDetails={setCarDetails}
         idCar={id}
         carDetails={carDetails}
         onChangeStatus={handleChangeStatus}
@@ -98,10 +103,10 @@ export default function OrderDetailsView({ id }) {
           display="grid"
           gridTemplateColumns={{
             xs: 'repeat(1, 1fr)',
-            sm: 'repeat(3, 1fr)',
+            sm: 'repeat(1, 1fr)',
           }}
         >
-          <Grid xs={12} md={4}>
+          {/* <Grid xs={12} md={4}>
             <Stack spacing={3} direction={{ xs: 'column-reverse', md: 'column' }}>
               <OrderDetailsInfo2
                 carDetails={carDetails}
@@ -111,8 +116,8 @@ export default function OrderDetailsView({ id }) {
                 shippingAddress={currentOrder?.shippingAddress}
               />
             </Stack>
-          </Grid>
-          <Grid xs={12} md={4}  >
+          </Grid> */}
+          <Grid xs={12} md={20}  >
             <Stack spacing={3} direction={{ xs: 'column-reverse', md: 'column', height: '100%' }}>
               <OrderDetailsInfo
                 carDetails={carDetails}
@@ -123,7 +128,7 @@ export default function OrderDetailsView({ id }) {
               />
             </Stack>
           </Grid>
-          <Grid xs={12} md={4}>
+          {/* <Grid xs={12} md={4}>
             <OrderDetailsInfo3
               carDetails={carDetails}
               customer={currentOrder?.customer}
@@ -131,7 +136,7 @@ export default function OrderDetailsView({ id }) {
               payment={currentOrder?.payment}
               shippingAddress={currentOrder?.shippingAddress}
             />
-          </Grid>
+          </Grid> */}
         </Box>
         <Card sx={{ p: 1 }}>
           <Tabs

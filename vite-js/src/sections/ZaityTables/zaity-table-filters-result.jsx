@@ -9,12 +9,15 @@ import Button from '@mui/material/Button';
 
 import Iconify from 'src/components/iconify';
 import { shortDateLabel } from 'src/components/custom-date-range-picker';
+import { t } from 'i18next';
 
 // ----------------------------------------------------------------------
 
 export default function OrderTableFiltersResult({
   filters,
   onFilters,
+  setTableDate,
+  tableData,
   onResetFilters,
   results,
   ...other
@@ -42,35 +45,35 @@ export default function OrderTableFiltersResult({
       <Box sx={{ typography: 'body2' }}>
         <strong>{results}</strong>
         <Box component="span" sx={{ color: 'text.secondary', ml: 0.25 }}>
-          results found
+          {t("result_found")}
         </Box>
       </Box>
 
       <Stack flexGrow={1} spacing={1} direction="row" flexWrap="wrap" alignItems="center">
-        {filters.status !== 'all' && (
-          <Block label="Status:">
+        {/* {filters.status !== 'all' && (
+          <Block label={t("status")}>
             <Chip size="small" label={filters.status} onDelete={handleRemoveStatus} />
           </Block>
-        )}
+        )} */}
 
-        {filters.startDate && filters.endDate && (
+        {/* {filters.startDate && filters.endDate && (
           <Block label="Date:">
             <Chip size="small" label={shortLabel} onDelete={handleRemoveDate} />
           </Block>
-        )}
+        )} */}
 
-        {!!filters.name && (
-          <Block label="Keyword:">
+        {!!filters && (
+          <Block label={t("filter")}>
             <Chip label={filters.name} size="small" onDelete={handleRemoveKeyword} />
           </Block>
         )}
 
         <Button
           color="error"
-          onClick={onResetFilters}
+          onClick={()=>{onResetFilters}}
           startIcon={<Iconify icon="solar:trash-bin-trash-bold" />}
         >
-          Clear
+          {t("clear")}
         </Button>
       </Stack>
     </Stack>
