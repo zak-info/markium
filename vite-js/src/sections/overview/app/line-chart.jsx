@@ -1,22 +1,23 @@
 import PropTypes from 'prop-types';
-
-import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
-import { styled, useTheme } from '@mui/material/styles';
-
-import { fNumber } from 'src/utils/format-number';
+import { useTheme, styled } from '@mui/material/styles';
+import {
+  Card,
+  CardHeader,
+  IconButton,
+  MenuItem,
+  Stack,
+} from '@mui/material';
 
 import Chart, { useChart } from 'src/components/chart';
-import { useTranslation } from 'react-i18next';
-import { IconButton, MenuItem } from '@mui/material';
 import Iconify from 'src/components/iconify';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
-import { Stack } from '@mui/system';
+
+import { fNumber } from 'src/utils/format-number';
+import { useTranslation } from 'react-i18next';
 
 // ----------------------------------------------------------------------
 
 const CHART_HEIGHT = 400;
-
 const LEGEND_HEIGHT = 72;
 
 const StyledChart = styled(Chart)(({ theme }) => ({
@@ -33,32 +34,61 @@ const StyledChart = styled(Chart)(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-export default function AppCurrentDownload({ title, labels, handleThisWeek,handleThisMonth,handleThisYear, subheader, chart, ...other }) {
+export default function AppCurrentDownload({
+  title,
+  subheader,
+  chart,
+  labels,
+  handleThisWeek,
+  handleThisMonth,
+  handleThisYear,
+  ...other
+}) {
   const theme = useTheme();
   const { t } = useTranslation();
+  const popover = usePopover();
 
   const { colors, series, options } = chart;
 
-  const chartSeries = series.map((i) => i.value);
+  // Bar values (y-axis length)
+  const chartSeries = [
+    {
+      name: t('item'),
+      data: series.map((item) => item.value),
+    },
+  ];
 
   const chartOptions = useChart({
-    colors,
-    labels: series.map((i) => i.label),
-    stroke: { colors: [theme.palette.background.paper] },
-    legend: {  // ✅ Merged `legend` object
-      show: true,
-      showForSingleSeries: true,
-      customLegendItems: labels,
-      offsetY: 0,
-      floating: true,
-      position: 'bottom',
-      horizontalAlign: 'center',
-      markers: {
-        fillColors: ['#00E396', '#775DD0'],
+    colors, // bar colors
+    labels: series.map((item) => item.label),
+    chart: {
+      type: 'bar',
+      toolbar: { show: false },
+    },
+    plotOptions: {
+      bar: {
+        horizontal: true,
+        distributed: true, // ✅ respect colors by bar
+        borderRadius: 4,
+        barHeight: '75%',
       },
     },
+    dataLabels: {
+      enabled: true,
+      style: {
+        colors: [theme.palette.text.primary],
+      },
+    },
+    legend: {
+      show: true,
+      customLegendItems: series.map((item) => item.label),
+      markers: {
+        fillColors: colors,
+      },
+      position: 'bottom',
+      horizontalAlign: 'center',
+    },
     tooltip: {
-      fillSeriesColor: false,
       y: {
         formatter: (value) => fNumber(value),
         title: {
@@ -66,73 +96,37 @@ export default function AppCurrentDownload({ title, labels, handleThisWeek,handl
         },
       },
     },
-    chart: {
-      type: 'bar',
-    },
-    plotOptions: {
-      bar: {
-        horizontal: true,
-      },
-    },
     ...options,
   });
-
-  const options2 = {
-    chart: {
-      type: 'bar',
-    },
-    plotOptions: {
-      bar: {
-        horizontal: true,
-      },
-    },
-
-    goals: [
-      {
-        name: 'Expected',
-        value: 52,
-        strokeColor: '#775DD0',
-      },
-    ],
-  };
-
-  const w = [
-    {
-      name: t("item"),
-      data: chartSeries,
-      strokeColor: '#775DD0',
-    },
-  ];
-  const popover = usePopover();
-
 
   return (
     <Card {...other}>
       <CardHeader title={title} subheader={subheader} sx={{ mb: 5 }} />
+
       <StyledChart
         dir="ltr"
         type="bar"
-        series={w}
+        series={chartSeries}
         options={chartOptions}
         width="100%"
         height={350}
       />
-      {/* <Legend labels={labels} /> */}
-      <Stack display={"flex"} direction="row" justifyContent="flex-end" >
+
+      <Stack direction="row" justifyContent="flex-end">
         <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
           <Iconify icon="eva:more-vertical-fill" />
         </IconButton>
       </Stack>
+
       <CustomPopover
         open={popover.open}
         onClose={popover.onClose}
         arrow="right-top"
         sx={{ width: 200 }}
       >
-
         <MenuItem
           onClick={() => {
-            handleThisWeek()
+            handleThisWeek();
             popover.onClose();
           }}
         >
@@ -140,7 +134,7 @@ export default function AppCurrentDownload({ title, labels, handleThisWeek,handl
         </MenuItem>
         <MenuItem
           onClick={() => {
-            handleThisMonth()
+            handleThisMonth();
             popover.onClose();
           }}
         >
@@ -148,20 +142,32 @@ export default function AppCurrentDownload({ title, labels, handleThisWeek,handl
         </MenuItem>
         <MenuItem
           onClick={() => {
-            handleThisYear()
+            handleThisYear();
             popover.onClose();
           }}
         >
           {t('this_year')}
         </MenuItem>
-
       </CustomPopover>
     </Card>
   );
 }
 
 AppCurrentDownload.propTypes = {
-  chart: PropTypes.object,
-  subheader: PropTypes.string,
   title: PropTypes.string,
+  subheader: PropTypes.string,
+  chart: PropTypes.shape({
+    colors: PropTypes.arrayOf(PropTypes.string),
+    series: PropTypes.arrayOf(
+      PropTypes.shape({
+        label: PropTypes.string,
+        value: PropTypes.number,
+      })
+    ),
+    options: PropTypes.object,
+  }),
+  labels: PropTypes.array,
+  handleThisWeek: PropTypes.func,
+  handleThisMonth: PropTypes.func,
+  handleThisYear: PropTypes.func,
 };

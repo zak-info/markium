@@ -164,7 +164,7 @@ export default function OverviewAppView() {
               handleThisMonth={() => { setClaims(Gclaims?.filter(item => new Date(item?.paiment_date) >= new Date(new Date().setDate(new Date().getDate() - 30)))) }}
               handleThisYear={() => { setClaims(Gclaims?.filter(item => new Date(item?.paiment_date) >= new Date(new Date().setFullYear(new Date().getFullYear() - 1)))) }}
               chart={{
-                // colors:["#00FF00", "#00FF00", "#0000FF", "FFFF00"],
+                colors:["#6457AA", "#423524", "#678FFF", "#987324"],
                 series: [
                   { label: t('due_claim'), value: claims?.filter(item => item?.status?.key == "due_claim").length },
                   { label: t('activated'), value: claims?.filter(item => item?.status?.key == "not_yet_claim" || item?.status?.key == "overdue_claim" || item?.status?.key == "severely_overdue_claim").length },
@@ -174,8 +174,8 @@ export default function OverviewAppView() {
                 ],
               }}
 
-              labels={[t("claims")]}
-              // labels={[t('paid_claim'), t('activated'), t('due_claim')]}
+              // labels={[t("claims")]}
+              labels={[t('paid_claim'), t('activated'), t('due_claim')]}
 
               chartss={{
                 series: statistics?.claims_by_status?.map(item => ({

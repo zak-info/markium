@@ -246,7 +246,7 @@ export default function UserNewEditForm({ currentCar }) {
 
               <RHFTextField required name="plat_number" label={t('plateNumber')} error={validateUnicity(car,"plat_number",values?.plat_number)} helperText={validateUnicity(car,"plat_number",values?.plat_number) ? t('plat_number_already_exists'):null} />
 
-              <RHFTextField required name="chassis_number" label={t('structureNo')} error={validateUnicity(car,"chassis_number",values?.chassis_number)} helperText={validateUnicity(car,"chassis_number",values?.vin) ? t('chassis_number_already_exists'):null} />
+              <RHFTextField required name="chassis_number" label={t('structureNo')} error={validateUnicity(car,"chassis_number",values?.chassis_number)} helperText={validateUnicity(car,"chassis_number",values?.chassis_number) ? t('chassis_number_already_exists'):null} />
 
               <RHFTextField required name="vin" label={t('serialNumber')} error={validateUnicity(car,"vin",values?.vin)} helperText={validateUnicity(car,"vin",values?.vin) ? t('vin_already_exists'):null} />
               <RHFTextField required name="odometer" label={t('odometer')} />

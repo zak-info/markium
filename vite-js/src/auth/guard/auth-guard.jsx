@@ -39,21 +39,23 @@ function Container({ children }) {
 
   const [checked, setChecked] = useState(false);
 
-  const check = useCallback(() => {
-    if (!authenticated) {
-      const searchParams = new URLSearchParams({
-        returnTo: window.location.pathname,
-      }).toString();
+ const check = useCallback(() => {
+  if (!authenticated) {
+    const returnTo = window.location.pathname + window.location.search;
 
-      const loginPath = loginPaths[method];
+    const searchParams = new URLSearchParams({
+      returnTo,
+    }).toString();
 
-      const href = `/auth/jwt/login?${searchParams}`;
+    const loginPath = loginPaths[method];
+    const href = `${loginPath}?${searchParams}`;
 
-      router.replace(href);
-    } else {
-      setChecked(true);
-    }
-  }, [authenticated, method, router]);
+    router.replace(href);
+  } else {
+    setChecked(true);
+  }
+}, [authenticated, method, router]);
+
 
   useEffect(() => {
     check();

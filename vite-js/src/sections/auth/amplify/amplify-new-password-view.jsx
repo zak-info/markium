@@ -73,7 +73,6 @@ export default function AmplifyNewPasswordView() {
   const onSubmit = handleSubmit(async (data) => {
     try {
       await newPassword?.(data.email, data.code, data.password);
-
       router.push(paths.auth.amplify.login);
     } catch (error) {
       console.error(error);

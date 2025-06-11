@@ -12,73 +12,65 @@ import { paths } from 'src/routes/paths';
 import showError from 'src/utils/show_error';
 
 const DocumentPreview = () => {
-    const settings = useSettingsContext();
-    const queryString = new URLSearchParams(window.location.search);
-    const fileUrl = queryString.get('url');
+  const settings = useSettingsContext();
+  const queryString = new URLSearchParams(window.location.search);
+  const fileUrl = queryString.get('url');
 
-    const downloadImage = async (url) => {
-        try {
-            const response = await fetch(url, { mode: 'cors' });
-            const blob = await response.blob();
-            const blobUrl = URL.createObjectURL(blob);
+  function downloadImage(imageUrl, filename = 'downloaded-image') {
+    const link = document.createElement('a');
+    link.href = imageUrl;
+    link.download = filename;
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+  
 
-            const link = document.createElement('a');
-            link.href = blobUrl;
-            link.download = url.split('/').pop(); // optional custom filename
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-
-            URL.revokeObjectURL(blobUrl); // cleanup
-        } catch (err) {
-            console.error('Download failed:', err);
-        }
-    };
-
-    const copyToClipboard = (url) => {
-        const baseUrl = window.location.origin;
-        const fullUrl = baseUrl + url;
-        console.log("fullUrl : ",fullUrl);
-        navigator.clipboard.writeText(fullUrl)
-            .then(() => {
-                enqueueSnackbar(t("operation_success"));
-            })
-            .catch(err => {
-                showError(err)
-            });
-    }
+  const copyToClipboard = (url) => {
+    const baseUrl = window.location.origin;
+    const fullUrl = baseUrl + url;
+    console.log("fullUrl : ", fullUrl);
+    navigator.clipboard.writeText(fullUrl)
+      .then(() => {
+        enqueueSnackbar(t("operation_success"));
+      })
+      .catch(err => {
+        showError(err)
+      });
+  }
 
 
 
-    return (
-        <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-            <CustomBreadcrumbs
-                heading={t('documents')}
-                links={[
-                    {
-                        name: t('dashboard'),
-                        href: paths.dashboard.root,
-                    },
-                    {
-                        name: t('documents'),
-                        href: paths.dashboard.documents.root,
-                    },
-                    { name: t('overview') },
-                ]}
-            />
-            <Stack width={"full"} display={"flex"} rowGap={2} columnGap={2} alignItems="flex-end" my={4}  >
-                <Box rowGap={2} columnGap={2}>
-                    {/* <Button onClick={() => { downloadImage(STORAGE_API + "/attachments/mw9ENR3YHI3GkbjWVdt4S7XwmT5sxJ608adHKpmF.pdf") }} variant="outlined" endIcon={<Iconify icon="solar:gallery-download-bold" width={24} />} sx={{ mx: "10px" }} >
-                        {t("download")}
-                    </Button> */}
-                    <Button onClick={() => { copyToClipboard(paths.dashboard.documents.preview + `?url=${fileUrl}`) }} variant="outlined" endIcon={<Iconify icon="solar:copy-bold-duotone" width={24} />}>
-                        {t("copy_link")}
-                    </Button>
-                </Box>
-            </Stack>
+  return (
+    <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+      <CustomBreadcrumbs
+        heading={t('documents')}
+        links={[
+          {
+            name: t('dashboard'),
+            href: paths.dashboard.root,
+          },
+          {
+            name: t('documents'),
+            href: paths.dashboard.documents.root,
+          },
+          { name: t('overview') },
+        ]}
+      />
+      <Stack width={"full"} display={"flex"} rowGap={2} columnGap={2} alignItems="flex-end" my={4}  >
+        <Box rowGap={2} columnGap={2}>
+          <Button onClick={() => { downloadImage(STORAGE_API + fileUrl) }} variant="outlined" endIcon={<Iconify icon="solar:gallery-download-bold" width={24} />} sx={{ mx: "10px" }} >
+            {t("download")}
+          </Button>
+          <Button onClick={() => { copyToClipboard(paths.dashboard.documents.preview + `?url=${fileUrl}`) }} variant="outlined" endIcon={<Iconify icon="solar:copy-bold-duotone" width={24} />}>
+            {t("copy_link")}
+          </Button>
+        </Box>
+      </Stack>
 
-            {/* src={STORAGE_API + "/attachments/mw9ENR3YHI3GkbjWVdt4S7XwmT5sxJ608adHKpmF.pdf"} */}
-            {/* <Image
+      {/* src={STORAGE_API + "/attachments/mw9ENR3YHI3GkbjWVdt4S7XwmT5sxJ608adHKpmF.pdf"} */}
+      {/* <Image
                 alt="file preview"
                 src={STORAGE_API + fileUrl}
                 sx={{
@@ -87,12 +79,12 @@ const DocumentPreview = () => {
                     borderRadius: 1,
                 }}
             /> */}
-            {renderFilePreview(fileUrl)}
+      {renderFilePreview(fileUrl)}
 
 
 
-        </Container>
-    )
+    </Container>
+  )
 }
 
 export default DocumentPreview
