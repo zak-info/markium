@@ -35,6 +35,8 @@ import { useGetStatistics } from 'src/api/statistics';
 import { useLocales } from 'src/locales';
 import PermissionsContext from 'src/auth/context/permissions/permissions-context';
 import { Box } from '@mui/material';
+import { useGetContracts } from 'src/api/contract';
+
 
 // ----------------------------------------------------------------------
 
@@ -43,32 +45,36 @@ const langsNum = { en: 0, ar: 1 }
 export default function OverviewAppView() {
   const { user } = useMockedUser();
   const { t } = useTranslation();
-
   const theme = useTheme();
-
   const settings = useSettingsContext();
-
   const { statistics } = useGetStatistics();
-  const { currentLang } = useLocales()
+  const { currentLang } = useLocales();
   console.log("currentLang : ", currentLang);
   const { car } = useGetCar();
-  const { claims } = useGetAllClaim();
-  console.log("statistics : ", statistics);
-  console.log("cars_by_status : ", statistics?.cars_by_status?.map(item => ({ lable: item?.status?.key, value: item?.count })));
+
+
+
+  const { claims: Gclaims } = useGetAllClaim();
+  const [claims, setClaims] = useState(Gclaims);
+  useEffect(() => {
+    setClaims(Gclaims);
+  }, [Gclaims]);
+
+
+  const { contracts: Gcontracts } = useGetContracts();
+  const [contracts, setContracts] = useState(Gcontracts);
+  useEffect(() => {
+    setContracts(Gcontracts);
+  }, [Gcontracts]);
+
+
   const { drivers } = useGetDrivers();
   const { data } = useValues();
-  // const {SystemData} = useContext(DataContext);
-  // const [data , setData] = useState(SystemData);
-  // useEffect(()=>{
-  //   setData(SystemData)
-  // },[SystemData])
 
 
 
   return (
     <Container rowGa maxWidth={settings.themeStretch ? false : 'xl'}>
-      {/* <Grid container spacing={3}> */}
-
       <Box
         // rowGap={3}
         columnGap={2}
@@ -103,7 +109,7 @@ export default function OverviewAppView() {
               }}
             />
           </Grid>
-          </PermissionsContext>
+        </PermissionsContext>
         <PermissionsContext action={'read.driver'}>
           <Grid xs={12} md={4}>
             <AppWidgetSummary
@@ -116,7 +122,7 @@ export default function OverviewAppView() {
               }}
             />
           </Grid>
-          </PermissionsContext>
+        </PermissionsContext>
       </Box>
       <Box
         // rowGap={3}
@@ -140,8 +146,9 @@ export default function OverviewAppView() {
               //   { label: t("under_maintenance"), value: car?.filter(item => item?.status?.key == "under_maintenance").length },
               // ],
               chart={{
+                // colors:["#FF0000", "#00FF00", "#0000FF", "FFFF00"],
                 series: statistics?.cars_by_status?.map(item => ({
-                  label: item?.status?.translations[langsNum[currentLang.value]]?.name,
+                  label: item?.status?.key == "available" ? t("activated") : item?.status?.key == "rented" ? t("out_of_service") : item?.status?.key == "under_maintenance" ? t("under_maintenance") : item?.status?.translations[langsNum[currentLang.value]]?.name,
                   value: item?.count
                 })) || []
               }}
@@ -153,15 +160,23 @@ export default function OverviewAppView() {
           <Grid xs={12} md={6} lg={4}>
             <LineChart
               title={t('claims')}
+              handleThisWeek={() => { setClaims(Gclaims?.filter(item => new Date(item?.paiment_date) >= new Date(new Date().setDate(new Date().getDate() - 7)))) }}
+              handleThisMonth={() => { setClaims(Gclaims?.filter(item => new Date(item?.paiment_date) >= new Date(new Date().setDate(new Date().getDate() - 30)))) }}
+              handleThisYear={() => { setClaims(Gclaims?.filter(item => new Date(item?.paiment_date) >= new Date(new Date().setFullYear(new Date().getFullYear() - 1)))) }}
               chart={{
+                // colors:["#00FF00", "#00FF00", "#0000FF", "FFFF00"],
                 series: [
-                  { label: t('not_yet_claim'), value: claims?.filter(item => item?.status?.key == "not_yet_claim").length },
                   { label: t('due_claim'), value: claims?.filter(item => item?.status?.key == "due_claim").length },
-                  { label: t('overdue_claim'), value: claims?.filter(item => item?.status?.key == "overdue_claim").length },
-                  { label: t('severely_overdue_claim'), value: claims?.filter(item => item?.status?.key == "severely_overdue_claim").length },
+                  { label: t('activated'), value: claims?.filter(item => item?.status?.key == "not_yet_claim" || item?.status?.key == "overdue_claim" || item?.status?.key == "severely_overdue_claim").length },
+                  // { label: t('overdue_claim'), value: claims?.filter(item => item?.status?.key == "overdue_claim").length },
+                  // { label: t('severely_overdue_claim'), value: claims?.filter(item => item?.status?.key == "severely_overdue_claim").length },
                   { label: t('paid_claim'), value: claims?.filter(item => item?.status?.key == "paid_claim").length },
                 ],
               }}
+
+              labels={[t("claims")]}
+              // labels={[t('paid_claim'), t('activated'), t('due_claim')]}
+
               chartss={{
                 series: statistics?.claims_by_status?.map(item => ({
                   label: item?.status?.translations[langsNum[currentLang.value]]?.name,
@@ -179,15 +194,15 @@ export default function OverviewAppView() {
                   title={t('drivers')}
                   chart={{
                     series: [
-                      { label: t('not_rented'), value: statistics?.drivers_by_rental?.not_rented },
-                      { label: t('rented'), value: statistics?.drivers_by_rental?.rented },
+                      { label: t('available'), value: statistics?.drivers_by_rental?.not_rented },
+                      { label: t('bussy'), value: statistics?.drivers_by_rental?.rented },
                     ],
                   }}
 
                   chartssss={{
                     series: [
-                      { lable: t("rented"), value: statistics?.drivers_by_rental?.rented },
-                      { lable: t("not_rented"), value: statistics?.drivers_by_rental?.not_rented }
+                      { lable: t("bussy"), value: statistics?.drivers_by_rental?.rented },
+                      { lable: t("available"), value: statistics?.drivers_by_rental?.not_rented }
                     ]
                   }}
                 />
@@ -204,6 +219,69 @@ export default function OverviewAppView() {
                   />
                 </>
             }
+          </Grid>
+        </PermissionsContext>
+      </Box>
+      <Box
+        // rowGap={3}
+        mt={3}
+        columnGap={2}
+        width={"100%"}
+        display="grid"
+        gridTemplateColumns={{
+          xs: 'repeat(1, 1fr)',
+          sm: 'repeat(3, 1fr)',
+        }}
+      >
+        <PermissionsContext action={'read.contract'}>
+          <Grid xs={12} md={4}>
+            <AppWidgetSummary
+              title={t('contracts')}
+              percent={0.2}
+              total={contracts?.length}
+              chart={{
+                colors: [theme.palette.info.light, theme.palette.info.main],
+                series: [20, 41, 63, 33, 28, 35, 50, 46, 11, 26],
+              }}
+            />
+          </Grid>
+        </PermissionsContext>
+      </Box>
+      <Box
+        // rowGap={3}
+        mt={3}
+        columnGap={2}
+        width={"100%"}
+        display="grid"
+        gridTemplateColumns={{
+          xs: 'repeat(1, 1fr)',
+          sm: 'repeat(3, 1fr)',
+        }}
+      >
+        <PermissionsContext action={'read.contract'}>
+          <Grid xs={12} md={6} lg={4}>
+            <LineChart
+              title={t('contracts')}
+              handleThisWeek={() => { setContracts(Gcontracts?.filter(item => new Date(item?.created_at) >= new Date(new Date().setDate(new Date().getDate() - 7)))) }}
+              handleThisMonth={() => { setContracts(Gcontracts?.filter(item => new Date(item?.created_at) >= new Date(new Date().setDate(new Date().getDate() - 30)))) }}
+              handleThisYear={() => { setContracts(Gcontracts?.filter(item => new Date(item?.created_at) >= new Date(new Date().setFullYear(new Date().getFullYear() - 1)))) }}
+
+              chart={{
+                series: [
+                  { label: t('activated'), value: contracts?.filter(item => new Date(item?.periods[0]?.start_date) > new Date())?.length },
+                  { label: t('finished'), value: contracts?.filter(item => new Date(item?.periods[0]?.start_date) <= new Date())?.length },
+                ],
+              }}
+
+              // labels={[t('activated'), t('finished')]}
+              labels={[t('contracts')]}
+              chartss={{
+                series: statistics?.claims_by_status?.map(item => ({
+                  label: item?.status?.translations[langsNum[currentLang.value]]?.name,
+                  value: item?.count
+                })) || []
+              }}
+            />
           </Grid>
         </PermissionsContext>
       </Box>

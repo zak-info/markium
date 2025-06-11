@@ -46,14 +46,14 @@ import showError from 'src/utils/show_error';
 
 // ----------------------------------------------------------------------
 
-export default function EditExitDate({ currentMentainance,close }) {
+export default function EditExitDate({ currentMentainance,close ,setCurrentMentainance}) {
   const router = useRouter();
 
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslate();
 
   const NewUserSchema = Yup.object({
-    // exit_date: Yup.date().required('State ID is required') // Allowing an empty string for exit date (since it's not required)
+    exit_date: Yup.date().required('exit date is required') // Allowing an empty string for exit date (since it's not required)
   });
   const defaultValues = useMemo(
     () => ({
@@ -88,7 +88,8 @@ export default function EditExitDate({ currentMentainance,close }) {
       let body = data
       body.exit_date = format(new Date(data.exit_date), 'yyyy-MM-dd')
       console.log("body : ",{...body});
-      const response = await editMaintenance(currentMentainance?.id, body);
+      const response = await editMaintenance(currentMentainance?.id, {exit_date:body.exit_date,car_id:currentMentainance?.car_id});
+      setCurrentMentainance(prev => ({...prev,exit_date:body.exit_date}))
       enqueueSnackbar(t("operation_success"));
       close()
     } catch (error) {
@@ -123,7 +124,7 @@ export default function EditExitDate({ currentMentainance,close }) {
                     fullWidth: true,
                   },
                 }}
-                minDate={new Date()}
+                // minDate={new Date()}
               />
             </Box>
 

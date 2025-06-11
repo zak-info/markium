@@ -35,6 +35,7 @@ export default function OrderDetailsItems({
   totalAmount,
   maintenance_type,
   currentMentainance,
+  setCurrentMentainance,
   currentCar,
   driver
 }) {
@@ -80,7 +81,7 @@ export default function OrderDetailsItems({
           <Box sx={{ width: 160, color: 'text.secondary' }}>{t('exitExpectedDate')}</Box>
           <Box rowGap={3} columnGap={11} display="grid" gridTemplateColumns={{ xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)', }}>
             <Box sx={{ typography: 'subtitle2' }}>{fDate(currentMentainance?.exit_date)}</Box>
-            <EditExitDatePopUp currentMentainance={currentMentainance} />
+            <EditExitDatePopUp setCurrentMentainance={setCurrentMentainance} currentMentainance={currentMentainance} />
           </Box>
         </Stack>
         <Stack direction="row">

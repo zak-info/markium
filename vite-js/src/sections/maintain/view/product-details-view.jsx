@@ -68,7 +68,10 @@ export default function OrderDetailsView({ id }) {
   }, [clauses])
 
   // const currentMentainance = maintenance?.find((i) => i.id == id);
-  const currentMentainance = maintenance;
+  const [currentMentainance, setCurrentMentainance] = useState(maintenance)
+  useEffect(() => {
+    setCurrentMentainance(maintenance);
+  }, [maintenance])
   console.log("currentMentainance : ", currentMentainance);
   console.log("id : ", id);
   const { maintenance: periodic_maintenance } = useGetCarPeriodicMaintenance(currentMentainance?.car_id);
@@ -101,6 +104,7 @@ export default function OrderDetailsView({ id }) {
             <Grid xs={12} md={8}>
               <OrderDetailsItems
                 currentMentainance={currentMentainance}
+                setCurrentMentainance={setCurrentMentainance}
                 maintenance_type={data?.maintenance_type_enum?.find(item => item.key == currentMentainance?.maintainance_type)?.translations[0]?.name}
                 currentCar={currentCar}
                 driver={driver}
@@ -137,7 +141,7 @@ export default function OrderDetailsView({ id }) {
             setTableData={setTableData}
             tableLabels={[
               // { id: "is_periodic", key_to_update: "is_periodic", label: t("clause_type"), editable: false, creatable: true, type: "select", options: [{ value: "periodic", label: t("periodic") }, { value: "not-periodic", label: t("not_periodic") }], width: 100 },
-              { id: "clause", key_to_update: "related_id", label: t("clause"), editable: false, creatable: true, type: "select", options: [...periodic_maintenance, ...maintenance_specs?.filter(item => !item?.is_periodic)]?.map(item => ({ value: item.id, label: item?.name })), width:100 },
+              { id: "clause", key_to_update: "related_id", label: t("clause"), editable: false, creatable: true, type: "select", options: [...periodic_maintenance, ...maintenance_specs?.filter(item => !item?.is_periodic)]?.map(item => ({ value: item.id, label: item?.name })), width: 100 },
               { id: "cost", key_to_update: "cost", label: t("cost"), editable: true, creatable: true, type: "number", width: 100 },
               { id: "quantity", key_to_update: "quantity", label: t("qte"), editable: true, creatable: true, type: "number", width: 60 },
               { id: "tpiece_status", key_to_update: "piece_status", label: t("piece_status"), editable: true, creatable: true, type: "select", options: data?.piece_status_enum?.map(item => ({ value: item.key, label: item?.translations[0]?.name })), width: 100 },

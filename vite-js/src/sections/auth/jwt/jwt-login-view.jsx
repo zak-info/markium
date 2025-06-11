@@ -20,10 +20,12 @@ import { useRouter, useSearchParams } from 'src/routes/hooks';
 import { useBoolean } from 'src/hooks/use-boolean';
 
 import { useAuthContext } from 'src/auth/hooks';
-import { PATH_AFTER_LOGIN } from 'src/config-global';
+import { HOST_API, PATH_AFTER_LOGIN } from 'src/config-global';
 
 import Iconify from 'src/components/iconify';
 import FormProvider, { RHFTextField } from 'src/components/hook-form';
+import axios from 'axios';
+import { endpoints } from 'src/utils/axios';
 
 // ----------------------------------------------------------------------
 
@@ -81,15 +83,19 @@ export default function JwtLoginView() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      const res = await login?.(data.username, data.password);
-      // if (!returnTo) {
-      router.push(returnTo || PATH_AFTER_LOGIN);
-      // }
+      const response = await axios.post(HOST_API + endpoints.auth.login, data);
+      if (response?.data?.code == 200) {
+        const res = await login(data.username, data.password);
+        router.push(returnTo || PATH_AFTER_LOGIN);
+      } else {
+        setErrorMsg(t("please_check_your_username_and_password"));
+      }
 
     } catch (error) {
-      console.error(error);
-      reset();
-      setErrorMsg(typeof error === 'string' ? error : error.message);
+      // console.error(error);
+      // reset();
+      // setErrorMsg(typeof error === 'string' ? error : error?.message);
+      setErrorMsg(t("please_check_your_username_and_password"));
     }
   });
 
@@ -110,7 +116,6 @@ export default function JwtLoginView() {
   const renderForm = (
     <Stack spacing={2.5}>
       <RHFTextField name="username" label={t('username')} />
-
       <RHFTextField
         name="password"
         label={t('password')}

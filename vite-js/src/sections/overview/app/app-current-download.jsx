@@ -7,6 +7,7 @@ import { styled, useTheme } from '@mui/material/styles';
 import { fNumber } from 'src/utils/format-number';
 
 import Chart, { useChart } from 'src/components/chart';
+import { Stack } from '@mui/system';
 
 // ----------------------------------------------------------------------
 
@@ -82,7 +83,7 @@ export default function AppCurrentDownload({ title, subheader, chart, ...other }
   });
 
   return (
-    <Card {...other}>
+    <Card {...other} sx={{height:"100%"}} >
       <CardHeader title={title} subheader={subheader} sx={{ mb: 5 }} />
 
       <StyledChart
@@ -93,6 +94,7 @@ export default function AppCurrentDownload({ title, subheader, chart, ...other }
         width="100%"
         height={280}
       />
+      
     </Card>
   );
 }

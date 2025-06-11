@@ -9,6 +9,7 @@ import { AuthContext } from './auth-context';
 import { setSession, isValidToken, jwtDecode } from './utils';
 import { useValues } from 'src/api/utils';
 import showError from 'src/utils/show_error';
+import { success } from 'src/theme/palette';
 
 // ----------------------------------------------------------------------
 /**
@@ -121,9 +122,11 @@ export function AuthProvider({ children }) {
           },
         },
       });
+      return {success: true, message: 'Login successful!'}
     } catch (error) {
       console.error('Login failed:', error);  // Don't refresh the page here
-      throw new Error('Invalid credentials');  // Propagate error to display in the UI
+      return {success: false, message: 'Login successful!'}
+      // throw new Error('Invalid credentials');  // Propagate error to display in the UI
     }
   }, []);
 

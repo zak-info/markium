@@ -39,13 +39,14 @@ import { Container, IconButton, InputAdornment } from '@mui/material';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import Iconify from 'src/components/iconify';
 import { useBoolean } from 'src/hooks/use-boolean';
+import { t } from 'i18next';
 
 // ----------------------------------------------------------------------
 
 export default function ChangePasswordView({ currentUser, onClose, selfAccount }) {
     const router = useRouter();
     const { enqueueSnackbar } = useSnackbar();
-    const { t } = useTranslate();
+
      const password = useBoolean();
      const password2 = useBoolean();
      const password3 = useBoolean();

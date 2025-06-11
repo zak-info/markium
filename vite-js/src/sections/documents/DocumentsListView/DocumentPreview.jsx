@@ -35,8 +35,10 @@ const DocumentPreview = () => {
         }
     };
 
-    const  copyToClipboard = (url)=> {
-        navigator.clipboard.writeText(url)
+    const copyToClipboard = (url) => {
+        const baseUrl = window.location.origin;
+        const fullUrl = baseUrl + url;
+        navigator.clipboard.writeText(fullUrl)
             .then(() => {
                 enqueueSnackbar(t("operation_success"));
             })
@@ -65,19 +67,17 @@ const DocumentPreview = () => {
             />
             <Stack width={"full"} display={"flex"} rowGap={2} columnGap={2} alignItems="flex-end" my={4}  >
                 <Box rowGap={2} columnGap={2}>
-                    <Button onClick={() => { downloadImage(STORAGE_API + "/attachments/mw9ENR3YHI3GkbjWVdt4S7XwmT5sxJ608adHKpmF.pdf") }} variant="outlined" endIcon={<Iconify icon="solar:gallery-download-bold" width={24} />} sx={{ mx: "10px" }} >
+                    {/* <Button onClick={() => { downloadImage(STORAGE_API + "/attachments/mw9ENR3YHI3GkbjWVdt4S7XwmT5sxJ608adHKpmF.pdf") }} variant="outlined" endIcon={<Iconify icon="solar:gallery-download-bold" width={24} />} sx={{ mx: "10px" }} >
                         {t("download")}
-                    </Button>
-                    {/* </Box> */}
-                    {/* <Box> */}
-                    <Button onClick={() => { copyToClipboard("http://localhost:3030"+paths.dashboard.documents.preview + `?url=/${fileUrl}`) }} variant="outlined" endIcon={<Iconify icon="solar:copy-bold-duotone" width={24} />}>
+                    </Button> */}
+                    <Button onClick={() => { copyToClipboard(paths.dashboard.documents.preview + `?url=/${fileUrl}`) }} variant="outlined" endIcon={<Iconify icon="solar:copy-bold-duotone" width={24} />}>
                         {t("copy_link")}
                     </Button>
                 </Box>
             </Stack>
 
             {/* src={STORAGE_API + "/attachments/mw9ENR3YHI3GkbjWVdt4S7XwmT5sxJ608adHKpmF.pdf"} */}
-            <Image
+            {/* <Image
                 alt="file preview"
                 src={STORAGE_API + fileUrl}
                 sx={{
@@ -85,7 +85,8 @@ const DocumentPreview = () => {
                     height: 1,
                     borderRadius: 1,
                 }}
-            />
+            /> */}
+            {renderFilePreview(fileUrl)}
 
 
 
@@ -94,3 +95,51 @@ const DocumentPreview = () => {
 }
 
 export default DocumentPreview
+
+
+
+
+const getFileExtension = (filename) => {
+  return filename.split('.').pop()?.toLowerCase();
+};
+
+const renderFilePreview = (fileUrl) => {
+  const extension = getFileExtension(fileUrl);
+  const filePath = STORAGE_API + fileUrl;
+
+  switch (extension) {
+    case 'jpg':
+    case 'jpeg':
+    case 'png':
+      return (
+        <Image
+          alt="file preview"
+          src={filePath}
+          sx={{
+            width: 1,
+            height: 1,
+            borderRadius: 1,
+          }}
+        />
+      );
+    case 'pdf':
+      return (
+        <iframe
+          src={filePath}
+          style={{ width: '100%', height: '600px', borderRadius: '8px' }}
+          title="PDF Preview"
+        />
+      );
+    case 'doc':
+    case 'docx':
+      return (
+        <iframe
+          src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(filePath)}`}
+          style={{ width: '100%', height: '600px', border: 'none', borderRadius: '8px' }}
+          title="Word Document Preview"
+        />
+      );
+    default:
+      return <p>Preview not available for this file type.</p>;
+  }
+};

@@ -8,6 +8,10 @@ import { fNumber } from 'src/utils/format-number';
 
 import Chart, { useChart } from 'src/components/chart';
 import { useTranslation } from 'react-i18next';
+import { IconButton, MenuItem } from '@mui/material';
+import Iconify from 'src/components/iconify';
+import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import { Stack } from '@mui/system';
 
 // ----------------------------------------------------------------------
 
@@ -29,7 +33,7 @@ const StyledChart = styled(Chart)(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-export default function AppCurrentDownload({ title, subheader, chart, ...other }) {
+export default function AppCurrentDownload({ title, labels, handleThisWeek,handleThisMonth,handleThisYear, subheader, chart, ...other }) {
   const theme = useTheme();
   const { t } = useTranslation();
 
@@ -44,7 +48,7 @@ export default function AppCurrentDownload({ title, subheader, chart, ...other }
     legend: {  // ✅ Merged `legend` object
       show: true,
       showForSingleSeries: true,
-      customLegendItems: [t('paid_claim'), t('severely_overdue_claim'), t('due_claim')],
+      customLegendItems: labels,
       offsetY: 0,
       floating: true,
       position: 'bottom',
@@ -72,7 +76,7 @@ export default function AppCurrentDownload({ title, subheader, chart, ...other }
     },
     ...options,
   });
-  
+
   const options2 = {
     chart: {
       type: 'bar',
@@ -94,16 +98,17 @@ export default function AppCurrentDownload({ title, subheader, chart, ...other }
 
   const w = [
     {
-      name: 'series-1',
+      name: t("item"),
       data: chartSeries,
       strokeColor: '#775DD0',
     },
   ];
+  const popover = usePopover();
+
 
   return (
     <Card {...other}>
       <CardHeader title={title} subheader={subheader} sx={{ mb: 5 }} />
-
       <StyledChart
         dir="ltr"
         type="bar"
@@ -112,6 +117,45 @@ export default function AppCurrentDownload({ title, subheader, chart, ...other }
         width="100%"
         height={350}
       />
+      {/* <Legend labels={labels} /> */}
+      <Stack display={"flex"} direction="row" justifyContent="flex-end" >
+        <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
+          <Iconify icon="eva:more-vertical-fill" />
+        </IconButton>
+      </Stack>
+      <CustomPopover
+        open={popover.open}
+        onClose={popover.onClose}
+        arrow="right-top"
+        sx={{ width: 200 }}
+      >
+
+        <MenuItem
+          onClick={() => {
+            handleThisWeek()
+            popover.onClose();
+          }}
+        >
+          {t('this_week')}
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            handleThisMonth()
+            popover.onClose();
+          }}
+        >
+          {t('this_month')}
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            handleThisYear()
+            popover.onClose();
+          }}
+        >
+          {t('this_year')}
+        </MenuItem>
+
+      </CustomPopover>
     </Card>
   );
 }

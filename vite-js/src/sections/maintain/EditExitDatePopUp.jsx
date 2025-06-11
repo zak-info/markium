@@ -7,7 +7,7 @@ import { usePopover } from "src/components/custom-popover";
 import ContentDialog from "src/components/custom-dialog/content-dialog";
 import EditExitDate from "./EditExitDate";
 
-const EditExitDatePopUp = ({ currentMentainance }) => {
+const EditExitDatePopUp = ({ currentMentainance,setCurrentMentainance }) => {
   const completed = useBoolean();
   const popover = usePopover();
 
@@ -27,7 +27,7 @@ const EditExitDatePopUp = ({ currentMentainance }) => {
         content={
           <div>
             {/* // <MarkAsCompletedForm maintenanceId={row?.id} close={() => completed?.onFalse()} /> */}
-            <EditExitDate currentMentainance={currentMentainance} close={() => completed?.onFalse()} />
+            <EditExitDate setCurrentMentainance={setCurrentMentainance} currentMentainance={currentMentainance} close={() => completed?.onFalse()} />
           </div>
         }
       />
