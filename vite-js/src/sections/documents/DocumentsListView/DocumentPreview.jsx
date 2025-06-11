@@ -38,6 +38,7 @@ const DocumentPreview = () => {
     const copyToClipboard = (url) => {
         const baseUrl = window.location.origin;
         const fullUrl = baseUrl + url;
+        console.log("fullUrl : ",fullUrl);
         navigator.clipboard.writeText(fullUrl)
             .then(() => {
                 enqueueSnackbar(t("operation_success"));
@@ -70,7 +71,7 @@ const DocumentPreview = () => {
                     {/* <Button onClick={() => { downloadImage(STORAGE_API + "/attachments/mw9ENR3YHI3GkbjWVdt4S7XwmT5sxJ608adHKpmF.pdf") }} variant="outlined" endIcon={<Iconify icon="solar:gallery-download-bold" width={24} />} sx={{ mx: "10px" }} >
                         {t("download")}
                     </Button> */}
-                    <Button onClick={() => { copyToClipboard(paths.dashboard.documents.preview + `?url=/${fileUrl}`) }} variant="outlined" endIcon={<Iconify icon="solar:copy-bold-duotone" width={24} />}>
+                    <Button onClick={() => { copyToClipboard(paths.dashboard.documents.preview + `?url=${fileUrl}`) }} variant="outlined" endIcon={<Iconify icon="solar:copy-bold-duotone" width={24} />}>
                         {t("copy_link")}
                     </Button>
                 </Box>
