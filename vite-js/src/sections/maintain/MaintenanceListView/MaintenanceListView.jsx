@@ -120,7 +120,6 @@ export default function MaintenanceListView({ }) {
                 color: item?.status?.key == "pending" ? "warning" : item?.status?.key == "completed" ? "success" : "default",
                 entrydate: fDate(item?.entry_date),
                 exitdate: fDate(item?.exit_date),
-                entrydate: fDate(item?.entry_date),
                 createdat: fDate(item?.created_at),
                 type: t(item?.maintainance_type),
             };
