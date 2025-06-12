@@ -69,7 +69,6 @@ const DocumentPreview = () => {
         </Box>
       </Stack>
 
-      {/* src={STORAGE_API + "/attachments/mw9ENR3YHI3GkbjWVdt4S7XwmT5sxJ608adHKpmF.pdf"} */}
       {/* <Image
                 alt="file preview"
                 src={STORAGE_API + fileUrl}
