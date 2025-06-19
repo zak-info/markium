@@ -47,20 +47,22 @@ export default function ChangePasswordView({ currentUser, onClose, selfAccount }
     const router = useRouter();
     const { enqueueSnackbar } = useSnackbar();
 
-     const password = useBoolean();
-     const password2 = useBoolean();
-     const password3 = useBoolean();
+    const password = useBoolean();
+    const password2 = useBoolean();
+    const password3 = useBoolean();
     console.log(" currentUser : ", currentUser);
 
     const validationSchema = Yup.object({
         current_password: Yup.string(),
-        // .when('$selfAccount', {
-        //     is: (val) => !val, // when currentUser is falsy (e.g., null or undefined)
-        //     then: (schema) => schema.required('Password is required'),
-        //     otherwise: (schema) => schema.notRequired()
-        // }),
-        new_password: Yup.string().required('new password is required'),
-        confirm_password: Yup.string().required('confirm password is required'),
+        new_password: Yup.string()
+            .required(t('password_is_required'))
+            .min(8, t('password_must_be_at_least_8_characters'))
+            .matches(/[A-Z]/, t('password_must_contain_uppercase'))
+            .matches(/[a-z]/, t('password_must_contain_lowercase'))
+            .matches(/\d/, t('password_must_contain_number'))
+            .matches(/[@$!%*?&]/, t('password_must_contain_special_char'))
+            .matches(/^[^\u0600-\u06FF]*$/, 'arabic_letters_are_not_allowed'),
+        confirm_password: Yup.string().required(t("confirm_password_is_required")),
     });
 
     const defaultValues = useMemo(
@@ -122,25 +124,25 @@ export default function ChangePasswordView({ currentUser, onClose, selfAccount }
                                 sm: 'repeat(1, 1fr)',
                             }}
                         >
-                         {
-                            selfAccount && (
-                            <RHFTextField
-                                name="current_password"
-                                label={t('current_password')}
-                                type={password.value ? 'text' : 'password'}
-                                InputProps={{
-                                    endAdornment: (
-                                        <InputAdornment position="end">
-                                            <IconButton onClick={password.onToggle} edge="end">
-                                                <Iconify icon={password.value ? 'solar:eye-bold' : 'solar:eye-closed-bold'} />
-                                            </IconButton>
-                                        </InputAdornment>
-                                    ),
-                                }}
-                            />
-                             )
+                            {
+                                selfAccount && (
+                                    <RHFTextField
+                                        name="current_password"
+                                        label={t('current_password')}
+                                        type={password.value ? 'text' : 'password'}
+                                        InputProps={{
+                                            endAdornment: (
+                                                <InputAdornment position="end">
+                                                    <IconButton onClick={password.onToggle} edge="end">
+                                                        <Iconify icon={password.value ? 'solar:eye-bold' : 'solar:eye-closed-bold'} />
+                                                    </IconButton>
+                                                </InputAdornment>
+                                            ),
+                                        }}
+                                    />
+                                )
                             }
-                             <RHFTextField
+                            <RHFTextField
                                 name="new_password"
                                 label={t('new_password')}
                                 type={password2.value ? 'text' : 'password'}
@@ -154,7 +156,7 @@ export default function ChangePasswordView({ currentUser, onClose, selfAccount }
                                     ),
                                 }}
                             />
-                             <RHFTextField
+                            <RHFTextField
                                 name="confirm_password"
                                 label={t('confirm_password')}
                                 type={password3.value ? 'text' : 'password'}
@@ -168,7 +170,7 @@ export default function ChangePasswordView({ currentUser, onClose, selfAccount }
                                     ),
                                 }}
                             />
-                            
+
                         </Box>
                         <Stack alignItems="flex-end" sx={{ mt: 3 }}>
                             <LoadingButton type="submit" variant="contained" loading={isSubmitting}>

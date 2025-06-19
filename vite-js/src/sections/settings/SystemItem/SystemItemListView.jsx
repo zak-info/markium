@@ -328,14 +328,15 @@ const EnableDisableItem = ({ item, configurable_type, setTableData, data }) => {
         let status = ischkd ? "selected" : "not_selected";
         let enabled = ischkd ? t("enabled") : t("not_enabled");
         let color = ischkd ? "success" : "error";
-        console.log("status : ", status);
-        await changeItemVisibilityInSettings({ configurable_type, configurable_id: item.id, is_selected: event.target.checked, is_private: false })
-        if (configurable_type == "maintenance_specification") {
+        console.log("item : ", item);
+        const res = await changeItemVisibilityInSettings({ configurable_type, configurable_id: item.id, is_selected: event.target.checked, is_private: false })
+        console.log("changeItemVisibilityInSettings : ",res);
+        if (configurable_type == "maintenance_specification"  || configurable_type == "payment_method") {
             setTableData(prev =>
                 prev?.map(i => {
                     if (i.id == item.id) {
                         const updated = { ...i, enable: status, enabled, color, system_settings: { is_selected: event.target.checked } };
-                        console.log("Updated item: ", updated);
+                        console.log("maintenance_specification Updated item: ", updated);
                         return updated;
                     }
                     return i;

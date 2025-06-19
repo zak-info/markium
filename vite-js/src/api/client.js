@@ -41,7 +41,7 @@ export function useGetClient(id) {
 
     const memoizedValue = useMemo(
         () => ({
-            client: data?.data || [],
+            client: data?.data || {},
             clientLoading: isLoading,
             clientError: error,
             clientValidating: isValidating,

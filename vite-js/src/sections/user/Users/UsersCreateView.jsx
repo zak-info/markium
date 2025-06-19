@@ -54,25 +54,41 @@ export default function UsersCreateView({ currentUser }) {
 
 
   const validationSchema = Yup.object({
-    name: Yup.string().required('Name is required'),
-    username: Yup.string().required('Name is required'),
-    email: Yup.string().required('Name is required'),
-    phone_number: Yup.string().required('Name is required'),
+    name: Yup.string().required(t('name_required')),
+    username: Yup.string().required(t('username_required')),
+    email: Yup.string()
+      .email(t('email_invalid'))
+      .required(t('email_required')),
+    phone_number: Yup.string()
+      .required(t('phone_number_required'))
+      .matches(/^\d{10}$/, t('phone_number_must_be_10_digits')),
+
+
     password: Yup.string().when('$currentUser', {
-      is: (val) => !val, // when currentUser is falsy (e.g., null or undefined)
-      then: (schema) => schema.required('Password is required'),
-      otherwise: (schema) => schema.notRequired()
+      is: (val) => !val,
+      then: (schema) =>
+        schema.required(t('password_required')),
+      otherwise: (schema) => schema.notRequired(),
     }),
+
     password_confirmation: Yup.string().when('$currentUser', {
       is: (val) => !val,
-      then: (schema) => schema.required('Password confirmation is required'),
-      otherwise: (schema) => schema.notRequired()
+      then: (schema) =>
+        schema
+          .required(t('password_confirmation_required'))
+          .oneOf([Yup.ref('password'), null], t('passwords_must_match')),
+      otherwise: (schema) => schema.notRequired(),
     }),
-    role_id: Yup.array().min(1, 'At least one role is required'),
+
+    role_id: Yup.array()
+      .min(1, t('at_least_one_role_required')),
   });
+
   const passwordValidationSchema = Yup.object({
-    new_password: Yup.string().required('new password is required'),
-    confirm_password: Yup.string().required('confirm password is required'),
+    new_password: Yup.string().required(t('new_password_required')),
+    confirm_password: Yup.string()
+      .required(t('confirm_password_required'))
+      .oneOf([Yup.ref('new_password'), null], t('passwords_must_match')),
   });
 
   const defaultValues = useMemo(
@@ -111,6 +127,10 @@ export default function UsersCreateView({ currentUser }) {
     formState: { isSubmitting: isPasswordSubmitting },
   } = methods2;
 
+
+  const values = watch();
+
+
   useEffect(() => {
     if (currentUser?.id) {
       setValue('name', currentUser?.name);
@@ -129,7 +149,7 @@ export default function UsersCreateView({ currentUser }) {
       const body = data;
 
       if (currentUser?.id) {
-        console.log("currentUser?.id : ", currentUser?.id);
+        console.log("body : ", body);
         const res = await updateUser(currentUser?.id, body)
       } else {
         console.log("body :", body);
@@ -146,26 +166,13 @@ export default function UsersCreateView({ currentUser }) {
     }
   });
 
-  const onPasswordSubmit = handlePasswordSubmit(async (data) => {
-    try {
-      const body = data;
-      console.log("currentUser?.id : ", currentUser?.id);
-      const res = await changeUserPasswordByAdmin({ user_id: currentUser?.id, password: body?.new_password, password_confirmation: body?.confirm_password })
-      reset();
-      enqueueSnackbar(t("operation_success"));
-      router.push(paths.dashboard.user.list);
-      // v9W6FPLF hamed
-    } catch (error) {
-      console.error(error);
-      showError(error);
-    }
-  });
+ 
 
   return (
     <>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
-          heading={ currentUser?.id ?  t('edit_user') : t("add_user")}
+          heading={currentUser?.id ? t('edit_user') : t("add_user")}
           links={[
             {
               name: t('dashboard'),
@@ -175,7 +182,7 @@ export default function UsersCreateView({ currentUser }) {
               name: t('users'),
               href: paths.dashboard.user.root,
             },
-            { name: currentUser?.id ?  t('edit_user') : t("add_user") },
+            { name: currentUser?.id ? t('edit_user') : t("add_user") },
           ]}
           sx={{
             mb: { xs: 3, md: 5 },
@@ -198,7 +205,22 @@ export default function UsersCreateView({ currentUser }) {
                   <RHFTextField name="name" label={t('name')} />
                   <RHFTextField name="username" label={t('username')} />
                   <RHFTextField name="email" label={t('email')} type="email" />
-                  <RHFTextField name="phone_number" label={t('phone_number')} />
+                  <RHFTextField
+                    name="phone_number"
+                    type="text"
+                    label={t('phone_number')}
+                    error={
+                      !values.phone_number ? false : values.phone_number.length !== 10
+                    }
+                    helperText={
+                      !values.phone_number
+                        ? null
+                        : values.phone_number.length !== 10
+                          ? t('phone_number_must_be_10_digits')
+                          : ''
+                    }
+                  />
+
                   {/* {currentUser ? null : <RHFTextField name="password" label={t('password')} />}
                   {currentUser ? null : <RHFTextField name="password_confirmation" label={t('confirm_password')} />} */}
                   {
@@ -274,59 +296,7 @@ export default function UsersCreateView({ currentUser }) {
           </Grid>
         </FormProvider>
       </Container>
-      {/* <Container sx={{mt:4}} maxWidth={settings.themeStretch ? false : 'lg'}>
-        <CustomBreadcrumbs
-          heading={t('edit_password')}
-          links={[
-            {
-              name: t('dashboard'),
-              href: paths.dashboard.root,
-            },
-            {
-              name: t('users'),
-              href: paths.dashboard.user.root,
-            },
-            { name: t('edit_password') },
-          ]}
-          sx={{
-            mb: { xs: 3, md: 5 },
-          }}
-        />
-        {
-          currentUser ?
-            <FormProvider methods={methods2} onSubmit={onPasswordSubmit}>
-              <Grid container spacing={3}>
-                <Grid xs={12} md={8}>
-                  <Card sx={{ p: 3 }}>
-                    <Box
-                      rowGap={3}
-                      columnGap={2}
-                      display="grid"
-                      gridTemplateColumns={{
-                        xs: 'repeat(1, 1fr)',
-                        sm: 'repeat(2, 1fr)',
-                      }}
-                    >
-                      <RHFTextField name="new_password" label={t('new_password')} />
-                      <RHFTextField name="confirm_password" label={t('confirm_password')} />
-                    </Box>
 
-
-
-
-                    <Stack alignItems="flex-end" sx={{ mt: 3 }}>
-                      <LoadingButton type="submit" variant="contained" loading={isPasswordSubmitting}>
-                        {!currentUser ? t('create') : t('saveChange')}
-                      </LoadingButton>
-                    </Stack>
-                  </Card>
-                </Grid>
-              </Grid>
-            </FormProvider>
-            :
-            null
-        }
-      </Container> */}
     </>
   );
 }

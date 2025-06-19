@@ -217,7 +217,7 @@ export default function OrderListView() {
             dateError={dateError}
           />
 
-          {canReset && (
+          {/* {canReset && (
             <OrderTableFiltersResult
               filters={filters}
               onFilters={handleFilters}
@@ -227,7 +227,7 @@ export default function OrderListView() {
               results={dataFiltered.length}
               sx={{ p: 2.5, pt: 0 }}
             />
-          )}
+          )} */}
 
           <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
             <TableSelectedAction

@@ -186,7 +186,7 @@ export default function PmListView(id) {
           }}
         />
         <Grid xs={12} md={12}>
-          <UserNewEditForm car_id={id} />
+          <UserNewEditForm tableData={tableData} car_id={id} />
           <AppNewInvoice
           sx={{marginTop:"20px"}}
             title={t('items')}

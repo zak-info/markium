@@ -83,9 +83,9 @@ export default function CarLogsListView({ id }) {
   const confirm = useBoolean();
   const {data} = useValues()
   const { carLogs } = useGetCarLogs();
-  const [tableData, setTableData] = useState(carLogs?.filter(log => log.car_id == id));
+  const [tableData, setTableData] = useState(carLogs?.filter(log => log.car_id == id)?.reverse());
   useEffect(() => {
-    setTableData(carLogs?.filter(log=> log.car_id == id))
+    setTableData(carLogs?.filter(log=> log.car_id == id)?.reverse())
   }, [carLogs])
 
   const [filters, setFilters] = useState(defaultFilters);

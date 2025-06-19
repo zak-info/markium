@@ -36,30 +36,34 @@ import { useGetMaintenanceSpecs } from 'src/api/maintainance';
 import RHFTextarea from 'src/components/hook-form/RHFTextarea';
 import { addNewPm } from 'src/api/pm';
 import { fDate } from 'src/utils/format-time';
+import showError from 'src/utils/show_error';
 
 // ----------------------------------------------------------------------
 
-export default function UserNewEditForm({ car_id, currentClause }) {
+export default function UserNewEditForm({ tableData, car_id, currentClause }) {
   const router = useRouter();
-
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslate();
   const { data } = useValues();
   const validationSchema = Yup.object({
-    period_value: Yup.number().required('period value is required'),
-    period_unit: Yup.string().required('period unit is required'),
-    spec_id: Yup.number().required('periodic maintenace is required'),
-    last_value: Yup.string().required('last_value is required')
+    period_value: Yup.number()
+      .required(t('period_value_required')),
+
+    period_unit: Yup.string()
+      .required(t('period_unit_required')),
+
+    spec_id: Yup.number()
+      .required(t('periodic_maintenance_required')),
+
+    // last_value: Yup.required(t('last_value_required')),
   });
+
   const defaultValues = useMemo(
     () => ({
       period_value: currentClause?.period_unit || 0,
-      last_value: currentClause?.last_value || '',
+      last_value: currentClause?.last_value || null,
       period_unit: currentClause?.piece_status || "",
-      // spec_id: currentClause?.spec_id || '',
-      // period_maintenance_id: currentClause?.period_maintenance_id || '',
-      spec_id: currentClause?.spec_id || "",
-      // note_en: currentClause?.note_en || '',
+      spec_id: currentClause?.spec_id || 0,
     }),
     [currentClause]
   );
@@ -80,15 +84,27 @@ export default function UserNewEditForm({ car_id, currentClause }) {
 
   const values = watch();
 
+  useEffect(() => {
+    if (values.period_unit == "month") {
+      setValue("last_value", new Date())
+    } else if (values.period_unit == "km") {
+      setValue("last_value", 0)
+    }
+  }, [values])
+
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      const body = data;
-      console.log("data : ", data);
+      let body = data;
+      if (values.period_unit == "month") {
+        body.last_value = format(new Date(data.last_value), 'yyyy-MM-dd')
+      }
+      console.log("data : ", body);
 
       if (currentClause?.id) {
 
       } else {
+
         console.log("lets create :", car_id);
         await addNewPm(car_id.id, { ...body });
       }
@@ -97,25 +113,11 @@ export default function UserNewEditForm({ car_id, currentClause }) {
       router.reload();
     } catch (error) {
       console.error(error);
-      enqueueSnackbar(error?.message ? error?.message : "Somthing Went Wrong", { variant: 'error' });
+      showError(error)
 
     }
   });
 
-  const handleDrop = useCallback(
-    (acceptedFiles) => {
-      const file = acceptedFiles[0];
-
-      const newFile = Object.assign(file, {
-        preview: URL.createObjectURL(file),
-      });
-
-      if (file) {
-        setValue('avatarUrl', newFile, { shouldValidate: true });
-      }
-    },
-    [setValue]
-  );
 
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>
@@ -128,18 +130,43 @@ export default function UserNewEditForm({ car_id, currentClause }) {
               display="grid"
               gridTemplateColumns={{
                 xs: 'repeat(1, 1fr)',
-                sm: 'repeat(2, 1fr)',
+                sm: 'repeat(1, 1fr)',
               }}
             >
-              <RHFSelect name="spec_id" label={t('periodic_maintenances')} sx={{ width: "100%" }}>
+              <RHFSelect
+                name="spec_id"
+                label={t('periodic_maintenances')}
+                sx={{ width: '100%' }}
+              >
                 <Divider sx={{ borderStyle: 'dashed' }} />
-                {data?.maintenance_specifications?.filter(item => item?.is_periodic)?.map((option) => (
-                  <MenuItem key={option?.id} value={option?.id}>
-                    {option?.name}
-                  </MenuItem>
-                ))}
+
+                {(data?.maintenance_specifications || [])
+                  .filter(
+                    (item) =>
+                      item?.is_periodic &&
+                      !tableData.some((i) => i?.id === item?.id)
+                  )
+                  .map((option) => (
+                    <MenuItem key={option?.id} value={option?.id}>
+                      {option?.name}
+                    </MenuItem>
+                  ))}
               </RHFSelect>
-              <RHFSelect name="period_unit" label={t('period_unit')} sx={{ width: "100%" }}>
+            </Box>
+            <Box
+              rowGap={3}
+              columnGap={2}
+              mt={4}
+              display="grid"
+              gridTemplateColumns={{
+                xs: 'repeat(1, 1fr)',
+                sm: 'repeat(3, 1fr)',
+              }}
+            >
+
+
+
+              <RHFSelect name="period_unit" label={t('maintenance_period_unit')} sx={{ width: "100%" }}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
                 {data?.unit_enum?.map((option, index) => (
                   <MenuItem key={index} value={option.key}>
@@ -147,14 +174,14 @@ export default function UserNewEditForm({ car_id, currentClause }) {
                   </MenuItem>
                 ))}
               </RHFSelect>
-              <RHFTextField name="period_value" label={t('period_value')} type={"number"} sx={{ width: "100%" }} />
+              <RHFTextField name="period_value" label={t('maintenance_period_value')} type={"number"} sx={{ width: "100%" }} />
               {
                 values?.period_unit == 'km' ?
                   <RHFTextField name="last_value" label={t('last_value')} sx={{ width: "100%" }} />
                   : values?.period_unit == 'month' ?
                     <DatePicker
                       label={t('last_value')}
-                      format="dd/MM/yyyy"  
+                      format="dd/MM/yyyy"
                       value={values.last_value ? new Date(values.last_value) : new Date()}
                       name="last_value"
                       onChange={(newValue) => setValue('last_value', fDate(newValue, 'yyyy-MM-dd'))}

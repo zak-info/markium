@@ -27,39 +27,61 @@ import { STORAGE_API } from 'src/config-global';
 import { useEffect } from 'react';
 import { paths } from 'src/routes/paths';
 import { t } from 'i18next';
+import PermissionsContext from 'src/auth/context/permissions/permissions-context';
+import { useBoolean } from 'src/hooks/use-boolean';
+import { Typography } from '@mui/material';
+import ContentDialog from 'src/components/custom-dialog/content-dialog';
+import { EditODO } from '../vehicles/EditODO';
+import AddDocumentToDriver from './DriverListView/AddDocumentToDriver';
 
 // ----------------------------------------------------------------------
 
-export default function AppNewInvoice({ title, subheader, tableData, tableLabels, ...other }) {
+export default function AppNewInvoice({ driver, title, subheader, tableData, tableLabels, ...other }) {
   const { data } = useValues()
+  const completed = useBoolean()
   return (
-    <Card {...other}>
-      <CardHeader title={title} subheader={subheader} sx={{ mb: 3 }} />
-      <TableContainer sx={{ overflow: 'unset' }}>
-        <Scrollbar>
-          <Table sx={{}}>
-            <TableHeadCustom headLabel={tableLabels} />
-            <TableBody>
-              {tableData?.map((row) => (
-                <AppNewInvoiceRow attachement_name={data?.attachmenat_names?.find(item => item.id == row.attachment_name_id)?.translations[0]?.name} key={row.id} row={row} />
-              ))}
-            </TableBody>
-          </Table>
-        </Scrollbar>
-      </TableContainer>
+    <>
+      <Card {...other}>
+        <CardHeader sx={{ mb: 3 }} title={
+          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }} >
+            <Typography >
+              {title}
+            </Typography>
+            <PermissionsContext action={'put.car.odometer'}>
+              <Button onClick={() => { completed.onTrue() }} color="inherit" variant="contained" startIcon={<Iconify icon="solar:cloud-file-bold-duotone" />}>
+                {t("add")}
+              </Button>
+            </PermissionsContext>
+          </Box>
+        }
+          subheader={subheader} />
+        <TableContainer sx={{ overflow: 'unset' }}>
+          <Scrollbar>
+            <Table sx={{}}>
+              <TableHeadCustom headLabel={tableLabels} />
+              <TableBody>
+                {tableData?.map((row) => (
+                  <AppNewInvoiceRow attachement_name={data?.attachmenat_names?.find(item => item.id == row.attachment_name_id)?.translations[0]?.name} key={row.id} row={row} />
+                ))}
+              </TableBody>
+            </Table>
+          </Scrollbar>
+        </TableContainer>
 
-      <Divider sx={{ borderStyle: 'dashed' }} />
+        <Divider sx={{ borderStyle: 'dashed' }} />
 
-      {/* <Box sx={{ p: 2, textAlign: 'right' }}>
-        <Button
-          size="small"
-          color="inherit"
-          endIcon={<Iconify icon="eva:arrow-ios-forward-fill" width={18} sx={{ ml: -0.5 }} />}
-        >
-          View All
-        </Button>
-      </Box> */}
-    </Card>
+        <ContentDialog
+          maxWidth={"md"}
+          open={completed.value}
+          onClose={completed.onFalse}
+          title={t("addNewDocument")}
+
+          content={
+            <AddDocumentToDriver driver_id={driver.id} close={() => completed?.onFalse()} />
+          }
+        />
+      </Card>
+    </>
   );
 }
 
@@ -105,8 +127,8 @@ function AppNewInvoiceRow({ row, attachement_name }) {
       <TableRow>
         <TableCell>{attachement_name}</TableCell>
 
-        {row?.attachment_path ? <TableCell> <a href={paths.dashboard.documents.preview + `?url=${"/"+row?.attachment_path}`} target='_blank' ><Label variant="soft" color="success">{t("preview")}</Label></a></TableCell>:null}
-        {row?.invoice_path ? <TableCell> <a href={paths.dashboard.documents.preview + `?url=${"/"+row?.invoice_path}`} target='_blank' ><Label variant="soft" color="success">{t("preview")}</Label></a></TableCell>:null}
+        {row?.attachment_path ? <TableCell> <a href={paths.dashboard.documents.preview + `?url=${"/" + row?.attachment_path}`} target='_blank' ><Label variant="soft" color="success">{t("preview")}</Label></a></TableCell> : null}
+        {row?.invoice_path ? <TableCell> <a href={paths.dashboard.documents.preview + `?url=${"/" + row?.invoice_path}`} target='_blank' ><Label variant="soft" color="success">{t("preview")}</Label></a></TableCell> : null}
         {/* <TableCell><a href={STORAGE_API + "/" + row?.invoice_path} target='_blank' ><Label variant="soft" color="success">View</Label></a></TableCell> */}
 
         {/* <TableCell>{fCurrency(row.cost) || '-'}</TableCell> */}

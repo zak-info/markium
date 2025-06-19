@@ -163,7 +163,7 @@ export async function deleteUser(id) {
 }
 
 export async function updateUser(id,body) {
-    const URL = endpoints.users.root+"/"+id;
+    const URL = endpoints.users.users+"/"+id;
     return await axios.put(URL, body);
 }
 

@@ -178,7 +178,7 @@ export default function ContractNewEditForm({ contract }) {
       body.start_date = format(new Date(body.start_date), 'yyyy-MM-dd')
       body.end_date = format(new Date(body.end_date), 'yyyy-MM-dd')
 
-      body = { ...body, auto_renewal : checked,clauses: clauses.map(({ id, ...rest }) => rest)}
+      body = { ...body, auto_renewal : checked,clauses: clauses.map(({ id, ...rest }) => rest) || []}
       console.log("body :", body);
       const response = contract?.id ? await editContracts(contract?.id, body) : await createContracts(body);
       enqueueSnackbar(t("operation_success"), { variant: 'success' });

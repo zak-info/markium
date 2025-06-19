@@ -43,11 +43,12 @@ export default function CarsListView({ }) {
         { id: 'plat_number', label: t('plateNumber'), type: "two-lines-link", first: (row) => row?.plat_number, second: (row) => { }, link: (row) => { return paths.dashboard.vehicle.details(row?.id) }, width: 160 },
         { id: 'model', label: t('model'), type: "two-lines-link", first: (row) => row?.model?.translations?.name, second: (row) => row?.model?.company?.translations?.name, link: (row) => { return paths.dashboard.vehicle.details(row?.id) }, width: 140 },
         { id: 'production_year', label: t('manufacturingYear'), type: "text", width: 100 },
-        { id: 'c_driver', label: t('driver'), type: "long_text", length: 3, width: 200 },
+        { id: 'driver', label: t('driver'), type: "two-lines-link", first: (row) => row?.driver?.name, second: (row) => { }, link: (row) => { return paths.dashboard.drivers.details(row?.id) }, width: 180 },
+        // { id: 'c_driver', label: t('driver'), type: "long_text", length: 3, width: 200 },
         // { id: 'driver', label: t('driver'), type: "text", width: 140 },
         { id: 'condition', label: t('status'), type: "label", width: 140 },
-        { id: 'company', label: t('client'), type: "text", width: 140 },
-        { id: 'ref', label: t('contract'), type: "text", width: 140 },
+        { id: 'client', label: t('client'), type: "two-lines-link", first: (row) => row?.client?.name, second: (row) => { }, link: (row) => { return paths.dashboard.clients.details(row?.id) }, width: 180 },
+        { id: 'ref', label: t('contract'), type: "text", width: 100 },
         { id: 'actions', label: t('actions'), type: "threeDots", component: (item) => <ElementActions item={item} RformulateTable={RformulateTable} setTableData={setDataFiltered} />, width: 400, align: "right" },
     ]
 
@@ -58,15 +59,16 @@ export default function CarsListView({ }) {
         { key: 'available', label: t('available'), match: (item) => item?.status?.key == "available", color: 'primary' },
         { key: 'under_maintenance', label: t('under_maintenance'), match: (item) => item?.status?.key == "under_maintenance", color: 'error' },
         { key: 'under_preparation', label: t('under_preparation'), match: (item) => item?.status?.key == "under_preparation", color: 'secondary' },
-        { key: 'rented', label: t('rented'), match: (item) => item?.status?.key == "rented", color: 'warning' },
+        { key: 'rented', label: t('rented'), match: (item) => item?.is_rented, color: 'warning' },
     ];
     const filters = [
-        { key: 'plat_number', label: t('plat_number'), match: (item, value) => 
-            item?.plat_number?.toLowerCase()?.includes(value?.toLowerCase()) ||
-            item?.model?.translations?.name?.toLowerCase()?.includes(value?.toLowerCase()) ||
-            item?.model?.company?.translations?.name?.toLowerCase()?.includes(value?.toLowerCase()) ||
-            item?.production_year?.toLowerCase()?.includes(value?.toLowerCase()) ||
-            item?.condition?.toLowerCase()?.includes(value?.toLowerCase()) ,
+        {
+            key: 'plat_number', label: t('plat_number'), match: (item, value) =>
+                item?.plat_number?.toLowerCase()?.includes(value?.toLowerCase()) ||
+                item?.model?.translations?.name?.toLowerCase()?.includes(value?.toLowerCase()) ||
+                item?.model?.company?.translations?.name?.toLowerCase()?.includes(value?.toLowerCase()) ||
+                item?.production_year?.toLowerCase()?.includes(value?.toLowerCase()) ||
+                item?.condition?.toLowerCase()?.includes(value?.toLowerCase()),
         },
     ];
 
@@ -92,12 +94,13 @@ export default function CarsListView({ }) {
             const company = clients?.find((c) => c.id === contract?.company_id);
             console.log('company.find : ', company);
             let condition;
-            if (statusKey === "rented") {
+            // else if (item?.contract?.ref && statusKey !== "rented") {
+            //     condition = `${statusName} / ${t("rented")}`;
+            // }
+            if (statusKey === "available" || statusKey === "under_preparation") {
                 condition = statusName;
-            } else if (item?.contract?.ref && statusKey !== "rented") {
-                condition = `${statusName} / ${t("rented")}`;
             } else if (statusKey == "under_maintenance") {
-                condition = t("under_maintenance");
+                condition = t("under_maintenance") + (item?.is_rented ? "/" + t("rented") : "");
             } else {
                 condition = statusName;
             }
@@ -155,7 +158,7 @@ export default function CarsListView({ }) {
             >
                 <Card>
                     <ZaityTableTabs key='condition' data={tableData} items={items} defaultFilters={defaultFilters} setTableDate={setDataFiltered} filterFunction={filterFunction}>
-                        <ZaityTableFilters data={dataFiltered} tableData={tableData}  setTableDate={setDataFiltered} items={filters} defaultFilters={defaultFilters} dataFiltered={tableData} searchText={t("search_by") + " " + t("plateNumber")+" " + t("or_any_value")+" ..."} >
+                        <ZaityTableFilters data={dataFiltered} tableData={tableData} setTableDate={setDataFiltered} items={filters} defaultFilters={defaultFilters} dataFiltered={tableData} searchText={t("search_by") + " " + t("plateNumber") + " " + t("or_any_value") + " ..."} >
                             <ZaityListView TABLE_HEAD={[...TABLE_HEAD]} dense="medium" zaityTableDate={dataFiltered || []} onSelectedRows={({ data, setTableData }) => { return <onSelectedRowsComponent configurable_type={"roles"} setTableData={setTableData} data={car} /> }} />
                         </ZaityTableFilters>
                     </ZaityTableTabs>
@@ -169,9 +172,10 @@ export default function CarsListView({ }) {
 
 
 
-const ElementActions = ({ item,RformulateTable, setTableData }) => {
+const ElementActions = ({ item, RformulateTable, setTableData }) => {
     const popover = usePopover();
     const confirm = useBoolean();
+    const remove = useBoolean();
     const ban = useBoolean();
     const completed = useBoolean();
     const router = useRouter();
@@ -222,20 +226,20 @@ const ElementActions = ({ item,RformulateTable, setTableData }) => {
                     // router.reload()
                     setTableData(prev =>
                         RformulateTable(
-                        prev?.map(i => {
-                            if (i.id == item?.id) {
-                                return {
-                                    ...i,
-                                    // condition: t("under_maintenance"),
-                                    // color: "warning",
-                                    status: {
-                                        key: 'under_maintenance',
-                                        translations: { name: t("under_maintenance") }
+                            prev?.map(i => {
+                                if (i.id == item?.id) {
+                                    return {
+                                        ...i,
+                                        // condition: t("under_maintenance"),
+                                        // color: "warning",
+                                        status: {
+                                            key: 'under_maintenance',
+                                            translations: { name: t("under_maintenance") }
+                                        }
                                     }
                                 }
-                            }
-                            return i
-                        }))
+                                return i
+                            }))
                     );
                     enqueueSnackbar(t('operation_success'));
                     setLoading(false)
@@ -255,20 +259,20 @@ const ElementActions = ({ item,RformulateTable, setTableData }) => {
                         // router.reload()
                         setTableData(prev =>
                             RformulateTable(
-                            prev?.map(i => {
-                                if (i.id == item?.id) {
-                                    return {
-                                        ...i,
-                                        // condition:t("available"),
-                                        // color:"success",
-                                        status: {
-                                            key: 'available',
-                                            translations: { name: t("available") }
+                                prev?.map(i => {
+                                    if (i.id == item?.id) {
+                                        return {
+                                            ...i,
+                                            // condition:t("available"),
+                                            // color:"success",
+                                            status: {
+                                                key: 'available',
+                                                translations: { name: t("available") }
+                                            }
                                         }
                                     }
-                                }
-                                return i
-                            }))
+                                    return i
+                                }))
                         );
 
                         enqueueSnackbar(t('operation_success'));
@@ -312,7 +316,7 @@ const ElementActions = ({ item,RformulateTable, setTableData }) => {
                 <PermissionsContext action={'delete.car'}>
                     <MenuItem
                         onClick={() => {
-                            confirm.onTrue();
+                            remove.onTrue();
                             popover.onClose();
                         }}
                         sx={{ color: 'error.main' }}
@@ -374,8 +378,8 @@ const ElementActions = ({ item,RformulateTable, setTableData }) => {
             </CustomPopover>
 
             <ConfirmDialog
-                open={confirm.value}
-                onClose={confirm.onFalse}
+                open={remove.value}
+                onClose={remove.onFalse}
                 title={t('delete')}
                 content={t('deleteConfirm')}
                 action={

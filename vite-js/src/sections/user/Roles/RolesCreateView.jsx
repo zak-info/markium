@@ -43,6 +43,7 @@ import showError from 'src/utils/show_error';
 // ----------------------------------------------------------------------
 
 export default function RolesCreateView({ currentRole }) {
+    console.log("currentRole : ", currentRole);
     const router = useRouter();
     const { enqueueSnackbar } = useSnackbar();
     const { t } = useTranslate();
@@ -183,9 +184,9 @@ export default function RolesCreateView({ currentRole }) {
     const values = watch();
     useEffect(() => {
         if (currentRole?.id) {
-            setValue('nameEn', currentRole?.translations[0]?.name);
-            setValue('nameAr', currentRole?.translations[1]?.name);
-            setSelectedPermissions(currentRole?.permissions)
+            setValue('nameEn', currentRole?.translations?.find(i => i?.lang_id == 1 )?.name);
+            setValue('nameAr', currentRole?.translations?.find(i => i?.lang_id == 2 )?.name);
+            setSelectedPermissions(currentRole?.permissions.map(p => p.id) || []);
         }
     }, [currentRole, setValue]);
 

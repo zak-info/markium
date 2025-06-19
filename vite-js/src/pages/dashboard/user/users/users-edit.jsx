@@ -7,6 +7,7 @@ import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import { useSettingsContext } from 'src/components/settings';
 import { paths } from 'src/routes/paths';
 import UsersCreateView from 'src/sections/user/Users/UsersCreateView';
+import UsersEditView from 'src/sections/user/Users/UsersEditView';
 // ----------------------------------------------------------------------
 
 export default function UsersEditPage() {
@@ -22,7 +23,7 @@ export default function UsersEditPage() {
         <Helmet>
           <title> System: Edit a user</title>
         </Helmet>
-        <UsersCreateView id={id} currentUser={user} />
+        <UsersEditView id={id} currentUser={user} />
     </>
   );
 }

@@ -44,6 +44,7 @@ import { set } from 'lodash';
 
 export default function UserNewEditForm({ currentClient }) {
   const router = useRouter();
+  console.log(" LcurrentClient ",currentClient);
 
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslate();
@@ -104,7 +105,7 @@ export default function UserNewEditForm({ currentClient }) {
       setValue("neighborhood_id", currentClient?.neighborhood_id)
       setRepresentors(currentClient?.representors)
     }
-  }, [data, setValue]);
+  }, [data,currentClient, setValue]);
 
   const [create, setCreate] = useState(true)
   const [rep_id, setRip_id] = useState(null)

@@ -75,7 +75,7 @@ export default function ProfileHome({ driver, posts }) {
     { lable: t(`phone_number`), value: driver?.phone_number, icon: 'solar:phone-rounded-bold-duotone' },
     { lable: t(`birth_date`), value: driver?.birth_date, icon: 'solar:calendar-date-bold-duotone' },
     { lable: t(`start_date`), value: driver?.start_date, icon: 'solar:calendar-date-bold-duotone' },
-    { lable: t(`state`), value: data?.states?.find(i => i.id == driver?.state_id).translations[0]?.name || driver?.state?.key, icon: "mingcute:location-fill" },
+    { lable: t(`state`), value: data?.states?.find(i => i.id == driver?.state_id)?.translations[0]?.name || driver?.state?.key, icon: "mingcute:location-fill" },
     {
       lable: t(`car`), value: !!driver?.car?.id ?
         <Link href={paths?.dashboard?.vehicle.details(driver?.car?.id)} variant="subtitle2" color="inherit">
@@ -149,6 +149,7 @@ export default function ProfileHome({ driver, posts }) {
       style={{ marginTop: "20px" }}
       title={t('documents')}
       tableData={driverDocuments}
+      driver={driver}
       tableLabels={[
         { id: 'document', label: t('document') },
         { id: 'file', label: t('file') },

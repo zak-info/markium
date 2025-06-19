@@ -49,6 +49,8 @@ export default function UsersListView({ }) {
             key: 'name', label: t('name'), match: (item, value) =>
                 item?.name?.toLowerCase().includes(value?.toLowerCase()) ||
                 item?.username?.toLowerCase().includes(value?.toLowerCase()) ||
+                item?.phone_number?.toLowerCase().includes(value?.toLowerCase()) ||
+                item?.roles?.toLowerCase().includes(value?.toLowerCase()) ||
                 item?.email?.toLowerCase().includes(value?.toLowerCase()) ,
         },
     ];

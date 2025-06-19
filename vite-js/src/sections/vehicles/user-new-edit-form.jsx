@@ -50,51 +50,62 @@ export default function UserNewEditForm({ currentCar }) {
   const { t } = useTranslate();
 
   const NewUserSchema = Yup.object().shape({
-    production_year: Yup.number().required('Production year is required').positive().integer(),
-    plat_number: Yup.string().required('Plate number is required').test(
-      'unique-plat',
-      t('plat_number_already_exists'),
-      function (value) {
-        return !car?.map(item => item?.plat_number)?.includes(value.trim());
-      }
-    ),
-    chassis_number: Yup.string()
-      .length(17, 'يجب أن يتكون الرقم الهيكل من 17 خانة ')
-      .required('Chassis number is required').test(
-      'chassis-number',
-      t('chassis_number_already_exists'),
-      function (value) {
-        return !car?.map(item => item?.chassis_number)?.includes(value.trim());
-      }
-    ),
-    vin: Yup.string()
-      // .length(9, 'يجب أن يتكون الرقم التسلسلي من 9 خانة ')
-      .required('VIN is required')
-      .label('Vin').test(
-      'vin',
-      t('vin_already_exists'),
-      function (value) {
-        return !car?.map(item => item?.vin)?.includes(value.trim());
-      }
-    ),
-    passengers_capacity: Yup.number()
-      .required('Passenger capacity is required')
+    production_year: Yup.number()
+      .required(t('production_year_required'))
       .positive()
       .integer(),
-    odometer: Yup.number().nullable().positive().required('odometer is required'),
-    // depreciation: Yup.number()
-    //   .nullable()
-    //   .min(0, 'Depreciation cannot be negative')
-    //   .test('is-decimal', 'يجب أن يكون الاستهلاك رقم عشري مع حدين عشريين كحد أقصى', (value) =>
-    //     (value + '').match(/^\d*\.{1}\d*$/)
-    //   ),
-    car_model_id: Yup.string().required('Car model is required'),
-    color_id: Yup.string().required('Color is required'),
-    state_id: Yup.string().required('Location is required'),
-    car_company_id: Yup.string().required('Car company is required'),
-    spec_id: Yup.string().required('Specification is required'),
-    license_type_id: Yup.string().required('License type is required'),
+
+    plat_number: Yup.string()
+      .required(t('plat_number_required'))
+      .test(
+        'unique-plat',
+        t('plat_number_already_exists'),
+        function (value) {
+          return !car?.map(item => item?.plat_number)?.filter(item => item?.id != currentCar?.id)?.includes(value.trim());
+        }
+      ),
+
+    chassis_number: Yup.string()
+      .length(17, t('chassis_number_length'))
+      .required(t('chassis_number_required'))
+      .test(
+        'chassis-number',
+        t('chassis_number_already_exists'),
+        function (value) {
+          return !car?.map(item => item?.chassis_number)?.filter(item => item?.chassis_number != currentCar?.chassis_number)?.includes(value.trim());
+        }
+      ),
+
+    vin: Yup.string()
+      .required(t('vin_required'))
+      .test(
+        'vin',
+        t('vin_already_exists'),
+        function (value) {
+          return !car?.map(item => item?.vin)?.filter(item => item?.vin != currentCar?.vin)?.includes(value.trim());
+        }
+      ),
+
+    passengers_capacity: Yup.number()
+      .required(t('passenger_capacity_required'))
+      .positive(t('passenger_capacity_must_be_positive'))
+      .integer(t('passenger_capacity_must_be_integer'))
+      .max(99, t('passenger_capacity_must_be_less_than_100')),
+
+
+    odometer: Yup.number()
+      .nullable()
+      .positive()
+      .required(t('odometer_required')),
+
+    car_model_id: Yup.string().required(t('car_model_required')),
+    color_id: Yup.string().required(t('color_required')),
+    state_id: Yup.string().required(t('location_required')),
+    car_company_id: Yup.string().required(t('car_company_required')),
+    spec_id: Yup.string().required(t('specification_required')),
+    license_type_id: Yup.string().required(t('license_type_required')),
   });
+
 
   const defaultValues = useMemo(
     () => ({
@@ -116,8 +127,8 @@ export default function UserNewEditForm({ currentCar }) {
   );
 
 
-  const validateUnicity = (list,key,value)=>{
-    return list?.map(item => item?.[key])?.includes(value.trim())
+  const validateUnicity = (list, key, value) => {
+    return list?.map(item => item?.[key])?.filter(item => item?.[key] != currentCar?.[key])?.includes(value.trim())
   }
 
   const methods = useForm({
@@ -187,7 +198,7 @@ export default function UserNewEditForm({ currentCar }) {
   const onSubmit = handleSubmit(async (data) => {
     try {
       if (car?.map(item => item?.plat_number)?.includes(data?.plat_number.trim())) {
-        enqueueSnackbar(t('plat_number_already_used'),{variant:'error'});
+        enqueueSnackbar(t('plat_number_already_used'), { variant: 'error' });
         return;
       }
       const response = currentCar?.id ? await editCar(currentCar?.id, data) : await createCar(data);
@@ -244,18 +255,20 @@ export default function UserNewEditForm({ currentCar }) {
                 ))}
               </RHFSelect>
 
-              <RHFTextField required name="plat_number" label={t('plateNumber')} error={validateUnicity(car,"plat_number",values?.plat_number)} helperText={validateUnicity(car,"plat_number",values?.plat_number) ? t('plat_number_already_exists'):null} />
+              <RHFTextField required name="plat_number" label={t('plateNumber')} error={validateUnicity(car.filter(item => item?.plat_number != currentCar?.plat_number), "plat_number", values?.plat_number)} helperText={validateUnicity(car, "plat_number", values?.plat_number) ? t('plat_number_already_exists') : null} />
 
-              <RHFTextField required name="chassis_number" label={t('structureNo')} error={validateUnicity(car,"chassis_number",values?.chassis_number)} helperText={validateUnicity(car,"chassis_number",values?.chassis_number) ? t('chassis_number_already_exists'):null} />
+              <RHFTextField required name="chassis_number" label={t('structureNo')} error={validateUnicity(car.filter(item => item?.chassis_number != currentCar?.chassis_number), "chassis_number", values?.chassis_number)} helperText={validateUnicity(car, "chassis_number", values?.chassis_number) ? t('chassis_number_already_exists') : null} />
 
-              <RHFTextField required name="vin" label={t('serialNumber')} error={validateUnicity(car,"vin",values?.vin)} helperText={validateUnicity(car,"vin",values?.vin) ? t('vin_already_exists'):null} />
+              <RHFTextField required name="vin" label={t('serialNumber')} error={validateUnicity(car.filter(item => item?.vin != currentCar?.vin), "vin", values?.vin)} helperText={validateUnicity(car, "vin", values?.vin) ? t('vin_already_exists') : null} />
               <RHFTextField required name="odometer" label={t('odometer')} />
               {/* <RHFTextField name="depreciation" label={t('depreciation')} /> */}
               <RHFTextField
-                type="number"
+                type={"number"}
                 required
                 name="passengers_capacity"
                 label={t('numberOfPassengers')}
+                error={values.passengers_capacity > 99 }
+                 helperText={values.passengers_capacity > 99 ? t("passenger_capacity_must_be_less_than_100"):null}
               />
               <RHFSelect required name="color_id" label={t('vehcileColor')} >
                 <Divider sx={{ borderStyle: 'dashed' }} />

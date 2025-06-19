@@ -5,6 +5,8 @@ import { paths } from 'src/routes/paths';
 
 // export const HOST_API = 'http://172.105.83.136:8044/api';
 // export const STORAGE_API = 'http://172.105.83.136:8044/storage';
+// export const HOST_API = 'http://172.233.43.164:8000/api';
+// export const STORAGE_API = 'http://172.233.43.164:8000/storage';
 // export const HOST_API = 'http://127.0.0.1:8000/api'; 
 // export const STORAGE_API = 'http://127.0.0.1:8000/storage';
 export const HOST_API = 'https://be.zaity.co/api';

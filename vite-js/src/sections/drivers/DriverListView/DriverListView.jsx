@@ -8,7 +8,7 @@ import { useGetClauses } from 'src/api/claim';
 import { useGetClients } from 'src/api/client';
 import { deleteContractClause, useGetContracts } from 'src/api/contract';
 import { markMaintenanceAsCompeleted, useGetMaintenance } from 'src/api/maintainance';
-import { changeItemVisibilityInSettings, useGetMainSpecs } from 'src/api/settings'; // [keep for later use]
+import { changeItemVisibilityInSettings, useGetMainSpecs, useGetSystemVisibleItem } from 'src/api/settings'; // [keep for later use]
 import { createUser, deleteUser, useRoles, useUsers } from 'src/api/users';
 import { useValues } from 'src/api/utils';
 import PermissionsContext from 'src/auth/context/permissions/permissions-context';
@@ -51,19 +51,22 @@ export default function DriverListView({ }) {
     const { car } = useGetCar()
     const { drivers } = useGetDrivers()
     const { documents, mutate } = useGetDocuments()
-    const { clients } = useGetClients()
+    const { clients } = useGetClients();
+    const { items: carModels } = useGetSystemVisibleItem("car_model");
+
 
     const [tableData, setTableData] = useState([]);
     const [dataFiltered, setDataFiltered] = useState([]);
 
     let TABLE_HEAD = [
         { id: 'name', label: t('name'), type: "two-lines-link", first: (row) => { return row?.name }, second: (row) => { }, link: (row) => { return paths.dashboard.drivers.details(row.id) }, width: 180 },
-        { id: 'phonenumber', label: t('phone_number'), type: "text", width: 100 },
+        { id: 'phone_number', label: t('phone_number'), type: "text", width: 140 },
+        { id: 'residence_permit_number', label: t('residence_permit_number'), type: "text", width: 140 },
         { id: 'birth_date', label: t('birth_date'), type: "text", width: 140 },
         { id: 'gender', label: t('gender'), type: "text", width: 140 },
         { id: 'd_nationality', label: t('nationality'), type: "text", width: 100 },
         { id: 'd_state', label: t('state'), type: "text", width: 100 },
-        { id: 'attached_to', label: t('car'), type: "two-lines-link", first: (row) => { return row?.car?.model?.translations[0]?.name || "--" }, second: (row) => { return row?.car?.plat_number }, link: (row) => { return paths.dashboard.vehicle.details(row?.car?.id) }, width: 140 },
+        { id: 'attached_to', label: t('car'), type: "two-lines-link", first: (row) => { return row?.car_model || "--" }, second: (row) => { return row?.car?.plat_number }, link: (row) => { return paths.dashboard.vehicle.details(row?.car?.id) }, width: 140 },
         // { id: 'c_driver', label: t('driver'), type: "long_text", length: 3, width: 200 },
         { id: 'status', label: t('status'), type: "label", width: 140 },
         { id: 'actions', label: t('actions'), type: "threeDots", component: (item) => <ElementActions item={item} setTableData={setTableData} />, width: 200, align: "right" },
@@ -81,6 +84,7 @@ export default function DriverListView({ }) {
                 d_state: vData?.states?.find(i => i.id == item?.state_id).translations[0]?.name,
                 status: item?.is_rented ? t("bussy") : t("available"),
                 color: item?.is_rented ? "warning" : "success",
+                car_model: carModels?.find(i => i.id == item?.car?.car_model_id)?.translations[0]?.name,
 
             };
         }) || [];
@@ -88,13 +92,17 @@ export default function DriverListView({ }) {
 
 
     const filters = [
-        { key: 'name', label: t('name'), match: (item, value) =>
-             item?.name?.toLowerCase().includes(value?.toLowerCase()) ||
-             item?.phonenumber?.toLowerCase().includes(value?.toLowerCase()) ||
-             item?.gender?.toLowerCase().includes(value?.toLowerCase()) ||
-             item?.d_nationality?.toLowerCase().includes(value?.toLowerCase()) ||
-             item?.d_state?.toLowerCase().includes(value?.toLowerCase()) ,
-            },
+        {
+            key: 'name', label: t('name'), match: (item, value) =>
+                item?.name?.toLowerCase().includes(value?.toLowerCase()) ||
+                item?.phonenumber?.toLowerCase().includes(value?.toLowerCase()) ||
+                item?.gender?.toLowerCase().includes(value?.toLowerCase()) ||
+                item?.residence_permit_number?.toLowerCase().includes(value?.toLowerCase()) ||
+                item?.d_nationality?.toLowerCase().includes(value?.toLowerCase()) ||
+                item?.car?.plat_number?.toLowerCase().includes(value?.toLowerCase()) ||
+                item?.car_model?.toLowerCase().includes(value?.toLowerCase()) ||
+                item?.d_state?.toLowerCase().includes(value?.toLowerCase()),
+        },
     ];
 
     const defaultFilters = {
@@ -149,7 +157,7 @@ export default function DriverListView({ }) {
                 <Card>
                     <ZaityTableTabs key='condition' data={tableData} items={items} defaultFilters={defaultFilters} setTableDate={setDataFiltered} filterFunction={filterFunction}>
                         {/* <ZaityTableTabs key='attachable_type' data={tableData} items={items2} defaultFilters={defaultFilters} setTableDate={setDataFiltered} filterFunction={filterFunction}> */}
-                        <ZaityTableFilters data={dataFiltered} tableData={tableData} setTableDate={setDataFiltered} items={filters} defaultFilters={defaultFilters} dataFiltered={tableData} searchText={t("search_by")+" "+t("name")+" "+t("or_any_value")+" ..."}  >
+                        <ZaityTableFilters data={dataFiltered} tableData={tableData} setTableDate={setDataFiltered} items={filters} defaultFilters={defaultFilters} dataFiltered={tableData} searchText={t("search_by") + " " + t("name") + " " + t("or_any_value") + " ..."}  >
                             <ZaityListView TABLE_HEAD={[...TABLE_HEAD]} dense="medium" zaityTableDate={dataFiltered || []} onSelectedRows={({ data, setTableData }) => { return <onSelectedRowsComponent configurable_type={"roles"} setTableData={setTableData} data={car} /> }} />
                         </ZaityTableFilters>
                         {/* </ZaityTableTabs> */}
@@ -172,6 +180,8 @@ const ElementActions = ({ item, setTableData }) => {
     const loading = useBoolean();
     const router = useRouter();
 
+    const [postloader, setPostloader] = useState(false)
+
 
 
 
@@ -184,13 +194,20 @@ const ElementActions = ({ item, setTableData }) => {
 
     const onDeleteRow = useCallback(
         async (id) => {
+            setPostloader(true)
+            console.log("id : ",id);
             try {
                 loading.onTrue()
-                await deleteDriver(id);
+                const res = await deleteDriver(id);
+                console.log("res : ",res);
                 setTableData(prev => prev?.filter(i => i.id != id))
                 enqueueSnackbar(t("operation_success"));
                 confirm.onFalse();
+                loading.onFalse()
+                setPostloader(false)
             } catch (error) {
+                console.log("error : ",error);
+                setPostloader(false)
                 loading.onFalse()
                 showError(error)
             }
@@ -257,7 +274,7 @@ const ElementActions = ({ item, setTableData }) => {
                 content={t("are_you_sure_want_to_delete")}
                 action={
                     <LoadingButton
-                        isSubmitting={loading}
+                        isSubmitting={postloader}
                         variant="contained"
                         color="error"
                         onClick={() => {

@@ -1,12 +1,16 @@
 import { Box, Card, CardContent, CardHeader, Collapse, FormControlLabel, Grid, IconButton, Switch, Typography } from '@mui/material';
 import { display, Stack } from '@mui/system';
-import React from 'react'
+import React, { useContext } from 'react'
 import Iconify from 'src/components/iconify';
+import { SettingsContext } from 'src/components/settings/context/settings-context';
 import { useBoolean } from 'src/hooks/use-boolean';
 import { useTranslate } from 'src/locales';
 
-const PermissionsGroupCard2 = ({ model, perms, selectedPermissions, togglePermission,toggleGroupPermissions }) => {
-
+const PermissionsGroupCard2 = ({ model, perms, selectedPermissions, togglePermission, toggleGroupPermissions }) => {
+    const {
+        themeMode
+    } = useContext(SettingsContext);
+    console.log("themeMode :" ,themeMode);
     const collapse = useBoolean();
     const collapse2 = useBoolean();
     const { t } = useTranslate();
@@ -30,8 +34,8 @@ const PermissionsGroupCard2 = ({ model, perms, selectedPermissions, togglePermis
                         title={t(model.toLocaleLowerCase())}
                         titleTypographyProps={{ variant: 'h6' }}
                     />
-                    <Box sx={{ display: "flex",gap:"2px",alignItems:"center"}}>
-                    <JustSwitchPermission model={model} groupPermissions={[...perms.actions.map(perm => perm.id),...perms.columns.map(perm => perm.id)]} selectedPermissions={selectedPermissions} toggleGroupPermissions={toggleGroupPermissions}  />
+                    <Box sx={{ display: "flex", gap: "2px", alignItems: "center" }}>
+                        <JustSwitchPermission model={model} groupPermissions={[...perms.actions.map(perm => perm.id), ...perms.columns.map(perm => perm.id)]} selectedPermissions={selectedPermissions} toggleGroupPermissions={toggleGroupPermissions} />
                         <IconButton
                             color={collapse.value ? 'inherit' : 'default'}
                             onClick={collapse.onToggle}
@@ -67,7 +71,7 @@ const PermissionsGroupCard2 = ({ model, perms, selectedPermissions, togglePermis
                                         ? t("edit") + ` : ${t(removeIdOrPathSuffix(perm?.field))}`
                                         : t(key[0]) + " " + t(key[1]);
                                 return (
-                                    <BordersSwitchPermission perm={perm} label={label} selectedPermissions={selectedPermissions} togglePermission={togglePermission} />
+                                    <BordersSwitchPermission themeMode={themeMode} perm={perm} label={label} selectedPermissions={selectedPermissions} togglePermission={togglePermission} />
                                 );
                             })}
                             {/* : t(perm?.action?.toLowerCase()); */}
@@ -108,7 +112,7 @@ const PermissionsGroupCard2 = ({ model, perms, selectedPermissions, togglePermis
                                             ? t("edit") + ` : ${t(removeIdOrPathSuffix(perm.field))}`
                                             : t(perm?.action?.toLowerCase());
                                     return (
-                                        <BordersSwitchPermission perm={perm} label={label} selectedPermissions={selectedPermissions} togglePermission={togglePermission} />
+                                        <BordersSwitchPermission themeMode={themeMode} perm={perm} label={label} selectedPermissions={selectedPermissions} togglePermission={togglePermission} />
                                     );
                                 })}
                             </Box>
@@ -122,9 +126,9 @@ const PermissionsGroupCard2 = ({ model, perms, selectedPermissions, togglePermis
 
 export default PermissionsGroupCard2
 
-const BordersSwitchPermission = ({ perm, label, selectedPermissions, togglePermission }) => {
+const BordersSwitchPermission = ({ themeMode,perm, label, selectedPermissions, togglePermission }) => {
     return (
-        <Card sx={{ background: "#2C3844", display: 'flex', flexDirection: "row", alignItems: "center", borderRadius: "40px", justifyContent: 'start', px: 1 }}>
+        <Card sx={{ background: themeMode == "dark" ? "#2C3844" : "#fdf5e6",display: 'flex', flexDirection: "row", alignItems: "center", borderRadius: "40px", justifyContent: 'start', px: 1 }}>
             {/* <Typography variant="body2">{label}</Typography> */}
             <FormControlLabel
                 key={perm?.id}
@@ -163,7 +167,7 @@ const SwitchPermission = ({ perm, label, selectedPermissions, togglePermission }
     )
 }
 
-const JustSwitchPermission = ({ model, groupPermissions , selectedPermissions, toggleGroupPermissions }) => {
+const JustSwitchPermission = ({ model, groupPermissions, selectedPermissions, toggleGroupPermissions }) => {
     return (
         <Box sx={{ display: 'flex', flexDirection: "row", alignItems: "center" }}>
             <FormControlLabel
