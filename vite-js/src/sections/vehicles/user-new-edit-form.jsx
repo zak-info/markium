@@ -37,6 +37,7 @@ import { useGetCompany } from 'src/api/company';
 import { createCar, editCar, useGetCar } from 'src/api/car';
 import { useValues } from 'src/api/utils';
 import showError from 'src/utils/show_error';
+import { useGetSystemVisibleItem } from 'src/api/settings';
 
 // ----------------------------------------------------------------------
 
@@ -46,6 +47,12 @@ export default function UserNewEditForm({ currentCar }) {
   console.log("car : ", car);
 
   const { data } = useValues();
+  const {items : car_models} = useGetSystemVisibleItem("car_model")
+  const {items : car_companies} = useGetSystemVisibleItem("car_company")
+  const {items : colors} = useGetSystemVisibleItem("color")
+  const {items : states} = useGetSystemVisibleItem("state")
+  const {items : specs} = useGetSystemVisibleItem("spec")
+  const {items : license_types} = useGetSystemVisibleItem("license_type")
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslate();
 
@@ -94,9 +101,9 @@ export default function UserNewEditForm({ currentCar }) {
 
 
     odometer: Yup.number()
-      .nullable()
-      .positive()
-      .required(t('odometer_required')),
+      .positive(t('odometer_must_be_positive'))
+      .integer(t('odometer_must_be_integer')),
+    // .required(t('odometer_required'))
 
     car_model_id: Yup.string().required(t('car_model_required')),
     color_id: Yup.string().required(t('color_required')),
@@ -234,45 +241,58 @@ export default function UserNewEditForm({ currentCar }) {
                 ))}
               </RHFSelect> */}
 
-              <RHFSelect required name="car_company_id" label={t('company')}>
+              <RHFSelect required name="car_company_id"  label={t('company')}   disabled={currentCar?.id} >
                 <Divider sx={{ borderStyle: 'dashed' }} />
-                {data?.car_companies?.map((company) => (
+                {car_companies?.map((company) => (
                   <MenuItem key={company?.id} value={company.id}>
                     {company?.translations[0]?.name || company.key}
                   </MenuItem>
                 ))}
               </RHFSelect>
 
-              <RHFTextField required name="production_year" label={t('manufacturingYear')} />
-
-
-              <RHFSelect required name="car_model_id" label={t('model')}>
+              <RHFSelect required name="car_model_id" label={t('model')} disabled={currentCar?.id} >
                 <Divider sx={{ borderStyle: 'dashed' }} />
-                {data?.car_companies?.find(item => item?.id == selectedCompanyId)?.models?.map((model) => (
+                {data?.car_companies?.find(item => item?.id == selectedCompanyId)?.models?.filter(i => car_models?.map(ii => ii.id )?.includes(i.id))?.map((model) => (
                   <MenuItem key={model.id} value={model.id}>
                     {model.translations[0]?.name || model.key}
                   </MenuItem>
                 ))}
               </RHFSelect>
+              <RHFTextField required name="production_year" label={t('manufacturingYear')} disabled={currentCar?.id} />
 
-              <RHFTextField required name="plat_number" label={t('plateNumber')} error={validateUnicity(car.filter(item => item?.plat_number != currentCar?.plat_number), "plat_number", values?.plat_number)} helperText={validateUnicity(car, "plat_number", values?.plat_number) ? t('plat_number_already_exists') : null} />
 
-              <RHFTextField required name="chassis_number" label={t('structureNo')} error={validateUnicity(car.filter(item => item?.chassis_number != currentCar?.chassis_number), "chassis_number", values?.chassis_number)} helperText={validateUnicity(car, "chassis_number", values?.chassis_number) ? t('chassis_number_already_exists') : null} />
 
-              <RHFTextField required name="vin" label={t('serialNumber')} error={validateUnicity(car.filter(item => item?.vin != currentCar?.vin), "vin", values?.vin)} helperText={validateUnicity(car, "vin", values?.vin) ? t('vin_already_exists') : null} />
-              <RHFTextField required name="odometer" label={t('odometer')} />
+              <RHFTextField required name="plat_number" label={t('plateNumber')} error={validateUnicity(car.filter(item => item?.plat_number != currentCar?.plat_number), "plat_number", values?.plat_number)} helperText={validateUnicity(car, "plat_number", values?.plat_number) ? t('plat_number_already_exists') : null} disabled={currentCar?.id} />
+
+              <RHFTextField required name="chassis_number" label={t('structureNo')} error={validateUnicity(car.filter(item => item?.chassis_number != currentCar?.chassis_number), "chassis_number", values?.chassis_number)} helperText={validateUnicity(car, "chassis_number", values?.chassis_number) ? t('chassis_number_already_exists') : null} disabled={currentCar?.id} />
+
+              <RHFTextField required name="vin" label={t('serialNumber')} error={validateUnicity(car.filter(item => item?.vin != currentCar?.vin), "vin", values?.vin)} helperText={validateUnicity(car, "vin", values?.vin) ? t('vin_already_exists') : null}  disabled={currentCar?.id}  />
+              <RHFTextField
+                required
+                name="odometer"
+                label={t('odometer')}
+                error={isNaN(Number(values.odometer)) || Number(values.odometer) < 0}
+                helperText={
+                  isNaN(Number(values.odometer))
+                    ? t("odometer_must_be_number")
+                    : Number(values.odometer) < 0
+                      ? t("odometer_must_be_positive")
+                      : null
+                }
+              />
+
               {/* <RHFTextField name="depreciation" label={t('depreciation')} /> */}
               <RHFTextField
                 type={"number"}
                 required
                 name="passengers_capacity"
                 label={t('numberOfPassengers')}
-                error={values.passengers_capacity > 99 }
-                 helperText={values.passengers_capacity > 99 ? t("passenger_capacity_must_be_less_than_100"):null}
+                error={values.passengers_capacity > 99}
+                helperText={values.passengers_capacity > 99 ? t("passenger_capacity_must_be_less_than_100") : null}
               />
               <RHFSelect required name="color_id" label={t('vehcileColor')} >
                 <Divider sx={{ borderStyle: 'dashed' }} />
-                {data?.colors?.map((option) => (
+                {colors?.map((option) => (
                   <MenuItem key={option?.id} value={option?.id}>
                     {option?.translations[0]?.name}
                   </MenuItem>
@@ -281,7 +301,7 @@ export default function UserNewEditForm({ currentCar }) {
 
               <RHFSelect required name="spec_id" label={t('specifications')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
-                {data?.specs?.map((option) => (
+                {specs?.map((option) => (
                   <MenuItem key={option?.id} value={option?.id}>
                     {option?.translations[0]?.name}
                   </MenuItem>
@@ -289,7 +309,7 @@ export default function UserNewEditForm({ currentCar }) {
               </RHFSelect>
               <RHFSelect required name="license_type_id" label={t('typeOfLicense')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
-                {data?.license_types?.map((option) => (
+                {license_types?.map((option) => (
                   <MenuItem key={option?.id} value={option?.id}>
                     {option?.translations[0]?.name}
                   </MenuItem>
@@ -298,7 +318,7 @@ export default function UserNewEditForm({ currentCar }) {
 
               <RHFSelect required name="state_id" label={t('workSite')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
-                {data?.states?.map((option) => (
+                {states?.map((option) => (
                   <MenuItem key={option?.id} value={option?.id}>
                     {option?.translations[0]?.name}
                   </MenuItem>

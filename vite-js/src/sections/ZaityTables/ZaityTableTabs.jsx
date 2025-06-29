@@ -118,7 +118,6 @@ function applyFilter({ inputData, comparator, filters, currentKey, items }) {
         return matcherTab?.match(item)
       }
 
-
       if (typeof fieldValue === 'string') {
         return fieldValue.toLowerCase().includes(value.toLowerCase());
       }

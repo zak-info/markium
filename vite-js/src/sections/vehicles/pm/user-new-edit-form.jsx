@@ -122,7 +122,7 @@ export default function UserNewEditForm({ tableData, car_id, currentClause }) {
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>
       <Grid container spacing={3} >
-        <Grid xs={12} md={12}>
+        <Grid xs={12} md={8}>
           <Card sx={{ p: 3 }}>
             <Box
               rowGap={3}
@@ -160,52 +160,61 @@ export default function UserNewEditForm({ tableData, car_id, currentClause }) {
               display="grid"
               gridTemplateColumns={{
                 xs: 'repeat(1, 1fr)',
-                sm: 'repeat(3, 1fr)',
+                sm: 'repeat(1, 1fr)',
               }}
             >
 
 
+              <Box
+                rowGap={3}
+                columnGap={2}
+                display="grid"
+                gridTemplateColumns={{
+                  xs: 'repeat(1, 1fr)',
+                  sm: 'repeat(2, 1fr)',
+                }}
+              >
+                <RHFTextField name="period_value" label={t('maintenance_period_value')} type={"number"} sx={{ width: "100%" }} />
+                <RHFSelect name="period_unit" label={t('maintenance_period_unit')} sx={{ width: "100%" }}>
+                  <Divider sx={{ borderStyle: 'dashed' }} />
+                  {data?.unit_enum?.map((option, index) => (
+                    <MenuItem key={index} value={option.key}>
+                      {option?.translations[0]?.name}
+                    </MenuItem>
+                  ))}
+                </RHFSelect>
+                </Box>
+                {
+                  values?.period_unit == 'km' ?
+                    <RHFTextField name="last_value" label={t('last_value')} sx={{ width: "100%" }} />
+                    : values?.period_unit == 'month' ?
+                      <DatePicker
+                        label={t('last_value')}
+                        format="dd/MM/yyyy"
+                        value={values.last_value ? new Date(values.last_value) : new Date()}
+                        name="last_value"
+                        onChange={(newValue) => setValue('last_value', fDate(newValue, 'yyyy-MM-dd'))}
+                        slotProps={{
+                          textField: {
+                            fullWidth: true,
+                          },
+                        }}
+                      // minDate={new Date()}
+                      />
+                      :
+                      <RHFTextField disabled={true} name="last_value" label={t('last_value')} sx={{ width: "100%" }} />
 
-              <RHFSelect name="period_unit" label={t('maintenance_period_unit')} sx={{ width: "100%" }}>
-                <Divider sx={{ borderStyle: 'dashed' }} />
-                {data?.unit_enum?.map((option, index) => (
-                  <MenuItem key={index} value={option.key}>
-                    {option?.translations[0]?.name}
-                  </MenuItem>
-                ))}
-              </RHFSelect>
-              <RHFTextField name="period_value" label={t('maintenance_period_value')} type={"number"} sx={{ width: "100%" }} />
-              {
-                values?.period_unit == 'km' ?
-                  <RHFTextField name="last_value" label={t('last_value')} sx={{ width: "100%" }} />
-                  : values?.period_unit == 'month' ?
-                    <DatePicker
-                      label={t('last_value')}
-                      format="dd/MM/yyyy"
-                      value={values.last_value ? new Date(values.last_value) : new Date()}
-                      name="last_value"
-                      onChange={(newValue) => setValue('last_value', fDate(newValue, 'yyyy-MM-dd'))}
-                      slotProps={{
-                        textField: {
-                          fullWidth: true,
-                        },
-                      }}
-                    // minDate={new Date()}
-                    />
-                    :
-                    <RHFTextField disabled={true} name="last_value" label={t('last_value')} sx={{ width: "100%" }} />
-
-              }
+                }
 
 
 
-            </Box>
+              </Box>
 
-            <Stack alignItems="flex-end" sx={{ mt: 3 }}>
-              <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                {!currentClause ? t('addNewPeriodicMaintenance') : t('saveChange')}
-              </LoadingButton>
-            </Stack>
+              <Stack alignItems="flex-end" sx={{ mt: 3 }}>
+                <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
+                  {!currentClause ? t('addNewPeriodicMaintenance') : t('saveChange')}
+                </LoadingButton>
+              </Stack>
           </Card>
         </Grid>
       </Grid>

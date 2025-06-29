@@ -52,6 +52,7 @@ const NeighborhoodListPage = lazy(() => import('src/pages/dashboard/settings/nei
 const NeighborhoodCreatePage = lazy(() => import('src/pages/dashboard/settings/neighborhood/neighborhood-new'));
 const NeighborhoodEditPage = lazy(() => import('src/pages/dashboard/settings/neighborhood/neighborhood-edit'));
 // system item  settings 
+const AdminSystemItemListPage = lazy(() => import('src/pages/dashboard/settings/items/items-admin'));
 const SystemItemListPage = lazy(() => import('src/pages/dashboard/settings/items/items'));
 const SystemItemCreatePage = lazy(() => import('src/pages/dashboard/settings/items/items-new'));
 const SystemItemEditPage = lazy(() => import('src/pages/dashboard/settings/items/items-edit'));
@@ -291,6 +292,7 @@ export const dashboardRoutes = [
           { path: "pm", element: <SystemItemListPage collection={{metadata:"Maintenance Specification",type:"maintenance_specification"}} />, index: true },
           { path: 'pm/new', element: <SystemItemCreatePage collection={{metadata:"Maintenance Specification",type:"maintenance_specification"}} /> },
           { path: 'pm/:id/edit', element: <SystemItemEditPage collection={{metadata:"Maintenance Specification",type:"maintenance_specification"}} /> },
+          { path: ":model/admin", element: <AdminSystemItemListPage />, index: true },
           { path: "attachment_names", element: <SystemItemListPage collection={{metadata:"Attachment Names",type:"attachment_name"}} />, index: true },
           { path: 'attachment_names/new', element: <SystemItemCreatePage collection={{metadata:"Attachment Names",type:"attachment_name"}} /> },
           { path: 'attachment_names/:id/edit', element: <SystemItemEditPage collection={{metadata:"Attachment Names",type:"attachment_name"}} /> },

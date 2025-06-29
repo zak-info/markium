@@ -26,6 +26,7 @@ import { detacheCarToDriver } from 'src/api/car';
 import showError from 'src/utils/show_error';
 import { useRouter } from 'src/routes/hooks';
 import { enqueueSnackbar } from 'notistack';
+import ChangeCarStatus from './ChangeCarStatus';
 
 // ----------------------------------------------------------------------
 
@@ -80,7 +81,7 @@ export default function OrderDetailsToolbar({
                 {' '}
                 {t('vehicle')} {orderNumber}{' '}
               </Typography>
-              <Label
+              {/* <Label
                 variant="soft"
                 color={
                   (status?.key === 'available' && 'success') ||
@@ -91,7 +92,8 @@ export default function OrderDetailsToolbar({
                 }
               >
                 {status?.translations?.name}
-              </Label>
+              </Label> */}
+              <ChangeCarStatus car={carDetails} setCarDetails={setCarDetails} />
             </Stack>
 
             <Typography variant="body2" sx={{ color: 'text.disabled' }}>

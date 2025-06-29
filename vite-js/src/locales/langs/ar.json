@@ -289,8 +289,8 @@
   "starting_from": "ابتداءً من",
   "item": "عنصر",
   "period_unit": "وحدة الفترة",
-  "maintenance_period_unit": "نوع دور الصيانة (مسافة / زمن)",
-  "maintenance_period_value": "قيمة دور الصيانة",
+  "maintenance_period_unit": "نوع دورة الصيانة (كيلومتر / شهر)",
+  "maintenance_period_value": "قيمة دورة الصيانة (عدد الاشهر او المسافة)",
   "end_exd": "تاريخ ان / تاريخ ص",
   "remaining_in_maintenance": "المتبقي في الصيانة",
   "no_data": "لا توجد بيانات",
@@ -569,7 +569,7 @@
   "days": "ايام",
   "complete_maintenance": "اقفال الصيانة",
   "urgent": "طارئ",
-  "plat_number_already_exists": "رقم اللوحة موجود بالفعل",
+  "plat_number_already_exists": "اللوحة التي أدخلتها مضافه مسبقا.",
   "vin_already_exists": "الرقم التسلسلي موجود بالفعل",
   "not_yet_attachment": "ليس بعد",
   "soon_attachment": "قريباً",
@@ -606,7 +606,7 @@
   "plat_number_required": "رقم اللوحة مطلوب",
   "chassis_number_required": "رقم الهيكل مطلوب",
   "chassis_number_length": "يجب أن يتكون رقم الهيكل من 17 خانة",
-  "chassis_number_already_exists": "رقم الهيكل موجود بالفعل",
+  "chassis_number_already_exists": "رقم الهيكل الذي أدخلته مضاف مسبقا",
   "vin_required": "رقم VIN مطلوب",
   "passenger_capacity_required": "سعة الركاب مطلوبة",
   "odometer_required": "عداد المسافة مطلوب",
@@ -629,6 +629,9 @@
    "confirm_password_is_required": "تأكيد كلمة المرور مطلوب",
   "passenger_capacity_must_be_positive": "سعة الركاب يجب أن تكون رقماً موجباً",
   "passenger_capacity_must_be_integer": "سعة الركاب يجب أن تكون عدداً صحيحاً",
+  "must_be_integer": "فضلا أدخل أرقام فقط",
+  "odometer_must_be_positive": "عداد المسافة  يجب أن تكون رقماً موجباً",
+  "odometer_must_be_number": "عداد المسافة  يجب أن تكون عدداً صحيحاً",
   "passenger_capacity_must_be_less_than_100": "سعة الركاب يجب ألا تتجاوز 99",
    "period_value_required": "قيمة الفترة مطلوبة",
   "period_unit_required": "وحدة الفترة مطلوبة",
@@ -645,7 +648,8 @@
   "at_least_one_role_required": "يجب اختيار دور واحد على الأقل",
   "new_password_required": "كلمة المرور الجديدة مطلوبة",
   "confirm_password_required": "تأكيد كلمة المرور الجديدة مطلوب",
-  "phone_number_must_be_10_digits": "رقم الهاتف يجب أن يتكون من 10 أرقام"
+  "phone_number_must_be_10_digits": "رقم الهاتف يجب أن يتكون من 10 أرقام",
+  "item_not_verified":"لم يتم تفعيل هذا العنصر من طرف مدير النظام"
 
 
 

@@ -59,7 +59,7 @@ export default function DocumentsListView({ }) {
     let TABLE_HEAD = [
         { id: 'attachable', label: t('attachable'), type: "two-lines-link", first: (row) => { return row?.attachable?.first }, second: (row) => { return row?.attachable?.second }, link: (row) => { return row?.attachable?.link }, width: 140 },
         // { id: 'model', label: t('plateNumber'), type: "two-lines-link", first: (row) => row?.car?.model?.translations?.name, second: (row) => row?.car?.plat_number, link: (row) => { return paths.dashboard.vehicle.details(row?.id) }, width: 220 },
-        { id: 'attachment_type', label: t('attachment_type'), type: "text", width: 100 },
+        // { id: 'attachment_type', label: t('attachment_type'), type: "text", width: 100 },
         { id: 'attachment_name', label: t('attachment_name'), type: "text", width: 100 },
         { id: 'releasedate', label: t('release_date'), type: "text", width: 100 },
         { id: 'expirydate', label: t('expiry_date'), type: "text", width: 100 },

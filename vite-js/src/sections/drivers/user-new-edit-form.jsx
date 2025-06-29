@@ -32,6 +32,7 @@ import { addNewDriver, editDriver } from 'src/api/drivers';
 import { useValues } from 'src/api/utils';
 import { useGetCar } from 'src/api/car';
 import showError from 'src/utils/show_error';
+import { useGetSystemVisibleItem } from 'src/api/settings';
 
 // ----------------------------------------------------------------------
 
@@ -40,8 +41,8 @@ export default function UserNewEditForm({ currentDriver }) {
 
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslate();
-  const { data } = useValues();
-  console.log("data nationality", data);
+  const {items : countries} = useGetSystemVisibleItem("country")
+  const {items : states} = useGetSystemVisibleItem("state")
   const { car } = useGetCar();
   const { currentLang } = useLocales()
 
@@ -162,7 +163,7 @@ export default function UserNewEditForm({ currentDriver }) {
               <RHFTextField name="name" label={t('name')} />
               <RHFSelect name="nationality_id"  label={t('nationality')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
-                {data?.countries?.map((option) => (
+                {countries?.map((option) => (
                   <MenuItem key={option?.id} value={option?.id}>
                     {option?.translations[0]?.name}
                   </MenuItem>
@@ -252,7 +253,7 @@ export default function UserNewEditForm({ currentDriver }) {
 
               <RHFSelect name="state_id" label={t('workSite')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
-                {data?.states?.map((option) => (
+                {states?.map((option) => (
                   <MenuItem key={option?.name} value={option?.id}>
                     {option?.translations[0]?.name}
                   </MenuItem>

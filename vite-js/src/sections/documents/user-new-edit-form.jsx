@@ -47,6 +47,7 @@ import FileThumbnail from 'src/components/file-thumbnail';
 import FlexibleAutocomplete from 'src/components/hook-form/rhf-scalable-autocomplete';
 import { useGetClients } from 'src/api/client';
 import showError from 'src/utils/show_error';
+import { useGetSystemVisibleItem } from 'src/api/settings';
 
 // ----------------------------------------------------------------------
 
@@ -56,6 +57,7 @@ export default function UserNewEditForm({ currentDocument }) {
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslate();
   const { data } = useValues();
+  const {items : attachment_names} = useGetSystemVisibleItem("attachment_name")
   console.log("data : lds;ldsld;s ", data);
 
 
@@ -109,11 +111,23 @@ export default function UserNewEditForm({ currentDocument }) {
   const onSubmit = handleSubmit(async (data) => {
     try {
       const formData = new FormData();
-      if(currentDocument?.id){
+  
+      if (currentDocument?.id) {
         formData.append("file", data.attachment);
       }
+  
       formData.append("attachment", data.attachment);
-      formData.append("invoice", data.invoice);
+  
+      // Handle invoice file
+      if (data.invoice) {
+        formData.append("invoice", data.invoice);
+      } 
+      // else {
+      //   // 👇 Create and append empty file if invoice is missing
+      //   const emptyInvoiceFile = new File([""], "empty.pdf", { type: "application/pdf" });
+      //   formData.append("invoice", emptyInvoiceFile);
+      // }
+  
       formData.append("release_date", format(new Date(data.release_date), 'yyyy-MM-dd'));
       formData.append("expiry_date", format(new Date(data.expiry_date), 'yyyy-MM-dd'));
       formData.append("attachment_name_id", Number(data?.attachment_name_id));
@@ -121,19 +135,20 @@ export default function UserNewEditForm({ currentDocument }) {
       formData.append("attachable_type", data?.attachable_type);
       formData.append("note", data?.note);
       formData.append("attachment_type_id", 1);
-      // formData.append("document_duration_days", data?.document_duration_days);
-      // formData.append("duration_unity", data?.duration_unity);
-
+  
       console.info('DATA is  : ', data);
-      const response = currentDocument?.id ? await editDocument(currentDocument?.id, formData) : await createDocument(formData);
-
+  
+      const response = currentDocument?.id
+        ? await editDocument(currentDocument?.id, formData)
+        : await createDocument(formData);
+  
       enqueueSnackbar(t("operation_success"));
       router.push(paths.dashboard.documents.root);
-      // reset();
     } catch (error) {
       showError(error);
     }
   });
+  
 
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>
@@ -178,7 +193,7 @@ export default function UserNewEditForm({ currentDocument }) {
               <FlexibleAutocomplete
                 name="attachment_name_id"
                 label={t('document_name')}
-                options={data?.attachmenat_names?.filter(item => item?.object_type?.includes(values.attachable_type))}
+                options={attachment_names?.filter(item => item?.object_type?.includes(values.attachable_type))}
                 getOptionLabelFn={(option) => option?.translations?.[0]?.name}
               />
 
@@ -212,7 +227,7 @@ export default function UserNewEditForm({ currentDocument }) {
               />
               <RHFTextField name="note" label={t('note')} />
               {/* <p style={{ color: "gray" }}>.</p> */}
-              <RHFUpload name="attachment" placeholder={"upload_document"} lable={t("upload_document")} accept={".jpg,.jpeg,.png,.pdf,.doc,.docx"} oldFileUrl={currentDocument?.attachment_path}  />
+              <RHFUpload name="attachment" placeholder={"upload_document"} lable={t("upload_document")} accept={".jpg,.jpeg,.png,.pdf,.doc,.docx"} oldFileUrl={currentDocument?.attachment_path} />
               <RHFUpload name="invoice" placeholder={"upload_invoice_file"} lable={t("upload_invoice_file")} accept={".jpg,.jpeg,.png,.pdf,.doc,.docx"} oldFileUrl={currentDocument?.invoice_path} />
             </Box>
 

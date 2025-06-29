@@ -43,6 +43,7 @@ import { format } from 'date-fns';
 import CarsAutocomplete from 'src/components/hook-form/rhf-CarsAutocomplete';
 import { useSearchParams } from 'react-router-dom';
 import showError from 'src/utils/show_error';
+import { useGetSystemVisibleItem } from 'src/api/settings';
 
 // ----------------------------------------------------------------------
 
@@ -51,6 +52,7 @@ export default function UserNewEditForm({ currentMentainance }) {
   const [searchParams] = useSearchParams();
   const { car } = useGetCar()
   const { data } = useValues();
+  const {items : states} = useGetSystemVisibleItem("state")
 
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslate();
@@ -185,7 +187,7 @@ export default function UserNewEditForm({ currentMentainance }) {
 
               <RHFSelect required name="state_id" label={t('workSite')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
-                {data?.states?.map((option) => (
+                {states?.map((option) => (
                   <MenuItem key={option?.id} value={option?.id}>
                     {option?.translations[0]?.name}
                   </MenuItem>

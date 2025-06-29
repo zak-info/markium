@@ -48,7 +48,8 @@ export default function CarsListView({ }) {
         // { id: 'driver', label: t('driver'), type: "text", width: 140 },
         { id: 'condition', label: t('status'), type: "label", width: 140 },
         { id: 'client', label: t('client'), type: "two-lines-link", first: (row) => row?.client?.name, second: (row) => { }, link: (row) => { return paths.dashboard.clients.details(row?.id) }, width: 180 },
-        { id: 'ref', label: t('contract'), type: "text", width: 100 },
+        { id: 'contract', label: t('contract'), type: "two-lines-link", first: (row) => row?.contract?.ref, second: (row) => { }, link: (row) => { return paths.dashboard.clients.contractsDetails(row?.contract?.id) }, width: 180 },
+        // { id: 'ref', label: t('contract'), type: "text", width: 100 },
         { id: 'actions', label: t('actions'), type: "threeDots", component: (item) => <ElementActions item={item} RformulateTable={RformulateTable} setTableData={setDataFiltered} />, width: 400, align: "right" },
     ]
 
@@ -89,7 +90,7 @@ export default function CarsListView({ }) {
         return data?.map((item) => {
             const statusKey = item?.status?.key;
             const statusName = item?.status?.translations?.name || "--";
-            const contract = contracts.find((contract) => contract?.clauses?.some((clause) => clause.clauseable_type === "car" && clause.clauseable_id === item?.id));
+            const contract = contracts.find((contract) => contract?.client_id === item?.client?.id);
             console.log('contracts.find : ', contracts);
             const company = clients?.find((c) => c.id === contract?.company_id);
             console.log('company.find : ', company);
@@ -110,7 +111,7 @@ export default function CarsListView({ }) {
                 color,
                 condition,
                 c_driver: item?.driver?.id ? item.driver.name : "--",
-                contract,
+                contract: contract,
                 ref: contract?.ref || "--",
                 company: company?.name || "--",
             };
@@ -313,6 +314,7 @@ const ElementActions = ({ item, RformulateTable, setTableData }) => {
                 arrow="right-top"
                 sx={{ width: 200 }}
             >
+             {item?.status.key != "under_maintenance" && !item.is_rented ?
                 <PermissionsContext action={'delete.car'}>
                     <MenuItem
                         onClick={() => {
@@ -325,6 +327,8 @@ const ElementActions = ({ item, RformulateTable, setTableData }) => {
                         {t('delete')}
                     </MenuItem>
                 </PermissionsContext>
+                :
+                null}
                 <PermissionsContext action={'update.car'}>
                     <MenuItem
                         onClick={() => {

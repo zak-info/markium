@@ -3,7 +3,7 @@ import { t } from 'i18next';
 import { set } from 'lodash'; // [keep for later use]
 import { enqueueSnackbar } from 'notistack';
 import { useEffect, useState } from 'react';
-import { changeItemVisibilityInSettings, useGetMainSpecs } from 'src/api/settings'; // [keep for later use]
+import { changeItemVisibilityInSettings, useGetMainSpecs, useGetSystemVisibleItem } from 'src/api/settings'; // [keep for later use]
 import { useValues } from 'src/api/utils';
 import PermissionsContext from 'src/auth/context/permissions/permissions-context';
 import { fileData } from 'src/components/file-thumbnail'; // [keep for later use]
@@ -250,6 +250,16 @@ export default function SystemItemListView({ collection }) {
     const [dataFiltered, setDataFiltered] = useState([]);
 
     const currentType = collection?.type;
+
+
+    const { items: gVisibleItems } = useGetSystemVisibleItem(currentType);
+    console.log("gVisibleItems : ", gVisibleItems)
+    const [visibleItems, setVisibleItems] = useState(gVisibleItems);
+    useEffect(() => {
+        setVisibleItems(gVisibleItems)
+    }, [gVisibleItems])
+
+
     const currentSystemItem = types[currentType];
     const currentKeyInValue = currentSystemItem?.keyInValues;
     const defaultFilters = { status: 'all', name: "" };
@@ -260,9 +270,10 @@ export default function SystemItemListView({ collection }) {
     ];
 
     const filters = [
-        { key: 'name', label: t('name'), match: (item, value) =>
-             item?.name?.toLowerCase().includes(value?.toLowerCase()) ,
-            },
+        {
+            key: 'name', label: t('name'), match: (item, value) =>
+                item?.name?.toLowerCase().includes(value?.toLowerCase()),
+        },
     ];
 
 
@@ -273,17 +284,21 @@ export default function SystemItemListView({ collection }) {
         return data;
     }
 
+    const checkVisibility = (item) => {
+        const rt = visibleItems.some(i => i?.id == item?.id)
+        console.log(" visibleItems : ", visibleItems)
+        console.log(" rt : ", rt)
+        return rt
+    }
+
     useEffect(() => {
-        const items = types[currentType]?.tableElements(data, currentKeyInValue)?.map(item => ({ ...item, status: item?.system_settings == null || item?.system_settings?.is_selected ? "selected" : "not_selected", enable: item?.system_settings == null || item?.system_settings?.is_selected ? "selected" : "not_selected", enabled: item?.system_settings == null || item?.system_settings?.is_selected ? t("enabled") : t("not_enabled"), color: item?.system_settings == null || item?.system_settings?.is_selected ? "success" : "error" })) || [];
-        setDataFiltered(items?.map(item => ({ ...item, component: <EnableDisableItem configurable_type={collection?.type} item={item} setTableData={setDataFiltered} data={tableData} /> }))?.reverse());
-    }, [data, collection]);
+        const items = types[currentType]?.tableElements(data, currentKeyInValue)?.map(item => ({ ...item, status: checkVisibility(item) ? "selected" : "not_selected", enable: checkVisibility(item) ? "selected" : "not_selected", enabled: checkVisibility(item) ? t("enabled") : t("not_enabled"), color: checkVisibility(item) ? "success" : "error" })) || [];
+        setDataFiltered(items?.map(item => ({ ...item, component: <EnableDisableItem visibleItems={visibleItems} setVisibleItems={setVisibleItems} configurable_type={collection?.type} item={item} setTableData={setDataFiltered} data={tableData} /> }))?.reverse());
+    }, [data, collection, visibleItems]);
     useEffect(() => {
-        const items = types[currentType]?.tableElements(data, currentKeyInValue).map(item => ({ ...item, status: item?.system_settings == null || item?.system_settings?.is_selected ? "selected" : "not_selected", enable: item?.system_settings == null || item?.system_settings?.is_selected ? "selected" : "not_selected", enabled: item?.system_settings == null || item?.system_settings?.is_selected ? t("enabled") : t("not_enabled"), color: item?.system_settings == null || item?.system_settings?.is_selected ? "success" : "error" })) || [];
-        setTableData(items?.map(item => ({ ...item, component: <EnableDisableItem configurable_type={collection?.type} item={item} setTableData={setDataFiltered} data={tableData} /> }))?.reverse());
-        console.log("collection:", collection);
-        console.log("currentKeyInValue:", currentKeyInValue);
-        console.log("data[currentKeyInValue]:", data[currentKeyInValue]);
-    }, [data, currentType, currentKeyInValue, collection]);
+        const items = types[currentType]?.tableElements(data, currentKeyInValue).map(item => ({ ...item, status: checkVisibility(item) ? "selected" : "not_selected", enable: checkVisibility(item) ? "selected" : "not_selected", enabled: checkVisibility(item) ? t("enabled") : t("not_enabled"), color: checkVisibility(item) ? "success" : "error" })) || [];
+        setTableData(items?.map(item => ({ ...item, component: <EnableDisableItem visibleItems={visibleItems} setVisibleItems={setVisibleItems} configurable_type={collection?.type} item={item} setTableData={setDataFiltered} data={tableData} /> }))?.reverse());
+    }, [data, currentType, currentKeyInValue, collection, visibleItems]);
 
     return (
         <>
@@ -309,7 +324,7 @@ export default function SystemItemListView({ collection }) {
             >
                 <Card>
                     <ZaityTableTabs data={tableData} items={items} defaultFilters={{ status: 'all' }} setTableDate={setDataFiltered} filterFunction={filterFunction}>
-                        <ZaityTableFilters data={dataFiltered} tableData={tableData}  items={filters} setTableDate={setDataFiltered}  defaultFilters={defaultFilters} dataFiltered={tableData}>
+                        <ZaityTableFilters data={dataFiltered} tableData={tableData} items={filters} setTableDate={setDataFiltered} defaultFilters={defaultFilters} dataFiltered={tableData}>
                             <ZaityListView TABLE_HEAD={[...currentSystemItem?.TABLE_HEAD, { id: 'enabled', label: t('selected'), type: "label", width: collection.type == "maintenance_specification" ? 120 : 350 }, { id: 'enable', label: t('enable'), type: "component", width: 40, align: "center" }]} dense="small" zaityTableDate={dataFiltered || []} onSelectedRows={({ data, setTableData }) => { return <onSelectedRowsComponent configurable_type={collection?.type} setTableData={setTableData} data={data} /> }} />
                         </ZaityTableFilters>
                     </ZaityTableTabs>
@@ -322,97 +337,67 @@ export default function SystemItemListView({ collection }) {
 // ----------------------------------------------------------------------
 
 
-const EnableDisableItem = ({ item, configurable_type, setTableData, data }) => {
+const EnableDisableItem = ({ visibleItems, setVisibleItems, item, configurable_type, setTableData, data }) => {
     const handleChange = async (event) => {
-        const ischkd = event.target.checked
-        let status = ischkd ? "selected" : "not_selected";
-        let enabled = ischkd ? t("enabled") : t("not_enabled");
-        let color = ischkd ? "success" : "error";
-        console.log("item : ", item);
-        const res = await changeItemVisibilityInSettings({ configurable_type, configurable_id: item.id, is_selected: event.target.checked, is_private: false })
-        console.log("changeItemVisibilityInSettings : ",res);
-        if (configurable_type == "maintenance_specification"  || configurable_type == "payment_method") {
-            setTableData(prev =>
-                prev?.map(i => {
-                    if (i.id == item.id) {
-                        const updated = { ...i, enable: status, enabled, color, system_settings: { is_selected: event.target.checked } };
-                        console.log("maintenance_specification Updated item: ", updated);
-                        return updated;
-                    }
-                    return i;
-                })
-            );
-        } else {
-            setTableData(prev =>
-                prev?.map(i => {
-                    if (i.key == item.key) {
-                        const updated = { ...i, enable: status, enabled, color, system_settings: { is_selected: event.target.checked } };
-                        console.log("Updated item: ", updated);
-                        return updated;
-                    }
-                    return i;
-                })
-            );
+        if (item?.is_verified === 1) {
+            const ischkd = event.target.checked
+            let status = ischkd ? "selected" : "not_selected";
+            let enabled = ischkd ? t("enabled") : t("not_enabled");
+            let color = ischkd ? "success" : "error";
+            const res = await changeItemVisibilityInSettings({ configurable_type, configurable_id: item.id, is_selected: event.target.checked, is_private: false })
+            if (configurable_type == "maintenance_specification" || configurable_type == "payment_method") {
+                setTableData(prev =>
+                    prev?.map(i => {
+                        if (i.id == item.id) {
+                            const updated = { ...i, enable: status, enabled, color, system_settings: { is_selected: event.target.checked } };
+                            return updated;
+                        }
+                        return i;
+                    })
+                );
+                if (ischkd) {
+                    setVisibleItems(prev => [...(prev.length > 0 ? prev : []), { id: item?.id, key: item?.key }]);
+                } else {
+                    setVisibleItems(prev => prev.filter(i => i.id !== item.id));
+                }
+            } else {
+                setTableData(prev =>
+                    prev?.map(i => {
+                        if (i.key == item.key) {
+                            const updated = { ...i, enable: status, enabled, color, system_settings: { is_selected: event.target.checked } };
+                            return updated;
+                        }
+                        return i;
+                    })
+                );
+                if (ischkd) {
+                    setVisibleItems(prev => [...(prev.length > 0 ? prev : []), { key: item?.key, id: item?.id }]);
+                } else {
+                    setVisibleItems(prev => prev.filter(i => i.key !== item.key));
+                }
+            }
+            setIsChecked(status == "selected")
+            enqueueSnackbar(t("operation_success"), { variant: 'success' });
+        }else{
+            enqueueSnackbar(t("item_not_verified"), { variant: 'error' });
         }
-        setIsChecked(status == "selected")
-        enqueueSnackbar(t("operation_success"), { variant: 'success' });
     };
-    const [isChecked, setIsChecked] = useState(item?.enable == "selected")
-
-    return (
-        <FormGroup sx={{ display: "flex", flexDirection: "row", alignItems: "center", rowGap: "10px" }}>
-            <FormControlLabel
-                control={<Switch checked={isChecked} onChange={handleChange} />}
-                label=""
-            />
-        </FormGroup>
-    );
-};
-const onSelectedRowsComponent = ({ configurable_type, setTableData, data }) => {
-    const handleChange = async (event) => {
-        let status = event.target.checked ? "selected" : "not_selected";
-        console.log("status : ", status);
-        for (element in data) {
-            setTableData(prev =>
-                prev?.map(i => {
-                    if (i.key == element.key) {
-                        const updated = { ...i, enable: status, system_settings: { is_selected: event.target.checked }, enabled: event.target.checked ? t("yes") : t("no") };
-                        console.log("Updated item: ", updated);
-                        return updated;
-                    }
-                    return i;
-                })
-            );
-            await changeItemVisibilityInSettings({ configurable_type, configurable_id: item.id, is_selected: event.target.checked, is_private: false })
-        }
-        setIsChecked(event.target.checked)
-        enqueueSnackbar(t("operation_success"), { variant: 'success' });
-    };
-    const [isChecked, setIsChecked] = useState(false)
-
+    const [isChecked, setIsChecked] = useState(item.enable == "selected")
     return (
         <>
-            {/* <FormGroup sx={{ display: "flex", flexDirection: "row", alignItems: "center", rowGap: "10px" }}>
+            <FormGroup sx={{ display: "flex", flexDirection: "row", alignItems: "center", rowGap: "10px" }}>
                 <FormControlLabel
-                    control={<Switch checked={isChecked} onChange={handleChange} />}
+                    control={
+                        <Switch
+                            checked={isChecked}
+                            onChange={handleChange}
+                        // disabled={item?.is_verified === 1}
+                        />
+                    }
                     label=""
                 />
-            </FormGroup> */}
-            <Tooltip title="Delete">
-                <IconButton color="primary" onClick={() => { }}>
-                    <Iconify icon="solar:trash-bin-trash-bold" />
-                </IconButton>
-            </Tooltip>
+            </FormGroup>
+
         </>
-    );
-};
-
-
-const ElementActions = ({ actionMethod }) => {
-    return (
-        <MenuItem onClick={actionMethod} sx={{ color: 'error.main' }}>
-            <Iconify icon="solar:trash-bin-trash-bold" />
-            {t('delete')}
-        </MenuItem>
     );
 };

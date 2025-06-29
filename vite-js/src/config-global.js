@@ -3,6 +3,10 @@ import { paths } from 'src/routes/paths';
 // API
 // ----------------------------------------------------------------------
 
+
+// root@172.233.43.164
+// BETest@15371
+
 // export const HOST_API = 'http://172.105.83.136:8044/api';
 // export const STORAGE_API = 'http://172.105.83.136:8044/storage';
 // export const HOST_API = 'http://172.233.43.164:8000/api';
