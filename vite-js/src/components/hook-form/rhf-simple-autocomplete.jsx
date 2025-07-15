@@ -12,16 +12,18 @@ import Autocomplete from '@mui/material/Autocomplete';
 //   { id: 5, plat_number: 'Orange' }
 // ];
 
-export default function SimpleAutocomplete({ name, label,getOptionLabel, options , placeholder, multiple = false }) {
+export default function SimpleAutocomplete({ name, label, disabled, getOptionLabel, options, placeholder, multiple = false }) {
   const { control, setValue } = useFormContext();
 
   return (
     <Controller
       name={name}
       control={control}
+      disabled={disabled}
       render={({ field: { value }, fieldState: { error } }) => (
         <Autocomplete
           options={options}
+          disabled={disabled}
           multiple={multiple}
           getOptionLabel={!!getOptionLabel ? getOptionLabel : (option) => option.name} // Display `plat_number`
           value={multiple ? options.filter((o) => value?.includes(o.id)) : options?.find((o) => o.id == value) || null} // Convert id to object for UI
@@ -35,6 +37,7 @@ export default function SimpleAutocomplete({ name, label,getOptionLabel, options
           }
           renderInput={(params) => (
             <TextField
+              disabled={disabled}
               {...params}
               label={label}
               placeholder={placeholder}

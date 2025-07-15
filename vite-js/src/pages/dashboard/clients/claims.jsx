@@ -18,7 +18,7 @@ import { fDate } from 'src/utils/format-time';
 
 export default function InvoiceListPage() {
   const settings = useSettingsContext();
-  const { claims } = useGetAllClaim()
+  const { claims,claimsLoading } = useGetAllClaim()
   const { clients } = useGetClients()
   const { contracts } = useGetContracts()
   console.log("clients : ", clients?.find(item => item?.id == 1));
@@ -69,7 +69,7 @@ export default function InvoiceListPage() {
         {/* <Grid container spacing={3}> */}
         {/* <ClaimsListView /> */}
         <Grid display={"flex"} flexDirection={"column"} rowGap={4} xs={12} md={12}>
-          <ContractClaimsListView data={data} with_contracts={true} />
+          <ContractClaimsListView claimsLoading={claimsLoading} data={data} with_contracts={true} />
         </Grid>
         {/* </Grid> */}
       </Container>

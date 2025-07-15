@@ -52,7 +52,7 @@ export default function UserNewEditForm({ currentMentainance }) {
   const [searchParams] = useSearchParams();
   const { car } = useGetCar()
   const { data } = useValues();
-  const {items : states} = useGetSystemVisibleItem("state")
+  const { items: states } = useGetSystemVisibleItem("state")
 
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslate();
@@ -63,15 +63,16 @@ export default function UserNewEditForm({ currentMentainance }) {
     //   .positive('State ID must be a positive number')
     //   .integer('State ID must be an integer'),
 
-    // maintainance_type: Yup.string().required('Type is required'),
+    maintainance_type: Yup.string().required('Type is required'),
 
-    // car_id: Yup.number().required('Car is required'),
-    // entry_date: Yup.date().required('Entry date is required'), // Validates that the entry date is not in the future
-    // cause: Yup.string()
-    //   .min(3, 'Cause must be at least 3 characters long'), // Validates that cause has a minimum length of 3
-    // // .required('Cause is required')
+    car_id: Yup.number().required('Car is required'),
+    entry_date: Yup.date().required('Entry date is required'), // Validates that the entry date is not in the future
+    cause: Yup.string()
+      .required('Cause is required')
+      .matches(/^[a-zA-Z][a-zA-Z\s]*$/, 'Cause must start with a letter and contain only letters and spaces')
+      .trim(),
+    exit_date: Yup.date().nullable(),
 
-    // exit_date: Yup.date().nullable(), // Allowing an empty string for exit date (since it's not required)
   });
   const defaultValues = useMemo(
     () => ({
@@ -95,7 +96,7 @@ export default function UserNewEditForm({ currentMentainance }) {
     control,
     setValue,
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, errors },
   } = methods;
 
   const values = watch();
@@ -110,7 +111,7 @@ export default function UserNewEditForm({ currentMentainance }) {
       setValue('exit_date', currentMentainance?.exit_date ? new Date(currentMentainance?.exit_date) : new Date());
       setValue('state_id', currentMentainance?.state?.id);
     }
-    
+
     // const car_id = searchParams.get("car_id");
     // if (car_id) {
     //   // setValue('car_id', car?.find(item => item.id == car_id)?.id);
@@ -124,10 +125,10 @@ export default function UserNewEditForm({ currentMentainance }) {
     try {
       let body = data
       body.entry_date = format(new Date(data.entry_date), 'yyyy-MM-dd')
-      body.exit_date =  format(new Date(data.exit_date), 'yyyy-MM-dd')
+      body.exit_date = format(new Date(data.exit_date), 'yyyy-MM-dd')
       // body.car_id = searchParams.get("car_id")
       console.log("lets do it now ");
-      console.log("body : body: ",body);
+      console.log("body : body: ", body);
       const response = currentMentainance?.id ? await editMaintenance(currentMentainance?.id, body) : await createMaintenance(body);
       enqueueSnackbar(t("operation_success"));
       router.push(paths.dashboard.maintenance.root);
@@ -152,15 +153,15 @@ export default function UserNewEditForm({ currentMentainance }) {
               }}
             >
 
-              <CarsAutocomplete required options={car.filter(item => item?.status?.key != "under_maintenance")} name="car_id" label={t('car')} placeholder={t('search_by')+" "+t('plateNumber')}  car_id={searchParams.get("car_id")} disabled={searchParams.get("car_id") ? true:false} />
+              <CarsAutocomplete required options={car.filter(item => item?.status?.key != "under_maintenance")} name="car_id" label={t('car')} placeholder={t('search_by') + " " + t('plateNumber')} car_id={searchParams.get("car_id")} disabled={searchParams.get("car_id") ? true : false} />
 
               <DatePicker
                 label={t('entryDate')}
                 value={values.entry_date ? new Date(values.entry_date) : new Date()}
                 required
                 name="entry_date"
-                format="yyyy/MM/dd"  
-                onChange={(newValue) => setValue('entry_date', fDate(newValue,"yyyy-MM-dd"))}
+                format="yyyy/MM/dd"
+                onChange={(newValue) => setValue('entry_date', fDate(newValue, "yyyy-MM-dd"))}
                 slotProps={{
                   textField: {
                     fullWidth: true,
@@ -175,8 +176,8 @@ export default function UserNewEditForm({ currentMentainance }) {
                 label={t('exitDate')}
                 value={values.exit_date ? new Date(values.exit_date) : new Date()}
                 name="exit_date"
-                onChange={(newValue) => setValue('exit_date', fDate(newValue,"yyyy-MM-dd"))}
-                format="yyyy/MM/dd"  
+                onChange={(newValue) => setValue('exit_date', fDate(newValue, "yyyy-MM-dd"))}
+                format="yyyy/MM/dd"
                 slotProps={{
                   textField: {
                     fullWidth: true,
@@ -193,8 +194,21 @@ export default function UserNewEditForm({ currentMentainance }) {
                   </MenuItem>
                 ))}
               </RHFSelect>
-
-              <RHFTextField required name="cause" label={t('cause')} />
+              <RHFTextField
+                required
+                name="cause"
+                label={t('cause')}
+                error={
+                  !values.cause ? false : !/^[a-zA-Z][a-zA-Z\s]*$/.test(values.cause)
+                }
+                helperText={
+                  !values.cause
+                    ? null
+                    : !/^[a-zA-Z][a-zA-Z\s]*$/.test(values.cause)
+                      ? t('cause_must_start_with_letter_and_contain_only_letters_and_spaces')
+                      : ''
+                }
+              />
 
               <RHFSelect required name="maintainance_type" label={t('maintainType')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />

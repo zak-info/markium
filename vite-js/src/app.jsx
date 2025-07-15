@@ -38,7 +38,6 @@ export default function App() {
 
   return (
     <AuthProvider>
-      {/* <PermissionProvider> */}
         <LocalizationProvider>
           <SettingsProvider
             defaultSettings={{
@@ -56,16 +55,13 @@ export default function App() {
                   <CheckoutProvider>
                     <SettingsDrawer />
                     <ProgressBar />
-                    {/* <DataContextProvider> */}
                     <Router />
-                    {/* </DataContextProvider> */}
                   </CheckoutProvider>
                 </SnackbarProvider>
               </MotionLazy>
             </ThemeProvider>
           </SettingsProvider>
         </LocalizationProvider>
-      {/* </PermissionProvider> */}
     </AuthProvider>
   );
 }

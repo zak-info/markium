@@ -1,12 +1,15 @@
+import { LoadingButton } from '@mui/lab';
 import { Box, Button, Card, FormControlLabel, FormGroup, IconButton, MenuItem, Switch, Tooltip, Typography } from '@mui/material';
 import { t } from 'i18next';
 import { set } from 'lodash'; // [keep for later use]
 import { enqueueSnackbar } from 'notistack';
 import { useCallback, useEffect, useState } from 'react';
+import { deleteDriver } from 'src/api/drivers';
 import { changeItemVisibilityInSettings, useGetMainSpecs } from 'src/api/settings'; // [keep for later use]
-import { useRoles } from 'src/api/users';
+import { deleteRole, useRoles } from 'src/api/users';
 import { useValues } from 'src/api/utils';
 import PermissionsContext from 'src/auth/context/permissions/permissions-context';
+import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import { fileData } from 'src/components/file-thumbnail'; // [keep for later use]
 import Iconify from 'src/components/iconify';
@@ -53,7 +56,7 @@ export default function RolesListView({ }) {
     let TABLE_HEAD = [
         { id: 'name', label: t('role'), type: "text", width: 140 },
         { id: 'users_count', label: t('nb_users'), type: "number", width: 140 },
-        { id: 'actions', label: t('actions'), type: "threeDots", component: (item) => <ElementActions item={item} />, width: 400, align: "right" },
+        { id: 'actions', label: t('actions'), type: "threeDots", component: (item) => <ElementActions item={item} setTableData={setDataFiltered} />, width: 400, align: "right" },
     ]
 
 
@@ -71,7 +74,10 @@ export default function RolesListView({ }) {
     }
 
     const RformulateTable = (data) => {
-        return data?.map(item => ({ ...item, name: item?.translations[1]?.name})) || [];
+        return data?.map(item => ({
+            ...item,
+            name: item?.translations?.find(i => i.lang_id == 1)?.name
+        })) || [];
     }
 
     useEffect(() => {
@@ -190,20 +196,45 @@ const onSelectedRowsComponent = ({ configurable_type, setTableData, data }) => {
 };
 
 
-const ElementActions = ({ item }) => {
+const ElementActions = ({ item, setTableData }) => {
     const popover = usePopover();
     const confirm = useBoolean();
     const router = useRouter();
+    const [postloader, setPostloader] = useState(false)
     const onViewRow = useCallback(
         (id) => {
             router.push(paths.dashboard.user.rolesEdit(id));
         },
         [router]
     );
+
+    const onDeleteRow = useCallback(
+        async (id) => {
+            setPostloader(true)
+            console.log("id : ", id);
+            try {
+                const res = await deleteRole(id);
+                console.log("res : ", res);
+                setTableData(prev => prev?.filter(i => i.id != id))
+                enqueueSnackbar(t("operation_success"));
+                confirm.onFalse();
+                setPostloader(false)
+            } catch (error) {
+                console.log("error : ", error);
+                setPostloader(false)
+                showError(error)
+            }
+        }
+    );
     return (
         <Box display={"flex"} rowGap={"10px"} sx={{ gap: '10px' }} >
             <PermissionsContext action={"delete.role"} >
-                <Button onClick={() => { }} variant="outlined" color="error" startIcon={<Iconify icon="solar:trash-bin-trash-bold" />}>
+                <Button
+                    onClick={() => {
+                        confirm.onTrue();
+                        popover.onClose();
+                    }}
+                    variant="outlined" color="error" startIcon={<Iconify icon="solar:trash-bin-trash-bold" />}>
                     {t("delete")}
                 </Button>
             </PermissionsContext>
@@ -243,6 +274,25 @@ const ElementActions = ({ item }) => {
                     {t('edit')}
                 </MenuItem>
             </CustomPopover> */}
+            <ConfirmDialog
+                open={confirm.value}
+                onClose={confirm.onFalse}
+                title={t("delete")}
+                content={t("are_you_sure_want_to_delete")}
+                action={
+                    <LoadingButton
+                        isSubmitting={postloader}
+                        loading={postloader}
+                        variant="contained"
+                        color="error"
+                        onClick={() => {
+                            onDeleteRow(item?.id);
+                        }}
+                    >
+                        {t("delete")}
+                    </LoadingButton>
+                }
+            />
         </Box>
     );
 };

@@ -19,6 +19,7 @@ export function RHFSelect({
   maxHeight = 220,
   helperText,
   children,
+  disabled,
   PaperPropsSx,
   multiple,
   ...other
@@ -28,11 +29,13 @@ export function RHFSelect({
   return (
     <Controller
       name={name}
+      disabled={disabled}
       control={control}
       render={({ field, fieldState: { error } }) => (
         <TextField
           {...field}
           select
+          disabled={disabled}
           fullWidth
           SelectProps={{
             native,

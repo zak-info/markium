@@ -8,6 +8,7 @@ import { LoadingScreen } from 'src/components/loading-screen';
 import ContractCreatePage from 'src/pages/dashboard/clients/contracts-new';
 import SettingsView from 'src/sections/settings/view';
 import { DataContextProvider } from 'src/context/system-data/DataContext';
+import PermissionsRouteContext from 'src/auth/context/permissions/permissions-route-context';
 
 
 // ----------------------------------------------------------------------
@@ -186,13 +187,13 @@ export const dashboardRoutes = [
           { element: <UserProfilePage />, index: true },
           { path: 'profile', element: <UserProfilePage /> },
           { path: 'cards', element: <UserCardsPage /> },
-          { path: 'list', element: <UsersListPage /> },
-          { path: 'new', element: <UsersCreatePage /> },
-          { path: ':id/edit', element: <UsersEditPage /> },
+          { path: 'list', element: <PermissionsRouteContext action={"read.user"} ><UsersListPage /></PermissionsRouteContext> },
+          { path: 'new', element: <PermissionsRouteContext action={"create.user"} ><UsersCreatePage /></PermissionsRouteContext>  },
+          { path: ':id/edit', element: <PermissionsRouteContext action={"update.user"} ><UsersEditPage /></PermissionsRouteContext> },
           { path: 'account', element: <UserAccountPage /> },
-          { path: 'roles', element: <RolesListPage /> },
-          { path: 'roles/new', element: <RolesCreatePage /> },
-          { path: 'roles/:id/edit', element: <RolesEditPage /> },
+          { path: 'roles', element: <PermissionsRouteContext action={"read.role"} ><RolesListPage /></PermissionsRouteContext> },
+          { path: 'roles/new', element: <PermissionsRouteContext action={"create.role"} ><RolesCreatePage /></PermissionsRouteContext> },
+          { path: 'roles/:id/edit', element:<PermissionsRouteContext action={"update.role"} ><RolesEditPage /></PermissionsRouteContext>  },
         ],
       },
       {
@@ -208,26 +209,26 @@ export const dashboardRoutes = [
       {
         path: 'vehicle',
         children: [
-          { element: <VehiclesListPage />, index: true },
-          { path: 'list', element: <VehiclesListPage /> },
+          { element: <PermissionsRouteContext action={"read.car"} ><VehiclesListPage /></PermissionsRouteContext>, index: true },
+          { path: 'list', element: <PermissionsRouteContext action={"read.car"} ><VehiclesListPage /></PermissionsRouteContext> },
           { path: 'log', element: <LogListPage /> },
           { path: 'inputs', element: <InputsListPage /> },
-          { path: ':id', element: <VehiclePage /> },
-          { path: 'new', element: <VehiclesCreatePage /> },
-          { path: ':id/edit', element: <VehiclesEditPage /> },
+          { path: ':id', element: <PermissionsRouteContext action={"read.car"} ><VehiclePage /></PermissionsRouteContext> },
+          { path: 'new', element:<PermissionsRouteContext action={"create.car"} > <VehiclesCreatePage /></PermissionsRouteContext> },
+          { path: ':id/edit', element: <PermissionsRouteContext action={"update.car"} ><VehiclesEditPage /></PermissionsRouteContext> },
           { path: ':id/pm', element: <PMListPage /> },
         ],
       },
       {
         path: 'maintenance',
         children: [
-          { element: <MaintainListPage />, index: true },
-          { path: 'list', element: <MaintainListPage /> },
-          { path: ':id', element: <MaintainDetailsPage /> },
-          { path: 'new', element: <MaintainNewPage /> },
+          { element:<PermissionsRouteContext action={"read.maintenance"} ><MaintainListPage /></PermissionsRouteContext> , index: true },
+          { path: 'list', element: <PermissionsRouteContext action={"read.maintenance"} ><MaintainListPage /></PermissionsRouteContext> },
+          { path: ':id', element: <PermissionsRouteContext action={"read.maintenance"} ><MaintainDetailsPage /></PermissionsRouteContext> },
+          { path: 'new', element: <PermissionsRouteContext action={"create.maintenance"} ><MaintainNewPage /></PermissionsRouteContext> },
           { path: 'notifications', element: <NotificationsMaintainListPage /> },
 
-          { path: ':id/edit', element: <MaintainEditPage /> },
+          { path: ':id/edit', element: <PermissionsRouteContext action={"update.maintenance"} ><MaintainEditPage /></PermissionsRouteContext> },
           { path: ':id/clause', element: <ClauseNewPage /> },
 
           { path: 'current-in-maintenance', element: <CurrentInMaintainListView /> },

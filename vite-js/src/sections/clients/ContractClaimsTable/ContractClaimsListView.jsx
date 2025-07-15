@@ -23,11 +23,12 @@ import ZaityTableTabs from 'src/sections/ZaityTables/ZaityTableTabs'; // [keep f
 import { CloseClaim } from './CloseClaim';
 import { ViewClaim } from './ViewClaim';
 import { EditClaim } from './EditClaim';
+import { LoadingScreen } from 'src/components/loading-screen';
 
 // ----------------------------------------------------------------------
 
 
-export default function ContractClaimsListView({ data, with_contracts }) {
+export default function ContractClaimsListView({ claimsLoading,data, with_contracts }) {
     const [tableData, setTableData] = useState([]);
     const [dataFiltered, setDataFiltered] = useState([]);
 
@@ -148,7 +149,12 @@ export default function ContractClaimsListView({ data, with_contracts }) {
             {/* <AddClause contract_id={data?.length >0 ? data[0]?.contract_id : 0} setTableData={setDataFiltered} /> */}
             <Card  >
                 <ZaityTableTabs data={tableData} items={items} defaultFilters={{ gstatus: 'all' }} setTableDate={setDataFiltered} filterFunction={filterFunction}>
-                    <ZaityListView TABLE_HEAD={[...TABLE_HEAD]} dense="medium" zaityTableDate={dataFiltered || []} onSelectedRows={({ data, setTableData }) => { return <onSelectedRowsComponent configurable_type={"roles"} setTableData={setTableData} data={data} /> }} />
+                    {
+                        claimsLoading ?
+                            <LoadingScreen sx={{ my: 8 }} color='primary' />
+                            :
+                            <ZaityListView TABLE_HEAD={[...TABLE_HEAD]} dense="medium" zaityTableDate={dataFiltered || []} onSelectedRows={({ data, setTableData }) => { return <onSelectedRowsComponent configurable_type={"roles"} setTableData={setTableData} data={data} /> }} />
+                    }
                 </ZaityTableTabs>
             </Card>
         </>
@@ -243,8 +249,8 @@ const ElementActions = ({ item, setTableData }) => {
                 title={t("edit") + " " + t("claim")}
                 content={
                     <>
-                        <EditClaim claim_id={item?.id}  item={item} setTableData={setTableData} close={()=>{edit.onFalse()}}   />
-                    </> 
+                        <EditClaim claim_id={item?.id} item={item} setTableData={setTableData} close={() => { edit.onFalse() }} />
+                    </>
                 }
             />
 

@@ -152,14 +152,29 @@ export async function createRole(body) {
     return await axios.post(URL, body);
 }
 
+export async function deleteRole(id) {
+    const URL = endpoints.users?.roles + '/' + id;
+  
+    return await axios.delete(URL);
+  }
+
 
 export async function createUser(body) {
     const URL = endpoints.users.root;
     return await axios.post(URL, body);
 }
 export async function deleteUser(id) {
-    const URL = endpoints.users.root;
+    const URL = endpoints.users.users+"/"+id;
     return await axios.delete(URL);
+}
+
+export async function banUser(id) {
+    const URL = endpoints.users.banUser(id);
+    return await axios.post(URL);
+}
+export async function activateUser(id) {
+    const URL = endpoints.users.activateUser(id);
+    return await axios.post(URL);
 }
 
 export async function updateUser(id,body) {

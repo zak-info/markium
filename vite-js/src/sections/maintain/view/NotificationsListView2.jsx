@@ -99,9 +99,9 @@ export default function NotificationsListView2() {
   const { car } = useGetCar()
   const { data } = useValues()
 
-  const [tableData, setTableData] = useState(logs);
+  const [tableData, setTableData] = useState(logs.filter(item => item?.action !== 'action_required' || !item?.enabled));
   useEffect(() => {
-    setTableData(logs)
+    setTableData(logs.filter(item => item?.action !== 'action_required' || !item?.enabled))
   }, [logs])
 
   const [filters, setFilters] = useState(defaultFilters);
@@ -272,7 +272,6 @@ export default function NotificationsListView2() {
 
                 <TableBody>
                   {dataFiltered
-                    .filter(item => item?.action !== 'action_required' || !item?.enabled)
                     .slice(
                       table.page * table.rowsPerPage,
                       table.page * table.rowsPerPage + table.rowsPerPage
@@ -303,7 +302,7 @@ export default function NotificationsListView2() {
           </TableContainer>
 
           <TablePaginationCustom
-            count={dataFiltered.filter(item => item?.action !== 'action_required' || item?.enabled).length}
+            count={dataFiltered.filter(item => item?.action !== 'action_required' || !item?.enabled).length}
             page={table.page}
             rowsPerPage={table.rowsPerPage}
             onPageChange={table.onChangePage}

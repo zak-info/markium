@@ -83,7 +83,7 @@ export default function OrderListView() {
 
   const confirm = useBoolean();
 
-  const { claims } = useGetAllClaim()
+  const { claims:claimsLoading } = useGetAllClaim()
   const { data } = useValues()
   const { clients } = useGetClients()
   const { contracts } = useGetContracts()

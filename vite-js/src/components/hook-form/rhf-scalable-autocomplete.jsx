@@ -9,6 +9,7 @@ export default function FlexibleAutocomplete({
   label,
   options = [],
   placeholder,
+  disabled,
   multiple = false,
   getOptionLabelFn = (option) => option?.name,
   loading = false,
@@ -19,9 +20,11 @@ export default function FlexibleAutocomplete({
     <Controller
       name={name}
       control={control}
+      disabled={disabled}
       render={({ field: { value }, fieldState: { error } }) => (
         <Autocomplete
           options={options}
+          disabled={disabled}
           loading={loading}
           multiple={multiple}
           getOptionLabel={(option) => getOptionLabelFn(option) || ''}

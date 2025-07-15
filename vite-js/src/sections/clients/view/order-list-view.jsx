@@ -46,6 +46,7 @@ import OrderTableFiltersResult from '../order-table-filters-result';
 import { useTranslate } from 'src/locales';
 import { useGetClients } from 'src/api/client';
 import { useValues } from 'src/api/utils';
+import { LoadingScreen } from 'src/components/loading-screen';
 
 // ----------------------------------------------------------------------
 
@@ -83,14 +84,14 @@ export default function OrderListView() {
 
   const confirm = useBoolean();
 
-  const {clients} = useGetClients()
-  const {data} = useValues()
-  
+  const { clients, clientsLoading } = useGetClients()
+  const { data } = useValues()
+
   const [tableData, setTableData] = useState(clients);
 
-  useEffect(()=>{
+  useEffect(() => {
     setTableData(clients)
-  },[clients])
+  }, [clients])
 
   const [filters, setFilters] = useState(defaultFilters);
 
@@ -98,7 +99,7 @@ export default function OrderListView() {
 
   const dataFiltered = applyFilter({
     inputData: tableData,
-    data:data,
+    data: data,
     comparator: getComparator(table.order, table.orderBy),
     filters,
     dateError,
@@ -250,49 +251,54 @@ export default function OrderListView() {
             />
 
             <Scrollbar>
-              <Table size={table.dense ? 'small' : 'medium'} sx={{ minWidth: 960 }}>
-                <TableHeadCustom
-                  order={table.order}
-                  orderBy={table.orderBy}
-                  headLabel={TABLE_HEAD}
-                  rowCount={dataFiltered.length}
-                  numSelected={table.selected.length}
-                  onSort={table.onSort}
-                  onSelectAllRows={(checked) =>
-                    table.onSelectAllRows(
-                      checked,
-                      dataFiltered.map((row) => row.id)
-                    )
-                  }
-                />
+              {
+                clientsLoading ?
+                  <LoadingScreen sx={{ my: 8 }} color='primary' />
+                  :
+                  <Table size={table.dense ? 'small' : 'medium'} sx={{ minWidth: 960 }}>
+                    <TableHeadCustom
+                      order={table.order}
+                      orderBy={table.orderBy}
+                      headLabel={TABLE_HEAD}
+                      rowCount={dataFiltered.length}
+                      numSelected={table.selected.length}
+                      onSort={table.onSort}
+                      onSelectAllRows={(checked) =>
+                        table.onSelectAllRows(
+                          checked,
+                          dataFiltered.map((row) => row.id)
+                        )
+                      }
+                    />
 
-                <TableBody>
-                  {dataFiltered
-                    ?.slice(
-                      table.page * table.rowsPerPage,
-                      table.page * table.rowsPerPage + table.rowsPerPage
-                    )
-                    ?.map((row) => (
-                      <OrderTableRow
-                        location={data?.neighborhoods?.find(item => item.id == row?.neighborhood_id)?.translations[0]?.name}
-                        key={row.id}
-                        row={row}
-                        onEditRow={()=>handleEditRow(row?.id)}
-                        selected={table.selected.includes(row.id)}
-                        onSelectRow={() => table.onSelectRow(row.id)}
-                        onDeleteRow={() => handleDeleteRow(row.id)}
-                        onViewRow={() => handleViewRow(row.id)}
+                    <TableBody>
+                      {dataFiltered
+                        ?.slice(
+                          table.page * table.rowsPerPage,
+                          table.page * table.rowsPerPage + table.rowsPerPage
+                        )
+                        ?.map((row) => (
+                          <OrderTableRow
+                            location={data?.neighborhoods?.find(item => item.id == row?.neighborhood_id)?.translations[0]?.name}
+                            key={row.id}
+                            row={row}
+                            onEditRow={() => handleEditRow(row?.id)}
+                            selected={table.selected.includes(row.id)}
+                            onSelectRow={() => table.onSelectRow(row.id)}
+                            onDeleteRow={() => handleDeleteRow(row.id)}
+                            onViewRow={() => handleViewRow(row.id)}
+                          />
+                        ))}
+
+                      <TableEmptyRows
+                        height={denseHeight}
+                        emptyRows={emptyRows(table.page, table.rowsPerPage, dataFiltered.length)}
                       />
-                    ))}
 
-                  <TableEmptyRows
-                    height={denseHeight}
-                    emptyRows={emptyRows(table.page, table.rowsPerPage, dataFiltered.length)}
-                  />
-
-                  <TableNoData notFound={notFound} />
-                </TableBody>
-              </Table>
+                      <TableNoData notFound={notFound} />
+                    </TableBody>
+                  </Table>
+              }
             </Scrollbar>
           </TableContainer>
 
@@ -337,7 +343,7 @@ export default function OrderListView() {
 
 // ----------------------------------------------------------------------
 
-function applyFilter({ inputData,data, comparator, filters, dateError }) {
+function applyFilter({ inputData, data, comparator, filters, dateError }) {
   const { status, name, startDate, endDate } = filters;
 
   const stabilizedThis = inputData.map((el, index) => [el, index]);
@@ -355,8 +361,8 @@ function applyFilter({ inputData,data, comparator, filters, dateError }) {
       (order) =>
         order.name.toLowerCase().includes(name.toLowerCase()) ||
         order.tax_number.toLowerCase().includes(name.toLowerCase()) ||
-        data?.neighborhoods?.find(item => item?.id == order?.neighborhood_id)?.translations[0]?.name?.toLowerCase()?.includes(name.toLowerCase())||
-        order.commercial_registration_number.toLowerCase().includes(name.toLowerCase()) 
+        data?.neighborhoods?.find(item => item?.id == order?.neighborhood_id)?.translations[0]?.name?.toLowerCase()?.includes(name.toLowerCase()) ||
+        order.commercial_registration_number.toLowerCase().includes(name.toLowerCase())
     );
   }
 

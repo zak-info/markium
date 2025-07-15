@@ -63,7 +63,7 @@ export default function UserNewEditForm({ tableData, car_id, currentClause }) {
       period_value: currentClause?.period_unit || 0,
       last_value: currentClause?.last_value || null,
       period_unit: currentClause?.piece_status || "",
-      spec_id: currentClause?.spec_id || 0,
+      spec_id: currentClause?.spec_id || null,
     }),
     [currentClause]
   );
@@ -90,7 +90,7 @@ export default function UserNewEditForm({ tableData, car_id, currentClause }) {
     } else if (values.period_unit == "km") {
       setValue("last_value", 0)
     }
-  }, [values])
+  }, [values.period_unit])
 
 
   const onSubmit = handleSubmit(async (data) => {
@@ -186,7 +186,7 @@ export default function UserNewEditForm({ tableData, car_id, currentClause }) {
                 </Box>
                 {
                   values?.period_unit == 'km' ?
-                    <RHFTextField name="last_value" label={t('last_value')} sx={{ width: "100%" }} />
+                    <RHFTextField name="last_value" label={t('last_value')} type="number" sx={{ width: "100%" }} />
                     : values?.period_unit == 'month' ?
                       <DatePicker
                         label={t('last_value')}

@@ -4,7 +4,7 @@ import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import { useEffect } from 'react';
 
-export default function CarsAutocomplete({ name, label, options, placeholder, multiple = false, car_id }) {
+export default function CarsAutocomplete({ name, label,disabled, options, placeholder, multiple = false, car_id }) {
   const { control, setValue } = useFormContext();
 
   useEffect(() => {
@@ -20,9 +20,11 @@ export default function CarsAutocomplete({ name, label, options, placeholder, mu
     <Controller
       name={name}
       control={control}
+      disabled={disabled}
       render={({ field: { value }, fieldState: { error } }) => (
         <Autocomplete
           options={options}
+          disabled={disabled}
           multiple={multiple}
           getOptionLabel={(option) => option.plat_number} // Display `plat_number`
           value={multiple ? options.filter((o) => value?.includes(o.id)) : options.find((o) => o.id === value) || null} // Convert id to object for UI

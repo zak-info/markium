@@ -39,6 +39,8 @@ import Iconify from 'src/components/iconify';
 import { FormHelperText, Table, TableBody, TableCell, TableRow } from '@mui/material';
 import { TableHeadCustom } from 'src/components/table';
 import { set } from 'lodash';
+import showError from 'src/utils/show_error';
+import { useGetSystemVisibleItem } from 'src/api/settings';
 
 // ----------------------------------------------------------------------
 
@@ -49,7 +51,7 @@ export default function UserNewEditForm({ currentClient }) {
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslate();
   const { data } = useValues()
-
+  const {items : neighborhoods} = useGetSystemVisibleItem("neighborhood")
   const NewUserSchema = Yup.object().shape({
     name: Yup.string().required('Name is required'),
     commercial_registration_number: Yup.string()
@@ -59,7 +61,7 @@ export default function UserNewEditForm({ currentClient }) {
     tax_number: Yup.string()
       .required('Tax number is required')
       .length(15, t('tax_number_must_be_exactly_15_characters')),
-    location_id: Yup.number(),
+    // location_id: Yup.number(),
     neighborhood_id: Yup.number().required(t('neighborhoodـisـrequired')),
     // rep_name: Yup.string(),
     // rep_contact_number: Yup.string(),
@@ -70,7 +72,7 @@ export default function UserNewEditForm({ currentClient }) {
       name: currentClient?.name || '',
       commercial_registration_number: currentClient?.commercial_registration_number || '',
       tax_number: currentClient?.tax_number || '',
-      location_id: currentClient?.location_id || 0,
+      // location_id: currentClient?.location_id || 0,
       neighborhood_id: currentClient?.neighborhood_id || 0,
       // rep_name: currentClient?.rep_name || '',
       // rep_contact_number: currentClient?.rep_contact_number || '',
@@ -101,7 +103,7 @@ export default function UserNewEditForm({ currentClient }) {
       setValue("name", currentClient?.name)
       setValue("tax_number", currentClient?.tax_number)
       setValue("commercial_registration_number", currentClient?.commercial_registration_number)
-      setValue("location_id", currentClient?.location_id)
+      // setValue("location_id", currentClient?.location_id)
       setValue("neighborhood_id", currentClient?.neighborhood_id)
       setRepresentors(currentClient?.representors)
     }
@@ -140,15 +142,11 @@ export default function UserNewEditForm({ currentClient }) {
       // await new Promise((resolve) => setTimeout(resolve, 500));
       // reset();
       const response = currentClient?.id ? await editClient(currentClient?.id, { ...data, representors }) : await createClient({ ...data, representors });
-      enqueueSnackbar(currentClient ? 'Update success!' : 'Create success!');
+      enqueueSnackbar(t("operation_success"));
       router.push(paths.dashboard.clients.root);
     } catch (error) {
-      Object.values(error?.data).forEach(array => {
-        array.forEach(text => {
-          enqueueSnackbar(text, { variant: 'error' });
-        });
-      });
       console.error(error);
+      showError(error)
     }
   });
 
@@ -179,17 +177,17 @@ export default function UserNewEditForm({ currentClient }) {
                   {t("commercial_registration_number_must_be_exactly_10_characters")}
                 </FormHelperText>
               </Box>
-              <SimpleAutocomplete
+              {/* <SimpleAutocomplete
                 name="location_id"
                 label={t('state')}
                 options={data?.states}
                 getOptionLabel={(option) => option?.translations[0]?.name}
                 placeholder={t('choose_state')}
-              />
+              /> */}
               <SimpleAutocomplete
                 name="neighborhood_id"
                 label={t('location')}
-                options={data?.neighborhoods?.filter(item => item?.state_id == values?.location_id)}
+                options={neighborhoods}
                 getOptionLabel={(option) => option?.translations[0]?.name}
                 placeholder={t('choose_neighborhood')}
               />

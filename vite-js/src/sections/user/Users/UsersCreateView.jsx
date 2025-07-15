@@ -55,14 +55,25 @@ export default function UsersCreateView({ currentUser }) {
 
   const validationSchema = Yup.object({
     name: Yup.string().required(t('name_required')),
-    username: Yup.string().required(t('username_required')),
+   username: Yup.string()
+  .required(t('username_required'))
+  .min(3, t('username_min_length'))
+  .max(30, t('username_max_length'))
+  .matches(/^[a-zA-Z][a-zA-Z0-9_.]*$/, t('username_invalid_format'))
+  .matches(/^[a-zA-Z0-9_.]+$/, t('username_invalid_characters'))
+  .test('no-spaces', t('username_no_spaces'), (value) => {
+    return value ? !value.includes(' ') : true;
+  }),
     email: Yup.string()
       .email(t('email_invalid'))
       .required(t('email_required')),
+    // phone_number: Yup.string()
+    //   .required(t('phone_number_required'))
+    //   .matches(/^\d{10}$/, t('phone_number_must_be_10_digits')),
+
     phone_number: Yup.string()
       .required(t('phone_number_required'))
-      .matches(/^\d{10}$/, t('phone_number_must_be_10_digits')),
-
+      .matches(/^05\d{8}$/, t('phone_number_must_be_10_digits_starting_with_05')),
 
     password: Yup.string().when('$currentUser', {
       is: (val) => !val,
@@ -166,7 +177,7 @@ export default function UsersCreateView({ currentUser }) {
     }
   });
 
- 
+
 
   return (
     <>
@@ -210,13 +221,13 @@ export default function UsersCreateView({ currentUser }) {
                     type="text"
                     label={t('phone_number')}
                     error={
-                      !values.phone_number ? false : values.phone_number.length !== 10
+                      !values.phone_number ? false : !/^05\d{8}$/.test(values.phone_number)
                     }
                     helperText={
                       !values.phone_number
                         ? null
-                        : values.phone_number.length !== 10
-                          ? t('phone_number_must_be_10_digits')
+                        : !/^05\d{8}$/.test(values.phone_number)
+                          ? t('phone_number_must_be_10_digits_starting_with_05')
                           : ''
                     }
                   />

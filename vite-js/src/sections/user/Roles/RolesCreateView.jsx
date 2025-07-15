@@ -137,10 +137,8 @@ export default function RolesCreateView({ currentRole }) {
         console.log("allIncluded : ", allIncluded);
 
         if (allIncluded) {
-            // Remove all if already included
             setSelectedPermissions(selectedPermissions.filter(id => !allGroupIds.includes(id)));
         } else {
-            // Add missing ones
             const newSet = new Set([
                 ...(selectedPermissions?.length > 0 ? selectedPermissions : []),
                 ...allGroupIds
@@ -149,8 +147,6 @@ export default function RolesCreateView({ currentRole }) {
             setSelectedPermissions(Array.from(newSet));
         }
     };
-
-
 
     const validationSchema = Yup.object({
 
@@ -184,8 +180,8 @@ export default function RolesCreateView({ currentRole }) {
     const values = watch();
     useEffect(() => {
         if (currentRole?.id) {
-            setValue('nameEn', currentRole?.translations?.find(i => i?.lang_id == 1 )?.name);
-            setValue('nameAr', currentRole?.translations?.find(i => i?.lang_id == 2 )?.name);
+            // setValue('nameEn', currentRole?.translations?.find(i => i?.lang_id == 2 )?.name);
+            setValue('nameAr', currentRole?.translations?.find(i => i?.lang_id == 1 )?.name);
             setSelectedPermissions(currentRole?.permissions.map(p => p.id) || []);
         }
     }, [currentRole, setValue]);
@@ -194,14 +190,14 @@ export default function RolesCreateView({ currentRole }) {
 
     const onSubmit = handleSubmit(async (data) => {
         try {
-            let body = { permissions: selectedPermissions, nameAr: data?.nameAr, nameEn: data?.nameEn }
-            currentRole?.id ? await editRole(currentRole?.id, body) : await createRole(body)
-            console.log("body : ", body);
-            reset();
+            let body = { permissions: selectedPermissions, nameAr: data?.nameAr, nameEn: data?.nameAr }
+            const res = currentRole?.id ? await editRole(currentRole?.id, body) : await createRole(body)
+            console.log("res : ", res);
+            // reset();
             enqueueSnackbar(t("operation_success"));
             router.push(paths.dashboard.user.roles);
         } catch (error) {
-            console.error(error);
+            console.error("error : ",error);
             showError(error)
 
         }
@@ -233,7 +229,7 @@ export default function RolesCreateView({ currentRole }) {
                                 }}
                             >
                                 <RHFTextField name="nameAr" label={t('name_ar')} />
-                                <RHFTextField name="nameEn" label={t('name_en')} />
+                                {/* <RHFTextField name="nameEn" label={t('name_en')} /> */}
                             </Box>
                         </Card>
                     </Box>

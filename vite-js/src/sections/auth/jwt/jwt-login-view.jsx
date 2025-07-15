@@ -84,6 +84,8 @@ export default function JwtLoginView() {
   const onSubmit = handleSubmit(async (data) => {
     try {
       const response = await axios.post(HOST_API + endpoints.auth.login, data);
+      console.log("response : ", response);
+
       if (response?.data?.code == 200) {
         const res = await login(data.username, data.password);
         router.push(returnTo || PATH_AFTER_LOGIN);
@@ -92,12 +94,16 @@ export default function JwtLoginView() {
       }
 
     } catch (error) {
-      // console.error(error);
-      // reset();
-      // setErrorMsg(typeof error === 'string' ? error : error?.message);
-      setErrorMsg(t("please_check_your_username_and_password"));
+      console.log("error : ", error);
+
+      if (error?.response?.status === 403) {
+        setErrorMsg(t("user_is_banned"));
+      } else {
+        setErrorMsg(t("please_check_your_username_and_password"));
+      }
     }
   });
+
 
   const renderHead = (
     <Stack spacing={2} sx={{ mb: 5 }}>

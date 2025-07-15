@@ -4,7 +4,7 @@ import { set } from 'lodash'; // [keep for later use]
 import { enqueueSnackbar } from 'notistack';
 import { useCallback, useEffect, useState } from 'react';
 import { changeItemVisibilityInSettings, useGetMainSpecs } from 'src/api/settings'; // [keep for later use]
-import { createUser, deleteUser, useRoles, useUsers } from 'src/api/users';
+import { activateUser, banUser, createUser, deleteUser, useRoles, useUsers } from 'src/api/users';
 import { useValues } from 'src/api/utils';
 import PermissionsContext from 'src/auth/context/permissions/permissions-context';
 import { ConfirmDialog } from 'src/components/custom-dialog';
@@ -34,12 +34,12 @@ export default function UsersListView({ }) {
 
     let TABLE_HEAD = [
         { id: 'name', label: t('name'), type: "text", width: 140 },
-        { id: 'username', label: t('username'), type: "text", width: 180 },
+        { id: 'user_name', label: t('username'), type: "text", width: 180 },
         { id: 'email', label: t('email'), type: "text", width: 140 },
         { id: 'phone_number', label: t('phone_number'), type: "text", width: 140 },
-        { id: 'status', label: t('status'), type: "text", width: 140 },
+        { id: 'status', label: t('status'), type: "label", width: 140 },
         { id: 'roles', label: t('roles'), type: "text", width: 140 },
-        { id: 'actions', label: t('actions'), type: "threeDots", component: (item) => <ElementActions item={item} />, width: 400, align: "right" },
+        { id: 'actions', label: t('actions'), type: "threeDots", component: (item) => <ElementActions item={item} setTableData={setDataFiltered} />, width: 400, align: "right" },
     ]
 
 
@@ -51,7 +51,7 @@ export default function UsersListView({ }) {
                 item?.username?.toLowerCase().includes(value?.toLowerCase()) ||
                 item?.phone_number?.toLowerCase().includes(value?.toLowerCase()) ||
                 item?.roles?.toLowerCase().includes(value?.toLowerCase()) ||
-                item?.email?.toLowerCase().includes(value?.toLowerCase()) ,
+                item?.email?.toLowerCase().includes(value?.toLowerCase()),
         },
     ];
 
@@ -86,7 +86,8 @@ export default function UsersListView({ }) {
         return data?.map(item => ({
             ...item,
             roles: arrayToSentence(item.roles.map(i => i.key)),
-
+            status: item?.is_banned ? t("banned") : t("active"),
+            color: item?.is_banned ? "error" : "success"
         })) || [];
     }
 
@@ -121,7 +122,7 @@ export default function UsersListView({ }) {
             >
                 <Card>
                     {/* <ZaityTableTabs data={tableData} items={items} defaultFilters={{ status: 'all' }} setTableDate={setDataFiltered} filterFunction={filterFunction}> */}
-                    <ZaityTableFilters data={dataFiltered} tableData={tableData} setTableDate={setDataFiltered} items={filters} defaultFilters={defaultFilters} dataFiltered={tableData} searchText={t("search_by") + " " + t("name") + ", " + t("username") + ", " + t("email")+ ", " + t("phone") + " ..."} >
+                    <ZaityTableFilters data={dataFiltered} tableData={tableData} setTableDate={setDataFiltered} items={filters} defaultFilters={defaultFilters} dataFiltered={tableData} searchText={t("search_by") + " " + t("name") + ", " + t("username") + ", " + t("email") + ", " + t("phone") + " ..."} >
                         <ZaityListView TABLE_HEAD={[...TABLE_HEAD]} dense="medium" zaityTableDate={dataFiltered || []} onSelectedRows={({ data, setTableData }) => { return <onSelectedRowsComponent configurable_type={"roles"} setTableData={setTableData} data={users} /> }} />
                     </ZaityTableFilters>
                     {/* </ZaityTableTabs> */}
@@ -135,30 +136,88 @@ export default function UsersListView({ }) {
 
 
 import ChangePasswordView from 'src/sections/user/Users/changePasswordView';
+import showError from 'src/utils/show_error';
+import { LoadingButton } from '@mui/lab';
 
 
-const ElementActions = ({ item }) => {
+const ElementActions = ({ item, setTableData }) => {
     const popover = usePopover();
     const confirm = useBoolean();
     const ban = useBoolean();
+    const activate = useBoolean();
     const completed = useBoolean();
     const router = useRouter();
+    const [postloader, setPostloader] = useState(false)
     const onViewRow = useCallback(
         (id) => {
             router.push(paths.dashboard.user.edit(id));
         },
         [router]
     );
+
     const onDeleteRow = useCallback(
         async (id) => {
-            await deleteUser(id);
+            setPostloader(true)
+            try {
+                const res = await deleteUser(id);
+                console.log("res : ", res);
+                // if(res.status == 200){
+                // setTableData(prev => prev?.map(i => ({...i,is_banned : i.id != id ? !i.is_banned : i?.is_banned }) ))
+                setTableData(prev => prev?.filter(i => i.id != id))
+                enqueueSnackbar(t("operation_success"));
+                confirm.onFalse();
+                // }
+                setPostloader(false)
+            } catch (error) {
+                console.log("error : ", error);
+                setPostloader(false)
+                showError(error)
+            }
         }
     );
     const onBanRow = useCallback(
         async (id) => {
-            await deleteUser(id);
+            setPostloader(true)
+            // try {
+            console.log(" lets ban htis :", id);
+            const res = await banUser(id);
+            console.log("res : ", res);
+            if (res.status == 200) {
+                setTableData(prev => prev?.map(i => ({ ...i, is_banned: i.id == id ? !i.is_banned : i?.is_banned, status: i.id == id ? t("banned") : i.status, color: i.id == id ? "error" : i.color })))
+                enqueueSnackbar(t("operation_success"));
+                ban.onFalse();
+            }
+            setPostloader(false)
+            // } catch (error) {
+            //     console.log("error : ", error);
+            //     setPostloader(false)
+            //     showError(error)
+            // }
         }
     );
+
+    const onActivateRow = useCallback(
+        async (id) => {
+            setPostloader(true)
+            // try {
+            console.log(" lets activate this :", id);
+            const res = await activateUser(id);
+            console.log("res : ", res.status);
+            if (res.status == 200) {
+                // setTableData(prev => prev?.map(i => ({ ...i, is_banned: i.id != id ? !i.is_banned : i?.is_banned })))
+                setTableData(prev => prev?.map(i => ({ ...i, is_banned: i.id == id ? !i.is_banned : i?.is_banned, status: i.id == id ? t("active") : i.status, color: i.id == id ? "success" : i.color })))
+                enqueueSnackbar(t("operation_success"));
+                activate.onFalse();
+            }
+            setPostloader(false)
+            // } catch (error) {
+            //     console.log("error : ", error);
+            //     setPostloader(false)
+            //     showError(error)
+            // }
+        }
+    );
+
     return (
         <Box display={"flex"} rowGap={"10px"} sx={{ gap: '10px' }} >
             {/* <PermissionsContext action={"update.user"} >
@@ -222,18 +281,37 @@ const ElementActions = ({ item }) => {
                         {t('delete')}
                     </MenuItem>
                 </PermissionsContext>
-                <PermissionsContext action={"update.user"} >
-                    <MenuItem
-                        onClick={() => {
-                            ban.onTrue();
-                            popover.onClose();
-                        }}
-                        sx={{ color: 'warning.main' }}
-                    >
-                        <Iconify icon="material-symbols-light:shield-locked-rounded" />
-                        {t('ban')}
-                    </MenuItem>
-                </PermissionsContext>
+                {
+                    item?.is_banned ?
+                        <PermissionsContext action={"update.user"} >
+                            <MenuItem
+                                onClick={() => {
+                                    activate.onTrue();
+                                    popover.onClose();
+                                }}
+                                sx={{ color: 'success.main' }}
+                            >
+                                <Iconify icon="material-symbols-light:shield-locked-rounded" />
+                                {t('activate')}
+                            </MenuItem>
+                        </PermissionsContext>
+                        :
+                        <PermissionsContext action={"update.user"} >
+                            <MenuItem
+                                onClick={() => {
+                                    ban.onTrue();
+                                    popover.onClose();
+                                }}
+                                sx={{ color: 'warning.main' }}
+                            >
+                                <Iconify icon="material-symbols-light:shield-locked-rounded" />
+                                {t('ban')}
+                            </MenuItem>
+                        </PermissionsContext>
+
+                }
+
+
             </CustomPopover>
 
             <ContentDialog
@@ -253,9 +331,12 @@ const ElementActions = ({ item }) => {
                 title={t("delete")}
                 content={t("are_you_sure_want_to_delete")}
                 action={
-                    <Button variant="contained" color="error" onClick={onDeleteRow(item?.id)}>
+                    <LoadingButton
+                        isSubmitting={postloader}
+                        loading={postloader}
+                        variant="contained" color="error" onClick={() => onDeleteRow(item?.id)}>
                         {t("delete")}
-                    </Button>
+                    </LoadingButton>
                 }
             />
             <ConfirmDialog
@@ -264,9 +345,24 @@ const ElementActions = ({ item }) => {
                 title={t("ban")}
                 content={t("are_you_sure_want_to_ban")}
                 action={
-                    <Button variant="contained" color="error" onClick={onBanRow(item?.id)}>
+                    <LoadingButton isSubmitting={postloader}
+                        loading={postloader}
+                        variant="contained" color="error" onClick={() => onBanRow(item?.id)}>
                         {t("ban")}
-                    </Button>
+                    </LoadingButton>
+                }
+            />
+            <ConfirmDialog
+                open={activate.value}
+                onClose={activate.onFalse}
+                title={t("activate")}
+                content={t("are_you_sure_want_to_activate")}
+                action={
+                    <LoadingButton isSubmitting={postloader}
+                        loading={postloader}
+                        variant="contained" color="success" onClick={() => onActivateRow(item?.id)}>
+                        {t("activate")}
+                    </LoadingButton>
                 }
             />
         </Box>

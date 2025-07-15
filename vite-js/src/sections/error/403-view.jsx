@@ -9,6 +9,7 @@ import CompactLayout from 'src/layouts/compact';
 import { ForbiddenIllustration } from 'src/assets/illustrations';
 
 import { varBounce, MotionContainer } from 'src/components/animate';
+import { t } from 'i18next';
 
 // ----------------------------------------------------------------------
 
@@ -18,15 +19,15 @@ export default function View403() {
       <MotionContainer>
         <m.div variants={varBounce().in}>
           <Typography variant="h3" sx={{ mb: 2 }}>
-            No permission
+            {t("noPermission")}
           </Typography>
         </m.div>
 
         <m.div variants={varBounce().in}>
           <Typography sx={{ color: 'text.secondary' }}>
-            The page you&apos;re trying access has restricted access.
+            {t("restrictedAccess")}
             <br />
-            Please refer to your system administrator
+            {t("contactAdmin")}
           </Typography>
         </m.div>
 
@@ -35,7 +36,7 @@ export default function View403() {
         </m.div>
 
         <Button component={RouterLink} href="/" size="large" variant="contained">
-          Go to Home
+          {t("goHome")}
         </Button>
       </MotionContainer>
     </CompactLayout>

@@ -309,7 +309,7 @@ export default function UserNewEditForm({ currentCar }) {
               </RHFSelect>
               <RHFSelect required name="license_type_id" label={t('typeOfLicense')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
-                {license_types?.map((option) => (
+                {data?.license_types?.map((option) => (
                   <MenuItem key={option?.id} value={option?.id}>
                     {option?.translations[0]?.name}
                   </MenuItem>

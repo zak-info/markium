@@ -214,7 +214,7 @@ export default function ContractNewEditForm({ contract }) {
               <RHFSelect required name="payment_method_id" label={t('payment_method')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
                 {/* {[{ name: "deferred", lable: { ar: "دفعات", en: "deferred" } }, { name: "cash", lable: { ar: "نقدا", en: "cash" } }]?.map((type) => ( */}
-                {data?.payment_methods?.map((type) => (
+                {data?.payment_methods?.filter(i => i?.system_settings?.is_selected)?.map((type) => (
                   <MenuItem key={type?.id} value={type.id}>
                     {payment_methodes?.find(item => item?.name == type?.name)?.lable[currentLang.value] || type?.name}
                   </MenuItem>

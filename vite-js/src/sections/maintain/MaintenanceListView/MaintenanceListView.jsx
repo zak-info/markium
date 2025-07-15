@@ -34,6 +34,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import FormProvider, { RHFUpload } from 'src/components/hook-form';
 import { LoadingButton } from '@mui/lab';
+import { LoadingScreen } from 'src/components/loading-screen';
 
 
 
@@ -42,7 +43,7 @@ import { LoadingButton } from '@mui/lab';
 
 
 export default function MaintenanceListView({ }) {
-    const { maintenance, mutate } = useGetMaintenance();
+    const { maintenance, mutate, maintenanceLoading } = useGetMaintenance();
     const { car } = useGetCar();
     const { data: vData } = useValues();
     const { contracts } = useGetContracts()
@@ -83,7 +84,7 @@ export default function MaintenanceListView({ }) {
                 item?.createdat?.toLowerCase().includes(value?.toLowerCase()) ||
                 item?.entrydate?.toLowerCase().includes(value?.toLowerCase()) ||
                 item?.type?.toLowerCase().includes(value?.toLowerCase()) ||
-                item?.exitdate?.toLowerCase().includes(value?.toLowerCase()) ,
+                item?.exitdate?.toLowerCase().includes(value?.toLowerCase()),
 
         },
     ];
@@ -160,7 +161,12 @@ export default function MaintenanceListView({ }) {
                     <ZaityTableTabs key='condition' data={tableData} items={items} defaultFilters={defaultFilters} setTableDate={setDataFiltered} filterFunction={filterFunction}>
                         {/* <ZaityTableFilters data={dataFiltered} setTableDate={setDataFiltered} items={filters} defaultFilters={defaultFilters} dataFiltered={tableData} searchText={t("search_by") + " " + t("plateNumber") + " ..."} > */}
                         <ZaityTableFilters data={dataFiltered} tableData={tableData} setTableDate={setDataFiltered} items={filters} defaultFilters={defaultFilters} dataFiltered={tableData} searchText={t("search_by") + " " + t("plateNumber") + " " + t("or_any_vlaue") + " ..."} >
-                            <ZaityListView TABLE_HEAD={[...TABLE_HEAD]} dense="medium" zaityTableDate={dataFiltered || []} onSelectedRows={({ data, setTableData }) => { return <onSelectedRowsComponent configurable_type={"roles"} setTableData={setTableData} data={car} /> }} />
+                            {
+                                maintenanceLoading ?
+                                    <LoadingScreen sx={{ my: 8 }} color='primary' />
+                                    :
+                                    <ZaityListView TABLE_HEAD={[...TABLE_HEAD]} dense="medium" zaityTableDate={dataFiltered || []} onSelectedRows={({ data, setTableData }) => { return <onSelectedRowsComponent configurable_type={"roles"} setTableData={setTableData} data={car} /> }} />
+                            }
                         </ZaityTableFilters>
                         {/* </ZaityTableFilters> */}
                     </ZaityTableTabs>

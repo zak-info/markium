@@ -122,6 +122,11 @@ export async function editMaintenance(id, body) {
 
   return await axios.put(URL, body);
 }
+export async function editMaintenanceExitDate(id, body) {
+  const URL = endpoints.maintenance.updateExitDate(id);
+
+  return await axios.post(URL, body);
+}
 
 // ----------------------------------------------------------------------
 

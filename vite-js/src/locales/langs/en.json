@@ -417,6 +417,11 @@
   "password_must_contain_special_char": "Must contain at least one special character",
   "at_least_8_characters": "✔ At least 8 characters",
   "one_uppercase_one_lowercase": "✔ One uppercase and one lowercase letter",
-  "one_number_one_special_char": "✔ One number and one special character"
+  "one_number_one_special_char": "✔ One number and one special character",
+  "attachment_name_id_required": "Name is required",
+  "attachable_id_required": "Attachable ID is required",
+  "attachable_type_required": "Address is required",
+  "expiry_date_required": "Expiry date is required",
+  "release_date_required": "Release date is required"
   
 }

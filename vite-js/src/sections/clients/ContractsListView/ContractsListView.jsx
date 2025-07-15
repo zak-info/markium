@@ -38,6 +38,7 @@ import { deleteDocument, useGetDocuments } from 'src/api/document';
 import { deleteDriver, useGetDrivers } from 'src/api/drivers';
 import { secondary } from 'src/theme/palette';
 import { color } from 'framer-motion';
+import { LoadingScreen } from 'src/components/loading-screen';
 
 
 
@@ -47,12 +48,9 @@ import { color } from 'framer-motion';
 
 export default function ContractsListView({ }) {
 
-    const { data: vData } = useValues();
-   
-     const { clients } = useGetClients()
-     const { contracts } = useGetContracts()
-     const payment_methodes = [{ name: "deferred", lable: { ar: "دفعات", en: "deferred" } }, { name: "cash", lable: { ar: "نقدا", en: "cash" } }]
-     const { currentLang } = useLocales()
+    const { contracts, contractsLoading } = useGetContracts()
+    const payment_methodes = [{ name: "deferred", lable: { ar: "دفعات", en: "deferred" } }, { name: "cash", lable: { ar: "نقدا", en: "cash" } }]
+    const { currentLang } = useLocales()
 
     const [tableData, setTableData] = useState([]);
     const [dataFiltered, setDataFiltered] = useState([]);
@@ -76,7 +74,7 @@ export default function ContractsListView({ }) {
 
             return {
                 ...item,
-               
+
                 color: item?.is_rented ? "warning" : "success",
 
             };
@@ -85,13 +83,14 @@ export default function ContractsListView({ }) {
 
 
     const filters = [
-        { key: 'name', label: t('name'), match: (item, value) =>
-             item?.name?.toLowerCase().includes(value?.toLowerCase()) ||
-             item?.phonenumber?.toLowerCase().includes(value?.toLowerCase()) ||
-             item?.gender?.toLowerCase().includes(value?.toLowerCase()) ||
-             item?.d_nationality?.toLowerCasesrc/sections/drivers/DriverListView().includes(value?.toLowerCase()) ||
-             item?.d_state?.toLowerCase().includes(value?.toLowerCase()) ,
-            },
+        {
+            key: 'name', label: t('name'), match: (item, value) =>
+                item?.name?.toLowerCase().includes(value?.toLowerCase()) ||
+                item?.phonenumber?.toLowerCase().includes(value?.toLowerCase()) ||
+                item?.gender?.toLowerCase().includes(value?.toLowerCase()) ||
+                item?.d_nationality?.toLowerCasesrc / sections / drivers / DriverListView().includes(value?.toLowerCase()) ||
+                item?.d_state?.toLowerCase().includes(value?.toLowerCase()),
+        },
     ];
 
     const defaultFilters = {
@@ -146,8 +145,13 @@ export default function ContractsListView({ }) {
                 <Card>
                     <ZaityTableTabs key='condition' data={tableData} items={items} defaultFilters={defaultFilters} setTableDate={setDataFiltered} filterFunction={filterFunction}>
                         {/* <ZaityTableTabs key='attachable_type' data={tableData} items={items2} defaultFilters={defaultFilters} setTableDate={setDataFiltered} filterFunction={filterFunction}> */}
-                        <ZaityTableFilters data={dataFiltered} tableData={tableData} setTableDate={setDataFiltered} items={filters} defaultFilters={defaultFilters} dataFiltered={tableData} searchText={t("search_by")+" "+t("name")+" "+t("or_any_value")+" ..."}  >
-                            <ZaityListView TABLE_HEAD={[...TABLE_HEAD]} dense="medium" zaityTableDate={dataFiltered || []} onSelectedRows={({ data, setTableData }) => { return <onSelectedRowsComponent configurable_type={"roles"} setTableData={setTableData} data={contracts} /> }} />
+                        <ZaityTableFilters data={dataFiltered} tableData={tableData} setTableDate={setDataFiltered} items={filters} defaultFilters={defaultFilters} dataFiltered={tableData} searchText={t("search_by") + " " + t("name") + " " + t("or_any_value") + " ..."}  >
+                            {
+                                contractsLoading ?
+                                    <LoadingScreen sx={{ my: 8 }} color='primary' />
+                                    :
+                                    <ZaityListView TABLE_HEAD={[...TABLE_HEAD]} dense="medium" zaityTableDate={dataFiltered || []} onSelectedRows={({ data, setTableData }) => { return <onSelectedRowsComponent configurable_type={"roles"} setTableData={setTableData} data={contracts} /> }} />
+                            }
                         </ZaityTableFilters>
                         {/* </ZaityTableTabs> */}
                     </ZaityTableTabs>

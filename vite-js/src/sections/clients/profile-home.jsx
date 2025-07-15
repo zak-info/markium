@@ -77,7 +77,7 @@ export default function ProfileHome({ info, posts }) {
   );
   const { data } = useValues()
   const { contracts } = useGetContracts()
-  const { claims } = useGetAllClaim()
+  const { claims,claimsLoading } = useGetAllClaim()
   const selected_contracts = contracts?.filter(item => item?.client_id == info?.id)
   const selected_claims = claims.filter(item => selected_contracts.some(entry => entry.id == item?.contract_id));
 
@@ -237,7 +237,7 @@ export default function ProfileHome({ info, posts }) {
                 <ClientContractsListView id={info?.id} contracts={selected_contracts} />
 
                 : section == 2 ?
-                  <ClientClaimsListView id={info?.id} claims={selected_claims} />
+                  <ClientClaimsListView claimsLoading={claimsLoading} id={info?.id} claims={selected_claims} />
 
                   :
                   null

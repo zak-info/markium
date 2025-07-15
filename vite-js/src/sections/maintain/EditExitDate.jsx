@@ -35,7 +35,7 @@ import FormProvider, {
 import { useTranslate } from 'src/locales';
 import { useValues } from 'src/api/utils';
 
-import { createMaintenance, editMaintenance } from 'src/api/maintainance';
+import { createMaintenance, editMaintenance, editMaintenanceExitDate } from 'src/api/maintainance';
 import { fDate } from 'src/utils/format-time';
 import { useGetCar } from 'src/api/car';
 import { ListItemText } from '@mui/material';
@@ -88,7 +88,7 @@ export default function EditExitDate({ currentMentainance,close ,setCurrentMenta
       let body = data
       body.exit_date = format(new Date(data.exit_date), 'yyyy-MM-dd')
       console.log("body : ",{...body});
-      const response = await editMaintenance(currentMentainance?.id, {exit_date:body.exit_date,car_id:currentMentainance?.car_id});
+      const response = await editMaintenanceExitDate(currentMentainance?.id, {exit_date:body.exit_date});
       setCurrentMentainance(prev => ({...prev,exit_date:body.exit_date}))
       enqueueSnackbar(t("operation_success"));
       close()
@@ -118,7 +118,7 @@ export default function EditExitDate({ currentMentainance,close ,setCurrentMenta
                 value={values.exit_date ? new Date(values.exit_date) : new Date()}
                 name="exit_date"
                 onChange={(newValue) => setValue('exit_date', newValue)}
-                // format="dd/MM/yyyy"  
+                format="dd/MM/yyyy"  
                 slotProps={{
                   textField: {
                     fullWidth: true,

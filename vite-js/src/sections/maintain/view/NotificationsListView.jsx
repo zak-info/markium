@@ -99,9 +99,9 @@ export default function NotificationsListView() {
   const { car } = useGetCar()
   const { data } = useValues()
 
-  const [tableData, setTableData] = useState(logs);
+  const [tableData, setTableData] = useState(logs.filter(item => item?.action == 'action_required' && item?.enabled));
   useEffect(() => {
-    setTableData(logs)
+    setTableData(logs.filter(item => item?.action == 'action_required' && item?.enabled))
   }, [logs])
 
   const [filters, setFilters] = useState(defaultFilters);
@@ -271,7 +271,6 @@ export default function NotificationsListView() {
 
                 <TableBody>
                   {dataFiltered
-                    .filter(item => item?.action == 'action_required' && item?.enabled)
                     .slice(
                       table.page * table.rowsPerPage,
                       table.page * table.rowsPerPage + table.rowsPerPage

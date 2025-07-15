@@ -77,7 +77,8 @@ export default function ZaityListView({ TABLE_HEAD, dense, zaityTableDate, onSel
 
   const [tableData, setTableData] = useState(zaityTableDate);
   useEffect(() => {
-    setTableData(zaityTableDate)
+    setTableData(zaityTableDate);
+    table.onResetPage();
   }, [zaityTableDate])
 
   const [filters, setFilters] = useState(defaultFilters);
@@ -95,6 +96,8 @@ export default function ZaityListView({ TABLE_HEAD, dense, zaityTableDate, onSel
     table.page * table.rowsPerPage,
     table.page * table.rowsPerPage + table.rowsPerPage
   );
+
+  
 
   const denseHeight = table.dense ? 56 : 56 + 20;
 

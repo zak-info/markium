@@ -54,10 +54,27 @@ export default function UsersEditView({ currentUser }) {
 
 
   const validationSchema = Yup.object({
-    name: Yup.string().required('Name is required'),
-    username: Yup.string().required('Name is required'),
-    email: Yup.string().required('Name is required'),
-    phone_number: Yup.string().required('Name is required'),
+    name: Yup.string().required(t('name_required')),
+    username: Yup.string()
+      .required(t('username_required'))
+      .min(3, t('username_min_length'))
+      .max(30, t('username_max_length'))
+      .matches(/^[a-zA-Z][a-zA-Z0-9_.]*$/, t('username_invalid_format'))
+      .matches(/^[a-zA-Z0-9_.]+$/, t('username_invalid_characters'))
+      .test('no-spaces', t('username_no_spaces'), (value) => {
+        return value ? !value.includes(' ') : true;
+      }),
+    email: Yup.string()
+      .email(t('email_invalid'))
+      .required(t('email_required')),
+    // phone_number: Yup.string()
+    //   .required(t('phone_number_required'))
+    //   .matches(/^\d{10}$/, t('phone_number_must_be_10_digits')),
+
+    phone_number: Yup.string()
+      .required(t('phone_number_required'))
+      .matches(/^05\d{8}$/, t('phone_number_must_be_10_digits_starting_with_05')),
+
 
     role_id: Yup.array().min(1, 'At least one role is required'),
   });
@@ -119,9 +136,9 @@ export default function UsersEditView({ currentUser }) {
       const body = data;
 
       if (currentUser?.id) {
-        console.log("body : ", body );
+        console.log("body : ", body);
         const res = await updateUser(currentUser?.id, body)
-      } 
+      }
       reset();
       enqueueSnackbar(t("operation_success"));
       router.push(paths.dashboard.user.list);
@@ -131,12 +148,12 @@ export default function UsersEditView({ currentUser }) {
     }
   });
 
-  
+
   return (
     <>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
-          heading={ currentUser?.id ?  t('edit_user') : t("add_user")}
+          heading={currentUser?.id ? t('edit_user') : t("add_user")}
           links={[
             {
               name: t('dashboard'),
@@ -146,7 +163,7 @@ export default function UsersEditView({ currentUser }) {
               name: t('users'),
               href: paths.dashboard.user.root,
             },
-            { name: currentUser?.id ?  t('edit_user') : t("add_user") },
+            { name: currentUser?.id ? t('edit_user') : t("add_user") },
           ]}
           sx={{
             mb: { xs: 3, md: 5 },
@@ -208,7 +225,7 @@ export default function UsersEditView({ currentUser }) {
           </Grid>
         </FormProvider>
       </Container>
-     
+
     </>
   );
 }

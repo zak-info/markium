@@ -17,6 +17,7 @@ import ContentDialog from 'src/components/custom-dialog/content-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import { fileData } from 'src/components/file-thumbnail'; // [keep for later use]
 import Iconify from 'src/components/iconify';
+import { LoadingScreen } from 'src/components/loading-screen';
 import { useBoolean } from 'src/hooks/use-boolean';
 import { RouterLink } from 'src/routes/components';
 import { useRouter } from 'src/routes/hooks';
@@ -31,7 +32,7 @@ import showError from 'src/utils/show_error';
 
 
 export default function CarsListView({ }) {
-    const { car } = useGetCar();
+    const { car, carLoading } = useGetCar();
     const { contracts } = useGetContracts()
     const { clients } = useGetClients()
 
@@ -43,12 +44,12 @@ export default function CarsListView({ }) {
         { id: 'plat_number', label: t('plateNumber'), type: "two-lines-link", first: (row) => row?.plat_number, second: (row) => { }, link: (row) => { return paths.dashboard.vehicle.details(row?.id) }, width: 160 },
         { id: 'model', label: t('model'), type: "two-lines-link", first: (row) => row?.model?.translations?.name, second: (row) => row?.model?.company?.translations?.name, link: (row) => { return paths.dashboard.vehicle.details(row?.id) }, width: 140 },
         { id: 'production_year', label: t('manufacturingYear'), type: "text", width: 100 },
-        { id: 'driver', label: t('driver'), type: "two-lines-link", first: (row) => row?.driver?.name, second: (row) => { }, link: (row) => { return paths.dashboard.drivers.details(row?.id) }, width: 180 },
+        { id: 'driver', label: t('driver'), type: "two-lines-link", first: (row) => row?.driver?.name || "--", second: (row) => { }, link: (row) => { return paths.dashboard.drivers.details(row?.id) }, width: 180 },
         // { id: 'c_driver', label: t('driver'), type: "long_text", length: 3, width: 200 },
         // { id: 'driver', label: t('driver'), type: "text", width: 140 },
         { id: 'condition', label: t('status'), type: "label", width: 140 },
-        { id: 'client', label: t('client'), type: "two-lines-link", first: (row) => row?.client?.name, second: (row) => { }, link: (row) => { return paths.dashboard.clients.details(row?.id) }, width: 180 },
-        { id: 'contract', label: t('contract'), type: "two-lines-link", first: (row) => row?.contract?.ref, second: (row) => { }, link: (row) => { return paths.dashboard.clients.contractsDetails(row?.contract?.id) }, width: 180 },
+        { id: 'client', label: t('client'), type: "two-lines-link", first: (row) => row?.client?.name || "--", second: (row) => { }, link: (row) => { return paths.dashboard.clients.details(row?.id) }, width: 180 },
+        { id: 'contract', label: t('contract'), type: "two-lines-link", first: (row) => row?.contract?.ref || "--", second: (row) => { }, link: (row) => { return paths.dashboard.clients.contractsDetails(row?.contract?.id) }, width: 180 },
         // { id: 'ref', label: t('contract'), type: "text", width: 100 },
         { id: 'actions', label: t('actions'), type: "threeDots", component: (item) => <ElementActions item={item} RformulateTable={RformulateTable} setTableData={setDataFiltered} />, width: 400, align: "right" },
     ]
@@ -111,7 +112,7 @@ export default function CarsListView({ }) {
                 color,
                 condition,
                 c_driver: item?.driver?.id ? item.driver.name : "--",
-                contract: contract,
+                contract: contract || "--",
                 ref: contract?.ref || "--",
                 company: company?.name || "--",
             };
@@ -160,7 +161,12 @@ export default function CarsListView({ }) {
                 <Card>
                     <ZaityTableTabs key='condition' data={tableData} items={items} defaultFilters={defaultFilters} setTableDate={setDataFiltered} filterFunction={filterFunction}>
                         <ZaityTableFilters data={dataFiltered} tableData={tableData} setTableDate={setDataFiltered} items={filters} defaultFilters={defaultFilters} dataFiltered={tableData} searchText={t("search_by") + " " + t("plateNumber") + " " + t("or_any_value") + " ..."} >
-                            <ZaityListView TABLE_HEAD={[...TABLE_HEAD]} dense="medium" zaityTableDate={dataFiltered || []} onSelectedRows={({ data, setTableData }) => { return <onSelectedRowsComponent configurable_type={"roles"} setTableData={setTableData} data={car} /> }} />
+                            {
+                                carLoading ?
+                                    <LoadingScreen sx={{ my: 8 }} color='primary' />
+                                    :
+                                    <ZaityListView TABLE_HEAD={[...TABLE_HEAD]} dense="medium" zaityTableDate={dataFiltered || []} onSelectedRows={({ data, setTableData }) => { return <onSelectedRowsComponent configurable_type={"roles"} setTableData={setTableData} data={car} /> }} />
+                            }
                         </ZaityTableFilters>
                     </ZaityTableTabs>
                 </Card>
@@ -314,21 +320,21 @@ const ElementActions = ({ item, RformulateTable, setTableData }) => {
                 arrow="right-top"
                 sx={{ width: 200 }}
             >
-             {item?.status.key != "under_maintenance" && !item.is_rented ?
-                <PermissionsContext action={'delete.car'}>
-                    <MenuItem
-                        onClick={() => {
-                            remove.onTrue();
-                            popover.onClose();
-                        }}
-                        sx={{ color: 'error.main' }}
-                    >
-                        <Iconify icon="solar:trash-bin-trash-bold" />
-                        {t('delete')}
-                    </MenuItem>
-                </PermissionsContext>
-                :
-                null}
+                {item?.status.key != "under_maintenance" && !item.is_rented ?
+                    <PermissionsContext action={'delete.car'}>
+                        <MenuItem
+                            onClick={() => {
+                                remove.onTrue();
+                                popover.onClose();
+                            }}
+                            sx={{ color: 'error.main' }}
+                        >
+                            <Iconify icon="solar:trash-bin-trash-bold" />
+                            {t('delete')}
+                        </MenuItem>
+                    </PermissionsContext>
+                    :
+                    null}
                 <PermissionsContext action={'update.car'}>
                     <MenuItem
                         onClick={() => {

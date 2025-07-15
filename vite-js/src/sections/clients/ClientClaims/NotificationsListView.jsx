@@ -56,7 +56,7 @@ const defaultFilters = {
 
 // ----------------------------------------------------------------------
 
-export default function ClientClaimsListView({ id,claims }) {
+export default function ClientClaimsListView({claimsLoading, id,claims }) {
   const { enqueueSnackbar } = useSnackbar();
 
   const { t } = useTranslate();

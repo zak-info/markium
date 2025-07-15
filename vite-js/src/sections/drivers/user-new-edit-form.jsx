@@ -41,33 +41,50 @@ export default function UserNewEditForm({ currentDriver }) {
 
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslate();
-  const {items : countries} = useGetSystemVisibleItem("country")
-  const {items : states} = useGetSystemVisibleItem("state")
+  const { items: countries } = useGetSystemVisibleItem("country")
+  const { items: states } = useGetSystemVisibleItem("state")
   const { car } = useGetCar();
   const { currentLang } = useLocales()
 
 
 
   const validationSchema = Yup.object({
-    name: Yup.string().required('Name is required'),
+    name: Yup.string().required(t('name_required')),
     nationality_id: Yup.number()
-      .required('Nationality ID is required')
-      .typeError('Nationality ID must be a number'),
-    residence_permit_number: Yup.string().required('Residence permit number is required'),
-    salary: Yup.number().required('Salary is required').typeError('Salary must be a number'),
+      .required(t('nationality_id_required'))
+      .typeError(t('nationality_id_must_be_number')),
+    residence_permit_number: Yup.string()
+      .required(t('residence_permit_number_required'))
+      .matches(/^2\d{9}$/, t('residence_permit_number_invalid_format'))
+      .test('unique', t('residence_permit_number_already_exists'), async (value) => {
+        if (!value) return true;
+        try {
+          const response = await checkResidencePermitAvailability(value);
+          return response.available;
+        } catch {
+          return true;
+        }
+      }),
+    salary: Yup.number()
+      .required(t('salary_required'))
+      .typeError(t('salary_must_be_number')),
+    // phone_number: Yup.string()
+    //   .required(t('phone_number_required'))
+    //   .matches(/^\d+$/, t('phone_number_must_be_numeric')),
     phone_number: Yup.string()
-      .required('Phone number is required')
-      .matches(/^\d+$/, 'Phone number must be a valid numeric value'),
+      .required(t('phone_number_required'))
+      .matches(/^\d{10}$/, t('phone_number_must_be_10_digits')),
+
     start_date: Yup.date()
-      .required('Start date is required')
-      .typeError('Start date must be a valid date'),
-    state_id: Yup.number().required('State ID is required'),
+      .required(t('start_date_required'))
+      .typeError(t('start_date_must_be_valid')),
+    state_id: Yup.number().required(t('state_id_required')),
     isMale: Yup.boolean()
-      .required('Gender is required')
-      .typeError('Gender must be true or false'),
+      .required(t('gender_required'))
+      .typeError(t('gender_must_be_boolean')),
     birth_date: Yup.date()
-      .required('Birth date is required')
-      .typeError('Birth date must be a valid date'),
+      .required(t('birth_date_required'))
+      .typeError(t('birth_date_must_be_valid'))
   });
 
   const defaultValues = useMemo(
@@ -141,7 +158,7 @@ export default function UserNewEditForm({ currentDriver }) {
 
       router.push(paths.dashboard.drivers.root);
     } catch (error) {
-     showError(error)
+      showError(error)
     }
   });
 
@@ -159,9 +176,20 @@ export default function UserNewEditForm({ currentDriver }) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-             
-              <RHFTextField name="name" label={t('name')} />
-              <RHFSelect name="nationality_id"  label={t('nationality')}>
+
+              <RHFTextField
+                name="name"
+                label={t('name')}
+                error={!!errors.name}
+                helperText={errors.name?.message}
+              />
+
+              <RHFSelect
+                name="nationality_id"
+                label={t('nationality')}
+                error={!!errors.nationality_id}
+                helperText={errors.nationality_id?.message}
+              >
                 <Divider sx={{ borderStyle: 'dashed' }} />
                 {countries?.map((option) => (
                   <MenuItem key={option?.id} value={option?.id}>
@@ -170,7 +198,13 @@ export default function UserNewEditForm({ currentDriver }) {
                 ))}
               </RHFSelect>
 
-              <RHFSelect required name="isMale" label={t('gender')}>
+              <RHFSelect
+                required
+                name="isMale"
+                label={t('gender')}
+                error={!!errors.isMale}
+                helperText={errors.isMale?.message}
+              >
                 <Divider sx={{ borderStyle: 'dashed' }} />
                 {[
                   { value: true, label: { ar: 'ذكر', en: 'Male' } },
@@ -185,73 +219,92 @@ export default function UserNewEditForm({ currentDriver }) {
               <DatePicker
                 label={t('birth_date')}
                 format="dd/MM/yyyy"
-                value={currentDriver?.start_date ? new Date(currentDriver?.birth_date) : values?.birth_date ? new Date(values?.birth_date) : new Date()}
+                value={currentDriver?.birth_date ? new Date(currentDriver?.birth_date) : values?.birth_date ? new Date(values?.birth_date) : new Date()}
                 onChange={(date) => setValue('birth_date', date)}
                 slotProps={{
                   textField: {
                     fullWidth: true,
+                    error: !!errors.birth_date,
+                    helperText: errors.birth_date?.message,
                   },
                 }}
               />
 
-              {/* <DatePicker
-                label={t('start_date')}
-                format="dd/MM/yyyy"
-                value={currentDriver?.start_date ? new Date(currentDriver?.start_date) : values?.start_date ? new Date(values?.start_date) : new Date()}
-                onChange={(date) => setValue('start_date', date)}
+              {/* <RHFTextField
+                disabled={currentDriver?.id ? true : false}
+                name="residence_permit_number"
+                label={t('residence_permit_number')}
+                error={!!errors.residence_permit_number}
+                helperText={errors.residence_permit_number?.message}
+              /> */}
+              {/* .matches(/^2\d{9}$/, t('residence_permit_number_invalid_format')) */}
+              <RHFTextField
+              disabled={currentDriver?.id ? true : false}
+                name="residence_permit_number"
+                type="text"
+                label={t('residence_permit_number')}
+                error={
+                  !values.residence_permit_number ? false : !/^2\d{9}$/.test(values.residence_permit_number)
+                }
+                helperText={
+                  !values.residence_permit_number
+                    ? null
+                    : !/^2\d{9}$/.test(values.residence_permit_number)
+                      ? t('residence_permit_number_invalid_format')
+                      : ''
+                }
+              />
 
-                slotProps={{
-                  textField: {
-                    fullWidth: true,
-                  },
-                }}
+              <RHFTextField
+                name="salary"
+                label={t('salary')}
+                type="number"
+                error={!!errors.salary}
+                helperText={errors.salary?.message}
+              />
+
+              {/* <RHFTextField
+                name="phone_number"
+                label={t('phone')}
+                error={!!errors.phone_number}
+                helperText={errors.phone_number?.message}
               /> */}
 
-
-              {/* Residence Permit Number */}
-              <RHFTextField disabled={currentDriver?.id ? true : false} name="residence_permit_number" label={t('residence_permit_number')} />
-
-              {/* Location ID */}
-
-              {/* License Number */}
-              {/* <RHFTextField disabled={currentDriver?.id ? true : false} name="license_number" label={t('license_number')} /> */}
-
-              {/* Salary */}
-              <RHFTextField name="salary" label={t('salary')} type="number" />
-
-              {/* End of Service Bonus */}
-              {/* <RHFTextField name="end_of_service_bonus" label={t('end_of_service_bonus')} type="number"/> */}
-
-              {/* Additional Salary */}
-              {/* <RHFTextField name="additional_salary" label={t('additional_salary')} type="number" /> */}
-
-              {/* Phone Number */}
-              <RHFTextField name="phone_number" label={t('phone')} />
-
-              {/* Start Date */}
+              <RHFTextField
+                name="phone_number"
+                type="text"
+                label={t('phone_number')}
+                error={
+                  !values.phone_number ? false : !/^\d{10}$/.test(values.phone_number)
+                }
+                helperText={
+                  !values.phone_number
+                    ? null
+                    : !/^\d{10}$/.test(values.phone_number)
+                      ? t('phone_number_must_be_10_digits')
+                      : ''
+                }
+              />
               <DatePicker
                 label={t('start_date')}
                 format="dd/MM/yyyy"
                 value={currentDriver?.start_date ? new Date(currentDriver?.start_date) : values?.start_date ? new Date(values?.start_date) : new Date()}
                 onChange={(date) => setValue('start_date', date)}
-
                 slotProps={{
                   textField: {
                     fullWidth: true,
+                    error: !!errors.start_date,
+                    helperText: errors.start_date?.message,
                   },
                 }}
               />
 
-              {/* Hourly Rate */}
-              {/* <RHFTextField name="hourly_rate" label={t('hourly_rate')} type="number" /> */}
-
-              {/* Custody */}
-              {/* <RHFTextField name="custody" label={t('custody')} type="number" /> */}
-
-              {/* Loan */}
-              {/* <RHFTextField name="loan" label={t('loan')} type="number" /> */}
-
-              <RHFSelect name="state_id" label={t('workSite')}>
+              <RHFSelect
+                name="state_id"
+                label={t('workSite')}
+                error={!!errors.state_id}
+                helperText={errors.state_id?.message}
+              >
                 <Divider sx={{ borderStyle: 'dashed' }} />
                 {states?.map((option) => (
                   <MenuItem key={option?.name} value={option?.id}>
@@ -259,18 +312,6 @@ export default function UserNewEditForm({ currentDriver }) {
                   </MenuItem>
                 ))}
               </RHFSelect>
-
-              {/* Car ID */}
-
-              {/* <RHFSelect name="car_id" label={t('vehicle')}>
-                <Divider sx={{ borderStyle: 'dashed' }} />
-                {car?.map((option) => (
-                  <MenuItem key={option?.id} value={option?.id}>
-                    {option?.model?.company?.translations?.name} ({option?.plat_number})
-                  </MenuItem>
-                ))}
-              </RHFSelect> */}
-
 
             </Box>
 

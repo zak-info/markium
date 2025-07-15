@@ -47,6 +47,7 @@ import { useLocales, useTranslate } from 'src/locales';
 import { useGetClients } from 'src/api/client';
 import { useGetContracts } from 'src/api/contract';
 import { useValues } from 'src/api/utils';
+import { LoadingScreen } from 'src/components/loading-screen';
 
 // ----------------------------------------------------------------------
 
@@ -88,8 +89,8 @@ export default function OrderListView() {
   const confirm = useBoolean();
 
   const { clients } = useGetClients()
-  const { contracts } = useGetContracts()
-  console.log("contracts : ",contracts);
+  const { contracts, contractsLoading } = useGetContracts()
+  console.log("contracts : ", contracts);
   const { data } = useValues()
   const payment_methodes = [{ name: "deferred", lable: { ar: "دفعات", en: "deferred" } }, { name: "cash", lable: { ar: "نقدا", en: "cash" } }]
   const { currentLang } = useLocales()
@@ -258,51 +259,55 @@ export default function OrderListView() {
             />
 
             <Scrollbar>
-              <Table size={table.dense ? 'small' : 'medium'} sx={{ minWidth: 960 }}>
-                <TableHeadCustom
-                  order={table.order}
-                  orderBy={table.orderBy}
-                  headLabel={TABLE_HEAD}
-                  rowCount={dataFiltered.length}
-                  numSelected={table.selected.length}
-                  onSort={table.onSort}
-                  onSelectAllRows={(checked) =>
-                    table.onSelectAllRows(
-                      checked,
-                      dataFiltered.map((row) => row.id)
-                    )
-                  }
-                />
+              {
+                contractsLoading ?
+                  <LoadingScreen sx={{ my: 8 }} color='primary' />
+                  :
+                  <Table size={table.dense ? 'small' : 'medium'} sx={{ minWidth: 960 }}>
+                    <TableHeadCustom
+                      order={table.order}
+                      orderBy={table.orderBy}
+                      headLabel={TABLE_HEAD}
+                      rowCount={dataFiltered.length}
+                      numSelected={table.selected.length}
+                      onSort={table.onSort}
+                      onSelectAllRows={(checked) =>
+                        table.onSelectAllRows(
+                          checked,
+                          dataFiltered.map((row) => row.id)
+                        )
+                      }
+                    />
+                    <TableBody>
+                      {dataFiltered
+                        .slice(
+                          table.page * table.rowsPerPage,
+                          table.page * table.rowsPerPage + table.rowsPerPage
+                        )
+                        .map((row) => (
+                          <OrderTableRow
+                            key={row.id}
+                            client={clients?.find(item => item.id == row?.client_id)}
+                            row={row}
+                            // payment_method={data?.payment_methods?.find(item => item?.name == row?.payment_method)}
+                            payment_method={payment_methodes?.find(i => i?.name == row?.payment_method?.name)?.lable[currentLang.value] || row?.payment_method?.name}
+                            selected={table.selected.includes(row.id)}
+                            onSelectRow={() => table.onSelectRow(row.id)}
+                            onDeleteRow={() => handleDeleteRow(row.id)}
+                            onEditRow={() => handleEditRow(row.id)}
+                            onViewRow={() => handleViewRow(row.id)}
+                          />
+                        ))}
 
-                <TableBody>
-                  {dataFiltered
-                    .slice(
-                      table.page * table.rowsPerPage,
-                      table.page * table.rowsPerPage + table.rowsPerPage
-                    )
-                    .map((row) => (
-                      <OrderTableRow
-                        key={row.id}
-                        client={clients?.find(item => item.id == row?.client_id)}
-                        row={row}
-                        // payment_method={data?.payment_methods?.find(item => item?.name == row?.payment_method)}
-                        payment_method={payment_methodes?.find(i => i?.name == row?.payment_method?.name )?.lable[currentLang.value] || row?.payment_method?.name}
-                        selected={table.selected.includes(row.id)}
-                        onSelectRow={() => table.onSelectRow(row.id)}
-                        onDeleteRow={() => handleDeleteRow(row.id)}
-                        onEditRow={() => handleEditRow(row.id)}
-                        onViewRow={() => handleViewRow(row.id)}
+                      <TableEmptyRows
+                        height={denseHeight}
+                        emptyRows={emptyRows(table.page, table.rowsPerPage, dataFiltered.length)}
                       />
-                    ))}
 
-                  <TableEmptyRows
-                    height={denseHeight}
-                    emptyRows={emptyRows(table.page, table.rowsPerPage, dataFiltered.length)}
-                  />
-
-                  <TableNoData notFound={notFound} />
-                </TableBody>
-              </Table>
+                      <TableNoData notFound={notFound} />
+                    </TableBody>
+                  </Table>
+              }
             </Scrollbar>
           </TableContainer>
 

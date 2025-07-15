@@ -38,6 +38,7 @@ import { deleteDocument, useGetDocuments } from 'src/api/document';
 import { deleteDriver, useGetDrivers } from 'src/api/drivers';
 import { secondary } from 'src/theme/palette';
 import { color } from 'framer-motion';
+import { LoadingScreen } from 'src/components/loading-screen';
 
 
 
@@ -49,7 +50,7 @@ export default function DriverListView({ }) {
 
     const { data: vData } = useValues();
     const { car } = useGetCar()
-    const { drivers } = useGetDrivers()
+    const { drivers, driversLoading } = useGetDrivers()
     const { documents, mutate } = useGetDocuments()
     const { clients } = useGetClients();
     const { items: carModels } = useGetSystemVisibleItem("car_model");
@@ -59,16 +60,18 @@ export default function DriverListView({ }) {
     const [dataFiltered, setDataFiltered] = useState([]);
 
     let TABLE_HEAD = [
-        { id: 'name', label: t('name'), type: "two-lines-link", first: (row) => { return row?.name }, second: (row) => { }, link: (row) => { return paths.dashboard.drivers.details(row.id) }, width: 180 },
-        { id: 'phone_number', label: t('phone_number'), type: "text", width: 140 },
+        { id: 'name', label: t('name'), type: "two-lines-link", first: (row) => { return row?.name }, second: (row) => { return row?.phone_number }, link: (row) => { return paths.dashboard.drivers.details(row.id) }, width: 180 },
+        // { id: 'phone_number', label: t('phone_number'), type: "text", width: 140 },
         { id: 'residence_permit_number', label: t('residence_permit_number'), type: "text", width: 140 },
-        { id: 'birth_date', label: t('birth_date'), type: "text", width: 140 },
+        // { id: 'birth_date', label: t('birth_date'), type: "text", width: 140 },
         { id: 'gender', label: t('gender'), type: "text", width: 140 },
         { id: 'd_nationality', label: t('nationality'), type: "text", width: 100 },
         { id: 'd_state', label: t('state'), type: "text", width: 100 },
         { id: 'attached_to', label: t('car'), type: "two-lines-link", first: (row) => { return row?.car_model || "--" }, second: (row) => { return row?.car?.plat_number }, link: (row) => { return paths.dashboard.vehicle.details(row?.car?.id) }, width: 140 },
         // { id: 'c_driver', label: t('driver'), type: "long_text", length: 3, width: 200 },
         { id: 'status', label: t('status'), type: "label", width: 140 },
+        { id: 'c_contract', label: t('contract'), type: "two-lines-link", first: (row) => { return row?.contract?.ref || "--"  }, second: (row) => { }, link: (row) => { return row?.contract?.id ?  paths.dashboard.clients.contractsDetails(row?.contract?.id) : "#" }, width: 180 },
+        { id: 'c_client', label: t('client'), type: "two-lines-link", first: (row) => { return row?.client?.name || "--"  }, second: (row) => { }, link: (row) => { return row?.contract?.id ?  paths.dashboard.clients.details(row?.client?.id) : "#" }, width: 180 },
         { id: 'actions', label: t('actions'), type: "threeDots", component: (item) => <ElementActions item={item} setTableData={setTableData} />, width: 200, align: "right" },
     ]
 
@@ -80,8 +83,8 @@ export default function DriverListView({ }) {
                 ...item,
                 phonenumber: item?.phone_number != "N/A" ? "--" : item?.phone_number,
                 gender: item?.isMale == 1 ? t("male") : t("female"),
-                d_nationality: vData?.countries?.find(i => i.id == item?.nationality_id).translations[0]?.name,
-                d_state: vData?.states?.find(i => i.id == item?.state_id).translations[0]?.name,
+                d_nationality: vData?.countries?.find(i => i.id == item?.nationality_id)?.translations[0]?.name,
+                d_state: vData?.states?.find(i => i.id == item?.state_id)?.translations[0]?.name,
                 status: item?.is_rented ? t("bussy") : t("available"),
                 color: item?.is_rented ? "warning" : "success",
                 car_model: carModels?.find(i => i.id == item?.car?.car_model_id)?.translations[0]?.name,
@@ -101,6 +104,7 @@ export default function DriverListView({ }) {
                 item?.d_nationality?.toLowerCase().includes(value?.toLowerCase()) ||
                 item?.car?.plat_number?.toLowerCase().includes(value?.toLowerCase()) ||
                 item?.car_model?.toLowerCase().includes(value?.toLowerCase()) ||
+                item?.contract?.ref?.toLowerCase().includes(value?.toLowerCase()) ||
                 item?.d_state?.toLowerCase().includes(value?.toLowerCase()),
         },
     ];
@@ -127,10 +131,10 @@ export default function DriverListView({ }) {
 
     useEffect(() => {
         setDataFiltered(RformulateTable(drivers));
-    }, [car]);
+    }, [drivers, vData, carModels]);
     useEffect(() => {
         setTableData(RformulateTable(drivers));
-    }, [car]);
+    }, [drivers, vData, carModels]);
 
     return (
         <>
@@ -158,7 +162,12 @@ export default function DriverListView({ }) {
                     <ZaityTableTabs key='condition' data={tableData} items={items} defaultFilters={defaultFilters} setTableDate={setDataFiltered} filterFunction={filterFunction}>
                         {/* <ZaityTableTabs key='attachable_type' data={tableData} items={items2} defaultFilters={defaultFilters} setTableDate={setDataFiltered} filterFunction={filterFunction}> */}
                         <ZaityTableFilters data={dataFiltered} tableData={tableData} setTableDate={setDataFiltered} items={filters} defaultFilters={defaultFilters} dataFiltered={tableData} searchText={t("search_by") + " " + t("name") + " " + t("or_any_value") + " ..."}  >
-                            <ZaityListView TABLE_HEAD={[...TABLE_HEAD]} dense="medium" zaityTableDate={dataFiltered || []} onSelectedRows={({ data, setTableData }) => { return <onSelectedRowsComponent configurable_type={"roles"} setTableData={setTableData} data={car} /> }} />
+                            {
+                                driversLoading ?
+                                    <LoadingScreen sx={{ my: 8 }} color='primary' />
+                                    :
+                                    <ZaityListView TABLE_HEAD={[...TABLE_HEAD]} dense="medium" zaityTableDate={dataFiltered || []} onSelectedRows={({ data, setTableData }) => { return <onSelectedRowsComponent configurable_type={"roles"} setTableData={setTableData} data={car} /> }} />
+                            }
                         </ZaityTableFilters>
                         {/* </ZaityTableTabs> */}
                     </ZaityTableTabs>
@@ -195,18 +204,18 @@ const ElementActions = ({ item, setTableData }) => {
     const onDeleteRow = useCallback(
         async (id) => {
             setPostloader(true)
-            console.log("id : ",id);
+            console.log("id : ", id);
             try {
                 loading.onTrue()
                 const res = await deleteDriver(id);
-                console.log("res : ",res);
+                console.log("res : ", res);
                 setTableData(prev => prev?.filter(i => i.id != id))
                 enqueueSnackbar(t("operation_success"));
                 confirm.onFalse();
                 loading.onFalse()
                 setPostloader(false)
             } catch (error) {
-                console.log("error : ",error);
+                console.log("error : ", error);
                 setPostloader(false)
                 loading.onFalse()
                 showError(error)

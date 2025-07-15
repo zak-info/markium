@@ -46,7 +46,7 @@ const ZaityTableTabs = ({
 
   useEffect(() => {
     setTableDate(dataFiltered)
-  }, [filters])
+  }, [filters,data])
 
 
   return (
