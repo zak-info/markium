@@ -24,29 +24,6 @@ import ZaityTableTabs from 'src/sections/ZaityTables/ZaityTableTabs'; // [keep f
 
 // ----------------------------------------------------------------------
 
-const types = {
-
-    roles: {
-        item_settings_lable: "countries_settings",
-        add_new_item_lable: "add_new_country",
-        keyInValues: "roles",
-        TABLE_HEAD: [
-            { id: 'name', label: t('role'), type: "text", width: 140 },
-            // { id: 'actions', label: t('actions'), type: "threeDots", width: 88, align: "right" },
-        ],
-        href: paths.dashboard.settings.countriesNew,
-        tableElements: (data) => {
-            return data
-                ? data?.map((item) => ({
-                    ...item,
-                    name: item?.translations?.[0]?.name,
-                    // actions: (actionMethod) => <ElementActions actionMethod={actionMethod} />,
-                }))
-                : [];
-        },
-    },
-
-};
 
 export default function RolesListView({ }) {
     const { roles } = useRoles();

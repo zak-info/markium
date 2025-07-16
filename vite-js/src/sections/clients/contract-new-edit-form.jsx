@@ -115,10 +115,10 @@ export default function ContractNewEditForm({ contract }) {
 
   const values = watch();
 
-  useEffect(()=>{
-    setValue("c_start_date",values?.start_date)
-    setValue("c_end_date",values?.end_date)
-  },[values])
+  useEffect(() => {
+    setValue("c_start_date", values?.start_date)
+    setValue("c_end_date", values?.end_date)
+  }, [values])
 
   const [checked, setChecked] = useState(false);
 
@@ -128,13 +128,17 @@ export default function ContractNewEditForm({ contract }) {
 
   const [clauses, setClauses] = useState(contract?.clauses ? [...contract?.clauses] : [])
   const handleAddClause = () => {
-    setClauses([...clauses, { id: clauses?.length > 0 ? clauses[clauses.length - 1].id + 1 : 1, clauseable_id: values.clauseable_id, clauseable_type: values.clauseable_type, cost: values.cost, start_date: format(new Date(values.c_start_date) || new Date(), 'yyyy-MM-dd'), end_date: format(new Date(values.c_end_date) || new Date(), 'yyyy-MM-dd') }])
-    setValue("clauseable_id", 0)
-    setValue("clauseable_type", values.clauseable_type)
-    setValue("cost", 0)
-    setValue("duration", 0)
-    setValue("start_date",values?.start_date ||  new Date())
-    setValue("end_date", values?.end_date ||  new Date())
+    if(values.clauseable_id && values.cost && values.c_start_date && values.c_end_date ){
+      setClauses([...clauses, { id: clauses?.length > 0 ? clauses[clauses.length - 1].id + 1 : 1, clauseable_id: values.clauseable_id, clauseable_type: values.clauseable_type, cost: values.cost, start_date: format(new Date(values.c_start_date) || new Date(), 'yyyy-MM-dd'), end_date: format(new Date(values.c_end_date) || new Date(), 'yyyy-MM-dd') }])
+      setValue("clauseable_id", 0)
+      setValue("clauseable_type", values.clauseable_type)
+      setValue("cost", 0)
+      setValue("duration", 0)
+      setValue("start_date", values?.start_date || new Date())
+      setValue("end_date", values?.end_date || new Date())
+    }else{
+      enqueueSnackbar(t("please_fill_all_values_in_clauses"), { variant: 'error' });
+    }
 
   }
   const handleRemoveClause = (clauseable_id) => {
@@ -166,7 +170,7 @@ export default function ContractNewEditForm({ contract }) {
       }
       delete body?.auto_renewal_duration_unity
       delete body?.auto_renewal_duration
-      
+
 
 
       delete body.cost
@@ -178,7 +182,7 @@ export default function ContractNewEditForm({ contract }) {
       body.start_date = format(new Date(body.start_date), 'yyyy-MM-dd')
       body.end_date = format(new Date(body.end_date), 'yyyy-MM-dd')
 
-      body = { ...body, auto_renewal : checked,clauses: clauses.map(({ id, ...rest }) => rest) || []}
+      body = { ...body, auto_renewal: checked, clauses: clauses.map(({ id, ...rest }) => rest) || [] }
       console.log("body :", body);
       const response = contract?.id ? await editContracts(contract?.id, body) : await createContracts(body);
       enqueueSnackbar(t("operation_success"), { variant: 'success' });
@@ -342,7 +346,7 @@ export default function ContractNewEditForm({ contract }) {
                 tableLabels={[
                   { id: "clauseableType", key_to_update: "clauseable_type", label: t("clause_type"), editable: false, creatable: true, type: "select", options: attachables?.map((item) => ({ value: item?.name, lable: item?.lable[currentLang.value] })), width: 160 },
                   { id: "clauseable", key_to_update: "clauseable_id", label: t("clause"), editable: false, creatable: true, type: "car_autocomplete", options: car, width: 240 },
-                  { id: "cost", key_to_update: "cost", label: t("cost")+" ("+t(values?.type =="monthly" ?"month":"day" )+")", editable: true, creatable: true, type: "number", width: 160 },
+                  { id: "cost", key_to_update: "cost", label: t("cost") + " (" + t(values?.type == "monthly" ? "month" : "day") + ")", editable: true, creatable: true, type: "number", width: 160 },
                   // { id: "duration", key_to_update: "duration", label: t("duration"), editable: true, creatable: true, type: "number", width: 120 },
                   // { id: "total", key_to_update: "total", label: t("total"), editable: false, creatable: false, type: "number", width: 160 },
                   { id: "start_date", key_to_update: "start_date", label: t("start_date"), editable: true, creatable: true, type: "date", width: 180 },
@@ -392,9 +396,9 @@ export default function ContractNewEditForm({ contract }) {
               </RHFSelect>
               {
                 values.clauseable_type == "car" ?
-                  <CarsAutocomplete options={car?.filter(i => i?.status?.key == "available" && !clauses?.map(ii => ii?.clauseable_type =="car")?.map(ii=>ii?.clauseable_id)?.includes(i?.id) )} name="clauseable_id" label={t('car')} placeholder={t('search_by')+" "+t("plateNumber")} />
+                  <CarsAutocomplete options={car?.filter(i => i?.status?.key == "available" && !clauses?.map(ii => ii?.clauseable_type == "car")?.map(ii => ii?.clauseable_id)?.includes(i?.id))} name="clauseable_id" label={t('car')} placeholder={t('search_by') + " " + t("plateNumber")} />
                   : values.clauseable_type == "driver" ?
-                    <SimpleAutocomplete options={drivers?.filter(i => !i.is_rented)} name="clauseable_id" label={t('drivers')} placeholder={t('search_by')+" "+t("name")} />
+                    <SimpleAutocomplete options={drivers?.filter(i => !i.is_rented)} name="clauseable_id" label={t('drivers')} placeholder={t('search_by') + " " + t("name")} />
                     :
                     <RHFSelect disabled={!values.clauseable_type} name="clauseable_id" label={t('clause')}>
                       <Divider sx={{ borderStyle: 'dashed' }} />
@@ -411,7 +415,7 @@ export default function ContractNewEditForm({ contract }) {
                 label={t('start_date')}
                 format="dd/MM/yyyy"
                 value={values?.c_start_date || values?.start_date || new Date()}
-                onChange={(date) => setValue('c_start_date', date || values.start_date )}
+                onChange={(date) => setValue('c_start_date', date || values.start_date)}
                 slotProps={{
                   textField: {
                     fullWidth: true,
@@ -424,7 +428,7 @@ export default function ContractNewEditForm({ contract }) {
                 label={t('end_date')}
                 format="dd/MM/yyyy"
                 value={values?.c_end_date || values?.end_date || new Date()}
-                onChange={(date) => setValue('c_end_date', date || values?.end_date )}
+                onChange={(date) => setValue('c_end_date', date || values?.end_date)}
                 slotProps={{
                   textField: {
                     fullWidth: true,
@@ -441,11 +445,17 @@ export default function ContractNewEditForm({ contract }) {
             {/* </div> */}
 
 
-            <Stack alignItems="flex-end" sx={{ mt: 3 }}>
-              <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                {!contract.id ? t('addNewContract') : t('saveChange')}
-              </LoadingButton>
-            </Stack>
+            {
+              clauses?.length > 0 ?
+
+                <Stack alignItems="flex-end" sx={{ mt: 3 }}>
+                  <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
+                    {!contract.id ? t('addNewContract') : t('saveChange')}
+                  </LoadingButton>
+                </Stack>
+                :
+                null
+            }
 
 
           </Card>

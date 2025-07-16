@@ -89,7 +89,7 @@ const types = {
         add_new_item_lable: "add_new_payment_methods",
         keyInValues: "payment_methods",
         TABLE_HEAD: [
-            { id: 'name', label: t('name'), type: "text", width: 140 },
+            { id: 'name_ar', label: t('name'), type: "text", width: 140 },
             // { id: 'actions', label: t('actions'), type: "threeDots", width: 88, align: "right" },
         ],
         href: paths.dashboard.settings.payment_methodsNew,
@@ -97,11 +97,11 @@ const types = {
             return data?.[keyInValues]
                 ? data?.[keyInValues]?.map((item) => ({
                     ...item,
-                    // name: item?.translations?.[0]?.name,
+                    name_ar: t(item?.name),
                     // actions: (actionMethod) => <ElementActions actionMethod={actionMethod} />,
                 }))
                 : [];
-        },
+        }
     },
     license_type: {
         item_settings_lable: "license_types_settings",
@@ -248,6 +248,7 @@ const types = {
 
 export default function SystemItemListView({ collection }) {
     const { data } = useValues();
+
     const [tableData, setTableData] = useState([]);
     const [dataFiltered, setDataFiltered] = useState([]);
 

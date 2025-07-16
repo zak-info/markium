@@ -698,5 +698,8 @@
   "validation_isNonNumber": "الاسم لا يمكن أن يكون رقماً فقط",
   "user_is_banned":"تم تجميد  حسابك ، لقد تم حظره من قبل المسؤول.",
   "banned":"مجمد",
-  "active":"مفعل"
+  "active":"مفعل",
+  "deferred":"دفعات",
+  "cash":"نقدي",
+  "please_fill_all_values_in_clauses":"فضلا،يجب ملأ كل الخانات في عملية إضافة بند"
 }
