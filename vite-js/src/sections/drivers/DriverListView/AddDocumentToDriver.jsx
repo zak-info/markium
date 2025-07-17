@@ -123,8 +123,6 @@ export default function AddDocumentToDriver({ currentDocument, driver_id, close 
       formData.append("attachable_type", "driver");
       formData.append("note", data?.note);
       formData.append("attachment_type_id", 1);
-      // formData.append("document_duration_days", data?.document_duration_days);
-      // formData.append("duration_unity", data?.duration_unity);
 
       console.log("formData  : ",formData);
       const response = currentDocument?.id ? await editDocument(currentDocument?.id, formData) : await createDocument(formData);
