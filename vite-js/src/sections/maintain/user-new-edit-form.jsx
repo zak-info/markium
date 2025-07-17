@@ -58,26 +58,20 @@ export default function UserNewEditForm({ currentMentainance }) {
   const { t } = useTranslate();
 
   const NewUserSchema = Yup.object({
-    // state_id: Yup.number()
-    //   .required('State ID is required')
-    //   .positive('State ID must be a positive number')
-    //   .integer('State ID must be an integer'),
-
-    maintainance_type: Yup.string().required('Type is required'),
-
-    car_id: Yup.number().required('Car is required'),
-    entry_date: Yup.date().required('Entry date is required'), // Validates that the entry date is not in the future
+    maintainance_type: Yup.string().required(t("maintenance_type_is_required")),
+    car_id: Yup.number().required(t("car_is_required")),
+    entry_date: Yup.date().required(t("entry_date_is_required")),
     cause: Yup.string()
-      .required('Cause is required')
-      .matches(/^[a-zA-Z][a-zA-Z\s]*$/, 'Cause must start with a letter and contain only letters and spaces')
+      .required(t("cause_is_required"))
+      .matches(/^[a-zA-Z][a-zA-Z\s]*$/, t("cause_format_invalid"))
       .trim(),
     exit_date: Yup.date().nullable(),
-
   });
+
   const defaultValues = useMemo(
     () => ({
       state_id: null, // default value for state_id
-      car_id: '', // default value for car plate number
+      car_id: searchParams.get("car_id") || "", // default value for car plate number
       maintainance_type: '', // default value for car plate number
       entry_date: format(new Date(), 'yyyy-MM-dd'), // default value for entry date
       cause: '', // default value for cause
@@ -109,7 +103,7 @@ export default function UserNewEditForm({ currentMentainance }) {
       setValue('cause', currentMentainance?.cause);
       setValue('entry_date', currentMentainance?.entry_date ? new Date(currentMentainance?.entry_date) : new Date());
       setValue('exit_date', currentMentainance?.exit_date ? new Date(currentMentainance?.exit_date) : new Date());
-      setValue('state_id', currentMentainance?.state?.id);
+      setValue('state_id', currentMentainance?.state_id);
     }
 
     // const car_id = searchParams.get("car_id");
@@ -126,7 +120,7 @@ export default function UserNewEditForm({ currentMentainance }) {
       let body = data
       body.entry_date = format(new Date(data.entry_date), 'yyyy-MM-dd')
       body.exit_date = format(new Date(data.exit_date), 'yyyy-MM-dd')
-      // body.car_id = searchParams.get("car_id")
+
       console.log("lets do it now ");
       console.log("body : body: ", body);
       const response = currentMentainance?.id ? await editMaintenance(currentMentainance?.id, body) : await createMaintenance(body);
@@ -152,8 +146,15 @@ export default function UserNewEditForm({ currentMentainance }) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
+              {
+                searchParams.get("car_id") ?
+                  <Typography>
+                    {car?.find(i => i.id == searchParams.get("car_id"))?.plat_number}
+                  </Typography>
+                  :
+                  <CarsAutocomplete required options={car.filter(item => item?.status?.key != "under_maintenance")} name="car_id" label={t('car')} placeholder={t('search_by') + " " + t('plateNumber')} car_id={searchParams.get("car_id")} disabled={searchParams.get("car_id") ? true : false} />
+              }
 
-              <CarsAutocomplete required options={car.filter(item => item?.status?.key != "under_maintenance")} name="car_id" label={t('car')} placeholder={t('search_by') + " " + t('plateNumber')} car_id={searchParams.get("car_id")} disabled={searchParams.get("car_id") ? true : false} />
 
               <DatePicker
                 label={t('entryDate')}
@@ -183,12 +184,12 @@ export default function UserNewEditForm({ currentMentainance }) {
                     fullWidth: true,
                   },
                 }}
-                minDate={new Date()}
+                // minDate={new Date()}
               />
 
               <RHFSelect required name="state_id" label={t('workSite')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
-                {states?.map((option) => (
+                {data?.states?.filter(i => i.system_settings?.is_selected)?.map((option) => (
                   <MenuItem key={option?.id} value={option?.id}>
                     {option?.translations[0]?.name}
                   </MenuItem>

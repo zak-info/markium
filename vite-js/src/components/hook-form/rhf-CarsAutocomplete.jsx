@@ -1,38 +1,63 @@
 import PropTypes from 'prop-types';
-import { Controller, useFormContext } from 'react-hook-form';
+import { Controller, useFormContext, useWatch } from 'react-hook-form';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import { useEffect } from 'react';
 
-export default function CarsAutocomplete({ name, label,disabled, options, placeholder, multiple = false, car_id }) {
+export default function CarsAutocomplete({
+  name,
+  label,
+  disabled,
+  options,
+  placeholder,
+  multiple = false,
+  car_id,
+}) {
   const { control, setValue } = useFormContext();
 
+  // Watch the current value of this field in the form
+  const watchedValue = useWatch({ name });
+
+  // Auto-select if car_id is passed and matching item exists
   useEffect(() => {
-    if (car_id && options.length > 0) {
-      const selectedCar = options.find((car) => car.id == car_id);
+    if (car_id != null && options.length > 0) {
+      const selectedCar = options.find((car) => car.id === Number(car_id));
       if (selectedCar) {
-        setValue(name, multiple ? [selectedCar.id] : selectedCar.id, { shouldValidate: true });
+        setValue(name, multiple ? [selectedCar.id] : selectedCar.id, {
+          shouldValidate: true,
+        });
       }
     }
   }, [car_id, options, multiple, setValue, name]);
+
+  // Log for debugging (optional)
+  // console.log('car_id:', car_id);
+  // console.log('watchedValue:', watchedValue);
 
   return (
     <Controller
       name={name}
       control={control}
-      disabled={disabled}
-      render={({ field: { value }, fieldState: { error } }) => (
+      render={({ fieldState: { error } }) => (
         <Autocomplete
           options={options}
           disabled={disabled}
           multiple={multiple}
-          getOptionLabel={(option) => option.plat_number} // Display `plat_number`
-          value={multiple ? options.filter((o) => value?.includes(o.id)) : options.find((o) => o.id === value) || null} // Convert id to object for UI
-          isOptionEqualToValue={(option, val) => option.id === val?.id} // Prevent mismatches
+          getOptionLabel={(option) => option.plat_number || ''}
+          isOptionEqualToValue={(option, val) => option.id === val?.id}
+          value={
+            multiple
+              ? options.filter(
+                  (o) => Array.isArray(watchedValue) && watchedValue.includes(o.id)
+                )
+              : options.find((o) => o.id === watchedValue) ?? null
+          }
           onChange={(event, newValue) =>
             setValue(
               name,
-              multiple ? newValue.map((item) => item.id) : newValue?.id || '',
+              multiple
+                ? newValue.map((item) => item.id)
+                : newValue?.id ?? '',
               { shouldValidate: true }
             )
           }
@@ -56,5 +81,7 @@ CarsAutocomplete.propTypes = {
   label: PropTypes.string,
   placeholder: PropTypes.string,
   multiple: PropTypes.bool,
-  car_id: PropTypes.string, // Optional car ID to auto-select
+  disabled: PropTypes.bool,
+  car_id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  options: PropTypes.array.isRequired,
 };

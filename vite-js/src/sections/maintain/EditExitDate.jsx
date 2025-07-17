@@ -88,7 +88,8 @@ export default function EditExitDate({ currentMentainance,close ,setCurrentMenta
       let body = data
       body.exit_date = format(new Date(data.exit_date), 'yyyy-MM-dd')
       console.log("body : ",{...body});
-      const response = await editMaintenanceExitDate(currentMentainance?.id, {exit_date:body.exit_date});
+      // const response = await editMaintenanceExitDate(currentMentainance?.id, {exit_date:body.exit_date});
+      const response = await editMaintenance(currentMentainance?.id, {exit_date:body.exit_date});
       setCurrentMentainance(prev => ({...prev,exit_date:body.exit_date}))
       enqueueSnackbar(t("operation_success"));
       close()
@@ -96,6 +97,7 @@ export default function EditExitDate({ currentMentainance,close ,setCurrentMenta
       showError(error)
     }
   });
+
 
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>

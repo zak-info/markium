@@ -113,7 +113,9 @@ export default function AddDocumentToDriver({ currentDocument, driver_id, close 
         formData.append("file", data.attachment);
       }
       formData.append("attachment", data.attachment);
-      formData.append("invoice", data.invoice);
+       if (data.invoice) {
+        formData.append("invoice", data.invoice);
+      }
       formData.append("release_date", format(new Date(data.release_date), 'yyyy-MM-dd'));
       formData.append("expiry_date", format(new Date(data.expiry_date), 'yyyy-MM-dd'));
       formData.append("attachment_name_id", Number(data?.attachment_name_id));
@@ -124,6 +126,7 @@ export default function AddDocumentToDriver({ currentDocument, driver_id, close 
       // formData.append("document_duration_days", data?.document_duration_days);
       // formData.append("duration_unity", data?.duration_unity);
 
+      console.log("formData  : ",formData);
       const response = currentDocument?.id ? await editDocument(currentDocument?.id, formData) : await createDocument(formData);
 
       enqueueSnackbar(t("operation_success"));

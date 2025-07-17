@@ -696,10 +696,22 @@
   "validation_mustBeText": "يجب أن يكون نص (Text / String)",
   "validation_noDuplicateProps": "أسماء الخصائص المكررة غير مسموحة",
   "validation_isNonNumber": "الاسم لا يمكن أن يكون رقماً فقط",
-  "user_is_banned":"تم تجميد  حسابك ، لقد تم حظره من قبل المسؤول.",
-  "banned":"مجمد",
-  "active":"مفعل",
-  "deferred":"دفعات",
-  "cash":"نقدي",
-  "please_fill_all_values_in_clauses":"فضلًا، يجب ملء كل الخانات في عملية إضافة بند"
+  "user_is_banned": "تم تجميد  حسابك ، لقد تم حظره من قبل المسؤول.",
+  "banned": "مجمد",
+  "active": "مفعل",
+  "deferred": "دفعات",
+  "cash": "نقدي",
+  "please_fill_all_values_in_clauses": "فضلًا، يجب ملء كل الخانات في عملية إضافة بند",
+  "car_id": "السيارة",
+  "type_required": "النوع مطلوب",
+  "car_required": "السيارة مطلوبة",
+  "entry_date_required": "تاريخ الدخول مطلوب",
+  "cause_required": "السبب مطلوب",
+  "cause_invalid": "يجب أن يبدأ السبب بحرف ويحتوي على أحرف ومسافات فقط",
+   "maintenance_type_is_required": "نوع الصيانة مطلوب.",
+  "car_is_required": "السيارة مطلوبة.",
+  "entry_date_is_required": "تاريخ الدخول مطلوب.",
+  "cause_is_required": "السبب مطلوب.",
+  "cause_format_invalid": "يجب أن يبدأ السبب بحرف ويتكون فقط من حروف ومسافات."
+
 }
