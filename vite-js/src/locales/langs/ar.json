@@ -708,10 +708,14 @@
   "entry_date_required": "تاريخ الدخول مطلوب",
   "cause_required": "السبب مطلوب",
   "cause_invalid": "يجب أن يبدأ السبب بحرف ويحتوي على أحرف ومسافات فقط",
-   "maintenance_type_is_required": "نوع الصيانة مطلوب.",
+  "maintenance_type_is_required": "نوع الصيانة مطلوب.",
   "car_is_required": "السيارة مطلوبة.",
   "entry_date_is_required": "تاريخ الدخول مطلوب.",
   "cause_is_required": "السبب مطلوب.",
-  "cause_format_invalid": "يجب أن يبدأ السبب بحرف ويتكون فقط من حروف ومسافات."
-
+  "cause_format_invalid": "يجب أن يبدأ السبب بحرف ويتكون فقط من حروف ومسافات.",
+  "only_numbers_allowed": "الأرقام فقط مسموحة",
+  "this_number_is_already_in_use": "هذا الرقم مستخدم بالفعل",
+  "please_enter_number_beginning_with_966_or_05": "يرجى إدخال رقم يبدأ بـ 966+ أو 05",
+  "phone_number_must_be_12_digits_for_966": "رقم الهاتف يجب أن يكون 12 رقم عند البدء بـ 966",
+  "phone_number_must_be_10_digits_for_05": "رقم الهاتف يجب أن يكون 10 أرقام عند البدء بـ 05"
 }

@@ -12,6 +12,8 @@ import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import UserNewEditForm from '../user-new-edit-form';
 import { useTranslate } from 'src/locales';
 import { useGetCar } from 'src/api/car';
+import UserEditForm from '../user-edit-form';
+
 
 // ----------------------------------------------------------------------
 
@@ -41,7 +43,13 @@ export default function ProductEditView({ id }) {
         }}
       />
 
-      <UserNewEditForm currentCar={currentCar} />
+      {
+        currentCar?.id ?
+          <UserEditForm currentCar={currentCar} />
+          :
+          <UserNewEditForm currentCar={currentCar} />
+      }
+
     </Container>
   );
 }

@@ -73,8 +73,32 @@ export default function UserNewEditForm({ currentDriver }) {
     //   .matches(/^\d+$/, t('phone_number_must_be_numeric')),
     phone_number: Yup.string()
       .required(t('phone_number_required'))
-      .matches(/^\d{10}$/, t('phone_number_must_be_10_digits')),
+      .matches(/^[0-9]+$/, t('only_numbers_allowed')) // Only numbers allowed
+      .test('valid-format', t('please_enter_number_beginning_with_966_or_05'), function (value) {
+        if (!value) return false;
 
+        // Check if starts with +966 (remove + and check 966)
+        if (value.startsWith('966')) {
+          return value.length === 12; // 966 + 9 digits = 12 total
+        }
+
+        // Check if starts with 05
+        if (value.startsWith('05')) {
+          return value.length === 10; // 05 + 8 digits = 10 total
+        }
+
+        return false; // Must start with either 966 or 05
+      })
+      .test('unique-number', t('this_number_is_already_in_use'), async function (value) {
+        if (!value) return true;
+
+        // Add your logic here to check if number is already in use
+        // Example: const exists = await checkIfPhoneExists(value);
+        // return !exists;
+
+        // Placeholder - replace with actual uniqueness check
+        return true;
+      }),
     start_date: Yup.date()
       .required(t('start_date_required'))
       .typeError(t('start_date_must_be_valid')),
@@ -239,7 +263,7 @@ export default function UserNewEditForm({ currentDriver }) {
               /> */}
               {/* .matches(/^2\d{9}$/, t('residence_permit_number_invalid_format')) */}
               <RHFTextField
-              disabled={currentDriver?.id ? true : false}
+                disabled={currentDriver?.id ? true : false}
                 name="residence_permit_number"
                 type="text"
                 label={t('residence_permit_number')}
@@ -274,16 +298,47 @@ export default function UserNewEditForm({ currentDriver }) {
                 name="phone_number"
                 type="text"
                 label={t('phone_number')}
-                error={
-                  !values.phone_number ? false : !/^\d{10}$/.test(values.phone_number)
-                }
-                helperText={
-                  !values.phone_number
-                    ? null
-                    : !/^\d{10}$/.test(values.phone_number)
-                      ? t('phone_number_must_be_10_digits')
-                      : ''
-                }
+                error={(() => {
+                  if (!values.phone_number) return false;
+
+                  // Check if only numbers
+                  if (!/^[0-9]+$/.test(values.phone_number)) return true;
+
+                  // Check format and length based on prefix
+                  if (values.phone_number.startsWith('966')) {
+                    return values.phone_number.length !== 12;
+                  }
+
+                  if (values.phone_number.startsWith('05')) {
+                    return values.phone_number.length !== 10;
+                  }
+
+                  // Invalid prefix
+                  return true;
+                })()}
+                helperText={(() => {
+                  if (!values.phone_number) return null;
+
+                  // Check if only numbers
+                  if (!/^[0-9]+$/.test(values.phone_number)) {
+                    return t('only_numbers_allowed');
+                  }
+
+                  // Check format and length based on prefix
+                  if (values.phone_number.startsWith('966')) {
+                    if (values.phone_number.length !== 12) {
+                      return t('phone_number_must_be_12_digits_for_966');
+                    }
+                  } else if (values.phone_number.startsWith('05')) {
+                    if (values.phone_number.length !== 10) {
+                      return t('phone_number_must_be_10_digits_for_05');
+                    }
+                  } else {
+                    return t('please_enter_number_beginning_with_966_or_05');
+                  }
+
+                  return '';
+                })()}
               />
               <DatePicker
                 label={t('start_date')}

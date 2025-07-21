@@ -46,12 +46,12 @@ import { useGetSystemVisibleItem } from 'src/api/settings';
 
 export default function UserNewEditForm({ currentClient }) {
   const router = useRouter();
-  console.log(" LcurrentClient ",currentClient);
+  console.log(" LcurrentClient ", currentClient);
 
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslate();
   const { data } = useValues()
-  const {items : neighborhoods} = useGetSystemVisibleItem("neighborhood")
+  const { items: neighborhoods } = useGetSystemVisibleItem("neighborhood")
   const NewUserSchema = Yup.object().shape({
     name: Yup.string().required('Name is required'),
     commercial_registration_number: Yup.string()
@@ -107,7 +107,7 @@ export default function UserNewEditForm({ currentClient }) {
       setValue("neighborhood_id", currentClient?.neighborhood_id)
       setRepresentors(currentClient?.representors)
     }
-  }, [data,currentClient, setValue]);
+  }, [data, currentClient, setValue]);
 
   const [create, setCreate] = useState(true)
   const [rep_id, setRip_id] = useState(null)
@@ -187,10 +187,16 @@ export default function UserNewEditForm({ currentClient }) {
               <SimpleAutocomplete
                 name="neighborhood_id"
                 label={t('location')}
-                options={neighborhoods}
-                getOptionLabel={(option) => option?.translations[0]?.name}
+                options={useMemo(() => {
+                  const selected = data?.neighborhoods?.filter(i => i.system_settings?.is_selected) || [];
+                  const current = data?.neighborhoods?.find(i => i.id === currentClient?.neighborhood_id);
+                  const exists = selected.some(i => i.id === current?.id);
+                  return exists || !current ? selected : [...selected, current];
+                }, [data?.neighborhoods, currentClient?.neighborhood_id])}
+                getOptionLabel={(option) => option?.translations?.[0]?.name ?? ''}
                 placeholder={t('choose_neighborhood')}
               />
+
             </Box>
 
 

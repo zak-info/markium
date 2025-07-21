@@ -41,7 +41,7 @@ import { useGetSystemVisibleItem } from 'src/api/settings';
 
 // ----------------------------------------------------------------------
 
-export default function UserNewEditForm({ currentCar }) {
+export default function UserEditForm({ currentCar }) {
   const router = useRouter();
   const { car } = useGetCar()
   console.log("car : ", car);
@@ -57,41 +57,41 @@ export default function UserNewEditForm({ currentCar }) {
   const { t } = useTranslate();
 
   const NewUserSchema = Yup.object().shape({
-    production_year: Yup.number()
-      .required(t('production_year_required'))
-      .positive()
-      .integer(),
+    // production_year: Yup.number()
+    //   // .required(t('production_year_required'))
+    //   .positive()
+    //   .integer(),
 
-    plat_number: Yup.string()
-      .required(t('plat_number_required'))
-      .test(
-        'unique-plat',
-        t('plat_number_already_exists'),
-        function (value) {
-          return !car?.map(item => item?.plat_number)?.filter(item => item?.id != currentCar?.id)?.includes(value.trim());
-        }
-      ),
+    // plat_number: Yup.string()
+    //   // .required(t('plat_number_required'))
+    //   .test(
+    //     'unique-plat',
+    //     t('plat_number_already_exists'),
+    //     function (value) {
+    //       return !car?.map(item => item?.plat_number)?.filter(item => item?.id != currentCar?.id)?.includes(value.trim());
+    //     }
+    //   ),
 
-    chassis_number: Yup.string()
-      .length(17, t('chassis_number_length'))
-      .required(t('chassis_number_required'))
-      .test(
-        'chassis-number',
-        t('chassis_number_already_exists'),
-        function (value) {
-          return !car?.map(item => item?.chassis_number)?.filter(item => item?.chassis_number != currentCar?.chassis_number)?.includes(value.trim());
-        }
-      ),
+    // chassis_number: Yup.string()
+    //   .length(17, t('chassis_number_length'))
+    //   // .required(t('chassis_number_required'))
+    //   .test(
+    //     'chassis-number',
+    //     t('chassis_number_already_exists'),
+    //     function (value) {
+    //       return !car?.map(item => item?.chassis_number)?.filter(item => item?.chassis_number != currentCar?.chassis_number)?.includes(value.trim());
+    //     }
+    //   ),
 
-    vin: Yup.string()
-      .required(t('vin_required'))
-      .test(
-        'vin',
-        t('vin_already_exists'),
-        function (value) {
-          return !car?.map(item => item?.vin)?.filter(item => item?.vin != currentCar?.vin)?.includes(value.trim());
-        }
-      ),
+    // vin: Yup.string()
+    //   // .required(t('vin_required'))
+    //   .test(
+    //     'vin',
+    //     t('vin_already_exists'),
+    //     function (value) {
+    //       return !car?.map(item => item?.vin)?.filter(item => item?.vin != currentCar?.vin)?.includes(value.trim());
+    //     }
+    //   ),
 
     passengers_capacity: Yup.number()
       .required(t('passenger_capacity_required'))
@@ -99,16 +99,15 @@ export default function UserNewEditForm({ currentCar }) {
       .integer(t('passenger_capacity_must_be_integer'))
       .max(99, t('passenger_capacity_must_be_less_than_100')),
 
-
     odometer: Yup.number()
       .positive(t('odometer_must_be_positive'))
       .integer(t('odometer_must_be_integer')),
     // .required(t('odometer_required'))
 
-    car_model_id: Yup.string().required(t('car_model_required')),
+    // car_model_id: Yup.string().required(t('car_model_required')),
     color_id: Yup.string().required(t('color_required')),
     state_id: Yup.string().required(t('location_required')),
-    car_company_id: Yup.string().required(t('car_company_required')),
+    // car_company_id: Yup.string().required(t('car_company_required')),
     spec_id: Yup.string().required(t('specification_required')),
     license_type_id: Yup.string().required(t('license_type_required')),
   });
@@ -204,10 +203,10 @@ export default function UserNewEditForm({ currentCar }) {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      if (car?.map(item => item?.plat_number)?.includes(data?.plat_number.trim())) {
-        enqueueSnackbar(t('plat_number_already_used'), { variant: 'error' });
-        return;
-      }
+      // if (car?.map(item => item?.plat_number)?.includes(data?.plat_number.trim())) {
+      //   enqueueSnackbar(t('plat_number_already_used'), { variant: 'error' });
+      //   return;
+      // }
       const response = currentCar?.id ? await editCar(currentCar?.id, data) : await createCar(data);
       enqueueSnackbar(t('operation_success'));
 
@@ -264,7 +263,7 @@ export default function UserNewEditForm({ currentCar }) {
 
               <RHFTextField required name="plat_number" label={t('plateNumber')} error={validateUnicity(car.filter(item => item?.plat_number != currentCar?.plat_number), "plat_number", values?.plat_number)} helperText={validateUnicity(car, "plat_number", values?.plat_number) ? t('plat_number_already_exists') : null} disabled={currentCar?.id} />
 
-              <RHFTextField required name="chassis_number" label={t('structureNo')} error={validateUnicity(car, "chassis_number", values?.chassis_number) ? true :false} helperText={validateUnicity(car, "chassis_number", values?.chassis_number) ? t('chassis_number_already_exists') : null} disabled={currentCar?.id} />
+              <RHFTextField required name="chassis_number" label={t('structureNo')} error={validateUnicity(car.filter(item => item?.chassis_number != currentCar?.chassis_number), "chassis_number", values?.chassis_number)} helperText={validateUnicity(car, "chassis_number", values?.chassis_number) ? t('chassis_number_already_exists') : null} disabled={currentCar?.id} />
 
               <RHFTextField required name="vin" label={t('serialNumber')} error={validateUnicity(car.filter(item => item?.vin != currentCar?.vin), "vin", values?.vin)} helperText={validateUnicity(car, "vin", values?.vin) ? t('vin_already_exists') : null}  disabled={currentCar?.id}  />
               <RHFTextField
@@ -338,7 +337,7 @@ export default function UserNewEditForm({ currentCar }) {
   );
 }
 
-UserNewEditForm.propTypes = {
+UserEditForm.propTypes = {
   currentCar: PropTypes.object,
 };
 

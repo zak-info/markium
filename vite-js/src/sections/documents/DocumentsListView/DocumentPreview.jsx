@@ -7,7 +7,7 @@ import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import Iconify from 'src/components/iconify';
 import Image from 'src/components/image';
 import { useSettingsContext } from 'src/components/settings';
-import { STORAGE_API } from 'src/config-global';
+import { HOST_API, STORAGE_API } from 'src/config-global';
 import { paths } from 'src/routes/paths';
 import showError from 'src/utils/show_error';
 
@@ -16,16 +16,28 @@ const DocumentPreview = () => {
   const queryString = new URLSearchParams(window.location.search);
   const fileUrl = queryString.get('url');
 
+  console.log(" sdsdf : ",HOST_API+`/${fileUrl?.split("/")[1]}/${fileUrl?.split("/")[2]}`);
+  const handleDownload = (path) => {
+    const link = document.createElement("a");
+    const lien = HOST_API + path;
+    console.log(" HOST_API+imageUrl L", lien);
+    link.href = lien;
+    link.setAttribute("download", "downloaded-image");
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  };
+
   function downloadImage(imageUrl, filename = 'downloaded-image') {
     const link = document.createElement('a');
-    link.href = imageUrl;
+    link.href = HOST_API + imageUrl;
     link.download = filename;
     link.target = '_blank';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   }
-  
+
 
   const copyToClipboard = (url) => {
     const baseUrl = window.location.origin;
@@ -60,9 +72,20 @@ const DocumentPreview = () => {
       />
       <Stack width={"full"} display={"flex"} rowGap={2} columnGap={2} alignItems="flex-end" my={4}  >
         <Box rowGap={2} columnGap={2}>
-          <Button onClick={() => { downloadImage(STORAGE_API + fileUrl) }} variant="outlined" endIcon={<Iconify icon="solar:gallery-download-bold" width={24} />} sx={{ mx: "10px" }} >
-            {t("download")}
-          </Button>
+          <a
+            href={HOST_API+`/download/${fileUrl?.split("/")[2]}`}
+            target='_blank'
+            style={{ textDecoration: "none",color:"white" }}
+          >
+            <Button
+              variant="outlined"
+              endIcon={<Iconify icon="solar:gallery-download-bold" width={24} />}
+              sx={{ mx: "10px" }}
+            >
+              {t("download")}
+            </Button>
+          </a>
+
           <Button onClick={() => { copyToClipboard(paths.dashboard.documents.preview + `?url=${fileUrl}`) }} variant="outlined" endIcon={<Iconify icon="solar:copy-bold-duotone" width={24} />}>
             {t("copy_link")}
           </Button>

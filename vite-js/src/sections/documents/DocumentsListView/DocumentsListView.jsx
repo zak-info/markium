@@ -270,7 +270,7 @@ const ElementActions = ({ item, setTableData }) => {
                         {t('edit')}
                     </MenuItem>
                 </PermissionsContext>
-                <PermissionsContext action={'read.attachment'}>
+                {/* <PermissionsContext action={'read.attachment'}>
                     <MenuItem
                         onClick={() => {
                             router.push(paths.dashboard.documents.details(item?.id));
@@ -280,7 +280,7 @@ const ElementActions = ({ item, setTableData }) => {
                         <Iconify icon="solar:eye-bold" />
                         {t('overview')}
                     </MenuItem>
-                </PermissionsContext>
+                </PermissionsContext> */}
                 {
                     item?.attachment_path ?
                         <PermissionsContext action={'read.attachment'}>

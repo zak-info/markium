@@ -47,7 +47,7 @@ export default function InvoiceListPage() {
   const [data, setDate] = useState(formulateClaims(claims));
   useEffect(() => {
     setDate(formulateClaims(claims))
-  }, [claims])
+  }, [claims,clients,contracts])
 
   return (
     <>

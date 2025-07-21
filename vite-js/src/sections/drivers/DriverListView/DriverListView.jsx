@@ -67,7 +67,7 @@ export default function DriverListView({ }) {
         { id: 'gender', label: t('gender'), type: "text", width: 140 },
         { id: 'd_nationality', label: t('nationality'), type: "text", width: 100 },
         { id: 'd_state', label: t('state'), type: "text", width: 100 },
-        { id: 'attached_to', label: t('car'), type: "two-lines-link", first: (row) => { return row?.car_model || "--" }, second: (row) => { return row?.car?.plat_number }, link: (row) => { return paths.dashboard.vehicle.details(row?.car?.id) }, width: 140 },
+        { id: 'attached_to', label: t('car'), type: "two-lines-link", first: (row) => { return row?.car?.model?.translations?.name || "--" }, second: (row) => { return row?.car?.plat_number }, link: (row) => { return row?.car?.id ?  paths.dashboard.vehicle.details(row?.car?.id) : "#" }, width: 140 },
         // { id: 'c_driver', label: t('driver'), type: "long_text", length: 3, width: 200 },
         { id: 'status', label: t('status'), type: "label", width: 140 },
         { id: 'c_contract', label: t('contract'), type: "two-lines-link", first: (row) => { return row?.contract?.ref || "--"  }, second: (row) => { }, link: (row) => { return row?.contract?.id ?  paths.dashboard.clients.contractsDetails(row?.contract?.id) : "#" }, width: 180 },
@@ -83,11 +83,11 @@ export default function DriverListView({ }) {
                 ...item,
                 phonenumber: item?.phone_number != "N/A" ? "--" : item?.phone_number,
                 gender: item?.isMale == 1 ? t("male") : t("female"),
-                d_nationality: vData?.countries?.find(i => i.id == item?.nationality_id)?.translations[0]?.name,
-                d_state: vData?.states?.find(i => i.id == item?.state_id)?.translations[0]?.name,
+                d_nationality: item?.nationality?.translations?.name,
+                d_state: item?.state?.translations?.name,
                 status: item?.is_rented ? t("bussy") : t("available"),
                 color: item?.is_rented ? "warning" : "success",
-                car_model: carModels?.find(i => i.id == item?.car?.car_model_id)?.translations[0]?.name,
+                // car_model: vData?.car_companies?.flatMap(i => i.models)?.find(i => i.id == item?.car?.car_model_id)?.translations[0]?.name,
 
             };
         }) || [];

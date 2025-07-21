@@ -34,7 +34,7 @@ export default function UsersListView({ }) {
 
     let TABLE_HEAD = [
         { id: 'name', label: t('name'), type: "text", width: 140 },
-        { id: 'user_name', label: t('username'), type: "text", width: 180 },
+        { id: 'username', label: t('username'), type: "text", width: 180 },
         { id: 'email', label: t('email'), type: "text", width: 140 },
         { id: 'phone_number', label: t('phone_number'), type: "text", width: 140 },
         { id: 'status', label: t('status'), type: "label", width: 140 },
@@ -80,7 +80,6 @@ export default function UsersListView({ }) {
 
     // arrayToSentence(["apples", "bananas", "oranges"]);
     // Output: "apples, bananas, and oranges"
-
 
     const RformulateTable = (data) => {
         return data?.map(item => ({

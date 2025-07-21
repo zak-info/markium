@@ -253,6 +253,7 @@ export default function SystemItemListView({ collection }) {
     const [dataFiltered, setDataFiltered] = useState([]);
 
     const currentType = collection?.type;
+    console.log("currentType : ", currentType);
 
 
     const { items: gVisibleItems, itemsLoading } = useGetSystemVisibleItem(currentType);
@@ -288,10 +289,26 @@ export default function SystemItemListView({ collection }) {
     }
 
     // Memoized checkVisibility for performance
+    // const checkVisibility = useCallback(
+    //     (item) => {
+    //         // return visibleItems.some(i => (i?.id === item?.id || i?.key === item?.key));
+    //         if (currentType == "car_model") {
+
+    //             return visibleItems?.map(i => i.id)?.includes(item.id)
+    //         } else {
+    //             return item?.system_settings?.is_selected
+    //         }
+    //     },
+    //     [visibleItems]
+    // );
     const checkVisibility = useCallback(
         (item) => {
-            // return visibleItems.some(i => (i?.id === item?.id || i?.key === item?.key));
-            return item?.system_settings?.is_selected
+            if ( ["license_type","car_model"]?.includes(currentType) ) {
+                return visibleItems.some(i => (i?.id == item?.id || i?.key == item?.key));
+                // return visibleItems?.map(i => i.id)?.includes(item.id)
+            } else {
+                return item?.system_settings?.is_selected
+            }
         },
         [visibleItems]
     );
@@ -310,7 +327,7 @@ export default function SystemItemListView({ collection }) {
             ...item,
             component: <EnableDisableItem visibleItems={visibleItems} setVisibleItems={setVisibleItems} configurable_type={collection?.type} item={item} setTableData={setDataFiltered} data={dataFiltered} key={item.id || item.key} />
         }))?.reverse());
-    }, [data, currentKeyInValue, currentType, collection, visibleItems, checkVisibility]);
+    }, [visibleItems]);
 
     useEffect(() => {
         const tableItems = types[currentType]?.tableElements(data, currentKeyInValue)?.map(item => {
@@ -326,7 +343,7 @@ export default function SystemItemListView({ collection }) {
             ...item,
             component: <EnableDisableItem visibleItems={visibleItems} setVisibleItems={setVisibleItems} configurable_type={collection?.type} item={item} setTableData={setDataFiltered} data={dataFiltered} key={item.id || item.key} />
         }))?.reverse());
-    }, [data, currentType, currentKeyInValue, collection, visibleItems, checkVisibility]);
+    }, [visibleItems]);
 
     return (
         <>
@@ -390,22 +407,22 @@ const EnableDisableItem = ({ item, configurable_type, setTableData }) => {
         // if (item?.is_verified == 0) {
         //     enqueueSnackbar(t("item_not_verified"), { variant: 'error' });
         // } else {
-            setLoading(true);
-            const checked = event.target.checked;
-            // Optimistically update UI
-            updateVisibility(checked);
-            setIsChecked(checked);
-            try {
-                await changeItemVisibilityInSettings({ configurable_type, configurable_id: item.id, is_selected: checked, is_private: false });
-                enqueueSnackbar(t("operation_success"), { variant: 'success' });
-            } catch (error) {
-                // Rollback UI on error
-                updateVisibility(!checked);
-                setIsChecked(!checked);
-                enqueueSnackbar(t("operation_failed"), { variant: 'error' });
-            } finally {
-                setLoading(false);
-            }
+        setLoading(true);
+        const checked = event.target.checked;
+        // Optimistically update UI
+        updateVisibility(checked);
+        setIsChecked(checked);
+        try {
+            await changeItemVisibilityInSettings({ configurable_type, configurable_id: item.id, is_selected: checked, is_private: false });
+            enqueueSnackbar(t("operation_success"), { variant: 'success' });
+        } catch (error) {
+            // Rollback UI on error
+            updateVisibility(!checked);
+            setIsChecked(!checked);
+            enqueueSnackbar(t("operation_failed"), { variant: 'error' });
+        } finally {
+            setLoading(false);
+        }
         // }
     };
     return (
