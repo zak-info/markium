@@ -46,6 +46,7 @@ import { useTranslation } from 'react-i18next';
 import { useGetCar, useGetCarCostIput } from 'src/api/car';
 import { useLocales } from 'src/locales';
 import { useValues } from 'src/api/utils';
+import { useGetContracts } from 'src/api/contract';
 
 // ----------------------------------------------------------------------
 
@@ -83,9 +84,10 @@ export default function OrderListView() {
   const confirm = useBoolean();
   const {currentLang} = useLocales()
   const {cost_input} = useGetCarCostIput()
-  console.log("cost_input : ",cost_input);
   const {car} = useGetCar()
   const {data} = useValues()
+  const {contracts} = useGetContracts()
+  console.log("cost_input : ",cost_input);
   const [tableData, setTableData] = useState(cost_input);
   useEffect(()=>{
     setTableData(cost_input)
@@ -158,6 +160,13 @@ export default function OrderListView() {
   const handleViewRow = useCallback(
     (id) => {
       router.push(paths.dashboard.order.details(id));
+    },
+    [router]
+  );
+
+   const handleViewCar = useCallback(
+    (id) => {
+      router.push(paths.dashboard.vehicle.details(id));
     },
     [router]
   );
@@ -255,10 +264,12 @@ export default function OrderListView() {
                         row={row}
                         operation={data?.transaction_type_enum?.find(item => item?.key == row?.operation)?.translations[0]?.name}
                         currentLang={currentLang.value}
+                        contracts={contracts}
                         car={car?.find(item => item?.id == row?.car_id)}
                         selected={table.selected.includes(row.id)}
                         onSelectRow={() => table.onSelectRow(row.id)}
                         onDeleteRow={() => handleDeleteRow(row.id)}
+                        onViewCar={(id)=>handleViewCar(id)}
                         onViewRow={() => handleViewRow(row.id)}
                       />
                     ))}

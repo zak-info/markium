@@ -532,6 +532,7 @@
   "are_you_sure_want_to_activate": "هل أنت متأكد أنك تريد تفعيل هذا المستخدم؟",
   "home": "الصفحة الرئيسية",
   "current_password": "كلمة المرور الحالية",
+  "old_current_password": "تم استعمال كلمة المرور الحالية",
   "new_password": "كلمة المرور الجديدة",
   "confirm_password": "تأكيد كلمة المرور",
   "passwords_must_match": "يجب أن تتطابق كلمتا المرور",
@@ -717,5 +718,7 @@
   "this_number_is_already_in_use": "هذا الرقم مستخدم بالفعل",
   "please_enter_number_beginning_with_966_or_05": "يرجى إدخال رقم يبدأ بـ 966+ أو 05",
   "phone_number_must_be_12_digits_for_966": "رقم الهاتف يجب أن يكون 12 رقم عند البدء بـ 966",
-  "phone_number_must_be_10_digits_for_05": "رقم الهاتف يجب أن يكون 10 أرقام عند البدء بـ 05"
+  "phone_number_must_be_10_digits_for_05": "رقم الهاتف يجب أن يكون 10 أرقام عند البدء بـ 05",
+  "credit":"دائن",
+  "debit":"مدين"
 }

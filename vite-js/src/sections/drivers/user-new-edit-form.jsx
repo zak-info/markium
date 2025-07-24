@@ -107,7 +107,7 @@ export default function UserNewEditForm({ currentDriver }) {
       .required(t('gender_required'))
       .typeError(t('gender_must_be_boolean')),
     birth_date: Yup.date()
-      .required(t('birth_date_required'))
+      // .required(t('birth_date_required'))
       .typeError(t('birth_date_must_be_valid'))
   });
 
@@ -121,7 +121,7 @@ export default function UserNewEditForm({ currentDriver }) {
       start_date: currentDriver?.start_date || new Date(),
       state_id: currentDriver?.state?.id || null,
       isMale: currentDriver?.isMale == 0 ? false : true, // default to true if undefined
-      birth_date: currentDriver?.birth_date || null,
+      birth_date: currentDriver?.birth_date ? new Date(currentDriver?.birth_date) :  new Date(),
     }),
     [currentDriver]
   );

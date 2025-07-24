@@ -24,11 +24,12 @@ import { CloseClaim } from './CloseClaim';
 import { ViewClaim } from './ViewClaim';
 import { EditClaim } from './EditClaim';
 import { LoadingScreen } from 'src/components/loading-screen';
+import { deleteContractClaim, deleteContractClause } from 'src/api/contract';
 
 // ----------------------------------------------------------------------
 
 
-export default function ContractClaimsListView({ claimsLoading,data, with_contracts }) {
+export default function ContractClaimsListView({ claimsLoading, data, with_contracts }) {
     const [tableData, setTableData] = useState([]);
     const [dataFiltered, setDataFiltered] = useState([]);
 
@@ -174,6 +175,12 @@ const ElementActions = ({ item, setTableData }) => {
     const replace = useBoolean();
     const cancle = useBoolean();
     const router = useRouter();
+
+
+
+     const [postloader, setPostloader] = useState(false)
+
+
     const onViewRow = useCallback(
         (id) => {
             // router.push(paths.dashboard.user.edit(id));
@@ -182,8 +189,20 @@ const ElementActions = ({ item, setTableData }) => {
     );
     const onDeleteRow = useCallback(
         async (id) => {
-            console.log("hit here");
-            // await deleteContractClause(id);
+            setPostloader(true)
+            console.log("id : ", id);
+            try {
+                const res = await deleteContractClaim(id);
+                console.log("res : ", res);
+                setTableData(prev => prev?.filter(i => i.id != id))
+                enqueueSnackbar(t("operation_success"));
+                confirm.onFalse();
+                setPostloader(false)
+            } catch (error) {
+                console.log("error : ", error);
+                setPostloader(false)
+                showError(error)
+            }
         }
     );
     const onBanRow = useCallback(
@@ -291,7 +310,7 @@ const ElementActions = ({ item, setTableData }) => {
                 title={t("delete")}
                 content={t("are_you_sure_want_to_delete")}
                 action={
-                    <Button variant="contained" color="error" onClick={() => onDeleteRow(item?.id)}>
+                    <Button variant="contained"  loading={postloader} isSubmitting={postloader} color="error" onClick={() => onDeleteRow(item?.id)}>
                         {t("delete")}
                     </Button>
                 }

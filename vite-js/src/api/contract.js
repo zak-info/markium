@@ -87,3 +87,15 @@ export async function deleteContractClause(id) {
   const URL = endpoints.contracts.clause.root+"/"+id
   return await axios.post(URL);
 }
+
+
+export async function deleteContractClaim(id) {
+  const URL = endpoints.contracts.claims.root+"/"+id
+  return await axios.delete(URL);
+}
+
+
+export async function deleteContract(id) {
+  const URL = endpoints.contracts.list+"/"+id
+  return await axios.delete(URL);
+}

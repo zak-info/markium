@@ -88,14 +88,17 @@ export default function ChangePasswordView({ currentUser, onClose, selfAccount }
         formState: { isSubmitting, errors },
     } = methods;
 
-
-
+    const values = watch();
 
     const onPasswordSubmit = handleSubmit(async (data) => {
         try {
             const body = data;
             console.log("currentUser?.id : ", currentUser?.id);
             if (selfAccount) {
+                // if (data.new_password == data.current_password) {
+                //     enqueueSnackbar(t('old_current_password'), { variant: 'error' });
+                //     return;
+                // }
                 const res = await changeUserPassword({ old_password: data.current_password, new_password: data.new_password, new_password_confirmation: data?.confirm_password });
             } else {
                 const res = await changeUserPasswordByAdmin({ user_id: currentUser?.id, password: body?.new_password, password_confirmation: body?.confirm_password })
@@ -130,6 +133,7 @@ export default function ChangePasswordView({ currentUser, onClose, selfAccount }
                                         name="current_password"
                                         label={t('current_password')}
                                         type={password.value ? 'text' : 'password'}
+
                                         InputProps={{
                                             endAdornment: (
                                                 <InputAdornment position="end">
@@ -146,6 +150,16 @@ export default function ChangePasswordView({ currentUser, onClose, selfAccount }
                                 name="new_password"
                                 label={t('new_password')}
                                 type={password2.value ? 'text' : 'password'}
+                                error={
+                                    !values?.new_password ? false : values?.new_password == values?.current_password
+                                }
+                                helperText={
+                                    !values?.new_password
+                                        ? null
+                                        : values?.new_password == values?.current_password
+                                            ? t('old_current_password')
+                                            : ''
+                                }
                                 InputProps={{
                                     endAdornment: (
                                         <InputAdornment position="end">
@@ -156,10 +170,21 @@ export default function ChangePasswordView({ currentUser, onClose, selfAccount }
                                     ),
                                 }}
                             />
+
                             <RHFTextField
                                 name="confirm_password"
                                 label={t('confirm_password')}
                                 type={password3.value ? 'text' : 'password'}
+                                error={
+                                    !values?.confirm_password ? false : values?.new_password != values?.confirm_password
+                                }
+                                helperText={
+                                    !values?.confirm_password
+                                        ? null
+                                        : values?.new_password !== values?.confirm_password
+                                            ? t('passwords_must_match')
+                                            : ''
+                                }
                                 InputProps={{
                                     endAdornment: (
                                         <InputAdornment position="end">

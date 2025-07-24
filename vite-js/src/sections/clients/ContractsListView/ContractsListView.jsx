@@ -6,7 +6,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { AddCarToMentainance, deleteCar, markCarAsAvailable, useGetCar } from 'src/api/car';
 import { useGetClauses } from 'src/api/claim';
 import { useGetClients } from 'src/api/client';
-import { deleteContractClause, useGetContracts } from 'src/api/contract';
+import { deleteContract, deleteContractClause, useGetContracts } from 'src/api/contract';
 import { markMaintenanceAsCompeleted, useGetMaintenance } from 'src/api/maintainance';
 import { changeItemVisibilityInSettings, useGetMainSpecs } from 'src/api/settings'; // [keep for later use]
 import { createUser, deleteUser, useRoles, useUsers } from 'src/api/users';
@@ -49,6 +49,7 @@ import { LoadingScreen } from 'src/components/loading-screen';
 export default function ContractsListView({ }) {
 
     const { contracts, contractsLoading } = useGetContracts()
+    const {clients} = useGetClients()
     const payment_methodes = [{ name: "deferred", lable: { ar: "دفعات", en: "deferred" } }, { name: "cash", lable: { ar: "نقدا", en: "cash" } }]
     const { currentLang } = useLocales()
 
@@ -56,15 +57,17 @@ export default function ContractsListView({ }) {
     const [dataFiltered, setDataFiltered] = useState([]);
 
     let TABLE_HEAD = [
-        { id: 'name', label: t('name'), type: "two-lines-link", first: (row) => { return row?.name }, second: (row) => { }, link: (row) => { return paths.dashboard.drivers.details(row.id) }, width: 180 },
-        { id: 'phonenumber', label: t('phone_number'), type: "text", width: 100 },
-        { id: 'birth_date', label: t('birth_date'), type: "text", width: 140 },
-        { id: 'gender', label: t('gender'), type: "text", width: 140 },
-        { id: 'd_nationality', label: t('nationality'), type: "text", width: 100 },
-        { id: 'd_state', label: t('state'), type: "text", width: 100 },
-        { id: 'attached_to', label: t('car'), type: "two-lines-link", first: (row) => { return row?.car?.model?.translations[0]?.name || "--" }, second: (row) => { return row?.car?.plat_number }, link: (row) => { return paths.dashboard.vehicle.details(row?.car?.id) }, width: 140 },
+        { id: 'ref', label: t('ref'), type: "two-lines-link", first: (row) => { return row?.ref }, second: (row) => { }, link: (row) => { return paths.dashboard.clients?.contractsDetails(row.id) }, width: 180 },
+        { id: 'client', label: t('client'), type: "two-lines-link", first: (row) => { return row?.client?.name }, second: (row) => { }, link: (row) => { return paths.dashboard.clients?.details(row.client_id) }, width: 180 },
+        { id: 'contractDate', label: t('contractDate'), type: "text", width: 140 },
+        { id: 'c_payment_method', label: t('payment_method'), type: "text", width: 140 },
+        // { id: 'birth_date', label: t('birth_date'), type: "text", width: 140 },
+        // { id: 'gender', label: t('gender'), type: "text", width: 140 },
+        // { id: 'd_nationality', label: t('nationality'), type: "text", width: 100 },
+        // { id: 'd_state', label: t('state'), type: "text", width: 100 },
+        // { id: 'attached_to', label: t('car'), type: "two-lines-link", first: (row) => { return row?.car?.model?.translations[0]?.name || "--" }, second: (row) => { return row?.car?.plat_number }, link: (row) => { return paths.dashboard.vehicle.details(row?.car?.id) }, width: 140 },
         // { id: 'c_driver', label: t('driver'), type: "long_text", length: 3, width: 200 },
-        { id: 'status', label: t('status'), type: "label", width: 140 },
+        // { id: 'status', label: t('status'), type: "label", width: 140 },
         { id: 'actions', label: t('actions'), type: "threeDots", component: (item) => <ElementActions item={item} setTableData={setTableData} />, width: 200, align: "right" },
     ]
 
@@ -76,6 +79,9 @@ export default function ContractsListView({ }) {
                 ...item,
 
                 color: item?.is_rented ? "warning" : "success",
+                client : clients?.find( i => i.id == item?.client_id),
+                contractDate : fDate(item?.created_at,"yyyy-MM-dd"),
+                c_payment_method : t(item?.payment_method?.name),
 
             };
         }) || [];
@@ -85,11 +91,10 @@ export default function ContractsListView({ }) {
     const filters = [
         {
             key: 'name', label: t('name'), match: (item, value) =>
-                item?.name?.toLowerCase().includes(value?.toLowerCase()) ||
-                item?.phonenumber?.toLowerCase().includes(value?.toLowerCase()) ||
-                item?.gender?.toLowerCase().includes(value?.toLowerCase()) ||
-                item?.d_nationality?.toLowerCasesrc / sections / drivers / DriverListView().includes(value?.toLowerCase()) ||
-                item?.d_state?.toLowerCase().includes(value?.toLowerCase()),
+                item?.ref?.toLowerCase().includes(value?.toLowerCase()) ||
+                item?.contractDate?.toLowerCase().includes(value?.toLowerCase()) ||
+                item?.c_payment_method?.toLowerCase().includes(value?.toLowerCase()) ||
+                item?.client?.name?.toLowerCase().includes(value?.toLowerCase())
         },
     ];
 
@@ -99,8 +104,8 @@ export default function ContractsListView({ }) {
 
     const items = [
         { key: 'all', label: t('all'), match: () => true },
-        { key: 'available', label: t('available'), match: (item) => !item?.is_rented, color: 'success' },
-        { key: 'is_rented', label: t('rented'), match: (item) => item?.is_rented, color: 'warning' },
+        { key: 'cash', label: t('cash'), match: (item) => !item?.is_rented, color: 'success' },
+        { key: 'deferred', label: t('deferred'), match: (item) => item?.is_rented, color: 'warning' },
     ];
 
     const filterFunction = (data, filters) => {
@@ -115,30 +120,30 @@ export default function ContractsListView({ }) {
 
     useEffect(() => {
         setDataFiltered(RformulateTable(contracts));
-    }, [contracts]);
+    }, [contracts,clients]);
     useEffect(() => {
         setTableData(RformulateTable(contracts));
-    }, [contracts]);
+    }, [contracts,clients]);
 
     return (
         <>
             <ZaityHeadContainer
-                heading={t("driversList")}
+                heading={t("contractList")}
                 action={
-                    <PermissionsContext action={"create.driver"} >
+                    <PermissionsContext action={"create.contract"} >
                         <Button
                             component={RouterLink}
-                            href={paths.dashboard.drivers.new}
+                            href={paths.dashboard.clients.newContracts}
                             variant="contained"
                             startIcon={<Iconify icon="mingcute:add-line" />}
                         >
-                            {t("addNewDriver")}
+                            {t("addNewContract")}
                         </Button>
                     </PermissionsContext>
                 }
                 links={[
                     { name: t('dashboard'), href: paths.dashboard.root },
-                    { name: t("driversList"), href: paths.dashboard.drivers.root },
+                    { name: t("contractList"), href: paths.dashboard.contracts },
                     { name: t('list') },
                 ]}
             >
@@ -187,7 +192,7 @@ const ElementActions = ({ item, setTableData }) => {
         async (id) => {
             try {
                 loading.onTrue()
-                await deleteDriver(id);
+                await deleteContract(id);
                 setTableData(prev => prev?.filter(i => i.id != id))
                 enqueueSnackbar(t("operation_success"));
                 confirm.onFalse();
@@ -215,7 +220,7 @@ const ElementActions = ({ item, setTableData }) => {
                 arrow="right-top"
                 sx={{ width: 200 }}
             >
-                <PermissionsContext action={'delete.maintenance'}>
+                <PermissionsContext action={'delete.contract'}>
                     <MenuItem
                         onClick={() => {
                             confirm.onTrue();
@@ -227,7 +232,7 @@ const ElementActions = ({ item, setTableData }) => {
                         {t('delete')}
                     </MenuItem>
                 </PermissionsContext>
-                <PermissionsContext action={'update.maintenance'}>
+                {/* <PermissionsContext action={'update.maintenance'}>
                     <MenuItem
                         onClick={() => {
                             onEditRow(item?.id);
@@ -237,8 +242,8 @@ const ElementActions = ({ item, setTableData }) => {
                         <Iconify icon="solar:pen-bold" />
                         {t('edit')}
                     </MenuItem>
-                </PermissionsContext>
-                <PermissionsContext action={'read.maintenance'}>
+                </PermissionsContext> */}
+                {/* <PermissionsContext action={'read.maintenance'}>
                     <MenuItem
                         onClick={() => {
                             router.push(paths.dashboard.drivers.details(item?.id));
@@ -248,7 +253,7 @@ const ElementActions = ({ item, setTableData }) => {
                         <Iconify icon="solar:eye-bold" />
                         {t('overview')}
                     </MenuItem>
-                </PermissionsContext>
+                </PermissionsContext> */}
             </CustomPopover>
 
             <ConfirmDialog

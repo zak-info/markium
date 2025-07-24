@@ -168,7 +168,7 @@ const ElementActions = ({ item, setTableData }) => {
                 // }
                 setPostloader(false)
             } catch (error) {
-                console.log("error : ", error);
+                console.log("error res res  : ", error);
                 setPostloader(false)
                 showError(error)
             }

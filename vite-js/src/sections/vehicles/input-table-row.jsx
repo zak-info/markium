@@ -25,7 +25,7 @@ import CustomPopover, { usePopover } from 'src/components/custom-popover';
 
 // ----------------------------------------------------------------------
 
-export default function OrderTableRow({ row, operation , car,currentLang, selected, onViewRow, onSelectRow, onDeleteRow }) {
+export default function OrderTableRow({ row, contracts, operation, car, currentLang, selected, onViewRow, onSelectRow, onDeleteRow, onViewCar }) {
   const { items, status, orderNumber, createdAt, customer, totalQuantity, subTotal } = row;
 
   const confirm = useBoolean();
@@ -34,6 +34,24 @@ export default function OrderTableRow({ row, operation , car,currentLang, select
 
   const popover = usePopover();
 
+
+  const note = row[`note_${currentLang}`] ?? "";
+
+  const parsedNote = note.replace(/#(\w+)/g, (match, ref) => {
+    if (row?.operation === "debit") {
+      return `<a href="/dashboard/maintenance/${ref}" style="color: #00A76F; text-decoration: underline;">${ref}</a>`;
+    } else {
+      const contractId = contracts?.find(i => i.ref == ref)?.id;
+      if (contractId) {
+        return `<a href="/dashboard/clients/contracts/${contractId}" style="color: #00A76F; text-decoration: underline;">${ref}</a>`;
+      } else {
+        return `#${ref}`; // fallback if contract not found
+      }
+    }
+  });
+
+
+
   const renderPrimary = (
     <TableRow hover selected={selected}>
       <TableCell padding="checkbox">
@@ -41,16 +59,26 @@ export default function OrderTableRow({ row, operation , car,currentLang, select
       </TableCell>
 
       <TableCell>
-        <ListItemText
-          primary={car?.plat_number}
-          secondary={car?.model?.translations?.name + " " + car?.model?.company?.translations?.name}
-          primaryTypographyProps={{ typography: 'body2', noWrap: true }}
-          secondaryTypographyProps={{
-            mt: 0.5,
-            component: 'span',
-            typography: 'caption',
-          }}
-        />
+          <Box
+            onClick={() => onViewCar(car?.id)}
+            sx={{
+              cursor: 'pointer',
+              '&:hover': {
+                textDecoration: 'underline',
+              },
+            }}
+          >
+          <ListItemText
+            primary={car?.plat_number}
+            secondary={car?.model?.translations?.name + " " + car?.model?.company?.translations?.name}
+            primaryTypographyProps={{ typography: 'body2', noWrap: true }}
+            secondaryTypographyProps={{
+              mt: 0.5,
+              component: 'span',
+              typography: 'caption',
+            }}
+          />
+        </Box>
 
       </TableCell>
       <TableCell>
@@ -59,7 +87,7 @@ export default function OrderTableRow({ row, operation , car,currentLang, select
           variant="soft"
           color={
             (row?.operation === 'debit' && 'warning') ||
-            (row?.operation === 'income' && 'success') ||
+            (row?.operation === 'credit' && 'success') ||
             'default'
           }
         >
@@ -70,7 +98,8 @@ export default function OrderTableRow({ row, operation , car,currentLang, select
       <TableCell align="start"> {fDate(row?.created_at)} </TableCell>
       <TableCell align="start"> {row?.amount} </TableCell>
       <TableCell align="start">
-        <span dangerouslySetInnerHTML={{ __html: row["note_"+currentLang]?.replace(/#(\d+)/g, `<a href="/dashboard/${row?.operation == "debit" ? "maintenance":"clients/contracts"}/$1" style="color: #00A76F; text-decoration: underline;">#$1</a>`) }}></span>
+        {/* <span dangerouslySetInnerHTML={{ __html: row["note_" + currentLang]?.replace(/#(\d+)/g, `<a href="/dashboard/${row?.operation == "debit" ? "maintenance" : "clients/contracts"}/${row?.operation == "debit" ? "$1" : contracts?.find(i => i.ref == "$1")?.id}" style="color: #00A76F; text-decoration: underline;">#$1</a>`) }}></span> */}
+        <span dangerouslySetInnerHTML={{ __html: parsedNote }}></span>
       </TableCell>
 
       <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>

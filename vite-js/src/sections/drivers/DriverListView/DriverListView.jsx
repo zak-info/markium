@@ -82,7 +82,7 @@ export default function DriverListView({ }) {
             return {
                 ...item,
                 phonenumber: item?.phone_number != "N/A" ? "--" : item?.phone_number,
-                gender: item?.isMale == 1 ? t("male") : t("female"),
+                gender: item?.isMale  ? t("male") : t("female"),
                 d_nationality: item?.nationality?.translations?.name,
                 d_state: item?.state?.translations?.name,
                 status: item?.is_rented ? t("bussy") : t("available"),

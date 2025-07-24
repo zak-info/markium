@@ -173,6 +173,7 @@ export const paths = {
       alerts: `${ROOTS.DASHBOARD}/clients/alerts`,
       claims: `${ROOTS.DASHBOARD}/clients/claims`,
       contracts: `${ROOTS.DASHBOARD}/clients/contracts`,
+      newContracts: `${ROOTS.DASHBOARD}/clients/contracts/new`,
       editContracts:(id) => `${ROOTS.DASHBOARD}/clients/contracts/${id}/edit`,
       new: `${ROOTS.DASHBOARD}/clients/new`,
       edit:(id)=> `${ROOTS.DASHBOARD}/clients/${id}/edit`,

@@ -206,7 +206,7 @@ export default function OrderListView() {
           action={
             <Button
               component={RouterLink}
-              href={paths.dashboard.clients.contracts + "/new"}
+              href={paths.dashboard.clients.newContracts}
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
             >

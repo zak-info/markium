@@ -1,6 +1,7 @@
 import { Helmet } from 'react-helmet-async';
+import ContractsListView from 'src/sections/clients/ContractsListView/ContractsListView';
 
-import { ContractsListView } from 'src/sections/clients/view';
+// import { ContractsListView } from 'src/sections/clients/view';
 
 // ----------------------------------------------------------------------
 
