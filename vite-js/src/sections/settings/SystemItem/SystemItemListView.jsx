@@ -303,12 +303,12 @@ export default function SystemItemListView({ collection }) {
     // );
     const checkVisibility = useCallback(
         (item) => {
-            if ( ["license_type","car_model"]?.includes(currentType) ) {
-                return visibleItems.some(i => (i?.id == item?.id || i?.key == item?.key));
-                // return visibleItems?.map(i => i.id)?.includes(item.id)
-            } else {
+            // if ( ["license_type","car_model"]?.includes(currentType) ) {
+            //     return visibleItems.some(i => (i?.id == item?.id || i?.key == item?.key));
+            //     // return visibleItems?.map(i => i.id)?.includes(item.id)
+            // } else {
                 return item?.system_settings?.is_selected
-            }
+            // }
         },
         [visibleItems]
     );

@@ -41,6 +41,8 @@ import { TableHeadCustom } from 'src/components/table';
 import { set } from 'lodash';
 import showError from 'src/utils/show_error';
 import { useGetSystemVisibleItem } from 'src/api/settings';
+import { fDate } from 'src/utils/format-time';
+import RepSelfEditTable from './RepSelfEditTable';
 
 // ----------------------------------------------------------------------
 
@@ -141,7 +143,20 @@ export default function UserNewEditForm({ currentClient }) {
     try {
       // await new Promise((resolve) => setTimeout(resolve, 500));
       // reset();
-      const response = currentClient?.id ? await editClient(currentClient?.id, { ...data, representors }) : await createClient({ ...data, representors });
+
+      let body = {
+        name: data?.name,
+        commercial_registration_number: data?.commercial_registration_number,
+        neighborhood_id: data?.neighborhood_id,
+        tax_number: data?.tax_number,
+        representors: representors?.map(i => ({
+          name: i?.name,
+          contact_number: i?.contact_number,
+        }))
+
+      }
+      const response = currentClient?.id ? await editClient(currentClient?.id, body) : await createClient(body);
+      console.log("body} : ", body);
       enqueueSnackbar(t("operation_success"));
       router.push(paths.dashboard.clients.root);
     } catch (error) {
@@ -200,11 +215,11 @@ export default function UserNewEditForm({ currentClient }) {
             </Box>
 
 
-            <div style={{ marginTop: '30px', border: "1px solid gray", padding: "15px", borderRadius: '10px' }}>
-              <Label > {t("add_representor")}</Label>
+            <Box sx={{ marginTop: '30px', border: "1px solid gray", padding: "15px", borderRadius: '10px' }}>
+              {/* <Label > {t("add_representor")}</Label> */}
 
 
-              {representors?.map((row, index) => (
+              {/* {representors?.map((row, index) => (
                 <Box key={index} rowGap={3} columnGap={3} alignItems={"center"} display="grid" gridTemplateColumns={{ xs: 'repeat(3, 1fr)', sm: 'repeat(3, 1fr)', }} sx={{ marginTop: "10px" }}>
                   <Label >{row?.name}</Label>
                   <Label >{row?.contact_number}</Label>
@@ -213,7 +228,31 @@ export default function UserNewEditForm({ currentClient }) {
                     <Iconify onClick={() => handleUpdateRepresentor(row)} icon="fa:pencil-square-o" />
                   </div>
                 </Box>
-              ))}
+              ))} */}
+
+
+              <Grid xs={12} md={12}>
+                <RepSelfEditTable
+                  sx={{ marginTop: "10px" }}
+                  title={t('representors')}
+                  // parentId={contract?.id}
+                  // tableData={clauses?.map(item=> ({...item,clauseableType:attachables?.find(i => i?.name == item?.clauseable_type)?.lable[currentLang?.value],total:Number(item?.cost) * Number(item?.duration),startingFrom:fDate(item?.starting_from),clauseable:clauseable_type == "car" ? car?.find(i => i?.id == item?.clauseable_id)?.model?.translations?.name+" "+car?.find(i => i?.id == item?.clauseable_id)?.plat_number:drivers?.find(i => i?.id == item?.clauseable_id)?.name})})) }
+                  tableData={representors}
+                  setTableData={setRepresentors}
+                  tableLabels={[
+                    // { id: "clauseableType", key_to_update: "clauseable_type", label: t("clause_type"), editable: false, creatable: true, type: "select", options: attachables?.map((item) => ({ value: item?.name, lable: item?.lable[currentLang.value] })), width: 160 },
+                    // { id: "clauseable", key_to_update: "clauseable_id", label: t("clause"), editable: false, creatable: true, type: "car_autocomplete", options: car, width: 240 },
+                    { id: "name", key_to_update: "name", label: t("name"), editable: true, creatable: true, type: "text", width: 160 },
+                    { id: "contact_number", key_to_update: "contact_number", label: t("phone_number"), editable: true, creatable: true, type: "text", width: 160 },
+                    // { id: "duration", key_to_update: "duration", label: t("duration"), editable: true, creatable: true, type: "number", width: 120 },
+                    // { id: "total", key_to_update: "total", label: t("total"), editable: false, creatable: false, type: "number", width: 160 },
+                    // { id: "start_date", key_to_update: "start_date", label: t("start_date"), editable: true, creatable: true, type: "date", width: 180 },
+                    // { id: "end_date", key_to_update: "end_date", label: t("end_date"), editable: true, creatable: true, type: "date", width: 180 },
+                  ]}
+                />
+              </Grid>
+
+
               <Box
                 rowGap={3}
                 columnGap={2}
@@ -225,7 +264,53 @@ export default function UserNewEditForm({ currentClient }) {
                 sx={{ marginTop: "30px" }}
               >
                 <RHFTextField name="rep_name" label={t('representor_name')} />
-                <RHFTextField name="rep_contact_number" label={t('representor_contact_number')} />
+                {/* <RHFTextField name="rep_contact_number" label={t('representor_contact_number')} /> */}
+                <RHFTextField
+                  name="rep_contact_number"
+                  type="text"
+                  label={t('representor_contact_number')}
+                  error={(() => {
+                    if (!values.rep_contact_number) return false;
+
+                    // Check if only numbers
+                    if (!/^[0-9]+$/.test(values.rep_contact_number)) return true;
+
+                    // Check format and length based on prefix
+                    if (values.rep_contact_number.startsWith('966')) {
+                      return values.rep_contact_number.length !== 12;
+                    }
+
+                    if (values.rep_contact_number.startsWith('05')) {
+                      return values.rep_contact_number.length !== 10;
+                    }
+
+                    // Invalid prefix
+                    return true;
+                  })()}
+                  helperText={(() => {
+                    if (!values.rep_contact_number) return null;
+
+                    // Check if only numbers
+                    if (!/^[0-9]+$/.test(values.rep_contact_number)) {
+                      return t('only_numbers_allowed');
+                    }
+
+                    // Check format and length based on prefix
+                    if (values.rep_contact_number.startsWith('966')) {
+                      if (values.rep_contact_number.length !== 12) {
+                        return t('phone_number_must_be_12_digits_for_966');
+                      }
+                    } else if (values.rep_contact_number.startsWith('05')) {
+                      if (values.rep_contact_number.length !== 10) {
+                        return t('phone_number_must_be_10_digits_for_05');
+                      }
+                    } else {
+                      return t('please_enter_number_beginning_with_966_or_05');
+                    }
+
+                    return '';
+                  })()}
+                />
                 {/* <button type="button" variant="contained">
                   {!currentClient ? t('add representor') : 'Save Changes'}
                 </button> */}
@@ -234,7 +319,7 @@ export default function UserNewEditForm({ currentClient }) {
                 </LoadingButton>
               </Box>
 
-            </div>
+            </Box>
 
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>

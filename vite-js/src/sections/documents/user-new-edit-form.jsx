@@ -59,7 +59,7 @@ export default function UserNewEditForm({ currentDocument }) {
     { name: "car", label: { ar: "سيارة", en: "car" }, id: 1 },
     { name: "driver", label: { ar: "سائق", en: "driver" }, id: 2 },
     { name: "client", label: { ar: "عميل", en: "client" }, id: 3 },
-    { name: "other", label: { ar: "اخرى", en: "other" }, id: 4 }
+    // { name: "other", label: { ar: "اخرى", en: "other" }, id: 4 }
   ]
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslate();

@@ -153,7 +153,7 @@ export async function createRole(body) {
 }
 
 export async function deleteRole(id) {
-    const URL = endpoints.users?.roles + '/' + id;
+    const URL = endpoints.users?.deleteRole(id);
   
     return await axios.delete(URL);
   }

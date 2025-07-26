@@ -141,6 +141,7 @@ export const endpoints = {
     root: '/auth/registerCompanyEmployeer',
     users: '/users',
     roles: '/roles',
+    deleteRole: (id) => `/roles/${id}/delete`,
     banUser : (id)=> `users/${id}/ban`,
     activateUser : (id)=> `users/${id}/activate`,
     permissions: '/permissions',

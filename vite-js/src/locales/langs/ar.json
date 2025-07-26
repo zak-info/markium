@@ -657,6 +657,7 @@
   "item_not_verified": "لم يتم تفعيل هذا العنصر من طرف مدير النظام",
   "verified": "مصادق عليه",
   "attachment_name_id_required": "اسم المستند مطلوب",
+  "attachment_type_required": "نوع المستند مطلوب",
   "attachable_id_required": "المرفق مطلوب",
   "attachable_type_required": "المرفق مطلوب",
   "expiry_date_required": "تاريخ الانتهاء مطلوب",

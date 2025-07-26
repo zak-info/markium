@@ -160,7 +160,7 @@ function AppNewInvoiceRow({ row, tableLabels, editing, handleEdit, handleChange,
 
   const handleDelete = () => {
     setTableData(prev => prev?.filter(item =>
-      !(item?.clauseable_type === row?.clauseable_type && item?.clauseable_id === row?.clauseable_id)
+      row?.name != item?.name
     ));
     console.log("deleted");
 

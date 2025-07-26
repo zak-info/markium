@@ -12,6 +12,7 @@ import ZaityDynamicForm from 'src/sections/ZaityTables/zaity-new-edit-form';
 import { useValues } from 'src/api/utils';
 import { createItemInSettings } from 'src/api/settings';
 import { label } from 'yet-another-react-lightbox';
+import showError from 'src/utils/show_error';
 
 // ----------------------------------------------------------------------
 const SystemItemCreateView = ({ collection }) => {
@@ -105,18 +106,18 @@ const SystemItemCreateView = ({ collection }) => {
                 name_ar: data.name,
                 object_type: data.object_type,
                 attachable: data.attachable,
-                is_private: "1",
+                is_private: 1,
             }),
             schema: Yup.object().shape({
-                name: Yup.string().required(),
-                object_type: Yup.string().required(),
-                attachable: Yup.string().required(),
+                name: Yup.string().required(t("attachment_name_id_required")),
+                object_type: Yup.string().required(t("attachment_type_required")),
+                // attachable: Yup.number().required(t("attachable_id_required")),
             }),
             fields: (t) => [
                 { name: 'name', label: t('attachment_name'), type: 'text', required: true },
                 // { name: 'object_type', label: t('type'), type: 'select',data:[{ value: "card", label:  "كرت", id: 1 }, { value: "form", label: "استمارة", id: 2 }], required: true },
-                { name: 'object_type', label: t('type'), type: 'select', data: data?.attachment_types?.map(i => ({ value: i.key, label: i.translations[0]?.name })), required: true },
-                { name: 'attachable', label: t('attachable'), type: 'select', data: [{ value: "car", label: "سيارة", id: 1 }, { value: "driver", label: "سائق", id: 2 }, { value: "client", label: "عميل", id: 3 }, { value: "other", label: "اخرى", id: 4 }], required: true },
+                // { name: 'object_type', label: t('type'), type: 'select', data: data?.attachment_types?.map(i => ({ value: i.key, label: i.translations[0]?.name })), required: true },
+                { name: 'object_type', label: t('attachable'), type: 'select', data: [{ value: "car", label: "سيارة" }, { value: "driver", label: "سائق" }, { value: "client", label: "عميل"}], required: true },
 
             ],
         },
@@ -299,12 +300,17 @@ const SystemItemCreateView = ({ collection }) => {
     const currentSystemItem = types[currentType];
 
     const handleSubmitCreate = async (formData, runBeforePush) => {
-        const body = { ...currentSystemItem.getAndSend(formData), type: collection?.type };
-        console.log("to send:", body);
-        const response = await createItemInSettings(body);
-        if (response) {
-            if (runBeforePush) runBeforePush(); // In case you later use runBeforePush
-            router.push(currentSystemItem.homeHref);
+        try{
+            const body = { ...currentSystemItem.getAndSend(formData), type: collection?.type  };
+            console.log("to send:", body);
+            const response = await createItemInSettings(body);
+            if (response) {
+                if (runBeforePush) runBeforePush(); // In case you later use runBeforePush
+                router.push(currentSystemItem.homeHref);
+            }
+        }catch(error){
+            console.log("error : ",error);
+            showError(error)
         }
     };
 

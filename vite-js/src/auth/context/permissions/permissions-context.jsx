@@ -8,12 +8,12 @@ const PermissionsContext = ({ children, action, isList, mustAll }) => {
     return (
         <>
 
-            {
-                children
-            }
-
-
             {/* {
+                children
+            } */}
+
+
+            {
                 !action ||
                     (Array.isArray(action)
                         ? action.some(a => actions?.includes(a))
@@ -21,7 +21,7 @@ const PermissionsContext = ({ children, action, isList, mustAll }) => {
                     ?
                     children
                     : null
-            } */}
+            }
 
         </>
     )

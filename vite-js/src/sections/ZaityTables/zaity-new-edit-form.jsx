@@ -13,6 +13,7 @@ import SimpleAutocomplete from 'src/components/hook-form/rhf-simple-autocomplete
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import RHFTextarea from 'src/components/hook-form/RHFTextarea';
 import { renderActionsCell } from '@mui/x-data-grid';
+import showError from 'src/utils/show_error';
 
 export default function ZaityDynamicForm({ currentItem = {}, schema, fields, onSubmit }) {
   const methods = useForm({
@@ -39,9 +40,7 @@ export default function ZaityDynamicForm({ currentItem = {}, schema, fields, onS
       reset();
     } catch (error) {
       console.error(error);
-      Object.values(error?.data || {}).forEach((array) => {
-        array.forEach((text) => enqueueSnackbar(text, { variant: 'error' }));
-      });
+      showError(error)
     }
   });
 
