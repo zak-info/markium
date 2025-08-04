@@ -73,7 +73,7 @@ export default function OrderListView() {
     // { id: 'theRest', label: t('phone'), width: 140 },
     { id: 'crn', label: t('c_r_n'), width: 140 },
 
-    { id: '', width: 88 },
+    { id: '', width: 88 ,align:"right"},
   ];
 
   const table = useTable({ defaultOrderBy: 'tax' });
@@ -263,12 +263,12 @@ export default function OrderListView() {
                       rowCount={dataFiltered.length}
                       numSelected={table.selected.length}
                       onSort={table.onSort}
-                      onSelectAllRows={(checked) =>
-                        table.onSelectAllRows(
-                          checked,
-                          dataFiltered.map((row) => row.id)
-                        )
-                      }
+                      // onSelectAllRows={(checked) =>
+                      //   table.onSelectAllRows(
+                      //     checked,
+                      //     dataFiltered.map((row) => row.id)
+                      //   )
+                      // }
                     />
 
                     <TableBody>

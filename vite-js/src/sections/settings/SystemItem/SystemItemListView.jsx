@@ -249,6 +249,8 @@ const types = {
 export default function SystemItemListView({ collection }) {
     const { data } = useValues();
 
+
+
     const [tableData, setTableData] = useState([]);
     const [dataFiltered, setDataFiltered] = useState([]);
 
@@ -327,7 +329,7 @@ export default function SystemItemListView({ collection }) {
             ...item,
             component: <EnableDisableItem visibleItems={visibleItems} setVisibleItems={setVisibleItems} configurable_type={collection?.type} item={item} setTableData={setDataFiltered} data={dataFiltered} key={item.id || item.key} />
         }))?.reverse());
-    }, [visibleItems]);
+    }, [visibleItems,data]);
 
     useEffect(() => {
         const tableItems = types[currentType]?.tableElements(data, currentKeyInValue)?.map(item => {
@@ -343,7 +345,7 @@ export default function SystemItemListView({ collection }) {
             ...item,
             component: <EnableDisableItem visibleItems={visibleItems} setVisibleItems={setVisibleItems} configurable_type={collection?.type} item={item} setTableData={setDataFiltered} data={dataFiltered} key={item.id || item.key} />
         }))?.reverse());
-    }, [visibleItems]);
+    }, [visibleItems,data]);
 
     return (
         <>

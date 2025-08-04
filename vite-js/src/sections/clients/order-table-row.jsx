@@ -38,9 +38,9 @@ export default function OrderTableRow({ row, location, selected, onViewRow, onSe
 
   const renderPrimary = (
     <TableRow hover selected={selected}>
-      <TableCell padding="checkbox">
+      {/* <TableCell padding="checkbox">
         <Checkbox checked={selected} onClick={onSelectRow} />
-      </TableCell>
+      </TableCell> */}
 
       <TableCell>
         <Box
@@ -59,7 +59,7 @@ export default function OrderTableRow({ row, location, selected, onViewRow, onSe
       <TableCell>{location}</TableCell>
       <TableCell>{row?.tax_number}</TableCell>
       <TableCell>{row?.commercial_registration_number}</TableCell>
-      <TableCell align="start" sx={{ px: 1, whiteSpace: 'nowrap' }}>
+      <TableCell align="end" sx={{ px: 1, whiteSpace: 'nowrap' , display:'flex' , justifyContent:"end" }}>
         {/* <IconButton
           color={collapse.value ? 'inherit' : 'default'}
           onClick={collapse.onToggle}
@@ -72,7 +72,7 @@ export default function OrderTableRow({ row, location, selected, onViewRow, onSe
           <Iconify icon="eva:arrow-ios-downward-fill" />
         </IconButton> */}
 
-        <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
+        <IconButton color={popover.open ? 'inherit' : 'default'}  onClick={popover.onOpen}>
           <Iconify icon="eva:more-vertical-fill" />
         </IconButton>
       </TableCell>
