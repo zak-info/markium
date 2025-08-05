@@ -137,6 +137,12 @@ function renderCell(head_row, row, popover, router) {
           {row?.component}
         </TableCell>
       );
+    case 'render':
+      return (
+        <TableCell align="center" >
+          {head_row?.render(row)}
+        </TableCell>
+      );
 
     default:
       return row?.[head_row?.id] ?? '--';

@@ -35,6 +35,7 @@ import CarLogsListView from '../CarLogsTable/NotificationsListView';
 import CarPmListView from '../CarPmTable/NotificationsListView';
 import CarCostInputTable from '../CarCost&InputTable/NotificationsListView';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import CostListView from '../CarCost&InputTable/CostListView';
 
 // ----------------------------------------------------------------------
 
@@ -198,7 +199,7 @@ export default function OrderDetailsView({ id }) {
                         <CarPmListView id={id} />
                       </Grid>
                       : section == 4 ?
-                        <CarCostInputTable id={id} />
+                        <CostListView id={id} />
                         :
                         null
             }

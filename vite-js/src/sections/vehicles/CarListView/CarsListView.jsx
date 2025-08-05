@@ -122,10 +122,10 @@ export default function CarsListView({ }) {
 
     useEffect(() => {
         setDataFiltered(RformulateTable(car));
-    }, [car]);
+    }, [car,clients,contracts]);
     useEffect(() => {
         setTableData(RformulateTable(car));
-    }, [car]);
+    }, [car,clients,contracts]);
 
     return (
         <>
