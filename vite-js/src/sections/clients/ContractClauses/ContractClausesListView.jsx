@@ -24,7 +24,7 @@ import ZaityTableTabs from 'src/sections/ZaityTables/ZaityTableTabs'; // [keep f
 // ----------------------------------------------------------------------
 
 
-export default function ContractClausesListView({ data }) {
+export default function ContractClausesListView({ data , contract }) {
     // const { users } = useUsers();
     // const users = [
     //     { id: 1, name: "zaki", username: "zak-info", email: "zaki@gmail.com", phone_number: "075912431", role: "super admin" }
@@ -91,7 +91,7 @@ export default function ContractClausesListView({ data }) {
 
     return (
         <>
-            <AddClause contract_id={data?.length >0 ? data[0]?.contract_id : 0} setTableData={setDataFiltered} />
+            <AddClause contract={contract} contract_id={data?.length >0 ? data[0]?.contract_id : 0} setTableData={setDataFiltered} />
             <Card>
                 <ZaityTableTabs data={tableData} items={items} defaultFilters={{ gstatus: 'all' }} setTableDate={setDataFiltered} filterFunction={filterFunction}>
                     <ZaityListView TABLE_HEAD={[...TABLE_HEAD]} dense="medium" zaityTableDate={dataFiltered || []} onSelectedRows={({ data, setTableData }) => { return <onSelectedRowsComponent configurable_type={"roles"} setTableData={setTableData} data={data} /> }} />

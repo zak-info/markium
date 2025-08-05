@@ -156,9 +156,9 @@ export default function AddClauseForm({ setTableData, item, id, currentClause, c
             </RHFSelect>
             {
               values.clauseable_type == "car" ?
-                <CarsAutocomplete options={car} name="clauseable_id" label={t('car')} placeholder='filter with plat_number' />
+                <CarsAutocomplete options={car} name="clauseable_id" label={t('car')} placeholder={t("search_by")} />
                 : values.clauseable_type == "driver" ?
-                  <SimpleAutocomplete options={drivers} name="clauseable_id" label={t('drivers')} placeholder='filter with name' />
+                  <SimpleAutocomplete options={drivers} name="clauseable_id" label={t('drivers')} placeholder={t("search_by")} />
                   :
                   <RHFSelect disabled={!values.clauseable_type} name="clauseable_id" label={t('clause')}>
                     <Divider sx={{ borderStyle: 'dashed' }} />

@@ -5,8 +5,9 @@ import ContentDialog from 'src/components/custom-dialog/content-dialog'
 import Iconify from 'src/components/iconify'
 import { useBoolean } from 'src/hooks/use-boolean'
 import AddClauseForm from './AddClauseForm'
+import { fDate } from 'src/utils/format-time'
 
-const AddClause = ({contract_id,setTableData}) => {
+const AddClause = ({contract_id,setTableData , contract}) => {
     const confirm = useBoolean();
     return (
         <>
@@ -26,9 +27,10 @@ const AddClause = ({contract_id,setTableData}) => {
                 open={confirm.value}
                 onClose={confirm.onFalse}
                 title={t("addClause")}
+                description={t("must_be_within_period")+" : "+fDate(contract?.periods[0]?.start_date , "dd-MM-yyyy")+" - "+fDate(contract?.periods[0]?.end_date, "dd-MM-yyyy")}
                 content={
                     <>
-                        <AddClauseForm setTableData={setTableData} item={{}} id={contract_id} close={() => { confirm.onFalse() }} />
+                        <AddClauseForm contract={contract} setTableData={setTableData} item={{}} id={contract_id} close={() => { confirm.onFalse() }} />
                     </>
                 }
             />

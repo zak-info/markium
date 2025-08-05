@@ -115,7 +115,7 @@ export const endpoints = {
     cancleClause: (id) => `/contract/clauses/${id}/cancel`,
     allclaims: `/contract/claims/all`,
     logs: "/contract/claims/logs",
-    claims:{
+    allClaims:{
       root:"/contract/claims"
     },
     clause:{

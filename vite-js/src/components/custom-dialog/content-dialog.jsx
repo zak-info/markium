@@ -6,15 +6,17 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import { useTranslate } from 'src/locales';
+import { Typography } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
-export default function ContentDialog({ title,maxWidth="xs", content, action, open, onClose, ...other }) {
+export default function ContentDialog({ title , description ,maxWidth="xs", content, action, open, onClose, ...other }) {
   const { t } = useTranslate();
 
   return (
     <Dialog fullWidth maxWidth={maxWidth} open={open} onClose={onClose} {...other} sx={{ overflow: 'hidden'}} >
-      <DialogTitle sx={{ pb: 2 }}>{title}</DialogTitle>
+      <DialogTitle sx={{ pb: description ? 0 :2 }}>{title}</DialogTitle>
+      { description ?  <DialogTitle sx={{ pb:2 }}><Typography sx={{fontSize:"0.8rem" }}>{description}</Typography> </DialogTitle>: null }
 
       {content && 
       <DialogContent sx={{ typography: 'body2', pb: 2 }}>

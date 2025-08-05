@@ -717,6 +717,6 @@
     "this_number_is_already_in_use": "This number is already in use",
     "please_enter_number_beginning_with_966_or_05": "Please enter a number beginning with +966 or 05",
     "phone_number_must_be_12_digits_for_966": "Phone number must be 12 digits when starting with 966",
-    "phone_number_must_be_10_digits_for_05": "Phone number must be 10 digits when starting with 05"
-  
+    "phone_number_must_be_10_digits_for_05": "Phone number must be 10 digits when starting with 05",
+    "must_be_within_period": "must be within contract period"
 }

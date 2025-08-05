@@ -394,10 +394,8 @@ export default function ProfileHome({ info, posts, contract, client, location })
           </>
           :
           section === 0 ?
-
             <Grid xs={12} md={12}>
-
-              <ContractClausesListView data={clausesTableData} />
+              <ContractClausesListView contract={contract} data={clausesTableData} />
             </Grid>
             : section === 1 ?
               <Grid display={"flex"} flexDirection={"column"} rowGap={4} xs={12} md={12}>

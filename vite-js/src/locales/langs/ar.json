@@ -721,5 +721,6 @@
   "phone_number_must_be_12_digits_for_966": "رقم الهاتف يجب أن يكون 12 رقم عند البدء بـ 966",
   "phone_number_must_be_10_digits_for_05": "رقم الهاتف يجب أن يكون 10 أرقام عند البدء بـ 05",
   "credit":"دائن",
-  "debit":"مدين"
+  "debit":"مدين",
+  "must_be_within_period":"يجب ان يكون ظمن فترة العقد"
 }
