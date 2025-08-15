@@ -25,6 +25,7 @@ import { ViewClaim } from './ViewClaim';
 import { EditClaim } from './EditClaim';
 import { LoadingScreen } from 'src/components/loading-screen';
 import { deleteContractClaim, deleteContractClause } from 'src/api/contract';
+import showError from 'src/utils/show_error';
 
 // ----------------------------------------------------------------------
 

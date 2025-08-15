@@ -34,7 +34,7 @@ export function useGetMainSpecs() {
 }
 export function useGetMainSpec(id) {
     const { data, isLoading, error, isValidating, mutate } = useSWR(
-        endpoints.settings?.mainspecs+"/"+id,
+        endpoints.settings?.mainspecs + "/" + id,
         fetcher,
         options
     );
@@ -105,7 +105,7 @@ export function useRoles() {
 
 export function useShowUser(id) {
     const { data, isLoading, error, isValidating, mutate } = useSWR(
-        endpoints.users.users+"/"+id,
+        endpoints.users.users + "/" + id,
         fetcher,
         options
     );
@@ -126,7 +126,7 @@ export function useShowUser(id) {
 }
 export function useShowRole(id) {
     const { data, isLoading, error, isValidating, mutate } = useSWR(
-        endpoints.users.roles+"/"+id,
+        endpoints.users.roles + "/" + id,
         fetcher,
         options
     );
@@ -152,11 +152,15 @@ export async function createRole(body) {
     return await axios.post(URL, body);
 }
 
-export async function deleteRole(id) {
+export async function deleteRole(id, body) {
     const URL = endpoints.users?.deleteRole(id);
-  
+    return await axios.delete(URL, body);
+}
+export async function deleteEmptyRole(id) {
+    const URL = endpoints.users?.roles+"/"+id;
+
     return await axios.delete(URL);
-  }
+}
 
 
 export async function createUser(body) {
@@ -164,7 +168,7 @@ export async function createUser(body) {
     return await axios.post(URL, body);
 }
 export async function deleteUser(id) {
-    const URL = endpoints.users.users+"/"+id;
+    const URL = endpoints.users.users + "/" + id;
     return await axios.delete(URL);
 }
 
@@ -177,8 +181,8 @@ export async function activateUser(id) {
     return await axios.post(URL);
 }
 
-export async function updateUser(id,body) {
-    const URL = endpoints.users.users+"/"+id;
+export async function updateUser(id, body) {
+    const URL = endpoints.users.users + "/" + id;
     return await axios.put(URL, body);
 }
 
@@ -239,8 +243,8 @@ export function useUserPermissions() {
 export async function editRole(id, body) {
     const URL = endpoints.users.roles + '/' + id;
     // const URL = endpoints.cars.list + '/' + id;
-  
+
     return await axios.put(URL, body);
-  }
+}
 
 

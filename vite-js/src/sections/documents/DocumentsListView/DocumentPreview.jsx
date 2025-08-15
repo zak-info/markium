@@ -1,8 +1,9 @@
-import { Button, Container, Stack } from '@mui/material';
+import { Button, Container, Link, Stack } from '@mui/material';
 import { Box } from '@mui/system';
 import { t } from 'i18next';
 import { enqueueSnackbar } from 'notistack';
 import React from 'react'
+
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import Iconify from 'src/components/iconify';
 import Image from 'src/components/image';
@@ -16,7 +17,7 @@ const DocumentPreview = () => {
   const queryString = new URLSearchParams(window.location.search);
   const fileUrl = queryString.get('url');
 
-  console.log(" sdsdf : ",HOST_API+`/${fileUrl?.split("/")[1]}/${fileUrl?.split("/")[2]}`);
+  console.log(" sdsdf : ", HOST_API + `/${fileUrl?.split("/")[1]}/${fileUrl?.split("/")[2]}`);
   const handleDownload = (path) => {
     const link = document.createElement("a");
     const lien = HOST_API + path;
@@ -72,11 +73,12 @@ const DocumentPreview = () => {
       />
       <Stack width={"full"} display={"flex"} rowGap={2} columnGap={2} alignItems="flex-end" my={4}  >
         <Box rowGap={2} columnGap={2}>
-          <a
+          {/* <a
             href={HOST_API+`/download/${fileUrl?.split("/")[2]}`}
             target='_blank'
             style={{ textDecoration: "none",color:"white" }}
-          >
+          > */}
+          <Link color={"primary"} href={HOST_API + `/download/${fileUrl?.split("/")[2]}`} target='_blank' >
             <Button
               variant="outlined"
               endIcon={<Iconify icon="solar:gallery-download-bold" width={24} />}
@@ -84,9 +86,14 @@ const DocumentPreview = () => {
             >
               {t("download")}
             </Button>
-          </a>
+          </Link>
+          {/* </a> */}
 
-          <Button onClick={() => { copyToClipboard(paths.dashboard.documents.preview + `?url=${fileUrl}`) }} variant="outlined" endIcon={<Iconify icon="solar:copy-bold-duotone" width={24} />}>
+          <Button
+            color={"warning"}
+            onClick={() => { copyToClipboard(paths.dashboard.documents.preview + `?url=${fileUrl}`) }}
+            variant="outlined"
+            endIcon={<Iconify icon="solar:copy-bold-duotone" width={24} />}>
             {t("copy_link")}
           </Button>
         </Box>

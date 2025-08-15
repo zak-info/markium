@@ -102,6 +102,7 @@ export default function SettingsView() {
       </ToggleButtonGroup> */}
 
       <RoleBasedGuard hasContent roles={[role]} sx={{ py: 10 }}>
+
         {
           groups?.map((group, index) => (
             <>
@@ -110,10 +111,19 @@ export default function SettingsView() {
                 <Iconify icon={group?.icon} width="40px" height="40px" sx={{ mx: 1 }} style={{ color: "#00A76F" }} />
                 {t(group?.title)}
               </Typography>
-              <Box gap={3} display="grid" gridTemplateColumns="repeat(3, 1fr)">
+              {/* <Box gap={3} display="grid" gridTemplateColumns="repeat(3, 1fr)"> */}
+              <Box
+                rowGap={3}
+                columnGap={2}
+                display="grid"
+                gridTemplateColumns={{
+                  xs: 'repeat(1, 1fr)',
+                  sm: 'repeat(3, 1fr)',
+                }}
+              >
                 {
                   group.items?.map((item, index2) => (
-                    <PermissionsContext action={"read."+item?.type} >
+                    <PermissionsContext action={"read." + item?.type} >
                       <Card key={index2} sx={{ pb: 2 }}>
                         <CardHeader title={t(item?.header)} subheader={<Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>{t(item?.subheader)}<Link href={item?.href} sx={{ fontSize: "0.7rem" }}><Iconify icon="tabler:arrow-narrow-left" width="32px" height="32px" style={{ color: "#00A76F" }} /></Link></Box>} />
                       </Card>

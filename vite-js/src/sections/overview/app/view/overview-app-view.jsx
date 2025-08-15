@@ -183,7 +183,7 @@ export default function OverviewAppView() {
         </PermissionsContext>
       </Box>
 
-      <Box mt={3} display="grid" columnGap={2} gridTemplateColumns={{ xs: 'repeat(1, 1fr)', sm: 'repeat(3, 1fr)' }}>
+      {/* <Box mt={3} display="grid" columnGap={2} gridTemplateColumns={{ xs: 'repeat(1, 1fr)', sm: 'repeat(3, 1fr)' }}>
         <PermissionsContext action={'read.contract'}>
           <Grid xs={12} md={6} lg={4}>
             {loading ? renderChartSkeleton() : (
@@ -209,7 +209,7 @@ export default function OverviewAppView() {
             )}
           </Grid>
         </PermissionsContext>
-      </Box>
+      </Box> */}
     </Container>
   );
 }

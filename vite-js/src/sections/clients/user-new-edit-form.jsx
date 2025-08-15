@@ -65,8 +65,8 @@ export default function UserNewEditForm({ currentClient }) {
       .length(15, t('tax_number_must_be_exactly_15_characters')),
     // location_id: Yup.number(),
     neighborhood_id: Yup.number().required(t('neighborhoodـisـrequired')),
-    // rep_name: Yup.string(),
-    // rep_contact_number: Yup.string(),
+    // rep_name: Yup.string().required('rep_name is required'),
+    // rep_contact_number: Yup.string().required('rep_contact_number is required'),
   });
 
   const defaultValues = useMemo(
@@ -117,6 +117,10 @@ export default function UserNewEditForm({ currentClient }) {
 
   const [representors, setRepresentors] = useState([])
   const handleAddRepresentor = () => {
+    if(!values.rep_name || !values.rep_contact_number){
+      enqueueSnackbar(t("fill_rep_credentials"),{variant:"error"});
+      return
+    }
     if (create) {
       setRepresentors(!!representors ? [...representors, { id: representors?.length > 0 ? representors[representors.length - 1].id + 1 : 1, name: values.rep_name, contact_number: values.rep_contact_number }] : [{ id: 1, name: values.rep_name, contact_number: values.rep_contact_number }])
     } else {
@@ -263,9 +267,10 @@ export default function UserNewEditForm({ currentClient }) {
                 }}
                 sx={{ marginTop: "30px" }}
               >
-                <RHFTextField name="rep_name" label={t('representor_name')} />
+                <RHFTextField name="rep_name" label={t('representor_name')} required />
                 {/* <RHFTextField name="rep_contact_number" label={t('representor_contact_number')} /> */}
                 <RHFTextField
+                  required
                   name="rep_contact_number"
                   type="text"
                   label={t('representor_contact_number')}

@@ -180,14 +180,14 @@ export default function CarLogsListView({ id }) {
         <Typography variant="h4" sx={{ mt:"10px",mx:"10px"  }}>
           {t('alerts')}
         </Typography>
-        <OrderTableToolbar
+        {/* <OrderTableToolbar
           filters={filters}
           onFilters={handleFilters}
           //
           dateError={dateError}
-        />
+        /> */}
 
-        {canReset && (
+        {/* {canReset && (
           <OrderTableFiltersResult
             filters={filters}
             onFilters={handleFilters}
@@ -197,7 +197,7 @@ export default function CarLogsListView({ id }) {
             results={dataFiltered.length}
             sx={{ p: 2.5, pt: 0 }}
           />
-        )}
+        )} */}
 
         <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
           <TableSelectedAction

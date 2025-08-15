@@ -19,6 +19,7 @@ const SystemItemCreateView = ({ collection }) => {
     const settings = useSettingsContext();
     const { t } = useTranslate();
     const { data } = useValues();
+    console.log("data : data : ", data);
     const router = useRouter();
 
     const checkCountryExists = (value) => {
@@ -30,6 +31,22 @@ const SystemItemCreateView = ({ collection }) => {
     const checkSpecExists = (value) => {
         return !data?.specs?.some(
             (item) => item.key === value || item?.translations?.[0]?.name === value
+        );
+    };
+    const checkColorExists = (value) => {
+        return !data?.colors?.some(
+            (item) => item.key == value || item?.translations?.[0]?.name == value
+        );
+    };
+    const checkPaymentExists = (value) => {
+        return !data?.payment_methods?.some(
+            (item) => item.key == value || item?.translations?.[0]?.name == value
+        );
+    };
+
+    const checkStatesExists = (value) => {
+        return !data?.states?.some(
+            (item) => item.key == value || item?.translations?.[0]?.name == value
         );
     };
 
@@ -46,7 +63,16 @@ const SystemItemCreateView = ({ collection }) => {
                 is_private: "1",
             }),
             schema: Yup.object().shape({
-                name: Yup.string().required(),
+                name: Yup.string().required(t("validation_required"))
+                    .matches(/^[a-zA-Z0-9\u0600-\u06FF\s]+$/, t('validation_noSpecialChars')) // No special characters
+                    .typeError(t('validation_mustBeText')) // Must be text (Text / String)
+                    .test("is-non-number", t("validation_isNonNumber"), function (value) {
+                        // Test if value is not a pure number
+                        return value ? isNaN(Number(value)) || /[a-zA-Z\u0600-\u06FF]/.test(value) : true;
+                    })
+                    .test("is-valid-country", t("itemExist"), function (value) {
+                        return checkPaymentExists(value);
+                    })
             }),
             fields: (t) => [
                 { name: 'name', label: t('payment_methods_name'), type: 'text', required: true },
@@ -117,7 +143,7 @@ const SystemItemCreateView = ({ collection }) => {
                 { name: 'name', label: t('attachment_name'), type: 'text', required: true },
                 // { name: 'object_type', label: t('type'), type: 'select',data:[{ value: "card", label:  "كرت", id: 1 }, { value: "form", label: "استمارة", id: 2 }], required: true },
                 // { name: 'object_type', label: t('type'), type: 'select', data: data?.attachment_types?.map(i => ({ value: i.key, label: i.translations[0]?.name })), required: true },
-                { name: 'object_type', label: t('attachable'), type: 'select', data: [{ value: "car", label: "سيارة" }, { value: "driver", label: "سائق" }, { value: "client", label: "عميل"}], required: true },
+                { name: 'object_type', label: t('attachable'), type: 'select', data: [{ value: "car", label: "سيارة" }, { value: "driver", label: "سائق" }, { value: "client", label: "عميل" }], required: true },
 
             ],
         },
@@ -149,7 +175,16 @@ const SystemItemCreateView = ({ collection }) => {
                 is_private: "1",
             }),
             schema: Yup.object().shape({
-                name: Yup.string().required(),
+                name: Yup.string().required(t("validation_required"))
+                    .matches(/^[a-zA-Z0-9\u0600-\u06FF\s]+$/, t('validation_noSpecialChars')) // No special characters
+                    .typeError(t('validation_mustBeText')) // Must be text (Text / String)
+                    .test("is-non-number", t("validation_isNonNumber"), function (value) {
+                        // Test if value is not a pure number
+                        return value ? isNaN(Number(value)) || /[a-zA-Z\u0600-\u06FF]/.test(value) : true;
+                    })
+                    .test("is-valid-country", t("itemExist"), function (value) {
+                        return checkStatesExists(value);
+                    })
             }),
             fields: (t) => [
                 { name: 'name', label: t('state_name'), type: 'text', required: true },
@@ -187,7 +222,16 @@ const SystemItemCreateView = ({ collection }) => {
                 is_private: "1",
             }),
             schema: Yup.object().shape({
-                name: Yup.string().required(),
+                name: Yup.string().required(t("validation_required"))
+                    .matches(/^[a-zA-Z0-9\u0600-\u06FF\s]+$/, t('validation_noSpecialChars')) // No special characters
+                    .typeError(t('validation_mustBeText')) // Must be text (Text / String)
+                    .test("is-non-number", t("validation_isNonNumber"), function (value) {
+                        // Test if value is not a pure number
+                        return value ? isNaN(Number(value)) || /[a-zA-Z\u0600-\u06FF]/.test(value) : true;
+                    })
+                    .test("is-valid-country", t("itemExist"), function (value) {
+                        return checkColorExists(value);
+                    })
             }),
             fields: (t) => [
                 { name: 'name', label: t('color_name'), type: 'text', required: true },
@@ -294,23 +338,21 @@ const SystemItemCreateView = ({ collection }) => {
 
     // ----------------------------------------------------------------------
 
-
-
     const currentType = collection?.type; // fallback
     const currentSystemItem = types[currentType];
 
     const handleSubmitCreate = async (formData, runBeforePush) => {
-        try{
-            const body = { ...currentSystemItem.getAndSend(formData), type: collection?.type  };
+        try {
+            const body = { ...currentSystemItem.getAndSend(formData), type: collection?.type };
             console.log("to send:", body);
             const response = await createItemInSettings(body);
-            if (response) {
+            if (response){
                 if (runBeforePush) runBeforePush(); // In case you later use runBeforePush
                 router.push(currentSystemItem.homeHref);
             }
-        }catch(error){
-            console.log("error : ",error);
-            showError(error)
+        } catch (error) {
+            console.log("error : ", error);
+            throw error
         }
     };
 

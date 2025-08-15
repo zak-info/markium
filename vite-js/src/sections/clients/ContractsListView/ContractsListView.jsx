@@ -60,6 +60,7 @@ export default function ContractsListView({ }) {
         { id: 'ref', label: t('ref'), type: "two-lines-link", first: (row) => { return row?.ref }, second: (row) => { }, link: (row) => { return paths.dashboard.clients?.contractsDetails(row.id) }, width: 180 },
         { id: 'client', label: t('client'), type: "two-lines-link", first: (row) => { return row?.client?.name }, second: (row) => { }, link: (row) => { return paths.dashboard.clients?.details(row.client_id) }, width: 180 },
         { id: 'contractDate', label: t('contractDate'), type: "text", width: 140 },
+        { id: 'contractEndDate', label: t('end_date'), type: "text", width: 140 },
         { id: 'c_payment_method', label: t('payment_method'), type: "text", width: 140 },
         // { id: 'birth_date', label: t('birth_date'), type: "text", width: 140 },
         // { id: 'gender', label: t('gender'), type: "text", width: 140 },
@@ -80,7 +81,8 @@ export default function ContractsListView({ }) {
 
                 color: item?.is_rented ? "warning" : "success",
                 client : clients?.find( i => i.id == item?.client_id),
-                contractDate : fDate(item?.created_at,"yyyy-MM-dd"),
+                contractDate : fDate(item?.periods[0]?.start_date,"yyyy-MM-dd"),
+                contractEndDate : fDate(item?.periods[0]?.end_date,"yyyy-MM-dd"),
                 c_payment_method : t(item?.payment_method?.name),
 
             };

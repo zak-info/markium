@@ -532,7 +532,7 @@
   "are_you_sure_want_to_activate": "هل أنت متأكد أنك تريد تفعيل هذا المستخدم؟",
   "home": "الصفحة الرئيسية",
   "current_password": "كلمة المرور الحالية",
-  "old_current_password": "تم استعمال كلمة المرور الحالية",
+  "old_current_password": "كلمة المرور الجديدة لا يمكن أن تكون مطابقة للحالية",
   "new_password": "كلمة المرور الجديدة",
   "confirm_password": "تأكيد كلمة المرور",
   "passwords_must_match": "يجب أن تتطابق كلمتا المرور",
@@ -688,6 +688,7 @@
   "cause_must_start_with_letter_and_contain_only_letters_and_spaces": "يجب أن يبدأ السبب بحرف ويحتوي على أحرف ومسافات فقط",
   "countryExist": "هذا البلد موجود",
   "specExist": "هذه الخاصية موجودة",
+  "itemExist": "هذه العنصر موجودة",
   "noPermission": "ليست لديك صلاحية",
   "restrictedAccess": "الصفحة التي تحاول الوصول إليها مقيدة الوصول.",
   "contactAdmin": "يرجى الرجوع إلى مسؤول النظام",
@@ -722,5 +723,7 @@
   "phone_number_must_be_10_digits_for_05": "رقم الهاتف يجب أن يكون 10 أرقام عند البدء بـ 05",
   "credit":"دائن",
   "debit":"مدين",
-  "must_be_within_period":"يجب ان يكون ظمن فترة العقد"
+  "must_be_within_period":"يجب ان يكون ظمن فترة العقد",
+  "fill_rep_credentials":"قم بملأ معلومات الممثل",
+  "replacement_role_id":"الدور البديل"
 }

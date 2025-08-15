@@ -6,10 +6,11 @@ import { enqueueSnackbar } from 'notistack';
 import { useCallback, useEffect, useState } from 'react';
 import { deleteDriver } from 'src/api/drivers';
 import { changeItemVisibilityInSettings, useGetMainSpecs } from 'src/api/settings'; // [keep for later use]
-import { deleteRole, useRoles } from 'src/api/users';
+import { deleteEmptyRole, deleteRole, useRoles } from 'src/api/users';
 import { useValues } from 'src/api/utils';
 import PermissionsContext from 'src/auth/context/permissions/permissions-context';
 import { ConfirmDialog } from 'src/components/custom-dialog';
+import ContentDialog from 'src/components/custom-dialog/content-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import { fileData } from 'src/components/file-thumbnail'; // [keep for later use]
 import Iconify from 'src/components/iconify';
@@ -21,6 +22,8 @@ import ZaityListView from 'src/sections/ZaityTables/zaity-list-view';
 import ZaityHeadContainer from 'src/sections/ZaityTables/ZaityHeadContainer';
 import ZaityTableFilters from 'src/sections/ZaityTables/ZaityTableFilters';
 import ZaityTableTabs from 'src/sections/ZaityTables/ZaityTableTabs'; // [keep for later use]
+import showError from 'src/utils/show_error';
+import { DeleteCurrentRole } from './DeleteCurrentRole';
 
 // ----------------------------------------------------------------------
 
@@ -33,7 +36,7 @@ export default function RolesListView({ }) {
     let TABLE_HEAD = [
         { id: 'name', label: t('role'), type: "text", width: 140 },
         { id: 'users_count', label: t('nb_users'), type: "number", width: 140 },
-        { id: 'actions', label: t('actions'), type: "threeDots", component: (item) => <ElementActions item={item} setTableData={setDataFiltered} />, width: 400, align: "right" },
+        { id: 'actions', label: t('actions'), type: "threeDots", component: (item) => <ElementActions roles={roles} item={item} setTableData={setDataFiltered} />, width: 400, align: "right" },
     ]
 
 
@@ -53,7 +56,7 @@ export default function RolesListView({ }) {
     const RformulateTable = (data) => {
         return data?.map(item => ({
             ...item,
-            name: item?.translations?.find(i => i.lang_id == 1)?.name
+            name: item?.translations?.find(i => i.lang_id == 1)?.name || item?.translations?.find(i => i.lang_id == 2)?.name || item?.key
         })) || [];
     }
 
@@ -173,9 +176,10 @@ const onSelectedRowsComponent = ({ configurable_type, setTableData, data }) => {
 };
 
 
-const ElementActions = ({ item, setTableData }) => {
+const ElementActions = ({ item, setTableData,roles }) => {
     const popover = usePopover();
     const confirm = useBoolean();
+    const del = useBoolean();
     const router = useRouter();
     const [postloader, setPostloader] = useState(false)
     const onViewRow = useCallback(
@@ -190,7 +194,8 @@ const ElementActions = ({ item, setTableData }) => {
             setPostloader(true)
             console.log("id : ", id);
             try {
-                const res = await deleteRole(id);
+                // const res = await deleteRole(id, { replacement_role_id: 2 });
+                const res = await deleteEmptyRole(id);
                 console.log("res : ", res);
                 setTableData(prev => prev?.filter(i => i.id != id))
                 enqueueSnackbar(t("operation_success"));
@@ -207,6 +212,7 @@ const ElementActions = ({ item, setTableData }) => {
         <Box display={"flex"} rowGap={"10px"} sx={{ gap: '10px' }} >
             <PermissionsContext action={"delete.role"} >
                 <Button
+                disabled={item?.users_count && item?.users_count > 0}
                     onClick={() => {
                         confirm.onTrue();
                         popover.onClose();
@@ -251,6 +257,17 @@ const ElementActions = ({ item, setTableData }) => {
                     {t('edit')}
                 </MenuItem>
             </CustomPopover> */}
+
+            <ContentDialog
+                open={del.value}
+                onClose={del.onFalse}
+                title={t("delete")}
+                content={
+                    <DeleteCurrentRole roles={roles?.filter(i => i?.id != item?.id)?.map(i => ({id:i?.id , name:i.translations?.find(ii => ii.lang_id == 1)?.name || i.translations?.find(ii => ii.lang_id == 2)?.name || i.key}))} id={item?.id}  close={() => del?.onFalse()} />
+                }
+            />
+
+
             <ConfirmDialog
                 open={confirm.value}
                 onClose={confirm.onFalse}

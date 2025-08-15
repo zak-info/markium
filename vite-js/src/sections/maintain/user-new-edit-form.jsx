@@ -63,7 +63,7 @@ export default function UserNewEditForm({ currentMentainance }) {
     entry_date: Yup.date().required(t("entry_date_is_required")),
     cause: Yup.string()
       .required(t("cause_is_required"))
-      .matches(/^[a-zA-Z][a-zA-Z\s]*$/, t("cause_format_invalid"))
+      .matches(/^[\u0600-\u06FFa-zA-Z][\u0600-\u06FFa-zA-Z\s]*$/, t("cause_format_invalid"))
       .trim(),
     exit_date: Yup.date().nullable(),
   });
@@ -184,7 +184,7 @@ export default function UserNewEditForm({ currentMentainance }) {
                     fullWidth: true,
                   },
                 }}
-                // minDate={new Date()}
+              // minDate={new Date()}
               />
 
               <RHFSelect required name="state_id" label={t('workSite')}>
@@ -200,12 +200,12 @@ export default function UserNewEditForm({ currentMentainance }) {
                 name="cause"
                 label={t('cause')}
                 error={
-                  !values.cause ? false : !/^[a-zA-Z][a-zA-Z\s]*$/.test(values.cause)
+                  !values.cause ? false : !/^[\u0600-\u06FFa-zA-Z][\u0600-\u06FFa-zA-Z\s]*$/.test(values.cause)
                 }
                 helperText={
                   !values.cause
                     ? null
-                    : !/^[a-zA-Z][a-zA-Z\s]*$/.test(values.cause)
+                    : !/^[\u0600-\u06FFa-zA-Z][\u0600-\u06FFa-zA-Z\s]*$/.test(values.cause)
                       ? t('cause_must_start_with_letter_and_contain_only_letters_and_spaces')
                       : ''
                 }

@@ -85,8 +85,8 @@ export default function DriverListView({ }) {
                 gender: item?.isMale  ? t("male") : t("female"),
                 d_nationality: item?.nationality?.translations?.name,
                 d_state: item?.state?.translations?.name,
-                status: item?.is_rented ? t("bussy") : t("available"),
-                color: item?.is_rented ? "warning" : "success",
+                status: item?.contract?.id ? t("bussy") : t("available"),
+                color: item?.contract?.id ? "warning" : "success",
                 // car_model: vData?.car_companies?.flatMap(i => i.models)?.find(i => i.id == item?.car?.car_model_id)?.translations[0]?.name,
 
             };
@@ -284,6 +284,7 @@ const ElementActions = ({ item, setTableData }) => {
                 action={
                     <LoadingButton
                         isSubmitting={postloader}
+                        loading={postloader}
                         variant="contained"
                         color="error"
                         onClick={() => {
