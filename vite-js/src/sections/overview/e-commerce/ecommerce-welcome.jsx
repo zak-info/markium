@@ -8,12 +8,12 @@ import { bgGradient } from 'src/theme/css';
 
 // ----------------------------------------------------------------------
 
-export default function EcommerceWelcome({ title, description, action, img, ...other }) {
+export default function EcommerceWelcome({ title, description, action, img , direction = "row", ...other }) {
   const theme = useTheme();
 
   return (
     <Stack
-      flexDirection={{ xs: 'column', md: 'row' }}
+      flexDirection={{ xs: 'column', md: direction }}
       sx={{
         ...bgGradient({
           direction: '135deg',

@@ -17,7 +17,7 @@ export default function EcommerceSalesOverview({ title, subheader, data, ...othe
 
       <Stack spacing={4} sx={{ px: 3, pt: 3, pb: 5 }}>
         {data.map((progress) => (
-          <ProgressItem key={progress.label} progress={progress} />
+          <ProgressItem key={progress.label} progress={progress} color={progress?.color} />
         ))}
       </Stack>
     </Card>
@@ -32,7 +32,7 @@ EcommerceSalesOverview.propTypes = {
 
 // ----------------------------------------------------------------------
 
-function ProgressItem({ progress }) {
+function ProgressItem({ progress ,color}) {
   return (
     <Stack spacing={1}>
       <Stack direction="row" alignItems="center">
@@ -50,11 +50,7 @@ function ProgressItem({ progress }) {
       <LinearProgress
         variant="determinate"
         value={progress.value}
-        color={
-          (progress.label === 'Total Income' && 'info') ||
-          (progress.label === 'Total Expenses' && 'warning') ||
-          'primary'
-        }
+        color={color || "primary"}
       />
     </Stack>
   );

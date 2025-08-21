@@ -14,9 +14,9 @@ export default function OverviewAppPage() {
       </Helmet>
 
       {/* <DashboardStat /> */}
-      {/* <Dashboard /> */}
+      <Dashboard />
 
-      <OverviewAppView />
+      {/* <OverviewAppView /> */}
     </>
   );
 }

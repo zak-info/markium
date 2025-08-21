@@ -28,6 +28,7 @@ function MotivationIllustration({ ...other }) {
       <BackgroundShape />
 
       <image href="/assets/illustrations/characters/character_2.png" height="300" x="322" y="30" />
+      {/* <image href="/logo/logo_single.svg" height="300" x="322" y="30" /> */}
 
       <path
         fill="url(#paint0_linear_1_43)"

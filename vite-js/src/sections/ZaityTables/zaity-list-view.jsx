@@ -63,7 +63,7 @@ const defaultFilters = {
 
 // ----------------------------------------------------------------------
 
-export default function ZaityListView({ TABLE_HEAD, dense, zaityTableDate, onSelectedRows }) {
+export default function ZaityListView({ TABLE_HEAD, dense, zaityTableDate, onSelectedRows,maxWidth,rowsPerPage }) {
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslate();
 
@@ -93,8 +93,8 @@ export default function ZaityListView({ TABLE_HEAD, dense, zaityTableDate, onSel
   });
 
   const dataInPage = dataFiltered.slice(
-    table.page * table.rowsPerPage,
-    table.page * table.rowsPerPage + table.rowsPerPage
+    table.page * (rowsPerPage || table.rowsPerPage),
+    table.page * (rowsPerPage || table.rowsPerPage) + (rowsPerPage || table.rowsPerPage)
   );
 
   
@@ -123,7 +123,6 @@ export default function ZaityListView({ TABLE_HEAD, dense, zaityTableDate, onSel
 
   const handleSelectRows = useCallback(() => {
     const selectedRows = tableData.filter((row) => !table.selected.includes(row.id));
-    // onSelectedRowsActions(selectedRows)
   }, [dataFiltered.length, dataInPage.length, enqueueSnackbar, table, tableData]);
 
   const handleViewRow = useCallback(
@@ -132,6 +131,7 @@ export default function ZaityListView({ TABLE_HEAD, dense, zaityTableDate, onSel
     },
     [router]
   );
+
   const handleEditRow = useCallback(
     (id) => {
       router.push(paths.dashboard.settings.edit(id));
@@ -166,7 +166,7 @@ export default function ZaityListView({ TABLE_HEAD, dense, zaityTableDate, onSel
         /> */}
 
         <Scrollbar>
-          <Table size={dense} sx={{ minWidth: 960 }}>
+          <Table size={dense} sx={{ minWidth: 660 , maxWidth ,minHeight:400 }}>
             <TableHeadCustom
               order={table.order}
               orderBy={table.orderBy}
@@ -185,8 +185,8 @@ export default function ZaityListView({ TABLE_HEAD, dense, zaityTableDate, onSel
             <TableBody>
               {dataFiltered
                 .slice(
-                  table.page * table.rowsPerPage,
-                  table.page * table.rowsPerPage + table.rowsPerPage
+                  table.page * (rowsPerPage || table.rowsPerPage),
+                  table.page * (rowsPerPage || table.rowsPerPage) + (rowsPerPage || table.rowsPerPage)
                 )
                 .map((row) => (
                   <OrderTableRow
@@ -200,7 +200,7 @@ export default function ZaityListView({ TABLE_HEAD, dense, zaityTableDate, onSel
 
               <TableEmptyRows
                 height={denseHeight}
-                emptyRows={emptyRows(table.page, table.rowsPerPage, dataFiltered.length)}
+                emptyRows={emptyRows(table.page, (rowsPerPage || table.rowsPerPage), dataFiltered.length)}
               />
               <TableNoData notFound={notFound} />
             </TableBody>
@@ -211,7 +211,7 @@ export default function ZaityListView({ TABLE_HEAD, dense, zaityTableDate, onSel
       <TablePaginationCustom
         count={dataFiltered.length}
         page={table.page}
-        rowsPerPage={table.rowsPerPage}
+        rowsPerPage={(rowsPerPage || table.rowsPerPage)}
         onPageChange={table.onChangePage}
         onRowsPerPageChange={table.onChangeRowsPerPage}
         dense={table.dense}

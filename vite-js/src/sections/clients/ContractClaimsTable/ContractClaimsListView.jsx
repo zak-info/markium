@@ -34,15 +34,6 @@ export default function ContractClaimsListView({ claimsLoading, data, with_contr
     const [tableData, setTableData] = useState([]);
     const [dataFiltered, setDataFiltered] = useState([]);
 
-    // let TABLE_HEAD = [
-    //     { id: 'ref', label: t('ref'), type: "two-lines-link", first: (row) => row?.contract, second: (row) => { }, link: (row) => { return paths.dashboard.clients.contractsDetails(row.contract_id) }, width: 140 },
-    //     { id: 'client', label: t('client'), type: "two-lines-link", first: (row) => row?.client, second: (row) => { }, link: (row) => { return paths.dashboard.clients.details(row.client_id) }, width: 200 },
-    //     { id: 'amount', label: t('amount'), type: "text", width: 140 },
-    //     { id: 'date', label: t('date'), type: "text", width: 140 },
-    //     { id: 'payment_date', label: t('paiment_date'), type: "text", width: 140 },
-    //     { id: 'gstatus', label: t('status'), type: "label", color: "error", width: 140 },
-    //     { id: 'actions', label: t('actions'), type: "threeDots", component: (item) => <ElementActions item={item} setTableData={setDataFiltered} />, width: 400, align: "right" },
-    // ]
     const TABLE_HEAD = useMemo(() => {
         if (with_contracts) {
             return [
@@ -94,12 +85,6 @@ export default function ContractClaimsListView({ claimsLoading, data, with_contr
             ];
         }
     }, [with_contracts, setDataFiltered]);
-
-
-
-
-
-
 
 
     const defaultFilters = { status: 'all', name: "" };
