@@ -249,8 +249,8 @@ export default function OpearationalStat() {
                 chart={{
                   colors: ["#FFD666", "#00A76F", "#00A76F", "#987324"],
                   series: [
-                    { label: t('activated'), value: contracts?.filter(item => new Date(item?.periods?.[0]?.start_date) > new Date()).length },
-                    { label: t('finished'), value: contracts?.filter(item => new Date(item?.periods?.[0]?.start_date) <= new Date()).length },
+                    { label: t('activated'), value: contracts?.filter(item => new Date(item?.periods?.[0]?.end_date) > new Date()).length },
+                    { label: t('finished'), value: contracts?.filter(item => new Date(item?.periods?.[0]?.end_date) <= new Date()).length },
                   ],
                 }}
                 labels={[t('contracts')]}
@@ -317,7 +317,7 @@ export default function OpearationalStat() {
       <Box mt={3} display="grid" columnGap={2} gridTemplateColumns={{ xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' }}>
         <PermissionsContext action={'read.claim'}>
           <Grid xs={12} md={12} lg={16}>
-            <EcommerceSalesOverview title={t("financial_ind")} data={
+            <EcommerceSalesOverview title={t("ada_kpi")} data={
               [
                 { label: t("claims"), totalAmount: claims?.length, value: 200, color: "primary" },
                 { label: t("contracts"), totalAmount: contracts?.length, value: 200, color: "secondary" },

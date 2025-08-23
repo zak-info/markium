@@ -26,6 +26,7 @@ import { EditClaim } from './EditClaim';
 import { LoadingScreen } from 'src/components/loading-screen';
 import { deleteContractClaim, deleteContractClause } from 'src/api/contract';
 import showError from 'src/utils/show_error';
+import { LoadingButton } from '@mui/lab';
 
 // ----------------------------------------------------------------------
 
@@ -296,9 +297,9 @@ const ElementActions = ({ item, setTableData }) => {
                 title={t("delete")}
                 content={t("are_you_sure_want_to_delete")}
                 action={
-                    <Button variant="contained"  loading={postloader} isSubmitting={postloader} color="error" onClick={() => onDeleteRow(item?.id)}>
+                    <LoadingButton variant="contained"  loading={postloader} isSubmitting={postloader} color="error" onClick={() => onDeleteRow(item?.id)}>
                         {t("delete")}
-                    </Button>
+                    </LoadingButton>
                 }
             />
 

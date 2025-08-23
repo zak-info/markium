@@ -63,7 +63,7 @@ const defaultFilters = {
 
 // ----------------------------------------------------------------------
 
-export default function ZaityListView({ TABLE_HEAD, dense, zaityTableDate, onSelectedRows,maxWidth,rowsPerPage }) {
+export default function ZaityListView({ TABLE_HEAD, dense, zaityTableDate, onSelectedRows,maxWidth,rowsPerPage,minHeight }) {
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslate();
 
@@ -166,7 +166,7 @@ export default function ZaityListView({ TABLE_HEAD, dense, zaityTableDate, onSel
         /> */}
 
         <Scrollbar>
-          <Table size={dense} sx={{ minWidth: 660 , maxWidth ,minHeight:400 }}>
+          <Table size={dense} sx={{ minWidth: 660 , maxWidth ,minHeight }}>
             <TableHeadCustom
               order={table.order}
               orderBy={table.orderBy}

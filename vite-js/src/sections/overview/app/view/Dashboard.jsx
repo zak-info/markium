@@ -56,11 +56,11 @@ const Dashboard = () => {
           aria-label="icon position tabs example"
           textColor="primary"
         >
-          <Tab icon={<Iconify icon="duo-icons:settings" />} iconPosition="start" label={t("general-stat")} />
-          <Tab icon={<Iconify icon="solar:align-left-bold-duotone" />} iconPosition="start" label={t("functional_data")} />
-          {/* <Tab icon={<SvgColor src={`/assets/icons/navbar/ic_analytics.svg`} />} iconPosition="start" label={t("kpi")} /> */}
+          <Tab icon={<Iconify icon="solar:align-left-bold-duotone" />} iconPosition="start" label={t("general-stat")} />
+          <Tab icon={<SvgColor src={`/assets/icons/navbar/ic_analytics.svg`} />} iconPosition="start" label={t("functional_data")} />
           <Tab icon={<Iconify icon="solar:danger-circle-bold" />} iconPosition="start" textColor='error' label={t("danger_alerts")} />
           <Tab icon={<Iconify icon="uim:layers-alt" />} iconPosition="start" textColor='error' label={t("daily_tasks")} />
+          {/* <Tab icon={<SvgColor src={`/assets/icons/navbar/ic_analytics.svg`} />} iconPosition="start" label={t("kpi")} /> */}
 
         </Tabs>
       </Card>
@@ -75,8 +75,14 @@ const Dashboard = () => {
                 <DangerAlerts />
                 : section === 3 ?
                   <DailyTasks />
-                  :
-                  null
+                  : section === 4 ?
+                    <>
+                      <OverviewEcommercePage />
+                      <OverviewAnalyticsPage />
+                      <OverviewBankingPage />
+                    </>
+                    :
+                    null
         }
 
 

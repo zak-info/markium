@@ -41,11 +41,11 @@ export default function GeneralStatistics() {
   const { currentLang } = useLocales();
 
   const { statistics, isLoading: loadingStatistics } = useGetStatistics();
-  const { car : Gcar, isLoading: loadingCars } = useGetCar();
-  const [car , setCar] = useState(Gcar)
-  useEffect(()=>{
+  const { car: Gcar, isLoading: loadingCars } = useGetCar();
+  const [car, setCar] = useState(Gcar)
+  useEffect(() => {
     setCar(Gcar)
-  },[Gcar])
+  }, [Gcar])
   const { claims: Gclaims, isLoading: loadingClaims } = useGetAllClaim();
   const { drivers, isLoading: loadingDrivers } = useGetDrivers();
   const { contracts: Gcontracts, isLoading: loadingContracts } = useGetContracts();
@@ -89,9 +89,9 @@ export default function GeneralStatistics() {
     const carsInMaintenance = cars.filter(c =>
       maintenance.some(m => m.car_id === c.id)
     );
-  
+
     if (carsInMaintenance.length === 0) return 0;
-  
+
     // total maintenance days
     const totalDays = maintenance.reduce((sum, m) => {
       const start = new Date(m.entry_date);
@@ -99,11 +99,11 @@ export default function GeneralStatistics() {
       const days = (end - start) / (1000 * 60 * 60 * 24);
       return sum + days;
     }, 0);
-  
+
     // divide only by cars that had maintenance
     return totalDays / carsInMaintenance.length;
   }
-  
+
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'xl'}>
@@ -128,31 +128,38 @@ export default function GeneralStatistics() {
         </Grid>
         <PermissionsContext action={'read.car'}>
           <Grid xs={12} md={6} lg={4}>
-            {loadingCars ? renderChartSkeleton() :
-              (
-                <>
-                  <EcommerceSaleByGender
-                    title={t('vehicles')}
-                    total={car?.length}
-                    chart={{
-                      series: statistics?.cars_by_status?.map(item => ({
-                        label: item?.status?.key === 'available' ? t('activated') :
-                          item?.status?.key === 'rented' ? t('bussy') :
-                            item?.status?.key === 'under_maintenance' ? t('under_maintenance') :
-                              item?.status?.translations?.[langsNum[currentLang.value]]?.name || 'N/A',
-                        value: item?.count || 0
-                      })) || []
-                    }}
-                  />
-                </>
+            {/* loadingCars ? renderChartSkeleton() : */}
+            {/* <EmptyContent filled title={t("no_data")} sx={{ py: 10 }} /> */}
+            {
+              loadingCars || !car?.length ? (
+                renderChartSkeleton()
               )
+                :
+                (
+                  <>
+                    <EcommerceSaleByGender
+                      title={t('vehicles')}
+                      total={car?.length}
+                      chart={{
+                        series: statistics?.cars_by_status?.map(item => ({
+                          label: item?.status?.key === 'available' ? t('activated') :
+                            item?.status?.key === 'rented' ? t('bussy') :
+                              item?.status?.key === 'under_maintenance' ? t('under_maintenance') :
+                                item?.status?.translations?.[langsNum[currentLang.value]]?.name || 'N/A',
+                          value: item?.count || 0
+                        })) || []
+                      }}
+                    />
+                  </>
+                )
             }
           </Grid>
         </PermissionsContext>
         <PermissionsContext action={'read.driver'}>
           <Grid xs={12} md={6} lg={4}>
+            {/* <EmptyContent filled title={t("no_data")} sx={{ py: 10 }} /> */}
             {loadingDrivers || !drivers?.length ? (
-              <EmptyContent filled title={t("no_data")} sx={{ py: 10 }} />
+              renderChartSkeleton()
             ) : (
               <>
                 <EcommerceSaleByGender
@@ -177,14 +184,15 @@ export default function GeneralStatistics() {
             <EcommerceSalesOverview title={t("operational_kpi")} data={
               [
                 { label: t("car_renting"), totalAmount: car?.length, value: ((car?.filter(i => i.status?.key == "rented")?.length / car?.length) * 100).toFixed(2), color: "primary" },
-                { label: t("avrg_car_maintenance"), totalAmount: getAverageMaintenancePerCar(maintenance,car).toFixed(0) + " "+ t("days"), value: 0, color: "secondary" },
+                { label: t("avrg_car_maintenance"), totalAmount: getAverageMaintenancePerCar(maintenance, car).toFixed(0) + " " + t("days"), value: 0, color: "secondary" },
                 // { label: t("maintenance_dates"), totalAmount: 300, value: 0, color: "warning" },
               ]
             } />
           </Grid>
         </PermissionsContext>
         <ChartLine
-          categories={[t('jan'),t('feb') ,t('mar'),t('apr'),t('may'), t('jun'),t('jul'), t('aug'),t('sep'),t('oct'),t('nov'),t('dec')]}
+          title={t("maintenance_over_time")}
+          categories={[t('jan'), t('feb'), t('mar'), t('apr'), t('may'), t('jun'), t('jul'), t('aug'), t('sep'), t('oct'), t('nov'), t('dec')]}
           series={[
             {
               data: countMaintenanceByMonth(maintenance, "created_at"),
