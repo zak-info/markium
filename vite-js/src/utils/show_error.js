@@ -16,3 +16,4 @@ export default function showError(error) {
     enqueueSnackbar(t('operation_failed'), { variant: 'error' });
   }
 }
+

@@ -27,6 +27,29 @@ export function useGetDocuments() {
 
 
 
+export function useGetDocument(id) {
+  const URL = endpoints.documents.list+"/"+id;
+
+  const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher);
+
+  const memoizedValue = useMemo(
+    () => ({
+      document: data?.data || {},
+      documentLoading: isLoading,
+      documentError: error,
+      documentValidating: isValidating,
+      documentEmpty: !isLoading && !data,
+      mutate,
+    }),
+    [data, error, isLoading, isValidating]
+  );
+
+  return memoizedValue;
+}
+
+
+
+
 // ----------------------------------------------------------------------
 
 export function useGetDocumentByID(id) {
@@ -81,6 +104,12 @@ export async function createDocument(body) {
 // ----------------------------------------------------------------------
 
 export async function editDocument(id, body) {
+  const URL = endpoints.documents.list + '/' + id+"/update";
+
+  return await axios.post(URL, body);
+}
+
+export async function editDocument2(id, body) {
   const URL = endpoints.documents.list + '/' + id;
 
   return await axios.put(URL, body);

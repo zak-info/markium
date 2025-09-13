@@ -64,38 +64,49 @@ export default function DailyTasks() {
   console.log("maintenance :", maintenance)
 
 
-  const [claims, setClaims] = useState([]);
+  
+  
   const [contracts, setContracts] = useState([]);
-
-
   const { clients } = useGetClients()
-  console.log("clients : ", clients?.find(item => item?.id == 1));
-  console.log("contracts : ", contracts?.find(item => item?.id == 1));
+  
+    const formulateClaims = (list) => {
+      return list.map((item) => {
+        const contract = contracts?.find((c) => c.id === item?.contract_id);
+        const client = clients?.find((cl) => cl.id === contract?.client_id);
+  
+        return {
+          ...item,
+          payment_date: fDate(new Date(item?.paiment_date)),
+          date: fDate(new Date(item?.created_at)),
+          gstatus: item?.status?.translations?.[0]?.name,
+          contract: contract?.ref,
+          client: client?.name,
+          client_id: client?.id,
+        };
+      });
+    };
 
 
-  const formulateClaims = (list) => {
-    return list.map((item) => {
-      const contract = contracts?.find((c) => c.id === item?.contract_id);
-      const client = clients?.find((cl) => cl.id === contract?.client_id);
-
-      return {
-        ...item,
-        payment_date: fDate(new Date(item?.paiment_date)),
-        date: fDate(new Date(item?.created_at)),
-        gstatus: item?.status?.translations?.[0]?.name,
-        contract: contract?.ref,
-        client: client?.name,
-        client_id: client?.id,
-      };
-    });
-  };
+  const [claims, setClaims] = useState(formulateClaims(Gclaims?.filter(i => new Date(i?.paiment_date) <= new Date())));
 
 
 
-  const [data, setDate] = useState(formulateClaims(claims));
+
+  
+  
   useEffect(() => {
-    setDate(formulateClaims(claims))
-  }, [claims, clients, contracts])
+    setClaims(
+      formulateClaims(
+        Gclaims?.filter(i => new Date(i?.paiment_date) <= new Date())
+      )
+    );
+
+    
+    
+  }, [claims, clients, contracts]);
+  
+  console.log(" claims : ",claims)
+  
 
 
   useEffect(() => {
@@ -173,7 +184,7 @@ export default function DailyTasks() {
             </>
           )}
         </Grid>
-        <ContractClaimsListView claimsLoading={loadingClaims} data={data} with_contracts={true} />
+        <ContractClaimsListView claimsLoading={loadingClaims} data={claims} with_contracts={true} />
       </Box>
 
      

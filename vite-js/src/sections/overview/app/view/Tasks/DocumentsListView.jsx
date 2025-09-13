@@ -159,6 +159,8 @@ export default function DocumentsListView({ }) {
           const expiry = new Date(doc.expiry_date);
           return expiry >= startOfWeek && expiry <= endOfWeek;
         });
+
+
       }
 
       

@@ -25,7 +25,7 @@ import CustomPopover, { usePopover } from 'src/components/custom-popover';
 
 // ----------------------------------------------------------------------
 
-export default function OrderTableRow({ row, status, currentLang, onCreateRow, selected, onViewRow, onSelectRow, onDeleteRow }) {
+export default function OrderTableRow({ row, status, drivers, currentLang, onCreateRow, selected, onViewRow, onSelectRow, onDeleteRow }) {
   const { items, orderNumber, createdAt, customer, totalQuantity, subTotal } = row;
 
   const confirm = useBoolean();
@@ -53,70 +53,23 @@ export default function OrderTableRow({ row, status, currentLang, onCreateRow, s
       </TableCell>
       <TableCell>{status}</TableCell>
       <TableCell>
-        <span dangerouslySetInnerHTML={{ __html: row["note_" + currentLang]?.replace(/#(\d+)/g, '<a href="/dashboard/maintenance/$1" style="color: #00A76F; text-decoration: underline;">#$1</a>') }}></span>
-      </TableCell>
-      {/* <TableCell>{fCurrency(row.cost) || '-'}</TableCell> */}
-      {/* <TableCell align="start" sx={{ px: 1 }}>
-        <IconButton
-          color={collapse.value ? 'inherit' : 'default'}
-          onClick={collapse.onToggle}
-          sx={{
-            ...(collapse.value && {
-              bgcolor: 'action.hover',
-            }),
+        <span
+          dangerouslySetInnerHTML={{
+            __html: row["note_" + currentLang]?.replace(
+              /#(\d+)/g,
+              (match, id) => {
+                const driver = drivers.find(d => d.id == id); // adjust if your id field is different
+                const name = driver ? driver.name : `#${id}`;
+                return `<a href="/dashboard/drivers/${id}" style="color: #00A76F; text-decoration: underline;">${name}</a>`;
+              }
+            )
           }}
-        >
-          <Iconify icon="eva:arrow-ios-downward-fill" />
-        </IconButton>
+        />
+      </TableCell>
 
-        <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
-          <Iconify icon="eva:more-vertical-fill" />
-        </IconButton>
-      </TableCell> */}
+
     </TableRow>
   );
-
-  // const renderSecondary = (new_values) => (
-  //   <TableRow>
-  //     <TableCell sx={{ p: 0, border: 'none' }} colSpan={8}>
-  //       <Collapse
-  //         in={collapse.value}
-  //         timeout="auto"
-  //         unmountOnExit
-  //         sx={{ bgcolor: 'background.neutral' }}
-  //       >
-  //         <Stack component={Paper} sx={{ m: 1.5 }}>
-  //           {/* {new_values ?
-  //             Object.entries(new_values)?.map(([key, value]) => (
-
-  //               typeof value === "object" && value !== null ?
-
-  //                 renderSecondary(value)
-
-  //                 :
-  //                 <Stack
-  //                   key={key}
-  //                   direction="row"
-  //                   alignItems="center"
-  //                   sx={{
-  //                     p: (theme) => theme.spacing(1.5, 2, 1.5, 1.5),
-  //                     '&:not(:last-of-type)': {
-  //                       borderBottom: (theme) => `solid 2px ${theme.palette.background.neutral}`,
-  //                     },
-  //                   }}
-  //                 >
-  //                   <p>{key} : {value}</p>
-  //                 </Stack>
-
-  //             ))
-  //             : null
-  //           } */}
-
-  //         </Stack>
-  //       </Collapse>
-  //     </TableCell>
-  //   </TableRow>
-  // );
 
   return (
     <>

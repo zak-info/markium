@@ -66,6 +66,10 @@ export default function ContractNewEditForm({ contract }) {
   const attachables2 = { car: { ar: "سيارة", en: "car" }, driver: { ar: "سائق", en: "driver" } }
   const payment_methodes = [{ name: "deferred", lable: { ar: "دفعات", en: "deferred" } }, { name: "cash", lable: { ar: "نقدا", en: "cash" } }]
 
+  let tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+
   const NewUserSchema = Yup.object().shape({
     client_id: Yup.number().required('client is required'),
     payment_method_id: Yup.number().required('payment method is required'),
@@ -89,9 +93,9 @@ export default function ContractNewEditForm({ contract }) {
       // clauseable_id: contract?.clauseable_id || '',
       // clauseable_type: contract?.clauseable_type || '',
       start_date: contract?.start_date || new Date(),
-      end_date: contract?.end_date || new Date(),
+      end_date: contract?.end_date || tomorrow,
       c_start_date: contract?.c_start_date || new Date(),
-      c_end_date: contract?.c_end_date || new Date(),
+      c_end_date: contract?.c_end_date || tomorrow,
       // cost: contract?.cost || 0,
       // rep_name: contract?.rep_name || '',
       // rep_contact_number: contract?.rep_contact_number || '',
@@ -149,6 +153,11 @@ export default function ContractNewEditForm({ contract }) {
     try {
       // await new Promise((resolve) => setTimeout(resolve, 500));
       // reset();
+
+      // if(new Date(data?.start_date) <= new Date(data?.end_date)){
+      //   enqueueSnackbar(t("start_date_must_be_after_end_date"), { variant: 'error' });
+      //   return ;
+      // }
       delete data?.id;
       let body = data
       if (body?.auto_renewal_deactivation_unity == "month" && body?.auto_renewal_deactivation > 0) {

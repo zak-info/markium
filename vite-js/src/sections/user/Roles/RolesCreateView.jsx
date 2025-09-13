@@ -32,13 +32,15 @@ import { addNewDriver, editDriver } from 'src/api/drivers';
 import { useValues } from 'src/api/utils';
 import { useGetCar } from 'src/api/car';
 import { createRole, editRole, usePermissions } from 'src/api/users';
-import { CardContent, CardHeader, Typography } from '@mui/material';
+import { CardContent, CardHeader, Tab, Tabs, Typography } from '@mui/material';
 import PermissionsGroupCard from './PermissionsGroupCard';
 import PermissionsGroupCard2 from './PermissionsGroupCard2';
 import { Container } from 'postcss';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import { useSettingsContext } from 'src/components/settings';
 import showError from 'src/utils/show_error';
+import Iconify from 'src/components/iconify';
+import SvgColor from 'src/components/svg-color';
 
 // ----------------------------------------------------------------------
 
@@ -63,13 +65,13 @@ export default function RolesCreateView({ currentRole }) {
 
 
     const groups = [
-        { id: "vehicles", models: ["car"], read_tags: ["car", "vehicle", "car_log"], label: t("vehicles") },
-        { id: "maintenance", models: ["maintenance"], read_tags: ["maintenance", "maintenance_log"], label: t("maintenance") },
-        { id: "documents", models: ["document", "attachment"], read_tags: ["documents", "attachment", "documents_log"], label: t("documents") },
-        { id: "drivers", models: ["driver"], read_tags: ["driver", "drivers_log"], label: t("drivers") },
-        { id: "clients", models: ["client", "contract", "claim"], read_tags: ["client", "contract", "client_log", "claim"], label: t("clients") },
-        { id: "system_settings", models: ["system_setting"], read_tags: ["car_company", "car_model", "country", "color", "state", "neighborhood", "maintenance_specification", "attachment_name", "payment_method", "license_type", "spec"], label: t("system_settings") },
-        { id: "users", models: ["user", "role"], read_tags: ["user", "role"], label: t("users") },
+        { id: "vehicles", models: ["car"], read_tags: ["car", "vehicle", "car_log"], label: t("vehicles"),icon:"duo-icons:car" },
+        { id: "maintenance", models: ["maintenance"], read_tags: ["maintenance", "maintenance_log"], label: t("maintenance"),icon:"ix:maintenance-info" },
+        { id: "documents", models: ["document", "attachment"], read_tags: ["documents", "attachment", "documents_log"], label: t("documents"),icon:"solar:document-text-bold-duotone" },
+        { id: "drivers", models: ["driver"], read_tags: ["driver", "drivers_log"], label: t("drivers"),icon:"healthicons:truck-driver" },
+        { id: "clients", models: ["client", "contract", "claim"], read_tags: ["client", "contract", "client_log", "claim"], label: t("clients") ,icon:"streamline-ultimate:shopping-basket-1-bold"},
+        { id: "system_settings", models: ["system_setting"], read_tags: ["car_company", "car_model", "country", "color", "state", "neighborhood", "maintenance_specification", "attachment_name", "payment_method", "license_type", "spec"], label: t("system_settings"),icon:"solar:settings-bold-duotone" },
+        { id: "users", models: ["user", "role"], read_tags: ["user", "role"], label: t("users") ,icon:"garden:security-26"},
     ]
 
 
@@ -142,8 +144,8 @@ export default function RolesCreateView({ currentRole }) {
             const newSet = new Set([
                 ...(selectedPermissions?.length > 0 ? selectedPermissions : []),
                 ...allGroupIds
-              ]);
-              
+            ]);
+
             setSelectedPermissions(Array.from(newSet));
         }
     };
@@ -181,7 +183,7 @@ export default function RolesCreateView({ currentRole }) {
     useEffect(() => {
         if (currentRole?.id) {
             // setValue('nameEn', currentRole?.translations?.find(i => i?.lang_id == 2 )?.name);
-            setValue('nameAr', currentRole?.translations?.find(i => i?.lang_id == 1 )?.name);
+            setValue('nameAr', currentRole?.translations?.find(i => i?.lang_id == 1)?.name);
             setSelectedPermissions(currentRole?.permissions.map(p => p.id) || []);
         }
     }, [currentRole, setValue]);
@@ -190,6 +192,10 @@ export default function RolesCreateView({ currentRole }) {
 
     const onSubmit = handleSubmit(async (data) => {
         try {
+            if(selectedPermissions?.length < 1 ){
+                enqueueSnackbar(t("at_least_one_permission"),{variant:"error"});
+                return ;
+            }
             let body = { permissions: selectedPermissions, nameAr: data?.nameAr, nameEn: data?.nameAr }
             const res = currentRole?.id ? await editRole(currentRole?.id, body) : await createRole(body)
             console.log("res : ", res);
@@ -197,11 +203,21 @@ export default function RolesCreateView({ currentRole }) {
             enqueueSnackbar(t("operation_success"));
             router.push(paths.dashboard.user.roles);
         } catch (error) {
-            console.error("error : ",error);
+            console.error("error : ", error);
             showError(error)
 
         }
     });
+
+
+    const [section, setSection] = useState(0);
+
+    const handleTabChange = (event, newValue) => {
+        setSection(newValue);
+    };
+
+
+
 
     return (
 
@@ -228,12 +244,50 @@ export default function RolesCreateView({ currentRole }) {
                                     sm: 'repeat(2, 1fr)',
                                 }}
                             >
-                                <RHFTextField name="nameAr" label={t('name_ar')} />
+                                <RHFTextField required name="nameAr" label={t('name_ar')} />
                                 {/* <RHFTextField name="nameEn" label={t('name_en')} /> */}
                             </Box>
                         </Card>
                     </Box>
+                    <Card sx={{ p: 1, mt: 8 }}>
+                        <Tabs
+                            value={section}
+                            onChange={handleTabChange}
+                            aria-label="icon position tabs example"
+                            textColor="primary"
+                        >
+                            {
+                                Object.keys(grouped)?.map((card, index) => (
+                                    <Tab key={index} icon={<Iconify icon={groups[index]?.icon} />} width="50px" height="50px" iconPosition="start" label={t(card.toLowerCase())} />
+                                ))
+                            }
+                        </Tabs>
+                    </Card>
                     <Box
+                        rowGap={3}
+                        columnGap={2}
+                        sx={{ mt: 4 }}
+                        display="grid"
+                        gridTemplateColumns={{
+                            xs: 'repeat(1, 1fr)',
+                            sm: 'repeat(1, 1fr)',
+                        }}
+                    >
+
+                       
+
+                        <PermissionsGroupCard2
+                            model={Object.keys(grouped)[section].toLowerCase()}
+                            perms={grouped[Object.keys(grouped)[section]]}
+                            // key={index}
+                            selectedPermissions={selectedPermissions}
+                            toggleGroupPermissions={toggleGroupPermissions}
+                            togglePermission={togglePermission}
+                        />
+
+
+                    </Box>
+                    {/* <Box
                         rowGap={3}
                         columnGap={2}
                         sx={{ mt: 8 }}
@@ -243,9 +297,7 @@ export default function RolesCreateView({ currentRole }) {
                             sm: 'repeat(2, 1fr)',
                         }}
                     >
-                        {/* {Object.entries(grouped).map(([model, perms]) => (
-                            <PermissionsGroupCard model={model} perms={perms} selectedPermissions={selectedPermissions} togglePermission={togglePermission} />
-                        ))} */}
+
                         {
                             Object.keys(grouped)?.map((card, index) => (
                                 <PermissionsGroupCard2
@@ -258,7 +310,7 @@ export default function RolesCreateView({ currentRole }) {
                                 />
                             ))
                         }
-                    </Box>
+                    </Box> */}
                     <Stack alignItems="flex-end" sx={{ mt: 3 }}>
                         <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
                             {!currentRole ? t('create') : t('saveChange')}

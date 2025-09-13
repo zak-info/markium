@@ -7,7 +7,7 @@ import { AddCarToMentainance, deleteCar, markCarAsAvailable, useGetCar } from 's
 import { useGetClauses } from 'src/api/claim';
 import { useGetClients } from 'src/api/client';
 import { useGetContracts } from 'src/api/contract';
-import { markMaintenanceAsCompeleted, useGetMaintenance } from 'src/api/maintainance';
+import { deleteMaintenance, markMaintenanceAsCompeleted, useGetMaintenance } from 'src/api/maintainance';
 import { changeItemVisibilityInSettings, useGetMainSpecs } from 'src/api/settings'; // [keep for later use]
 import { createUser, deleteUser, useRoles, useUsers } from 'src/api/users';
 import { useValues } from 'src/api/utils';
@@ -69,7 +69,7 @@ export default function MaintenanceListView({ }) {
         { id: 'entrydate', label: t('entry_date'), type: "text", width: 140 },
         { id: 'exitdate', label: t('exit_date'), type: "text", width: 140 },
         { id: 'type', label: t('type'), type: "text", width: 100 },
-        { id: 'actions', label: t('actions'), type: "threeDots", component: (item) => <ElementActions item={item} setTableData={setTableData} />, width: 200, align: "right" },
+        { id: 'actions', label: t('actions'), type: "threeDots", component: (item) => <ElementActions item={item} setTableData={setDataFiltered} />, width: 200, align: "right" },
     ]
 
 
@@ -130,10 +130,10 @@ export default function MaintenanceListView({ }) {
 
     useEffect(() => {
         setDataFiltered(RformulateTable(maintenance));
-    }, [maintenance]);
+    }, [maintenance,car]);
     useEffect(() => {
         setTableData(RformulateTable(maintenance));
-    }, [maintenance]);
+    }, [maintenance,car]);
 
     return (
         <>
@@ -160,7 +160,7 @@ export default function MaintenanceListView({ }) {
                 <Card>
                     <ZaityTableTabs key='condition' data={tableData} items={items} defaultFilters={defaultFilters} setTableDate={setDataFiltered} filterFunction={filterFunction}>
                         {/* <ZaityTableFilters data={dataFiltered} setTableDate={setDataFiltered} items={filters} defaultFilters={defaultFilters} dataFiltered={tableData} searchText={t("search_by") + " " + t("plateNumber") + " ..."} > */}
-                        <ZaityTableFilters data={dataFiltered} tableData={tableData} setTableDate={setDataFiltered} items={filters} defaultFilters={defaultFilters} dataFiltered={tableData} searchText={t("search_by") + " " + t("plateNumber") + " " + t("or_any_vlaue") + " ..."} >
+                        <ZaityTableFilters data={dataFiltered} tableData={tableData} setTableDate={setDataFiltered} items={filters} defaultFilters={defaultFilters} dataFiltered={tableData} searchText={t("search_by") + " " + t("plateNumber") + " " + t("or_any_value") + " ..."} >
                             {
                                 maintenanceLoading ?
                                     <LoadingScreen sx={{ my: 8 }} color='primary' />
@@ -187,6 +187,8 @@ const ElementActions = ({ item, setTableData }) => {
     const completed = useBoolean();
     const router = useRouter();
 
+    const [postloader, setPostloader] = useState(false)
+
 
     const onEditRow = useCallback(
         (id) => {
@@ -194,6 +196,27 @@ const ElementActions = ({ item, setTableData }) => {
         },
         [router]
     );
+
+
+    const onDeleteRow = useCallback(
+        async (id) => {
+            setPostloader(true)
+            console.log("id : ", id);
+            try {
+                const res = await deleteMaintenance(id);
+                setTableData(prev => prev?.filter(i => i.id != id))
+                enqueueSnackbar(t("operation_success"));
+                confirm.onFalse();
+                setPostloader(false)
+            } catch (error) {
+                console.log("error : ", error);
+                setPostloader(false)
+                showError(error)
+            }
+        }
+    );
+
+
 
 
 
@@ -212,7 +235,7 @@ const ElementActions = ({ item, setTableData }) => {
                 arrow="right-top"
                 sx={{ width: 200 }}
             >
-                <PermissionsContext action={'delete.maintenance'}>
+                {/* <PermissionsContext action={'delete.maintenance'}>
                     <MenuItem
                         onClick={() => {
                             confirm.onTrue();
@@ -223,7 +246,7 @@ const ElementActions = ({ item, setTableData }) => {
                         <Iconify icon="solar:trash-bin-trash-bold" />
                         {t('delete')}
                     </MenuItem>
-                </PermissionsContext>
+                </PermissionsContext> */}
                 <PermissionsContext action={'update.maintenance'}>
                     <MenuItem
                         onClick={() => {
@@ -278,24 +301,26 @@ const ElementActions = ({ item, setTableData }) => {
                 onClose={completed.onFalse}
                 title={t("complete_maintenance")}
                 content={
-                    <MarkAsCompletedForm maintenanceId={item?.id} close={() => completed?.onFalse()} />
+                    <MarkAsCompletedForm setTableData={setTableData} maintenanceId={item?.id} close={() => completed?.onFalse()} />
                 }
             />
             <ConfirmDialog
                 open={confirm.value}
                 onClose={confirm.onFalse}
+                isSubmitting={postloader}
+                loading={postloader}
                 title={t("delete")}
-                content="Are you sure want to delete?"
+                content={t("are_you_sure_want_to_delete")}
                 action={
                     <Button
                         variant="contained"
                         color="error"
                         onClick={() => {
-                            onDeleteRow();
+                            onDeleteRow(item?.id);
                             confirm.onFalse();
                         }}
                     >
-                        Delete
+                        {t("delete")}
                     </Button>
                 }
             />
@@ -306,7 +331,7 @@ const ElementActions = ({ item, setTableData }) => {
 
 
 
-export function MarkAsCompletedForm({ maintenanceId, close }) {
+export function MarkAsCompletedForm({ setTableData, maintenanceId, close }) {
     const { enqueueSnackbar } = useSnackbar();
     const { t } = useTranslate();
 
@@ -348,6 +373,22 @@ export function MarkAsCompletedForm({ maintenanceId, close }) {
 
             const response = await markMaintenanceAsCompeleted(maintenanceId, formData);
             enqueueSnackbar(t("operation_success"), { variant: 'success' });
+            setTableData(prev =>
+                prev.map(c =>
+                    c.id == maintenanceId
+                        ? {
+                            ...c,
+                            status: {
+                                key: "completed",
+                                translations: [{ name: t("completed") }],
+                            },
+                            condition:t("completed"),
+                            color:"success",
+                        }
+                        :
+                        c
+                )
+            );
             close();
         } catch (error) {
             showError(error)

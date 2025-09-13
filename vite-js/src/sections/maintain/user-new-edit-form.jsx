@@ -39,11 +39,12 @@ import { createMaintenance, editMaintenance } from 'src/api/maintainance';
 import { fDate } from 'src/utils/format-time';
 import { useGetCar } from 'src/api/car';
 import { ListItemText } from '@mui/material';
-import { format } from 'date-fns';
+import { format, subDays } from 'date-fns';
 import CarsAutocomplete from 'src/components/hook-form/rhf-CarsAutocomplete';
 import { useSearchParams } from 'react-router-dom';
 import showError from 'src/utils/show_error';
 import { useGetSystemVisibleItem } from 'src/api/settings';
+import showValidationError from 'src/utils/show_validation_error';
 
 // ----------------------------------------------------------------------
 
@@ -73,7 +74,7 @@ export default function UserNewEditForm({ currentMentainance }) {
       state_id: null, // default value for state_id
       car_id: searchParams.get("car_id") || "", // default value for car plate number
       maintainance_type: '', // default value for car plate number
-      entry_date: format(new Date(), 'yyyy-MM-dd'), // default value for entry date
+      entry_date: format(subDays(new Date(), 1), "yyyy-MM-dd"), // default value for entry date
       cause: '', // default value for cause
       exit_date: format(new Date(), 'yyyy-MM-dd'), // default value for exit date (empty string)
     }),
@@ -92,6 +93,12 @@ export default function UserNewEditForm({ currentMentainance }) {
     handleSubmit,
     formState: { isSubmitting, errors },
   } = methods;
+
+
+  useEffect(() => {
+    showValidationError(errors)
+  }, [errors]);
+
 
   const values = watch();
 

@@ -391,7 +391,7 @@ const ElementActions = ({ item, RformulateTable, setTableData }) => {
                 open={remove.value}
                 onClose={remove.onFalse}
                 title={t('delete')}
-                content={t('deleteConfirm')}
+                content={t('are_u_sure_to_delete',{item:t("vehicle"),item2:item?.plat_number})}
                 action={
                     <Button
                         variant="contained"

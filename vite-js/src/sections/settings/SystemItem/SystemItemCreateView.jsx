@@ -44,11 +44,29 @@ const SystemItemCreateView = ({ collection }) => {
         );
     };
 
-    const checkStatesExists = (value) => {
-        return !data?.states?.some(
-            (item) => item.key == value || item?.translations?.[0]?.name == value
+
+
+    const checkCarModelExists = (value) => {
+        // if (!value || !data?.car_companies) return false;
+      
+        return !data.car_companies.some((company) =>
+          company?.models?.some((model) =>
+            model?.key == value ||
+            model?.translations?.[0]?.name == value 
+          )
+        );
+      };
+      
+
+
+    
+    const checkItemExists = (item,value) => {
+        return !data?.[item]?.some(
+            (item) => item?.key == value || item?.name == value || item?.translations?.[0]?.name == value
         );
     };
+
+
 
 
 
@@ -70,9 +88,9 @@ const SystemItemCreateView = ({ collection }) => {
                         // Test if value is not a pure number
                         return value ? isNaN(Number(value)) || /[a-zA-Z\u0600-\u06FF]/.test(value) : true;
                     })
-                    .test("is-valid-country", t("itemExist"), function (value) {
-                        return checkPaymentExists(value);
-                    })
+                    .test("is-valid-payment-methods", t("itemExist"), function (value) {
+                        return checkItemExists("payment_methods",value);
+                    }),
             }),
             fields: (t) => [
                 { name: 'name', label: t('payment_methods_name'), type: 'text', required: true },
@@ -88,7 +106,10 @@ const SystemItemCreateView = ({ collection }) => {
                 is_private: "1",
             }),
             schema: Yup.object().shape({
-                name: Yup.string().required(),
+                name: Yup.string().required()
+                .test("is-valid-country", t("itemExist"), function (value) {
+                    return checkItemExists("license_types",value);
+                }),
             }),
             fields: (t) => [
                 { name: 'name', label: t('license_types_name'), type: 'text', required: true },
@@ -135,7 +156,10 @@ const SystemItemCreateView = ({ collection }) => {
                 is_private: 1,
             }),
             schema: Yup.object().shape({
-                name: Yup.string().required(t("attachment_name_id_required")),
+                name: Yup.string().required(t("attachment_name_id_required"))
+                .test("is-valid-country", t("itemExist"), function (value) {
+                    return checkItemExists("attachmenat_names",value);
+                }),
                 object_type: Yup.string().required(t("attachment_type_required")),
                 // attachable: Yup.number().required(t("attachable_id_required")),
             }),
@@ -158,8 +182,8 @@ const SystemItemCreateView = ({ collection }) => {
             schema: Yup.object().shape({
                 name: Yup.string()
                     .required(t("name_required"))
-                    .test("is-valid-country", t("countryExist"), function (value) {
-                        return checkCountryExists(value);
+                    .test("is-valid-maintenance-specifications", t("itemExist"), function (value) {
+                        return checkItemExists("countries",value);
                     }),
             }),
             fields: (t) => [
@@ -183,7 +207,7 @@ const SystemItemCreateView = ({ collection }) => {
                         return value ? isNaN(Number(value)) || /[a-zA-Z\u0600-\u06FF]/.test(value) : true;
                     })
                     .test("is-valid-country", t("itemExist"), function (value) {
-                        return checkStatesExists(value);
+                        return checkItemExists("states",value);
                     })
             }),
             fields: (t) => [
@@ -200,7 +224,10 @@ const SystemItemCreateView = ({ collection }) => {
                 is_private: "1",
             }),
             schema: Yup.object().shape({
-                name: Yup.string().required(),
+                name: Yup.string().required()
+                .test("is-valid-neighborhood", t("itemExist"), function (value) {
+                    return checkItemExists("neighborhoods",value);
+                }),
             }),
             fields: (t, data) => [
                 { name: 'name', label: t('neighborhood_name'), type: 'text', required: true },
@@ -229,7 +256,7 @@ const SystemItemCreateView = ({ collection }) => {
                         // Test if value is not a pure number
                         return value ? isNaN(Number(value)) || /[a-zA-Z\u0600-\u06FF]/.test(value) : true;
                     })
-                    .test("is-valid-country", t("itemExist"), function (value) {
+                    .test("is-valid-color", t("itemExist"), function (value) {
                         return checkColorExists(value);
                     })
             }),
@@ -247,7 +274,10 @@ const SystemItemCreateView = ({ collection }) => {
                 is_private: "1",
             }),
             schema: Yup.object().shape({
-                name: Yup.string().required(),
+                name: Yup.string().required()
+                .test("is-valid-car-companies", t("itemExist"), function (value) {
+                    return checkItemExists("car_companies",value);
+                }),
             }),
             fields: (t, data) => [
                 { name: 'name', label: t('car_company_name'), type: 'text', required: true },
@@ -270,7 +300,10 @@ const SystemItemCreateView = ({ collection }) => {
                 is_private: "1",
             }),
             schema: Yup.object().shape({
-                name: Yup.string().required(),
+                name: Yup.string().required()
+                .test("is-valid-car-model", t("itemExist"), function (value) {
+                    return checkCarModelExists(value);
+                }),
             }),
             fields: (t, data) => [
                 { name: 'name', label: t('car_model_name'), type: 'text', required: true },
@@ -299,7 +332,10 @@ const SystemItemCreateView = ({ collection }) => {
                 icon: "1",
             }),
             schema: Yup.object().shape({
-                name: Yup.string().required(),
+                name: Yup.string().required()
+                .test("is-valid-maintenance-specifications", t("itemExist"), function (value) {
+                    return checkItemExists("maintenance_specifications",value);
+                }),
             }),
             fields: (t, data) => [
                 { name: 'name', label: t('name'), type: 'text', required: true },

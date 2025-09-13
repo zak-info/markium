@@ -262,7 +262,7 @@ const ElementActions = ({ item, setTableData }) => {
                 open={confirm.value}
                 onClose={confirm.onFalse}
                 title={t("delete")}
-                content={t("are_you_sure_want_to_delete")}
+                content={t('are_u_sure_to_delete',{item:t("contract"),item2:item?.ref})}
                 action={
                     <LoadingButton
                         isSubmitting={loading}

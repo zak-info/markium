@@ -90,6 +90,7 @@ export default function CarDocListView({id}) {
   const confirm = useBoolean();
   // const { logs } = useGetMaintenanceLogs()
   const { documents } = useGetDocuments()
+  console.log("documents : ",documents)
   const carDocuments = documents.filter(item => item.attachable_id == id && item.attachable_type == "car")
 
   const { data } = useValues()
@@ -108,6 +109,7 @@ export default function CarDocListView({id}) {
     comparator: getComparator(table.order, table.orderBy),
     filters,
     dateError,
+    data
   });
 
   const dataInPage = dataFiltered.slice(
@@ -198,7 +200,7 @@ export default function CarDocListView({id}) {
             dateError={dateError}
           />
 
-          {canReset && (
+          {/* {canReset && (
             <OrderTableFiltersResult
               filters={filters}
               onFilters={handleFilters}
@@ -208,7 +210,7 @@ export default function CarDocListView({id}) {
               results={dataFiltered.length}
               sx={{ p: 2.5, pt: 0 }}
             />
-          )}
+          )} */}
 
           <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
             <TableSelectedAction
@@ -319,7 +321,7 @@ export default function CarDocListView({id}) {
 
 // ----------------------------------------------------------------------
 
-function applyFilter({ inputData, comparator, filters, dateError }) {
+function applyFilter({ inputData, comparator, filters, dateError , data }) {
   const { status, name, startDate, endDate } = filters;
 
   const stabilizedThis = inputData.map((el, index) => [el, index]);
@@ -335,7 +337,8 @@ function applyFilter({ inputData, comparator, filters, dateError }) {
   if (name) {
     inputData = inputData.filter(
       (order) =>
-        order?.name?.toLowerCase()?.includes(name.toLowerCase())
+         data?.attachmenat_names?.find( i => i.id == order?.attachment_name_id)?.translations[0]?.name?.toLowerCase()?.includes(name.toLowerCase())
+        // order?.name?.toLowerCase()?.includes(name.toLowerCase())
     );
   }
 

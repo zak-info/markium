@@ -49,6 +49,7 @@ import { useGetCar, useGetCarLogs, useGetCarMaintenance } from 'src/api/car';
 import { useGetDocuments } from 'src/api/document';
 import { Typography } from '@mui/material';
 import { useValues } from 'src/api/utils';
+import { useGetDrivers } from 'src/api/drivers';
 
 // ----------------------------------------------------------------------
 
@@ -83,6 +84,8 @@ export default function CarLogsListView({ id }) {
   const confirm = useBoolean();
   const {data} = useValues()
   const { carLogs } = useGetCarLogs();
+  const {drivers} = useGetDrivers()
+  console.log("drivers ",drivers)
   const [tableData, setTableData] = useState(carLogs?.filter(log => log.car_id == id)?.reverse());
   useEffect(() => {
     setTableData(carLogs?.filter(log=> log.car_id == id)?.reverse())
@@ -180,12 +183,12 @@ export default function CarLogsListView({ id }) {
         <Typography variant="h4" sx={{ mt:"10px",mx:"10px"  }}>
           {t('alerts')}
         </Typography>
-        {/* <OrderTableToolbar
+        <OrderTableToolbar
           filters={filters}
           onFilters={handleFilters}
           //
           dateError={dateError}
-        /> */}
+        />
 
         {/* {canReset && (
           <OrderTableFiltersResult
@@ -246,6 +249,7 @@ export default function CarLogsListView({ id }) {
                     <OrderTableRow
                       key={row?.id}
                       row={row}
+                      drivers={drivers}
                       currentLang = {currentLang?.value}
                       status={data?.car_log_action_enum?.find((status) => status?.key == row?.action)?.translations[0]?.name}
                       selected={table.selected.includes(row?.id)}

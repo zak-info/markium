@@ -52,9 +52,13 @@ export default function RepSelfEditTable({
   };
 
   const handleChange = (event, rowId, field, type) => {
+    // if(event.target.value){
     setTableData((prev) =>
       prev.map((row) => (row.id === rowId ? { ...row, [field]: type == "date" ? fDate(event.target.value) : event.target.value, new: row?.new == "true" ? "true" : "false" } : row))
     );
+    // }else{
+
+    // }
   };
 
   const handleBlur = () => {
@@ -201,12 +205,13 @@ function AppNewInvoiceRow({ row, tableLabels, editing, handleEdit, handleChange,
                       onBlur={handleBlur}
                     /> */}
                       <DatePicker
+                        required
                         name="date"
                         label={row?.label}
                         format="dd/MM/yyyy"
                         // value={contract?.cancle_at ? new Date(contract?.cancle_at) : values?.start_date ? new Date(values?.start_date) : new Date()}
                         // onChange={(date) => setValue('cancel_at', date)}
-                        onChange={(newValue) => handleChange({ target: { value: newValue } }, row.id, key_to_update,'date')}
+                        onChange={(newValue) => handleChange({ target: { value: newValue } }, row.id, key_to_update, 'date')}
                         slotProps={{
                           textField: {
                             fullWidth: true,
@@ -216,11 +221,14 @@ function AppNewInvoiceRow({ row, tableLabels, editing, handleEdit, handleChange,
                     </>
                   ) : (
                     <TextField
+                      required
                       value={row[id] || ""}
                       type={type}
                       onChange={(e) => handleChange(e, row.id, key_to_update)}
                       onBlur={handleBlur}
                       autoFocus
+                      error={!row[id] || row[id].toString().trim() === ""}
+                      helperText={(!row[id] || row[id].toString().trim() === "") ? t("phone") + " "+ t("required") : ""}
                     />
                   )
               ) : (

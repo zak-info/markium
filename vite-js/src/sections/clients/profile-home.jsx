@@ -110,7 +110,7 @@ export default function ProfileHome({ info, posts }) {
         </Stack>
 
         <Stack direction="row" spacing={2}>
-          <Iconify icon="ic:round-business-center" width={48} />
+          <Iconify icon="ic:round-business-center" width={24} />
 
           <Box sx={{ typography: 'body2' }}>
             {t(`tax_number`) + "  "}
@@ -121,7 +121,7 @@ export default function ProfileHome({ info, posts }) {
           </Box>
         </Stack>
         <Stack direction="row" spacing={2}>
-          <Iconify icon="ic:round-business-center" width={48} />
+          <Iconify icon="ic:round-business-center" width={24} />
 
           <Box sx={{ typography: 'body2' }}>
             {t(`c_r_n`) + "  "}
@@ -215,7 +215,7 @@ export default function ProfileHome({ info, posts }) {
             <Tab icon={<Iconify icon="duo-icons:settings" />} iconPosition="start" label={t("representors")} />
             <Tab icon={<Iconify icon="lets-icons:file-dock-search-fill" />} iconPosition="start" label={t("contracts")} />
             <Tab icon={<Iconify icon="solar:dollar-line-duotone" />} iconPosition="start" label={t("claims")} />
-            <Tab icon={<Iconify icon="lets-icons:alarm-fill" />} iconPosition="start" label={t("alerts")} />
+            {/* <Tab icon={<Iconify icon="lets-icons:alarm-fill" />} iconPosition="start" label={t("alerts")} /> */}
             {/* <Tab icon={<Iconify icon="lets-icons:refresh" />} iconPosition="start" label={t("periodic_maintenances")} /> */}
           </Tabs>
         </Card>

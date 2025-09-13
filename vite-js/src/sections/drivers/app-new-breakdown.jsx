@@ -128,7 +128,13 @@ function AppNewInvoiceRow({ row, attachement_name }) {
         <TableCell>{attachement_name}</TableCell>
 
         {row?.attachment_path ? <TableCell> <a href={paths.dashboard.documents.preview + `?url=${"/" + row?.attachment_path}`} target='_blank' ><Label variant="soft" color="success">{t("preview")}</Label></a></TableCell> : null}
-        {row?.invoice_path ? <TableCell> <a href={paths.dashboard.documents.preview + `?url=${"/" + row?.invoice_path}`} target='_blank' ><Label variant="soft" color="success">{t("preview")}</Label></a></TableCell> : null}
+        <TableCell>
+          {row?.invoice_path ?
+            <a href={paths.dashboard.documents.preview + `?url=${"/" + row?.invoice_path}`} target='_blank' ><Label variant="soft" color="success">{t("preview")}</Label></a>
+            :
+            "--"
+          }
+        </TableCell>
         {/* <TableCell><a href={STORAGE_API + "/" + row?.invoice_path} target='_blank' ><Label variant="soft" color="success">View</Label></a></TableCell> */}
 
         {/* <TableCell>{fCurrency(row.cost) || '-'}</TableCell> */}

@@ -29,7 +29,7 @@ import { useSettingsContext } from 'src/components/settings';
 // ----------------------------------------------------------------------
 
 
-export default function ContractClaimsListView({ claimsLoading, data, with_contracts }) {
+export default function ContractClaimsListView({ claimsLoading , data , with_contracts }) {
     const [tableData, setTableData] = useState([]);
     const [dataFiltered, setDataFiltered] = useState([]);
     const settings = useSettingsContext();
@@ -125,17 +125,17 @@ export default function ContractClaimsListView({ claimsLoading, data, with_contr
     };
 
     useEffect(() => {
-        if (!data) return;
+        // if (!data) return;
 
-        const todayStr = new Date().toISOString().split("T")[0]; // "YYYY-MM-DD"
+        // const todayStr = new Date().toISOString().split("T")[0]; // "YYYY-MM-DD"
 
-        const filtered = data.filter(i => {
-            const dateStr = new Date(i.paiment_date).toISOString().split("T")[0];
-            return dateStr === todayStr;
-        });
+        // const filtered = data.filter(i => {
+        //     const dateStr = new Date(i.paiment_date).toISOString().split("T")[0];
+        //     return dateStr === todayStr;
+        // });
 
-        setDataFiltered(RformulateTable(filtered));
-        setTableData(RformulateTable(filtered));
+        setDataFiltered(RformulateTable(data));
+        setTableData(RformulateTable(data));
     }, [data]);
 
       

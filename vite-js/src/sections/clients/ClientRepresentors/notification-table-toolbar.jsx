@@ -21,6 +21,7 @@ export default function OrderTableToolbar({ filters, onFilters, dateError }) {
   const handleFilterName = useCallback(
     (event) => {
       onFilters('name', event.target.value);
+      onFilters('phone', event.target.value);
     },
     [onFilters]
   );

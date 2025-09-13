@@ -187,12 +187,12 @@ export default function CarMaintenancesListView({ id }) {
         <Typography variant="h4" sx={{ mt:"10px",mx:"10px"  }}>
           {t('maintenance')}
         </Typography>
-        <OrderTableToolbar
+        {/* <OrderTableToolbar
           filters={filters}
           onFilters={handleFilters}
           //
           dateError={dateError}
-        />
+        /> */}
 
         {canReset && (
           <OrderTableFiltersResult
@@ -206,7 +206,7 @@ export default function CarMaintenancesListView({ id }) {
           />
         )}
 
-        <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
+        <TableContainer sx={{ position: 'relative', overflow: 'unset' ,mt:4 }}>
           <TableSelectedAction
             dense={table.dense}
             numSelected={table.selected.length}

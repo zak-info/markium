@@ -71,7 +71,7 @@ export default function NotificationsListView() {
 
   const TABLE_HEAD = [
     { id: 'id', label: t('id'), width: 60 },
-    { id: 'plateNumber', label: t('plateNumber'), width: 140 },
+    { id: 'plateNumber', label: t('plateNumber'), width: 180 },
     // { id: 'vehicle', label: t('vehicle'), width: 116 },
     { id: 'entryDate', label: t('entryDate'), width: 140 },
     // { id: 'manitainClassification', label: t('manitainClassification'), width: 140 },
@@ -110,6 +110,8 @@ export default function NotificationsListView() {
 
   useEffect(() => {
     setTableData(car);
+
+    console.log("tableData : ",car)
   }, [car]);
 
   const [filters, setFilters] = useState(defaultFilters);
@@ -335,6 +337,7 @@ export default function NotificationsListView() {
                       <OrderTableRow
                         key={row.id}
                         row={row}
+                        setTableData={setTableData}
                         maintenance={maintenance?.find(item=> item?.car_id == row?.id)}
                         selected={table.selected.includes(row.id)}
                         onSelectRow={() => table.onSelectRow(row.id)}

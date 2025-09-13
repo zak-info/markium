@@ -163,12 +163,14 @@ export default function AppNewInvoice3({
         {
           !addProcess ?
             <UserNewEditForm setAddProcess={setAddProcess} maintenance_id={maintenance_id} setTableData={setTableData} />
-            :
+            : !isChangeing ?
             <Stack alignItems="flex-end" sx={{ m: 3 }}>
               <Button variant="contained" onClick={handleAddRow}>
                 {t("addClause")}
               </Button>
             </Stack>
+            :
+            null
         }
       </TableContainer>
       <Divider sx={{ borderStyle: "dashed" }} />
@@ -311,7 +313,7 @@ function AppNewInvoiceRow({ row, setTableData, tableLabels, editing, handleEdit,
         open={confirm.value}
         onClose={confirm.onFalse}
         title={t('delete')}
-        content={t('deleteConfirm')}
+        content={t('are_u_sure_to_delete',{item:t("the_clause"),item2:row?.clause+" "+row?.cost})}
         action={
           <LoadingButton
             loading={loading}

@@ -196,7 +196,7 @@ export default function OrderTableRow({ row, location, selected, onViewRow, onSe
         open={confirm.value}
         onClose={confirm.onFalse}
         title={t('delete')}
-        content={t('deleteConfirm')}
+        content={t('are_u_sure_to_delete',{item:t("client"),item2:row?.name})}
         action={
           <Button
             variant="contained"

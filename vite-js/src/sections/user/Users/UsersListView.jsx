@@ -26,11 +26,37 @@ import ZaityTableTabs from 'src/sections/ZaityTables/ZaityTableTabs'; // [keep f
 
 export default function UsersListView({ }) {
     const { users } = useUsers();
+    const {roles} = useRoles()
+    const {currentLang} = useLocales()
     // const users = [
     //     { id: 1, name: "zaki", username: "zak-info", email: "zaki@gmail.com", phone_number: "075912431", role: "super admin" }
     // ]
     const [tableData, setTableData] = useState([]);
     const [dataFiltered, setDataFiltered] = useState([]);
+
+
+
+    function translateSelectedRoles(selectedRoles, roles, locale) {
+        if (!Array.isArray(selectedRoles) || !roles?.length) return "";
+      
+        const translated = selectedRoles.map(sel => {
+          const role = roles.find(r => r.key === sel.key);
+          if (!role) return sel.key; // fallback
+      
+          if (locale === "ar") {
+            return role.translations.find(t => t.lang_id === 1)?.name || sel.key;
+          } else {
+            return role.translations.find(t => t.lang_id === 2)?.name || sel.key;
+          }
+        });
+      
+        return locale === "ar"
+          ? translated.join(" و ")
+          : translated.join(" and ");
+      }
+      
+
+      
 
     let TABLE_HEAD = [
         { id: 'name', label: t('name'), type: "text", width: 140 },
@@ -38,8 +64,8 @@ export default function UsersListView({ }) {
         { id: 'email', label: t('email'), type: "text", width: 140 },
         { id: 'phone_number', label: t('phone_number'), type: "text", width: 140 },
         { id: 'status', label: t('status'), type: "label", width: 140 },
-        { id: 'roles', label: t('roles'), type: "text", width: 140 },
-        { id: 'actions', label: t('actions'), type: "threeDots", component: (item) => <ElementActions item={item} setTableData={setDataFiltered} />, width: 400, align: "right" },
+        { id: 'roles', label: t('roles'), type: "text", width: 400 },
+        { id: 'actions', label: t('actions'), type: "threeDots", component: (item) => <ElementActions item={item} setTableData={setDataFiltered} />, width: 200, align: "right" },
     ]
 
 
@@ -84,7 +110,10 @@ export default function UsersListView({ }) {
     const RformulateTable = (data) => {
         return data?.map(item => ({
             ...item,
-            roles: arrayToSentence(item.roles.map(i => i.key)),
+            roles:translateSelectedRoles(item.roles,roles,currentLang?.value),
+            // roles2:item.roles,
+            // roles: arrayToSentence(item.roles.map(i => i.key)),
+
             status: item?.is_banned ? t("banned") : t("active"),
             color: item?.is_banned ? "error" : "success"
         })) || [];
@@ -137,6 +166,7 @@ export default function UsersListView({ }) {
 import ChangePasswordView from 'src/sections/user/Users/changePasswordView';
 import showError from 'src/utils/show_error';
 import { LoadingButton } from '@mui/lab';
+import { useLocales } from 'src/locales';
 
 
 const ElementActions = ({ item, setTableData }) => {

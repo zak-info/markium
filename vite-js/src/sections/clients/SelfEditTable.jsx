@@ -53,7 +53,7 @@ export default function SelfEditTable({
 
   const handleChange = (event, rowId, field, type) => {
     setTableData((prev) =>
-      prev.map((row) => (row.id === rowId ? { ...row, [field]: type == "date" ? fDate(event.target.value) : event.target.value, new: row?.new == "true" ? "true" : "false" } : row))
+      prev.map((row) => (row.id === rowId ? { ...row, [field]: type == "date" ? fDate(event.target.value,"yyyy-MM-dd") : event.target.value, new: row?.new == "true" ? "true" : "false" } : row))
     );
   };
 

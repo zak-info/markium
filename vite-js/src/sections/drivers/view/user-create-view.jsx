@@ -25,7 +25,7 @@ export default function UserCreateView() {
           },
           {
             name: t('driversList'),
-            href: paths.dashboard.documents.root,
+            href: paths.dashboard.drivers.root,
           },
           { name: t('addNewDriver') },
         ]}

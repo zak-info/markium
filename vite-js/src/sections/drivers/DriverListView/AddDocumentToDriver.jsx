@@ -58,9 +58,12 @@ export default function AddDocumentToDriver({ currentDocument, driver_id, close 
   const { data } = useValues();
   console.log("data : lds;ldsld;s ", data);
 
+  let tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
 
   const NewUserSchema = Yup.object().shape({
-    attachment_name_id: Yup.string().required('Name is required'),
+    attachment_name_id: Yup.string().required(t("attachment_name_id_required")),
     // attachment_type_id: Yup.string().required('type id is required'),
     // attachable_id: Yup.string().required('attachable_id is required'),
     // attachable_type: Yup.string().required('Address is required'),
@@ -78,7 +81,7 @@ export default function AddDocumentToDriver({ currentDocument, driver_id, close 
       // attachable_id: currentDocument?.attachable_id || '',
       // attachable_type: currentDocument?.attachable_type || '',
       // document_duration_days: currentDocument?.document_duration_days || '',
-      expiry_date: currentDocument?.expiry_date || new Date(),
+      expiry_date: currentDocument?.expiry_date || tomorrow,
       release_date: currentDocument?.release_date || new Date(),
       note: currentDocument?.note || "",
     }),
@@ -108,12 +111,37 @@ export default function AddDocumentToDriver({ currentDocument, driver_id, close 
 
   const onSubmit = handleSubmit(async (data) => {
     try {
+
+
+
+      const tomorrow2 = new Date();
+      tomorrow2.setHours(0, 0, 0, 0); // reset to start of tomorrow
+      tomorrow2.setDate(tomorrow2.getDate() + 1);
+
+      const expiryDate = new Date(data?.expiry_date);
+      expiryDate.setHours(0, 0, 0, 0); // ignore time part
+
+
+
+
+      const maxSizeInBytes = 2 * 1024 * 1024; // 2MB
+      if (data.attachment && data.attachment.size > maxSizeInBytes) {
+        enqueueSnackbar(t('file_size_exceeds_2mb'), { variant: 'error' });
+        return; // Stop execution
+      } else if (!data.attachment && !currentDocument?.id) {
+        enqueueSnackbar(t('file_is_required'), { variant: 'error' });
+        return; // Stop execution
+      } else if (expiryDate < tomorrow2) {
+        enqueueSnackbar(t('expiry_date_must_start_from_tomorow'), { variant: 'error' });
+        return; // Stop execution
+      }
+
       const formData = new FormData();
       if (currentDocument?.id) {
         formData.append("file", data.attachment);
       }
       formData.append("attachment", data.attachment);
-       if (data.invoice) {
+      if (data.invoice) {
         formData.append("invoice", data.invoice);
       }
       formData.append("release_date", format(new Date(data.release_date), 'yyyy-MM-dd'));
@@ -121,10 +149,10 @@ export default function AddDocumentToDriver({ currentDocument, driver_id, close 
       formData.append("attachment_name_id", Number(data?.attachment_name_id));
       formData.append("attachable_id", Number(driver_id));
       formData.append("attachable_type", "driver");
-      formData.append("note", data?.note);
+      formData.append("note", data?.note || "--");
       formData.append("attachment_type_id", 1);
 
-      console.log("formData  : ",formData);
+      console.log("formData  : ", formData);
       const response = currentDocument?.id ? await editDocument(currentDocument?.id, formData) : await createDocument(formData);
 
       enqueueSnackbar(t("operation_success"));

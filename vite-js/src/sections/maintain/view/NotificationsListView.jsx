@@ -220,7 +220,7 @@ export default function NotificationsListView() {
             dateError={dateError}
           />
 
-          {canReset && (
+          {/* {canReset && (
             <OrderTableFiltersResult
               filters={filters}
               onFilters={handleFilters}
@@ -230,7 +230,7 @@ export default function NotificationsListView() {
               results={dataFiltered.length}
               sx={{ p: 2.5, pt: 0 }}
             />
-          )}
+          )} */}
 
           <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
             <TableSelectedAction

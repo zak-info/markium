@@ -28,7 +28,7 @@ const PermissionsGroupCard2 = ({ model, perms, selectedPermissions, togglePermis
 
     return (
         <>
-            <Card variant="outlined" height="auto" sx={{ height: "auto" }}>
+            <Card variant="outlined" height="auto" sx={{ height: "auto" }} >
                 <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", px: 2 }}>
                     <CardHeader
                         title={t(model.toLocaleLowerCase())}

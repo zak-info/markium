@@ -59,6 +59,7 @@ export default function DocumentsListView({ }) {
     const [tableData, setTableData] = useState([]);
     const [dataFiltered, setDataFiltered] = useState([]);
 
+
     let TABLE_HEAD = [
         { id: 'attachable', label: t('attachable'), type: "two-lines-link", first: (row) => { return row?.attachable?.first }, second: (row) => { return row?.attachable?.second }, link: (row) => { return row?.attachable?.link }, width: 160 },
         // { id: 'model', label: t('plateNumber'), type: "two-lines-link", first: (row) => row?.car?.model?.translations?.name, second: (row) => row?.car?.plat_number, link: (row) => { return paths.dashboard.vehicle.details(row?.id) }, width: 220 },
@@ -144,10 +145,10 @@ export default function DocumentsListView({ }) {
 
     useEffect(() => {
         setDataFiltered(RformulateTable(documents));
-    }, [documents, car, drivers, clients]);
+    }, [vData,documents, car, drivers, clients]);
     useEffect(() => {
         setTableData(RformulateTable(documents));
-    }, [documents, car, drivers, clients]);
+    }, [vData,documents, car, drivers, clients]);
 
     return (
         <>

@@ -44,7 +44,7 @@ export default function App() {
               themeMode: 'light', // 'light' | 'dark'
               themeDirection: 'ltr', //  'rtl' | 'ltr'
               themeContrast: 'default', // 'default' | 'bold'
-              themeLayout: 'horizontal', // 'vertical' | 'horizontal' | 'mini'
+              themeLayout: 'mini', // 'vertical' | 'horizontal' | 'mini'
               themeColorPresets: 'default', // 'default' | 'cyan' | 'purple' | 'blue' | 'orange' | 'red'
               themeStretch: false,
             }}

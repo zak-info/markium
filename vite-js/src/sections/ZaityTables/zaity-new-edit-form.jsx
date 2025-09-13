@@ -14,6 +14,8 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import RHFTextarea from 'src/components/hook-form/RHFTextarea';
 import { renderActionsCell } from '@mui/x-data-grid';
 import showError from 'src/utils/show_error';
+import { useEffect } from 'react';
+import showValidationError from 'src/utils/show_validation_error';
 
 export default function ZaityDynamicForm({ currentItem = {}, schema, fields, onSubmit }) {
   const methods = useForm({
@@ -26,9 +28,13 @@ export default function ZaityDynamicForm({ currentItem = {}, schema, fields, onS
     watch,
     setValue,
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting ,errors},
   } = methods;
   const values = watch();
+
+  // useEffect(()=>{
+  //   showValidationError(errors)
+  // },[errors])
 
   const { enqueueSnackbar } = useSnackbar();
   const router = useRouter();

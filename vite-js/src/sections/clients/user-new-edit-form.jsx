@@ -54,6 +54,11 @@ export default function UserNewEditForm({ currentClient }) {
   const { t } = useTranslate();
   const { data } = useValues()
   const { items: neighborhoods } = useGetSystemVisibleItem("neighborhood")
+
+
+
+
+
   const NewUserSchema = Yup.object().shape({
     name: Yup.string().required('Name is required'),
     commercial_registration_number: Yup.string()
@@ -65,6 +70,7 @@ export default function UserNewEditForm({ currentClient }) {
       .length(15, t('tax_number_must_be_exactly_15_characters')),
     // location_id: Yup.number(),
     neighborhood_id: Yup.number().required(t('neighborhoodـisـrequired')),
+    state_id: Yup.number(),
     // rep_name: Yup.string().required('rep_name is required'),
     // rep_contact_number: Yup.string().required('rep_contact_number is required'),
   });
@@ -117,8 +123,8 @@ export default function UserNewEditForm({ currentClient }) {
 
   const [representors, setRepresentors] = useState([])
   const handleAddRepresentor = () => {
-    if(!values.rep_name || !values.rep_contact_number){
-      enqueueSnackbar(t("fill_rep_credentials"),{variant:"error"});
+    if (!values.rep_name || !values.rep_contact_number) {
+      enqueueSnackbar(t("fill_rep_credentials"), { variant: "error" });
       return
     }
     if (create) {
@@ -147,6 +153,12 @@ export default function UserNewEditForm({ currentClient }) {
     try {
       // await new Promise((resolve) => setTimeout(resolve, 500));
       // reset();
+
+
+      if(representors?.length < 1 ){
+        enqueueSnackbar(t("at_least_one_representors"),{variant:"error"});
+        return ;
+      }
 
       let body = {
         name: data?.name,
@@ -184,14 +196,84 @@ export default function UserNewEditForm({ currentClient }) {
               }}
             >
               <RHFTextField required name="name" label={t('name')} />
-              <Box>
+              {/* <Box>
                 <RHFTextField required name="tax_number" label={t('tax_number')} />
+                <FormHelperText id="component-helper-text">
+                  {t("tax_number_must_be_exactly_15_characters")}
+                </FormHelperText>
+              </Box> */}
+              <Box>
+                <RHFTextField
+                  required
+                  name="tax_number"
+                  label={t('tax_number')}
+                  inputProps={{
+                    inputMode: 'numeric',
+                    pattern: '[0-9]*',
+                    maxLength: 15,
+                    onInput: (e) => {
+                      // Remove any non-numeric characters
+                      e.target.value = e.target.value.replace(/[^0-9]/g, '');
+                      // Limit to 10 characters
+                      if (e.target.value.length > 15) {
+                        e.target.value = e.target.value.slice(0, 15);
+                      }
+                    }
+                  }}
+                  rules={{
+                    required: t('field_required'),
+                    pattern: {
+                      value: /^\d{10}$/,
+                      message: t('invalid_10_digit_number')
+                    },
+                    minLength: {
+                      value: 10,
+                      message: t('invalid_10_digit_number')
+                    },
+                    maxLength: {
+                      value: 10,
+                      message: t('invalid_10_digit_number')
+                    }
+                  }}
+                />
                 <FormHelperText id="component-helper-text">
                   {t("tax_number_must_be_exactly_15_characters")}
                 </FormHelperText>
               </Box>
               <Box>
-                <RHFTextField required name="commercial_registration_number" label={t('c_r_n')} />
+                <RHFTextField
+                  required
+                  name="commercial_registration_number"
+                  label={t('c_r_n')}
+                  inputProps={{
+                    inputMode: 'numeric',
+                    pattern: '[0-9]*',
+                    maxLength: 10,
+                    onInput: (e) => {
+                      // Remove any non-numeric characters
+                      e.target.value = e.target.value.replace(/[^0-9]/g, '');
+                      // Limit to 10 characters
+                      if (e.target.value.length > 10) {
+                        e.target.value = e.target.value.slice(0, 10);
+                      }
+                    }
+                  }}
+                  rules={{
+                    required: t('field_required'),
+                    pattern: {
+                      value: /^\d{10}$/,
+                      message: t('invalid_10_digit_number')
+                    },
+                    minLength: {
+                      value: 10,
+                      message: t('invalid_10_digit_number')
+                    },
+                    maxLength: {
+                      value: 10,
+                      message: t('invalid_10_digit_number')
+                    }
+                  }}
+                />
                 <FormHelperText id="component-helper-text">
                   {t("commercial_registration_number_must_be_exactly_10_characters")}
                 </FormHelperText>
@@ -202,6 +284,18 @@ export default function UserNewEditForm({ currentClient }) {
                 options={data?.states}
                 getOptionLabel={(option) => option?.translations[0]?.name}
                 placeholder={t('choose_state')}
+              /> */}
+              {/* <SimpleAutocomplete
+                name="state_id"
+                label={t('state')}
+                options={useMemo(() => {
+                  const selected = data?.states?.filter(i => i.system_settings?.is_selected) || [];
+                  const current = data?.states?.find(i => i.id == data?.neighborhoods?.find( n => n.id == currentClient?.neighborhood_id )?.state_id);
+                  const exists = selected.some(i => i.id === current?.id);
+                  return exists || !current ? selected : [...selected, current];
+                }, [data?.states, currentClient])}
+                getOptionLabel={(option) => option?.translations?.[0]?.name ?? ''}
+                placeholder={t('search_by')+" ..."}
               /> */}
               <SimpleAutocomplete
                 name="neighborhood_id"
@@ -246,8 +340,8 @@ export default function UserNewEditForm({ currentClient }) {
                   tableLabels={[
                     // { id: "clauseableType", key_to_update: "clauseable_type", label: t("clause_type"), editable: false, creatable: true, type: "select", options: attachables?.map((item) => ({ value: item?.name, lable: item?.lable[currentLang.value] })), width: 160 },
                     // { id: "clauseable", key_to_update: "clauseable_id", label: t("clause"), editable: false, creatable: true, type: "car_autocomplete", options: car, width: 240 },
-                    { id: "name", key_to_update: "name", label: t("name"), editable: true, creatable: true, type: "text", width: 160 },
-                    { id: "contact_number", key_to_update: "contact_number", label: t("phone_number"), editable: true, creatable: true, type: "text", width: 160 },
+                    { id: "name", key_to_update: "name", label: t("name"), editable: true, creatable: true, type: "text", width: 460 },
+                    { id: "contact_number", key_to_update: "contact_number", label: t("phone_number"), editable: true, creatable: true, type: "text", width: 460 },
                     // { id: "duration", key_to_update: "duration", label: t("duration"), editable: true, creatable: true, type: "number", width: 120 },
                     // { id: "total", key_to_update: "total", label: t("total"), editable: false, creatable: false, type: "number", width: 160 },
                     // { id: "start_date", key_to_update: "start_date", label: t("start_date"), editable: true, creatable: true, type: "date", width: 180 },
@@ -267,10 +361,54 @@ export default function UserNewEditForm({ currentClient }) {
                 }}
                 sx={{ marginTop: "30px" }}
               >
-                <RHFTextField name="rep_name" label={t('representor_name')} required />
-                {/* <RHFTextField name="rep_contact_number" label={t('representor_contact_number')} /> */}
+                {/* <RHFTextField name="rep_name" label={t('representor_name')} required /> */}
+
                 <RHFTextField
-                  required
+                  name="rep_name"
+                  label={t('representor_name')}
+                  // required
+                  error={(() => {
+                    if (!values.rep_name) return false;
+
+                    // Check minimum length (more than 3 characters)
+                    if (values.rep_name.trim().length <= 3) return true;
+
+                    // Check for numbers
+                    if (/[0-9]/.test(values.rep_name)) return true;
+
+                    // Check for spaces only or leading/trailing spaces
+                    if (values.rep_name.trim() === '' || values.rep_name !== values.rep_name.trim()) return true;
+
+                    // Check if contains only spaces
+                    if (/^\s+$/.test(values.rep_name)) return true;
+
+                    return false;
+                  })()}
+                  helperText={(() => {
+                    if (!values.rep_name) return null;
+
+                    // Priority order of error messages
+                    if (values.rep_name.trim().length <= 3) {
+                      return t('name_must_be_more_than_3_characters');
+                    }
+
+                    if (/[0-9]/.test(values.rep_name)) {
+                      return t('name_cannot_contain_numbers');
+                    }
+
+                    if (/^\s+$/.test(values.rep_name)) {
+                      return t('name_cannot_be_only_spaces');
+                    }
+
+                    if (values.rep_name !== values.rep_name.trim()) {
+                      return t('name_cannot_have_leading_or_trailing_spaces');
+                    }
+
+                    return null;
+                  })()}
+                />
+                <RHFTextField
+                  // required
                   name="rep_contact_number"
                   type="text"
                   label={t('representor_contact_number')}

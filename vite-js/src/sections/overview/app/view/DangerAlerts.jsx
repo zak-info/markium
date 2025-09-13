@@ -88,15 +88,15 @@ export default function DangerAlerts() {
 
   const [data, setDate] = useState(formulateClaims(claims));
   useEffect(() => {
-    setDate(formulateClaims(claims))
+    setDate(formulateClaims(claims?.filter( c => new Date(c.paiment_date) < new Date && c?.status?.key != "paid_claim" )))
   }, [claims, clients, contracts])
 
 
   useEffect(() => {
-    if (Gclaims) setClaims(Gclaims);
+    setClaims(Gclaims);
     // ?.filter( c => ["overdue_claim","severely_overdue_claim"]?.includes(c.status?.key))
     // paid_claim
-  }, [Gclaims]);
+  }, [Gclaims,clients, contracts]);
 
   useEffect(() => {
     if (Gcontracts) setContracts(Gcontracts);

@@ -23,6 +23,8 @@ import Iconify from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import { STORAGE_API } from 'src/config-global';
+import { t } from 'i18next';
+import { paths } from 'src/routes/paths';
 
 // ----------------------------------------------------------------------
 
@@ -38,8 +40,8 @@ export default function OrderTableRow({ row, attachement_name,status, onCreateRo
   const renderPrimary = (
     <TableRow hover selected={selected}>
       <TableCell>{attachement_name}</TableCell>
-      <TableCell> <a href={STORAGE_API + "/" + row?.attachment_path} target='_blank' ><Label variant="soft" color="success">View</Label></a></TableCell>
-      <TableCell><a href={STORAGE_API + "/" + row?.invoice_path} target='_blank' ><Label variant="soft" color="success">View</Label></a></TableCell>
+      <TableCell>{row?.attachment_path ? <a href={ paths.dashboard.documents.preview + `?url=/${row?.attachment_path}`} target='_blank' ><Label variant="soft" color="success">{t("view")}</Label></a> : "--" }</TableCell>
+      <TableCell>{row?.attachment_path ?<a href={ paths.dashboard.documents.preview + `?url=/${row?.invoice_path}`} target='_blank' ><Label variant="soft" color="success">{t("view")}</Label></a> : "--" }</TableCell>
       <TableCell>
         <Label
           variant="soft"

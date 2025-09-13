@@ -33,13 +33,13 @@ export default function ContractClausesListView({ data , contract }) {
     const [dataFiltered, setDataFiltered] = useState([]);
 
     let TABLE_HEAD = [
-        { id: 'clausable', label: t('clause'), type: "two-lines-link", first: (row) => row?.clausable?.first, second: (row) => row?.clausable?.second, link: (row) => { return row?.clauseable_type == "car" ? paths.dashboard.vehicle.details(row?.id) : paths.dashboard.drivers.details(row?.id) }, width: 240 },
+        { id: 'clausable', label: t('clause'), type: "two-lines-link", first: (row) => row?.clausable?.first, second: (row) => row?.clausable?.second, link: (row) => { return row?.clauseable_type == "car" ? paths.dashboard.vehicle.details(row?.id) : paths.dashboard.drivers.details(row?.id) }, width: 300 },
         { id: 'cost', label: t('cost'), type: "text", width: 140 },
         { id: 'total_cost', label: t('total'), type: "text", width: 140 },
         { id: 'status', label: t('status'), type: "label", color: "error", width: 140 },
         { id: 'start_date', label: t('start_date'), type: "text", width: 140 },
         { id: 'end_date', label: t('end_date'), type: "text", width: 140 },
-        { id: 'actions', label: t('actions'), type: "threeDots", component: (item) => <ElementActions item={item} setDataFiltered={setDataFiltered} />, width: 400, align: "right" },
+        { id: 'actions', label: t('actions'), type: "threeDots", component: (item) => <ElementActions item={item} setDataFiltered={setDataFiltered} />, width: 300, align: "right" },
     ]
 
 
@@ -91,7 +91,7 @@ export default function ContractClausesListView({ data , contract }) {
 
     return (
         <>
-            <AddClause contract={contract} contract_id={data?.length >0 ? data[0]?.contract_id : 0} setTableData={setDataFiltered} />
+            <AddClause contract={contract} contract_id={data?.length > 0 ? data[0]?.contract_id : 0} setTableData={setDataFiltered} />
             <Card>
                 <ZaityTableTabs data={tableData} items={items} defaultFilters={{ gstatus: 'all' }} setTableDate={setDataFiltered} filterFunction={filterFunction}>
                     <ZaityListView TABLE_HEAD={[...TABLE_HEAD]} dense="medium" zaityTableDate={dataFiltered || []} onSelectedRows={({ data, setTableData }) => { return <onSelectedRowsComponent configurable_type={"roles"} setTableData={setTableData} data={data} /> }} />
@@ -214,7 +214,7 @@ const ElementActions = ({ item, setDataFiltered }) => {
                 open={confirm.value}
                 onClose={confirm.onFalse}
                 title={t("delete")}
-                content={t("are_you_sure_want_to_delete")}
+                content={t('are_u_sure_to_delete',{item:t("clause"),item2:item?.clausable?.first+" "+(item?.clauseable_type == "car" ? item?.clausable?.second : "")})}
                 action={
                     <Button variant="contained" color="error" onClick={() => onDeleteRow(item?.id)}>
                         {t("delete")}

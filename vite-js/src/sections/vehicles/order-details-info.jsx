@@ -13,12 +13,14 @@ import Typography from '@mui/material/Typography';
 import { useTranslation } from 'react-i18next';
 
 import Iconify from 'src/components/iconify';
+import { paths } from 'src/routes/paths';
+import { useRouter } from 'src/routes/hooks';
 
 // ----------------------------------------------------------------------
 
 export default function OrderDetailsInfo({ carDetails, delivery, payment, shippingAddress }) {
   const { t } = useTranslation();
-
+  const router = useRouter()
 
   const renderDelivery = (
     <>
@@ -40,7 +42,7 @@ export default function OrderDetailsInfo({ carDetails, delivery, payment, shippi
           <Box sx={{ typography: 'subtitle2' }}>{carDetails?.chassis_number}</Box>
         </Stack>
 
-       <Stack direction="row" sx={{ px: "10px" }}>
+        <Stack direction="row" sx={{ px: "10px" }}>
           <Box sx={{ width: 120, color: 'text.secondary' }}>{t('vin')}</Box>
           <Box sx={{ typography: 'subtitle2' }}>{carDetails?.vin}</Box>
         </Stack>
@@ -103,10 +105,13 @@ export default function OrderDetailsInfo({ carDetails, delivery, payment, shippi
                 >
                   {carDetails?.driver?.name}
                 </Box>
+
+
                 : "--"
 
 
-            }</Box>
+            }
+          </Box>
         </Stack>
       </Stack>
     </>

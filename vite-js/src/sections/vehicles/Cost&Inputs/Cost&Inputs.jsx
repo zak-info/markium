@@ -44,7 +44,7 @@ export default function CostInputs({ }) {
 
     let TABLE_HEAD = [
         // { id: 'plat_number', label: t('plateNumber'), type: "text", width: 120 },
-        { id: 'vehicle', label: t('vehicle'), type: "two-lines-link", first: (row) => row?.car?.plat_number, second: (row) => row?.car?.model?.translations?.name, link: (row) => { return paths.dashboard.vehicle.details(row?.id) }, width: 160 },
+        { id: 'vehicle', label: t('vehicle'), type: "two-lines-link", first: (row) => row?.car?.plat_number, second: (row) => row?.car?.model?.translations?.name, link: (row) => { return paths.dashboard.vehicle.details(row?.car?.id) }, width: 160 },
         // { id: 'model', label: t('model'), type: "two-lines-link", first: (row) => row?.model?.translations?.name, second: (row) => row?.model?.company?.translations?.name, link: (row) => { return paths.dashboard.vehicle.details(row?.id) }, width: 140 },
         // { id: 'production_year', label: t('manufacturingYear'), type: "text", width: 100 },
         // { id: 'driver', label: t('driver'), type: "two-lines-link", first: (row) => row?.driver?.name || "--", second: (row) => { }, link: (row) => { return row?.driver?.id ?  paths.dashboard.drivers.details(row?.driver?.id) : "#"}, width: 180 },

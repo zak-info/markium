@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
 import PropTypes from 'prop-types';
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
@@ -48,6 +48,7 @@ import FlexibleAutocomplete from 'src/components/hook-form/rhf-scalable-autocomp
 import { useGetClients } from 'src/api/client';
 import showError from 'src/utils/show_error';
 import { useGetSystemVisibleItem } from 'src/api/settings';
+import showValidationError from 'src/utils/show_validation_error';
 
 // ----------------------------------------------------------------------
 
@@ -67,6 +68,11 @@ export default function UserNewEditForm({ currentDocument }) {
   const { items: attachment_names } = useGetSystemVisibleItem("attachment_name")
   console.log("data : lds;ldsld;s ", data);
 
+
+  let tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+
   const NewUserSchema = Yup.object().shape({
     attachment_name_id: Yup.string().required(t('attachment_name_id_required')),
     attachable_id: Yup.string().required(t('attachable_id_required')),
@@ -83,7 +89,7 @@ export default function UserNewEditForm({ currentDocument }) {
       attachable_id: currentDocument?.attachable_id || '',
       attachable_type: currentDocument?.attachable_type || '',
       // document_duration_days: currentDocument?.document_duration_days || '',
-      expiry_date: currentDocument?.expiry_date || new Date(),
+      expiry_date: currentDocument?.expiry_date || tomorrow,
       release_date: currentDocument?.release_date || new Date(),
       note: currentDocument?.note || "",
     }),
@@ -104,6 +110,11 @@ export default function UserNewEditForm({ currentDocument }) {
     formState: { isSubmitting, errors },
   } = methods;
 
+
+  useEffect(() => {
+    showValidationError(errors)
+  }, [errors]);
+
   const values = watch();
   const { car } = useGetCar()
   const { drivers } = useGetDrivers()
@@ -114,10 +125,28 @@ export default function UserNewEditForm({ currentDocument }) {
   const onSubmit = handleSubmit(async (data) => {
     try {
       // Check file size (2MB = 2 * 1024 * 1024 bytes)
-      const maxSizeInBytes = 2 * 1024 * 1024; // 2MB
 
+
+
+      const tomorrow2 = new Date();
+      tomorrow2.setHours(0, 0, 0, 0); // reset to start of tomorrow
+      tomorrow2.setDate(tomorrow2.getDate() + 1);
+
+      const expiryDate = new Date(data?.expiry_date);
+      expiryDate.setHours(0, 0, 0, 0); // ignore time part
+
+      
+
+
+      const maxSizeInBytes = 2 * 1024 * 1024; // 2MB
       if (data.attachment && data.attachment.size > maxSizeInBytes) {
         enqueueSnackbar(t('file_size_exceeds_2mb'), { variant: 'error' });
+        return; // Stop execution
+      } else if (!data.attachment && !currentDocument?.id ) {
+        enqueueSnackbar(t('file_is_required'), { variant: 'error' });
+        return; // Stop execution
+      } else if (expiryDate < tomorrow2) {
+        enqueueSnackbar(t('expiry_date_must_start_from_tomorow'), { variant: 'error' });
         return; // Stop execution
       }
 
@@ -128,16 +157,17 @@ export default function UserNewEditForm({ currentDocument }) {
       }
 
       const formData = new FormData();
-      if (currentDocument?.id) {
-        formData.append("file", data.attachment);
+      if (currentDocument.attachment_name_id) {
+        formData.append("attachment", data.attachment);
       } else {
         formData.append("attachment_name_id", Number(data?.attachment_name_id));
         formData.append("attachable_id", Number(data?.attachable_id));
         formData.append("attachable_type", data?.attachable_type);
-      }
-      formData.append("attachment", data.attachment);
-      if (data.invoice) {
-        formData.append("invoice", data.invoice);
+        formData.append("attachment", data.attachment);
+        formData.append("attachment_type_id", 1);
+        if (data.invoice) {
+          formData.append("invoice", data.invoice);
+        }
       }
       formData.append("release_date", format(new Date(data.release_date), 'yyyy-MM-dd'));
       formData.append("expiry_date", format(new Date(data.expiry_date), 'yyyy-MM-dd'));
@@ -147,14 +177,18 @@ export default function UserNewEditForm({ currentDocument }) {
       } else {
         formData.append("note", "--");
       }
-      formData.append("attachment_type_id", 1);
-      console.info('DATA is : ', data);
-      const response = currentDocument?.id
-        ? await editDocument(currentDocument?.id, {note:data?.note,expiry_date:format(new Date(data.expiry_date), 'yyyy-MM-dd'),release_date:format(new Date(data.release_date), 'yyyy-MM-dd')})
+
+      console.info('DATA is : ', formData);
+      console.info('data is : ', data);
+      console.info('currentDocument?.id is : ', currentDocument?.id);
+      const response = !!currentDocument?.id
+        ? await editDocument(currentDocument?.id, formData)
         : await createDocument(formData);
+      console.log("response response response  ", response)
       enqueueSnackbar(t("operation_success"));
       router.push(paths.dashboard.documents.root);
     } catch (error) {
+      console.log("error error error  ", error)
       showError(error);
     }
   });
@@ -209,7 +243,7 @@ export default function UserNewEditForm({ currentDocument }) {
                 disabled={currentDocument?.id}
                 name="attachment_name_id"
                 label={t('document_name')}
-                options={attachment_names?.filter(item => item?.object_type?.includes(values.attachable_type))}
+                options={data?.attachmenat_names?.filter(item => item?.object_type == values.attachable_type)}
                 getOptionLabelFn={(option) => option?.translations?.[0]?.name}
               />
 
@@ -233,6 +267,7 @@ export default function UserNewEditForm({ currentDocument }) {
                 name="expiry_date"
                 label={t('expiry_date')}
                 format="dd/MM/yyyy"
+                minDate={tomorrow}
                 value={currentDocument?.expiry_date ? new Date(currentDocument?.expiry_date) : values?.expiry_date ? new Date(values?.expiry_date) : new Date()}
                 onChange={(date) => setValue('expiry_date', date)}
                 slotProps={{
@@ -243,8 +278,13 @@ export default function UserNewEditForm({ currentDocument }) {
               />
               <RHFTextField name="note" label={t('note')} />
               {/* <p style={{ color: "gray" }}>.</p> */}
-              <RHFUpload name="attachment" placeholder={"upload_document"} lable={t("upload_document")} accept={".jpg,.jpeg,.png,.pdf,.doc,.docx"} oldFileUrl={currentDocument?.attachment_path} />
-              <RHFUpload name="invoice" placeholder={"upload_invoice_file"} lable={t("upload_invoice_file")} accept={".jpg,.jpeg,.png,.pdf,.doc,.docx"} oldFileUrl={currentDocument?.invoice_path} />
+              <RHFUpload name="attachment" required placeholder={"upload_document"} lable={t("upload_document")} accept={".jpg,.jpeg,.png,.pdf,.doc,.docx"} oldFileUrl={currentDocument?.attachment_path} />
+              {
+                !currentDocument?.id ?
+                  <RHFUpload name="invoice" placeholder={"upload_invoice_file"} lable={t("upload_invoice_file")} accept={".jpg,.jpeg,.png,.pdf,.doc,.docx"} oldFileUrl={currentDocument?.invoice_path} />
+                  :
+                  null
+              }
             </Box>
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>

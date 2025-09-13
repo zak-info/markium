@@ -35,6 +35,8 @@ export default function EcommerceSaleByGender({ title, subheader, total, chart, 
     colors = [
       [theme.palette.primary.light, theme.palette.primary.main],
       [theme.palette.warning.light, theme.palette.warning.main],
+      [theme.palette.error.light, theme.palette.error.main],
+      [theme.palette.secondary.light, theme.palette.secondary.main],
     ],
     series,
     options,

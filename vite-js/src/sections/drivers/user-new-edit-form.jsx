@@ -27,7 +27,7 @@ import FormProvider, { RHFTextField, RHFSelect } from 'src/components/hook-form'
 
 import { useLocales, useTranslate } from 'src/locales';
 
-import { addNewDriver, editDriver } from 'src/api/drivers';
+import { addNewDriver, editDriver, useGetDrivers } from 'src/api/drivers';
 
 import { useValues } from 'src/api/utils';
 import { useGetCar } from 'src/api/car';
@@ -43,8 +43,13 @@ export default function UserNewEditForm({ currentDriver }) {
   const { t } = useTranslate();
   const { items: countries } = useGetSystemVisibleItem("country")
   const { items: states } = useGetSystemVisibleItem("state")
+  const {data : Vdata} = useValues()
   const { car } = useGetCar();
+  const { drivers } = useGetDrivers()
   const { currentLang } = useLocales()
+
+
+
 
 
 
@@ -76,28 +81,24 @@ export default function UserNewEditForm({ currentDriver }) {
       .matches(/^[0-9]+$/, t('only_numbers_allowed')) // Only numbers allowed
       .test('valid-format', t('please_enter_number_beginning_with_966_or_05'), function (value) {
         if (!value) return false;
-
-        // Check if starts with +966 (remove + and check 966)
+        // Check if starts with 966
         if (value.startsWith('966')) {
           return value.length === 12; // 966 + 9 digits = 12 total
         }
-
         // Check if starts with 05
         if (value.startsWith('05')) {
           return value.length === 10; // 05 + 8 digits = 10 total
         }
-
         return false; // Must start with either 966 or 05
       })
       .test('unique-number', t('this_number_is_already_in_use'), async function (value) {
-        if (!value) return true;
-
-        // Add your logic here to check if number is already in use
-        // Example: const exists = await checkIfPhoneExists(value);
-        // return !exists;
-
-        // Placeholder - replace with actual uniqueness check
-        return true;
+        if (!value) return true; // Skip validation if no value
+        if(currentDriver?.id){
+          return true
+        }
+        // Check if phone number already exists in drivers array
+        const isDuplicate = drivers?.some(driver => driver.phone_number === value);
+        return !isDuplicate; // Return false if duplicate found, true if unique
       }),
     start_date: Yup.date()
       .required(t('start_date_required'))
@@ -111,6 +112,8 @@ export default function UserNewEditForm({ currentDriver }) {
       .typeError(t('birth_date_must_be_valid'))
   });
 
+
+
   const defaultValues = useMemo(
     () => ({
       name: currentDriver?.name || '',
@@ -121,7 +124,7 @@ export default function UserNewEditForm({ currentDriver }) {
       start_date: currentDriver?.start_date || new Date(),
       state_id: currentDriver?.state?.id || null,
       isMale: currentDriver?.isMale == 0 ? false : true, // default to true if undefined
-      birth_date: currentDriver?.birth_date ? new Date(currentDriver?.birth_date) :  new Date(),
+      birth_date: currentDriver?.birth_date ? new Date(currentDriver?.birth_date) : new Date(),
     }),
     [currentDriver]
   );
@@ -157,6 +160,23 @@ export default function UserNewEditForm({ currentDriver }) {
     console.log("currentDriver : ", currentDriver);
 
   }, [car, setValue]);
+
+
+
+
+
+
+  const isDuplicatePhone = useMemo(() => {
+    if(currentDriver?.id){
+      return false
+    }
+    if (!values.phone_number) return false;
+    return drivers?.some(driver => driver.phone_number === values.phone_number) || false;
+  }, [values.phone_number, drivers]);
+
+
+
+
 
   const onSubmit = handleSubmit(async (data) => {
     try {
@@ -215,7 +235,7 @@ export default function UserNewEditForm({ currentDriver }) {
                 helperText={errors.nationality_id?.message}
               >
                 <Divider sx={{ borderStyle: 'dashed' }} />
-                {countries?.map((option) => (
+                {Vdata?.countries?.filter(i => i?.system_settings?.is_selected)?.map((option) => (
                   <MenuItem key={option?.id} value={option?.id}>
                     {option?.translations[0]?.name}
                   </MenuItem>
@@ -301,6 +321,9 @@ export default function UserNewEditForm({ currentDriver }) {
                 error={(() => {
                   if (!values.phone_number) return false;
 
+                  // Check for duplicates first
+                  if (isDuplicatePhone) return true;
+
                   // Check if only numbers
                   if (!/^[0-9]+$/.test(values.phone_number)) return true;
 
@@ -308,7 +331,6 @@ export default function UserNewEditForm({ currentDriver }) {
                   if (values.phone_number.startsWith('966')) {
                     return values.phone_number.length !== 12;
                   }
-
                   if (values.phone_number.startsWith('05')) {
                     return values.phone_number.length !== 10;
                   }
@@ -319,12 +341,15 @@ export default function UserNewEditForm({ currentDriver }) {
                 helperText={(() => {
                   if (!values.phone_number) return null;
 
-                  // Check if only numbers
+                  // Priority order of error messages
+                  if (isDuplicatePhone) {
+                    return t('this_number_is_already_in_use');
+                  }
+
                   if (!/^[0-9]+$/.test(values.phone_number)) {
                     return t('only_numbers_allowed');
                   }
 
-                  // Check format and length based on prefix
                   if (values.phone_number.startsWith('966')) {
                     if (values.phone_number.length !== 12) {
                       return t('phone_number_must_be_12_digits_for_966');
@@ -337,7 +362,7 @@ export default function UserNewEditForm({ currentDriver }) {
                     return t('please_enter_number_beginning_with_966_or_05');
                   }
 
-                  return '';
+                  return null;
                 })()}
               />
               <DatePicker
@@ -361,7 +386,7 @@ export default function UserNewEditForm({ currentDriver }) {
                 helperText={errors.state_id?.message}
               >
                 <Divider sx={{ borderStyle: 'dashed' }} />
-                {states?.map((option) => (
+                {Vdata?.states?.filter(i => i?.system_settings?.is_selected)?.map((option) => (
                   <MenuItem key={option?.name} value={option?.id}>
                     {option?.translations[0]?.name}
                   </MenuItem>

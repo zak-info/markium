@@ -186,7 +186,7 @@ export default function ClientRepresentorsListView({ id,representors }) {
           dateError={dateError}
         />
 
-        {canReset && (
+        {/* {canReset && (
           <OrderTableFiltersResult
             filters={filters}
             onFilters={handleFilters}
@@ -196,7 +196,7 @@ export default function ClientRepresentorsListView({ id,representors }) {
             results={dataFiltered?.length}
             sx={{ p: 2.5, pt: 0 }}
           />
-        )}
+        )} */}
 
         <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
           <TableSelectedAction

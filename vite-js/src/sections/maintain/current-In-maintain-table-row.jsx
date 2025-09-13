@@ -31,7 +31,7 @@ import ReleaseCar from './releaseCar';
 
 // ----------------------------------------------------------------------
 
-export default function OrderTableRow({ row, maintenance, selected, onViewRow, onEditRow, onSelectRow, onDeleteRow, onViewMaintenance }) {
+export default function OrderTableRow({ row,setTableData, maintenance, selected, onViewRow, onEditRow, onSelectRow, onDeleteRow, onViewMaintenance }) {
   const { model, status, plat_number, createdAt, state, totalQuantity, subTotal } = row;
 
   const confirm = useBoolean();
@@ -246,7 +246,7 @@ export default function OrderTableRow({ row, maintenance, selected, onViewRow, o
         onClose={release.onFalse}
         title={t("release_car")}
         content={
-          <ReleaseCar maintenanceId={row?.id} close={() => release?.onFalse()} />
+          <ReleaseCar maintenanceId={row?.id} row={row} setTableData={setTableData} close={() => release?.onFalse()} />
         }
       />
       <ContentDialog

@@ -49,10 +49,11 @@ import RHFFileInput from 'src/components/hook-form/rhf-input-field';
 import FileThumbnail from 'src/components/file-thumbnail';
 import ContentDialog from 'src/components/custom-dialog/content-dialog';
 import { markMaintenanceAsCompeleted, releaseCar } from 'src/api/maintainance';
+import showError from 'src/utils/show_error';
 
 
 
-export default function ReleaseCar({ maintenanceId, close }) {
+export default function ReleaseCar({ maintenanceId, close, setTableData, row }) {
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslate();
 
@@ -62,7 +63,7 @@ export default function ReleaseCar({ maintenanceId, close }) {
 
   const defaultValues = useMemo(
     () => ({
-      invoice : ''
+      invoice: ''
     }),
     []
   );
@@ -86,7 +87,7 @@ export default function ReleaseCar({ maintenanceId, close }) {
     try {
       console.log("hi there 2");
       const formData = new FormData();
-  
+
       if (Array.isArray(data.invoice)) {
         data.invoice.forEach((file) => {
           formData.append("invoice[]", file);
@@ -94,30 +95,38 @@ export default function ReleaseCar({ maintenanceId, close }) {
       } else {
         formData.append("invoice[]", data.invoice);
       }
-      
-  
+
+
       console.log("hi there 3 formData", formData.getAll("invoice[]")); // Debugging
-  
+
       const response = await releaseCar(maintenanceId);
-      console.log("hi there 4");
-  
+      setTableData(prev =>
+        prev.map(c =>
+          c.id === row.id
+            ? {
+              ...c,
+              car: {
+                ...c.car,
+                status: {
+                  key: "under_preparation",
+                  translations: { name: t("under_preparation") },
+                },
+              },
+            }
+            : 
+            c
+        )
+      );
       enqueueSnackbar(t("operation_success"), { variant: 'success' });
       close();
     } catch (error) {
       console.error(error);
-      Object.values(error?.data || {}).forEach(array => {
-        array.forEach(text => {
-          enqueueSnackbar(text, { variant: 'error' });
-        });
-      });
-      if(error?.message){
-        enqueueSnackbar(error?.message, { variant: 'error' });
-      }
+      showError(error);
     }
   });
-  
-  
-  
+
+
+
 
 
   return (

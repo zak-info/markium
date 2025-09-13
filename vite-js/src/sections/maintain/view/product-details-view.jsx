@@ -101,7 +101,7 @@ export default function OrderDetailsView({ id }) {
       <Grid container spacing={3}>
         <Grid xs={12} md={16}>
           <Stack spacing={3} direction={{ xs: 'column-reverse', md: 'row' }}>
-            <Grid xs={12} md={8}>
+            <Grid xs={12} md={18} >
               <OrderDetailsItems
                 currentMentainance={currentMentainance}
                 setCurrentMentainance={setCurrentMentainance}
@@ -146,7 +146,7 @@ export default function OrderDetailsView({ id }) {
               { id: "quantity", key_to_update: "quantity", label: t("qte"), editable: true, creatable: true, type: "number", width: 60 },
               { id: "tpiece_status", key_to_update: "piece_status", label: t("piece_status"), editable: true, creatable: true, type: "select", options: data?.piece_status_enum?.map(item => ({ value: item.key, label: item?.translations[0]?.name })), width: 100 },
               { id: "total", key_to_update: "total", label: t("total"), editable: false, creatable: false, width: 100 },
-              { id: "note", key_to_update: "note", label: t("note"), editable: true, creatable: true, width: 200 },
+              { id: "note", key_to_update: "note", label: t("note"), editable: true, creatable: true, width: 300 },
             ]}
           />
         </Grid>

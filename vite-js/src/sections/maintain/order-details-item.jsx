@@ -14,7 +14,7 @@ import { fCurrency } from 'src/utils/format-number';
 
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
-import { Divider, Link } from '@mui/material';
+import { Divider, Link, Typography, Grid, Paper } from '@mui/material';
 import { fDate } from 'src/utils/format-time';
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
@@ -40,248 +40,347 @@ export default function OrderDetailsItems({
   driver
 }) {
   const { t } = useTranslation();
-
   const router = useRouter();
+  const { currentLang } = useLocales();
 
-
-  const day = { ar: "يوم", en: 'day' }
-  const days = { ar: "ايام", en: 'day' }
-  const { currentLang } = useLocales()
+  const day = { ar: "يوم", en: 'day' };
+  const days = { ar: "ايام", en: 'days' };
 
   const handleViewCar = useCallback(
     (id) => {
       router.push(paths.dashboard.vehicle.details(id));
     },
     [router]
-  )
+  );
 
   const handleViewDriver = useCallback(
     (id) => {
       router.push(paths.dashboard.drivers.details(id));
     },
     [router]
-  )
+  );
 
-  const renderTotal = (
-    <Stack
-      spacing={1}
-      justifyContent="space-between"
-      alignItems="start"
-      direction="row"
-      flexWrap="wrap"
-      sx={{ mb: 3, typography: 'body2' }}
-      divider={<Divider />}
+  // Helper function to format remaining days
+  const formatRemainingDays = () => {
+    const remainingDays = currentMentainance?.remaining_days;
+    if (!remainingDays) return "--";
+
+    const dayText = remainingDays > 2 && remainingDays < 11
+      ? days[currentLang?.value]
+      : day[currentLang?.value];
+
+    return `${remainingDays} ${dayText}`;
+  };
+
+  // Vehicle Information Section
+  const renderVehicleInfo = (
+    <Paper
+      elevation={0}
+      sx={{
+        p: 3,
+        bgcolor: 'background.neutral',
+        borderRadius: 2,
+        mb: 3,
+        height:"100%"
+      }}
     >
-      <Stack spacing={1} sx={{ typography: 'body2' }}>
-        <Stack direction="row">
-          <Box sx={{ width: 160, color: 'text.secondary' }}>{t('entryDate')}</Box>
-          <Box sx={{ typography: 'subtitle2' }}>{fDate(currentMentainance?.entry_date)}</Box>
-        </Stack>
-        <Stack direction="row">
-          <Box sx={{ width: 160, color: 'text.secondary' }}>{t('exitExpectedDate')}</Box>
-          <Box rowGap={3} columnGap={11} display="grid" gridTemplateColumns={{ xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)', }}>
-            <Box sx={{ typography: 'subtitle2' }}>{fDate(currentMentainance?.exit_date)}</Box>
-            <EditExitDatePopUp setCurrentMentainance={setCurrentMentainance} currentMentainance={currentMentainance} />
+      <Typography variant="h6" sx={{ mb: 2, color: 'text.primary' }}>
+        {t('vehicleInformation')}
+      </Typography>
+
+      <Grid container display={"flex"} flexDirection={"column"} spacing={3}>
+        <Grid item xs={12} md={12}>
+          <Box
+            onClick={() => handleViewCar(currentCar?.id)}
+            sx={{
+              cursor: 'pointer',
+              p: 2,
+              borderRadius: 1,
+              bgcolor: 'background.paper',
+              transition: 'all 0.2s',
+              '&:hover': {
+                bgcolor: 'action.hover',
+                transform: 'translateY(-2px)',
+                boxShadow: 1,
+              },
+            }}
+          >
+            <Stack direction="row" alignItems="center" spacing={2}>
+              <Avatar
+                sx={{
+                  bgcolor: 'primary.main',
+                  color: 'primary.contrastText',
+                  width: 48,
+                  height: 48,
+                }}
+              >
+                <Iconify icon="mdi:car" width={24} />
+              </Avatar>
+              <Box>
+                <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+                  {currentCar?.model?.translations?.name}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {currentCar?.model?.company?.translations?.name}
+                </Typography>
+                <Typography variant="caption" color="primary.main" sx={{ fontWeight: 500 }}>
+                  {currentCar?.plat_number}
+                </Typography>
+              </Box>
+            </Stack>
           </Box>
+        </Grid>
+
+        <Grid item xs={12} md={12}>
+          <Stack spacing={2}>
+            <Stack direction="row" justifyContent="space-between">
+              <Typography variant="body2" color="text.secondary">
+                {t('contract')}
+              </Typography>
+              <Typography variant="subtitle2">
+                {currentMentainance?.contract?.ref || "--"}
+              </Typography>
+            </Stack>
+
+            <Stack direction="row" justifyContent="space-between">
+              <Typography variant="body2" color="text.secondary">
+                {t('driver')}
+              </Typography>
+              <Box>
+                {driver?.name ? (
+                  <Link
+                    onClick={() => handleViewDriver(driver?.id)}
+                    href=""
+                    sx={{
+                      textDecoration: 'none',
+                      '&:hover': { textDecoration: 'underline' }
+                    }}
+                  >
+                    <Typography variant="subtitle2" color="primary.main">
+                      {driver?.name}
+                    </Typography>
+                  </Link>
+                ) : (
+                  <Typography variant="subtitle2">--</Typography>
+                )}
+              </Box>
+            </Stack>
+          </Stack>
+        </Grid>
+      </Grid>
+    </Paper>
+  );
+
+  // Maintenance Information Section
+  const renderMaintenanceInfo = (
+    <Paper
+      elevation={0}
+      sx={{
+        p: 3,
+        bgcolor: 'background.neutral',
+        borderRadius: 2,
+        mb: 3,
+         height:"100%"
+      }}
+    >
+      <Typography variant="h6" sx={{ mb: 2, color: 'text.primary' }}>
+        {t('maintenanceInformation')}
+      </Typography>
+
+        <Box
+          // onClick={() => handleViewCar(currentCar?.id)}
+          sx={{
+            cursor: 'pointer',
+            p: 2,
+            borderRadius: 1,
+            bgcolor: 'background.paper',
+            transition: 'all 0.2s',
+            '&:hover': {
+              bgcolor: 'action.hover',
+              transform: 'translateY(-2px)',
+              boxShadow: 1,
+            },
+          }}
+        >
+          <Grid item xs={12} md={6}>
+            <Stack spacing={2}>
+              <Stack direction="row" justifyContent="space-between">
+                <Typography variant="body2" color="text.secondary">
+                  {t('maintainType')}
+                </Typography>
+                <Typography variant="subtitle2">
+                  {maintenance_type || "--"}
+                </Typography>
+              </Stack>
+
+              <Stack direction="row" justifyContent="space-between">
+                <Typography variant="body2" color="text.secondary">
+                  {t('cause')}
+                </Typography>
+                <Typography variant="subtitle2">
+                  {currentMentainance?.cause || "--"}
+                </Typography>
+              </Stack>
+            </Stack>
+          </Grid>
+        </Box>
+    </Paper>
+  );
+
+  // Timeline Section
+  const renderTimeline = (
+    <Paper
+      elevation={0}
+      sx={{
+        p: 3,
+        bgcolor: 'background.neutral',
+        borderRadius: 2
+      }}
+    >
+      <Typography variant="h6" sx={{ mb: 2, color: 'text.primary' }}>
+        {t('timeline')}
+      </Typography>
+
+      <Stack spacing={2}>
+        {/* Entry Date */}
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
+          sx={{
+            p: 2,
+            bgcolor: 'background.paper',
+            borderRadius: 1,
+            border: '1px solid',
+            borderColor: 'divider'
+          }}
+        >
+          <Stack direction="row" alignItems="center" spacing={2}>
+            <Box
+              sx={{
+                width: 10,
+                height: 10,
+                borderRadius: '50%',
+                bgcolor: 'success.main',
+              }}
+            />
+            <Typography variant="body2" color="text.secondary">
+              {t('entryDate')}
+            </Typography>
+          </Stack>
+          <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+            {fDate(currentMentainance?.entry_date)}
+          </Typography>
         </Stack>
-        <Stack direction="row">
-          <Box sx={{ width: 160, color: 'text.secondary' }}>{t('remaining_days')}</Box>
-          <Box rowGap={3} columnGap={0} display="grid" gridTemplateColumns={{ xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)', }}>
-            <Box sx={{ typography: 'subtitle2' }}>{currentMentainance?.remaining_days ? currentMentainance?.remaining_days : "--"}  {currentMentainance?.remaining_days ? currentMentainance?.remaining_days > 2 && currentMentainance?.remaining_days < 11 ? days[currentLang?.value] : day[currentLang?.value] : "-"} </Box>
+
+        {/* Exit Date */}
+        <Stack
+          display={"flex"}
+          direction="column"
+          justifyContent="space-between"
+          // alignItems="center"
+          sx={{
+            p: 2,
+            bgcolor: 'background.paper',
+            borderRadius: 1,
+            border: '1px solid',
+            borderColor: 'divider'
+          }}
+        >
+          <Stack direction="row" justifyContent={"space-between"} alignItems="center" >
+            <Stack direction="row" alignItems="center" spacing={2}>
+              <Box
+                sx={{
+                  width: 10,
+                  height: 10,
+                  borderRadius: '50%',
+                  bgcolor: 'warning.main',
+                }}
+              />
+              <Typography variant="body2" color="text.secondary">
+                {t('exitExpectedDate')}
+              </Typography>
+            </Stack>
+            <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+              {fDate(currentMentainance?.exit_date)}
+            </Typography>
+          </Stack>
+          <Stack direction="row" justifyContent="flex-end" mt={2} alignItems="center" spacing={2}>
+            <EditExitDatePopUp
+              setCurrentMentainance={setCurrentMentainance}
+              currentMentainance={currentMentainance}
+            />
+          </Stack>
+        </Stack>
+
+        {/* Remaining Days */}
+        <Stack
+          display={"flex"}
+          direction="column"
+          justifyContent="space-between"
+          sx={{
+            p: 2,
+            bgcolor: 'background.paper',
+            borderRadius: 1,
+            border: '1px solid',
+            borderColor: 'divider'
+          }}
+        >
+          <Stack direction="row" justifyContent={"space-between"} alignItems="center" spacing={2}>
+            <Stack direction="row" alignItems="center" spacing={2}>
+              <Box
+                sx={{
+                  width: 10,
+                  height: 10,
+                  borderRadius: '50%',
+                  bgcolor: 'info.main',
+                }}
+              />
+              <Typography variant="body2" color="text.secondary">
+                {t('remaining_days')}
+              </Typography>
+            </Stack>
+            <Typography variant="subtitle2" sx={{ fontWeight: 600, }}>
+              {formatRemainingDays()}
+            </Typography>
+          </Stack>
+          <Stack direction="row" justifyContent={"flex-end"} alignItems="center" mt={2} spacing={2}>
             <StatusLabel date={currentMentainance?.exit_date} />
-          </Box>
+          </Stack>
         </Stack>
-
-        {/* <Stack direction="row">
-          <Box sx={{ width: 160, color: 'text.secondary' }}>{t('vehcileColor')}</Box>
-          <Box sx={{ typography: 'subtitle2' }}>23444vf</Box>
-        </Stack> */}
       </Stack>
-      <Divider orientation="vertical" flexItem />
-      {/* <Stack spacing={2} sx={{ my: 1, typography: 'body2' }}>
-        <Stack direction="row">
-          <Box sx={{ width: 160, color: 'text.secondary' }}>{t('maintainType')}</Box>
-          <Box sx={{ typography: 'subtitle2' }}>{maintenance_type || "--"}</Box>
-        </Stack>
-        <Stack direction="row">
-          <Box sx={{ width: 160, color: 'text.secondary' }}>{t('cause')}</Box>
-          <Box sx={{ typography: 'subtitle2' }}>{currentMentainance?.cause}</Box>
-        </Stack>
-
-        <Stack direction="row">
-          <Box sx={{ width: 160, color: 'text.secondary' }}>{t('contract')}</Box>
-          <Box sx={{ typography: 'subtitle2' }}>{currentMentainance?.contract?.ref || "--"}</Box>
-        </Stack>
-        <Stack direction="row">
-          <Box sx={{ width: 160, color: 'text.secondary' }}>{t('driver')}</Box>
-          <Box sx={{ typography: 'subtitle2' }}>{currentMentainance?.driver?.name || "--"}</Box>
-        </Stack>
-      </Stack> */}
-    </Stack>
+    </Paper>
   );
 
   return (
-    <Card>
-      <CardHeader title={t('details')} />
+    <Card sx={{ overflow: 'visible' }}>
+      <CardHeader
+        title={t('details')}
 
-      <Stack
         sx={{
-          px: 3,
+          pb: 0,
+          '& .MuiCardHeader-title': {
+            fontSize: '1.25rem',
+            fontWeight: 600,
+          }
         }}
+      />
+
+      {/* <Box sx={{ p: 3 }}> */}
+      <Box
+        rowGap={3}
+        columnGap={3}
+        display="grid"
+        gridTemplateColumns={{
+          xs: 'repeat(1, 1fr)',
+          lg: 'repeat(3, 1fr)',
+        }}
+        sx={{ p: 3 }}
       >
-        {/* <Scrollbar> */}
-        <Stack
-          direction="row"
-          justifyContent={"start"}
-          gap={12}
-          alignItems="start"
-          sx={{
-            py: 3,
-            minWidth: 640,
-            borderBottom: (theme) => `dashed 2px ${theme.palette.background.neutral}`,
-          }}
-        >
-          <Box>
-            <Box
-              onClick={() => handleViewCar(currentCar?.id)}
-              sx={{
-                cursor: 'pointer',
-                '&:hover': {
-                  textDecoration: 'underline',
-                },
-              }}
-            >
-              <ListItemText
-                primary={currentCar?.model?.translations?.name + " - (" + currentCar?.model?.company?.translations?.name + ")"}
-                secondary={currentCar?.plat_number}
-                primaryTypographyProps={{
-                  typography: 'body2',
-                }}
-                secondaryTypographyProps={{
-                  component: 'span',
-                  color: 'text.disabled',
-                  mt: 0.5,
-                }}
-              />
-            </Box>
-            <Stack direction="row">
-              <Box sx={{ width: 120, color: 'text.secondary' }}>{t('contract')}</Box>
-              <Box sx={{ typography: 'subtitle2' }}>{currentMentainance?.contract?.ref || "--"}</Box>
-            </Stack>
-            <Stack direction="row" >
-              <Box sx={{ width: 120, color: 'text.secondary' }}>{t('driver')}</Box>
-              <Box sx={{ typography: 'subtitle2' }}>{driver?.name ? <Link onClick={() => { handleViewDriver(driver?.id) }} href={""}>{driver?.name} </Link> : "--"} </Box>
-            </Stack>
-          </Box>
-          <Divider orientation="vertical" flexItem />
-          <Stack spacing={2} sx={{ my: 1, typography: 'body2' }}>
-            <Stack direction="row">
-              <Box sx={{ width: 120, color: 'text.secondary' }}>{t('maintainType')}</Box>
-              <Box sx={{ typography: 'subtitle2' }}>{maintenance_type || "--"}</Box>
-            </Stack>
-            {/* <Stack direction="row">
-          <Box sx={{ width: 160, color: 'text.secondary' }}>{t('remaining')}</Box>
-          <Box
-            sx={{
-              ...(shipping && { color: 'error.main' }),
-            }}
-          >
-            <Label variant="soft" color={'default'}>
-              {currentMentainance?.remaining_days}
-            </Label>
-          </Box>
-        </Stack> */}
-            <Stack direction="row">
-              <Box sx={{ width: 120, color: 'text.secondary' }}>{t('cause')}</Box>
-              <Box sx={{ typography: 'subtitle2' }}>{currentMentainance?.cause}</Box>
-            </Stack>
-
-
-          </Stack>
-        </Stack>
-        {/* {
-          driver ?
-            <Stack
-              direction="row"
-              alignItems="center"
-              sx={{
-                py: 3,
-                minWidth: 640,
-                // borderBottom: (theme) => ` 2px ${theme.palette.background.neutral}`,
-              }}
-            >
-              <Box
-                onClick={() => handleViewDriver(driver?.id)}
-                sx={{
-                  cursor: 'pointer',
-                  '&:hover': {
-                    textDecoration: 'underline',
-                  },
-                }}
-              >
-                <ListItemText
-                  primary={driver?.name}
-                  secondary={driver?.phone_number != "N/A" ? driver?.phone_number : "--"}
-                  primaryTypographyProps={{
-                    typography: 'body2',
-                  }}
-                  secondaryTypographyProps={{
-                    component: 'span',
-                    color: 'text.disabled',
-                    mt: 0.5,
-                  }}
-                />
-              </Box>
-            </Stack>
-            :
-            null
-        } */}
-        {/* <Stack
-            direction="row"
-            alignItems="center"
-            sx={{
-              py: 3,
-              minWidth: 640,
-              borderBottom: (theme) => `dashed 2px ${theme.palette.background.neutral}`,
-            }}
-          >
-            <Box sx={{ width: 160, color: 'text.secondary' }}>{t('driver')}</Box>
-
-            {
-              currentMentainance?.driver ?
-                <Box
-                  onClick={() => handleViewDriver(currentMentainance?.driver?.id)}
-                  sx={{
-                    cursor: 'pointer',
-                    '&:hover': {
-                      textDecoration: 'underline',
-                    },
-                  }}
-                >
-                  <ListItemText
-                    primary={currentMentainance?.driver?.name || "--"}
-                    secondary={currentMentainance?.driver?.phone_number || "--"}
-                    primaryTypographyProps={{
-                      typography: 'body2',
-                    }}
-                    secondaryTypographyProps={{
-                      component: 'span',
-                      color: 'text.disabled',
-                      mt: 0.5,
-                    }}
-                  />
-                </Box>
-                :
-                "--"
-            }
-          </Stack> */}
-
-
-        {/* </Scrollbar> */}
-
-        {renderTotal}
-
-      </Stack>
+        {renderVehicleInfo}
+        {renderMaintenanceInfo}
+        {renderTimeline}
+      </Box>
     </Card>
   );
 }
@@ -293,4 +392,9 @@ OrderDetailsItems.propTypes = {
   subTotal: PropTypes.number,
   taxes: PropTypes.number,
   totalAmount: PropTypes.number,
+  maintenance_type: PropTypes.string,
+  currentMentainance: PropTypes.object,
+  setCurrentMentainance: PropTypes.func,
+  currentCar: PropTypes.object,
+  driver: PropTypes.object,
 };

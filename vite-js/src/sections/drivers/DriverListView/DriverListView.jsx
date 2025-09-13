@@ -67,11 +67,11 @@ export default function DriverListView({ }) {
         { id: 'gender', label: t('gender'), type: "text", width: 140 },
         { id: 'd_nationality', label: t('nationality'), type: "text", width: 100 },
         { id: 'd_state', label: t('state'), type: "text", width: 100 },
-        { id: 'attached_to', label: t('car'), type: "two-lines-link", first: (row) => { return row?.car?.model?.translations?.name || "--" }, second: (row) => { return row?.car?.plat_number }, link: (row) => { return row?.car?.id ?  paths.dashboard.vehicle.details(row?.car?.id) : "#" }, width: 140 },
+        { id: 'attached_to', label: t('car'), type: "two-lines-link", first: (row) => { return row?.car?.model?.translations?.name || "--" }, second: (row) => { return row?.car?.plat_number }, link: (row) => { return row?.car?.id ? paths.dashboard.vehicle.details(row?.car?.id) : "#" }, width: 140 },
         // { id: 'c_driver', label: t('driver'), type: "long_text", length: 3, width: 200 },
         { id: 'status', label: t('status'), type: "label", width: 140 },
-        { id: 'c_contract', label: t('contract'), type: "two-lines-link", first: (row) => { return row?.contract?.ref || "--"  }, second: (row) => { }, link: (row) => { return row?.contract?.id ?  paths.dashboard.clients.contractsDetails(row?.contract?.id) : "#" }, width: 180 },
-        { id: 'c_client', label: t('client'), type: "two-lines-link", first: (row) => { return row?.client?.name || "--"  }, second: (row) => { }, link: (row) => { return row?.contract?.id ?  paths.dashboard.clients.details(row?.client?.id) : "#" }, width: 180 },
+        { id: 'c_contract', label: t('contract'), type: "two-lines-link", first: (row) => { return row?.contract?.ref || "--" }, second: (row) => { }, link: (row) => { return row?.contract?.id ? paths.dashboard.clients.contractsDetails(row?.contract?.id) : "#" }, width: 180 },
+        { id: 'c_client', label: t('client'), type: "two-lines-link", first: (row) => { return row?.client?.name || "--" }, second: (row) => { }, link: (row) => { return row?.contract?.id ? paths.dashboard.clients.details(row?.client?.id) : "#" }, width: 180 },
         { id: 'actions', label: t('actions'), type: "threeDots", component: (item) => <ElementActions item={item} setTableData={setTableData} />, width: 200, align: "right" },
     ]
 
@@ -82,7 +82,7 @@ export default function DriverListView({ }) {
             return {
                 ...item,
                 phonenumber: item?.phone_number != "N/A" ? "--" : item?.phone_number,
-                gender: item?.isMale  ? t("male") : t("female"),
+                gender: item?.isMale ? t("male") : t("female"),
                 d_nationality: item?.nationality?.translations?.name,
                 d_state: item?.state?.translations?.name,
                 status: item?.contract?.id ? t("bussy") : t("available"),
@@ -240,18 +240,23 @@ const ElementActions = ({ item, setTableData }) => {
                 arrow="right-top"
                 sx={{ width: 200 }}
             >
-                <PermissionsContext action={'delete.maintenance'}>
-                    <MenuItem
-                        onClick={() => {
-                            confirm.onTrue();
-                            popover.onClose();
-                        }}
-                        sx={{ color: 'error.main' }}
-                    >
-                        <Iconify icon="solar:trash-bin-trash-bold" />
-                        {t('delete')}
-                    </MenuItem>
-                </PermissionsContext>
+                {
+                    !item?.contract?.id &&  !item?.car?.id ?
+                        <PermissionsContext action={'delete.maintenance'}>
+                            <MenuItem
+                                onClick={() => {
+                                    confirm.onTrue();
+                                    popover.onClose();
+                                }}
+                                sx={{ color: 'error.main' }}
+                            >
+                                <Iconify icon="solar:trash-bin-trash-bold" />
+                                {t('delete')}
+                            </MenuItem>
+                        </PermissionsContext>
+                        :
+                        null
+                }
                 <PermissionsContext action={'update.maintenance'}>
                     <MenuItem
                         onClick={() => {
@@ -280,7 +285,7 @@ const ElementActions = ({ item, setTableData }) => {
                 open={confirm.value}
                 onClose={confirm.onFalse}
                 title={t("delete")}
-                content={t("are_you_sure_want_to_delete")}
+                content={t('are_u_sure_to_delete',{item:t("driver"),item2:item?.name})}
                 action={
                     <LoadingButton
                         isSubmitting={postloader}

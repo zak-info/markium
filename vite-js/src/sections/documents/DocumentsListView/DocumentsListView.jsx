@@ -52,6 +52,7 @@ export default function DocumentsListView({ }) {
     const { car } = useGetCar()
     const { drivers } = useGetDrivers()
     const { documents, mutate, documentsLoading } = useGetDocuments()
+    console.log("documents : documents : ",documents)
     const { clients } = useGetClients()
 
     const [tableData, setTableData] = useState([]);
@@ -61,6 +62,7 @@ export default function DocumentsListView({ }) {
         { id: 'attachable', label: t('attachable'), type: "two-lines-link", first: (row) => { return row?.attachable?.first }, second: (row) => { return row?.attachable?.second }, link: (row) => { return row?.attachable?.link }, width: 140 },
         // { id: 'model', label: t('plateNumber'), type: "two-lines-link", first: (row) => row?.car?.model?.translations?.name, second: (row) => row?.car?.plat_number, link: (row) => { return paths.dashboard.vehicle.details(row?.id) }, width: 220 },
         // { id: 'attachment_type', label: t('attachment_type'), type: "text", width: 100 },
+        { id: 'type', label: t('type'), type: "text", width: 100 },
         { id: 'attachment_name', label: t('attachment_name'), type: "text", width: 100 },
         { id: 'releasedate', label: t('release_date'), type: "text", width: 100 },
         { id: 'expirydate', label: t('expiry_date'), type: "text", width: 100 },
@@ -131,8 +133,10 @@ export default function DocumentsListView({ }) {
                 expirydate: fDate(item?.expiry_date),
                 attachment_name: vData?.attachmenat_names?.find(i => i.id == item?.attachment_name_id).translations[0]?.name,
                 attachment_type: vData?.attachment_types?.find(i => i.id == item?.attachment_type_id).translations[0]?.name,
-                gstatus: vData?.attachemnt_notification_statuses?.find(i => i.id == item?.status?.id).translations[0]?.name,
-                color: item?.status?.key == "not_yet_attachment" ? "default" : item?.status?.key == "soon_attachment" ? "warning" : "error"
+                // gstatus: vData?.attachemnt_notification_statuses?.find(i => i.id == item?.status?.id).translations[0]?.name,
+                gstatus:item?.status?.translations[0]?.name,
+                color: item?.status?.key == "not_yet_attachment" ? "default" : item?.status?.key == "soon_attachment" ? "warning" : "error",
+                type:t(item?.attachable_type),
 
 
             };
@@ -142,10 +146,10 @@ export default function DocumentsListView({ }) {
 
     useEffect(() => {
         setDataFiltered(RformulateTable(documents));
-    }, [documents, car, drivers, clients]);
+    }, [vData,documents, car, drivers, clients]);
     useEffect(() => {
         setTableData(RformulateTable(documents));
-    }, [documents, car, drivers, clients]);
+    }, [vData,documents, car, drivers, clients]);
 
     return (
         <>
@@ -320,7 +324,7 @@ const ElementActions = ({ item, setTableData }) => {
                 open={confirm.value}
                 onClose={confirm.onFalse}
                 title={t("delete")}
-                content={t("are_you_sure_want_to_delete") + " ?"}
+                content={t('are_u_sure_to_delete',{item:t("the_attachment"),item2:item?.attachment_name})}
                 action={
                     <LoadingButton
                         loading={postloader}

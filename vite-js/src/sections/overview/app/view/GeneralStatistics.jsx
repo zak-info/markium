@@ -141,6 +141,7 @@ export default function GeneralStatistics() {
                       title={t('vehicles')}
                       total={car?.length}
                       chart={{
+                        // colors: ["#6457AA", "#423524", "#678FFF", "#987324"],
                         series: statistics?.cars_by_status?.map(item => ({
                           label: item?.status?.key === 'available' ? t('activated') :
                             item?.status?.key === 'rented' ? t('bussy') :

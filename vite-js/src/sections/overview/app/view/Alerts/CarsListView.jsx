@@ -29,6 +29,7 @@ import ZaityListView from 'src/sections/ZaityTables/zaity-list-view';
 import ZaityHeadContainer from 'src/sections/ZaityTables/ZaityHeadContainer';
 import ZaityTableFilters from 'src/sections/ZaityTables/ZaityTableFilters';
 import ZaityTableTabs from 'src/sections/ZaityTables/ZaityTableTabs'; // [keep for later use]
+import { fDate } from 'src/utils/format-time';
 import showError from 'src/utils/show_error';
 
 // ----------------------------------------------------------------------
@@ -46,28 +47,36 @@ export default function CarsListView({ }) {
 
     function getLateCars(cars, maintenances) {
         const today = new Date();
-
-        // Group maintenances by car_id to check the latest one
+      
+        // Group maintenances by car_id
         const carMaintMap = maintenances.reduce((map, m) => {
-            if (!map[m.car_id]) map[m.car_id] = [];
-            map[m.car_id].push(m);
-            return map;
+          if (!map[m.car_id]) map[m.car_id] = [];
+          map[m.car_id].push(m);
+          return map;
         }, {});
-
-        // Filter cars that exist in maintenances and are late
-        return cars.filter(car => {
+      
+        return cars
+          .filter(car => {
             const carMaints = carMaintMap[car.id];
-            if (!carMaints) return false; // car has no maintenance
-
-            // get last maintenance by exit_date
-            const lastMaint = carMaints.reduce((latest, m) => {
-                return new Date(m.exit_date) > new Date(latest.exit_date) ? m : latest;
-            });
-
-            return new Date(lastMaint.exit_date) < today; // late if exit_date already passed
-        })
-        // ?.filter(car => car?.status?.key == "under_maintenance");
-    }
+            if (!carMaints) return false;
+      
+            // Get last maintenance
+            const lastMaint = carMaints.reduce((latest, m) =>
+              new Date(m.exit_date) > new Date(latest.exit_date) ? m : latest
+            );
+      
+            // Attach last maintenance to car for later
+            car._lastMaintenance = lastMaint;
+            return new Date(lastMaint.exit_date) < today;
+          })
+          .filter(car => car?.status?.key === "under_maintenance")
+          .map(car => ({
+            ...car,
+            last_maintenance_date: fDate(car._lastMaintenance.exit_date),
+            last_maintenance: car._lastMaintenance // keep full object if needed
+          }));
+      }
+      
 
     console.log("maintenance : ", maintenance)
 
@@ -81,7 +90,7 @@ export default function CarsListView({ }) {
         // { id: 'production_year', label: t('manufacturingYear'), type: "text", width: 100 },
         // { id: 'driver', label: t('driver'), type: "two-lines-link", first: (row) => row?.driver?.name || "--", second: (row) => { }, link: (row) => { return row?.driver?.id ? paths.dashboard.drivers.details(row?.driver?.id) : "#" }, width: 180 },
         // { id: 'c_driver', label: t('driver'), type: "long_text", length: 3, width: 200 },
-        // { id: 'driver', label: t('driver'), type: "text", width: 140 },
+        { id: 'last_maintenance_date', label: t('date'), type: "text", width: 140 },
         { id: 'condition', label: t('status'), type: "label", width: 60 },
         // { id: 'client', label: t('client'), type: "two-lines-link", first: (row) => row?.client?.name || "--", second: (row) => { }, link: (row) => { return row?.client?.id ? paths.dashboard.clients.details(row?.id) : "#" }, width: 180 },
         // { id: 'contract', label: t('contract'), type: "two-lines-link", first: (row) => row?.contract?.ref || "--", second: (row) => { }, link: (row) => { return row?.contract?.id ? paths.dashboard.clients.contractsDetails(row?.contract?.id) : "#" }, width: 180 },

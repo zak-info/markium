@@ -41,6 +41,7 @@ import SimpleAutocomplete from 'src/components/hook-form/rhf-simple-autocomplete
 import { fDate } from 'src/utils/format-time';
 import { createClaim } from 'src/api/claim';
 import { keyBy } from 'lodash';
+import showError from 'src/utils/show_error';
 
 // ----------------------------------------------------------------------
 
@@ -55,14 +56,14 @@ export default function ClaimNewEditForm({ contract, currentClause, setTableData
   // const { clients } = useGetClients();
   const validationSchema = Yup.object({
     // contract_id: Yup.number().required('contract is required'),
-    amount: Yup.number().required('amount is required'),
-    paiment_date: Yup.string().required('paiment date is required'),
+    amount: Yup.number().positive(t("amount_must_be_positive")).required(t("amount_is_required")),
+    paiment_date: Yup.string().required(t("paiment_date_is_required")),
   });
   const defaultValues = useMemo(
     () => ({
       // contract_id: contract_id,
       amount: currentClause?.amount || 0,
-      paiment_date: currentClause?.paiment_date || new Date(),
+      paiment_date: currentClause?.paiment_date || format(new Date(),"yyyy-MM-dd"),
     }),
     [currentClause]
   );
@@ -107,17 +108,10 @@ export default function ClaimNewEditForm({ contract, currentClause, setTableData
             translations: [{ name: t("not_yet") }]
           },
           gstatus: t("not_yet"),
-
         }
       ]);
-
-    } catch (error) {
-      console.error(error);
-      Object.values(error?.data).forEach(array => {
-        array.forEach(text => {
-          enqueueSnackbar(text, { variant: 'error' });
-        });
-      });
+    } catch (error){
+      showError(error)
     }
   });
 

@@ -38,6 +38,7 @@ import { createCar, editCar, useGetCar } from 'src/api/car';
 import { useValues } from 'src/api/utils';
 import showError from 'src/utils/show_error';
 import { useGetSystemVisibleItem } from 'src/api/settings';
+import showValidationError from 'src/utils/show_validation_error';
 
 // ----------------------------------------------------------------------
 
@@ -150,6 +151,12 @@ export default function UserEditForm({ currentCar }) {
     handleSubmit,
     formState: { isSubmitting, errors },
   } = methods;
+
+
+  useEffect(() => {
+    showValidationError(errors)
+  }, [errors]);
+
 
 
   const selectedCompanyId = watch('car_company_id');
@@ -291,7 +298,7 @@ export default function UserEditForm({ currentCar }) {
               />
               <RHFSelect required name="color_id" label={t('vehcileColor')} >
                 <Divider sx={{ borderStyle: 'dashed' }} />
-                {colors?.map((option) => (
+                {data?.colors?.filter(i => i?.system_settings?.is_selected)?.map((option) => (
                   <MenuItem key={option?.id} value={option?.id}>
                     {option?.translations[0]?.name}
                   </MenuItem>
@@ -300,7 +307,7 @@ export default function UserEditForm({ currentCar }) {
 
               <RHFSelect required name="spec_id" label={t('specifications')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
-                {specs?.map((option) => (
+                {data?.specs?.filter(i => i?.system_settings?.is_selected)?.map((option) => (
                   <MenuItem key={option?.id} value={option?.id}>
                     {option?.translations[0]?.name}
                   </MenuItem>
@@ -308,7 +315,7 @@ export default function UserEditForm({ currentCar }) {
               </RHFSelect>
               <RHFSelect required name="license_type_id" label={t('typeOfLicense')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
-                {data?.license_types?.map((option) => (
+                {data?.license_types?.filter(i => i?.system_settings?.is_selected)?.map((option) => (
                   <MenuItem key={option?.id} value={option?.id}>
                     {option?.translations[0]?.name}
                   </MenuItem>
@@ -317,7 +324,7 @@ export default function UserEditForm({ currentCar }) {
 
               <RHFSelect required name="state_id" label={t('workSite')}>
                 <Divider sx={{ borderStyle: 'dashed' }} />
-                {states?.map((option) => (
+                {data?.states?.filter(i => i?.system_settings?.is_selected)?.map((option) => (
                   <MenuItem key={option?.id} value={option?.id}>
                     {option?.translations[0]?.name}
                   </MenuItem>

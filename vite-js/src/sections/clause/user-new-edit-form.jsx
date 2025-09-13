@@ -53,9 +53,9 @@ export default function UserNewEditForm({ maintenance_id, currentClause, setTabl
   const { maintenance: periodic_maintenance } = useGetCarPeriodicMaintenance(maintenance?.car_id);
   console.log("periodic_maintenance :", periodic_maintenance);
   const validationSchema = Yup.object({
-    cost: Yup.number().nullable(),
-    quantity: Yup.number(),
-    piece_status: Yup.string().required('piece_status is required'),
+    cost: Yup.number().required(t("cost_is_required")),
+    quantity: Yup.number().required(t("quantity_is_required")),
+    piece_status: Yup.string().required(t('piece_status_is_required')),
     spec_id: Yup.string(),
     period_maintenance_id: Yup.string(),
     note: Yup.string(),
@@ -105,6 +105,18 @@ export default function UserNewEditForm({ maintenance_id, currentClause, setTabl
     try {
       console.log("lest edit clause");
       let body = donnes;
+      console.log(" body enqueueSnackbar :",body)
+
+      if(Number(credentials.cost) <= 0){
+        enqueueSnackbar(t("cost_must_be_positive"), { variant: 'error' });
+        return ;
+      }
+      if(Number(credentials.quantity) <= 0){
+        enqueueSnackbar(t("quantity_must_be_positive"), { variant: 'error' });
+        return ;
+      }
+
+
       delete body?.total
       let maintenace_spec = {}
       body.maintenance_id = Number(maintenance_id);
@@ -177,7 +189,7 @@ export default function UserNewEditForm({ maintenance_id, currentClause, setTabl
               sm: 'repeat(7, 1fr)',
             }}
           >
-            <RHFSelect type="number" name="spec_id" label={t('clause')}>
+            <RHFSelect required type="number" name="spec_id" label={t('clause')}>
               <Divider sx={{ borderStyle: 'dashed' }} />
               {maintenance_specs?.map((option) => (
                 <MenuItem key={option?.name} value={option?.id}>
@@ -187,6 +199,7 @@ export default function UserNewEditForm({ maintenance_id, currentClause, setTabl
             </RHFSelect>
 
             <TextField
+            required
               type="text"
               label={t('cost')}
               name="cost"
@@ -195,13 +208,14 @@ export default function UserNewEditForm({ maintenance_id, currentClause, setTabl
             />
 
             <TextField
+            required
               type="text"
               name="quantity"
               label={t('qte')}
               value={credentials?.quantity}
               onChange={handleChange}
             />
-            <RHFSelect name="piece_status" label={t('piece_status')} sx={{ width: "100%" }}>
+            <RHFSelect required name="piece_status" label={t('piece_status')} sx={{ width: "100%" }}>
               <Divider sx={{ borderStyle: 'dashed' }} />
               {data?.piece_status_enum?.map((option) => (
                 <MenuItem key={option?.key} value={option?.key}>

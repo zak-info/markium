@@ -71,7 +71,7 @@ export default function OpearationalStat() {
 
   useEffect(() => {
     if (Gcontracts) setContracts(Gcontracts);
-    
+
     contracts?.forEach(contract => {
       if (contract?.created_at) {
         const date = new Date(contract.created_at);
@@ -169,16 +169,24 @@ export default function OpearationalStat() {
         <BankingWidgetSummary
           title={t("total_gain")}
           icon="solar:bookmark-bold"
-          total={((claims?.filter(item => item?.status?.key == "paid_claim")?.length/claims?.length)*100)?.toFixed(2) +" %"}
+          total={
+            claims && claims.length > 0
+              ? ((claims.filter(item => item?.status?.key === "paid_claim").length / claims.length) * 100).toFixed(2) + " %"
+              : "0 %"
+          }
           chart={{
-            series: claims?.filter(item => item?.status?.key == "paid_claim")?.map(claim => ({ x: new Date(claim?.paiment_date)?.getFullYear(), y: claim?.net })),
+            series: claims?.filter(item => item?.status?.key === "paid_claim")?.map(claim => ({
+              x: new Date(claim?.paiment_date)?.getFullYear(),
+              y: claim?.net ?? 0,
+            })) ?? [],
           }}
         />
+
         <BankingWidgetSummary
           title={t("auto_renew_contracts")}
           color='secondary'
           icon="solar:document-text-bold-duotone"
-          total={contracts?.filter(i => i.auto_renewal == 1 )?.length}
+          total={contracts?.filter(i => i.auto_renewal == 1)?.length || 0}
           chart={{
             series: months
           }}
@@ -188,7 +196,7 @@ export default function OpearationalStat() {
             {
               id: 1,
               title: t("total_claims_amount"),
-              balance: claims?.filter(item => item?.status?.key == "paid_claim")?.reduce((acc, obj) => acc + obj.net, 0) + " " + t("rsa"),
+              balance: (claims?.filter(item => item?.status?.key == "paid_claim")?.reduce((acc, obj) => acc + obj.net, 0) + " " + t("rsa") || 0),
               // cardType: 'mastercard',
               cardHolder: "zaki zaki",
               cardNumber: '**** **** **** 3640',
@@ -197,7 +205,7 @@ export default function OpearationalStat() {
             {
               id: 1,
               title: t("total_contracts"),
-              balance: contracts?.reduce((acc, obj) => acc + obj.total_cost, 0) + " " + t("rsa"),
+              balance: (contracts?.reduce((acc, obj) => acc + obj.total_cost, 0) || 0) + " " + t("rsa"),
               // cardType: 'mastercard',
               cardHolder: "zaki zaki",
               cardNumber: '**** **** **** 3640',
