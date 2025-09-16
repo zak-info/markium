@@ -43,7 +43,7 @@ const ShowInvoices = ({ invoices, date, setCurrentMentainance }) => {
       <ContentDialog
         open={completed.value}
         onClose={completed.onFalse}
-        title={t("exit_date")}
+        title={t("invoices")}
         content={
           <div>
             {/* // <MarkAsCompletedForm maintenanceId={row?.id} close={() => completed?.onFalse()} /> */}

@@ -456,7 +456,7 @@ export default function OrderDetailsItems({
             {/* <Typography variant="subtitle2" sx={{ fontWeight: 600, }}>
               {formatRemainingDays()}
             </Typography> */}
-            <StatusLabel date={currentMentainance?.exit_date} msg={formatRemainingDays()} />
+            <StatusLabel  currentMentainance={currentMentainance} msg={formatRemainingDays()} />
           </Stack>
           {/* <Stack direction="row" justifyContent={"flex-end"} alignItems="center" mt={2} spacing={2}>
           </Stack> */}

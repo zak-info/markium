@@ -3,15 +3,18 @@ import { differenceInDays } from "date-fns";
 import { t } from "i18next";
 import Label from "src/components/label";
 
-const StatusLabel = ({ date,msg }) => {
-  const targetDate = new Date(date);
+const StatusLabel = ({ currentMentainance,msg }) => {
+  const targetDate = new Date(currentMentainance?.exit_date);
   const today = new Date();
   const daysDifference = differenceInDays(targetDate, today);
 
   let label = "";
   let color = "default";
 
-  if (daysDifference > 3) {
+  if(currentMentainance?.status?.key == "completed"){
+    label = t("completed");
+    color = "success"; // use theme color instead of hex
+  }else if (daysDifference > 3) {
     label = t("in_processing");
     color = "primary"; // use theme color instead of hex
   } else if (daysDifference >= 0 && daysDifference <= 3) {
@@ -24,7 +27,7 @@ const StatusLabel = ({ date,msg }) => {
 
   return (
     <Label variant="soft" sx={{ m: 0 }} color={color}>
-      {label} { color != "primary" ? msg:null}
+      {label} { !["primary","success"]?.includes(color)  ? msg:null}
     </Label>
   );
 };
