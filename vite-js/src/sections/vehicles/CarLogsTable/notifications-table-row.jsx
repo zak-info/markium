@@ -22,10 +22,12 @@ import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import padWithZeros from 'src/utils/PadWithZero';
 
 // ----------------------------------------------------------------------
 
 export default function OrderTableRow({ row, status, drivers, currentLang, onCreateRow, selected, onViewRow, onSelectRow, onDeleteRow }) {
+  console.log("row row row : ",row)
   const { items, orderNumber, createdAt, customer, totalQuantity, subTotal } = row;
 
   const confirm = useBoolean();
@@ -58,9 +60,18 @@ export default function OrderTableRow({ row, status, drivers, currentLang, onCre
             __html: row["note_" + currentLang]?.replace(
               /#(\d+)/g,
               (match, id) => {
-                const driver = drivers.find(d => d.id == id); // adjust if your id field is different
-                const name = driver ? driver.name : `#${id}`;
-                return `<a href="/dashboard/drivers/${id}" style="color: #00A76F; text-decoration: underline;">${name}</a>`;
+                const driver = drivers?.find(d => d.id == id); // adjust if your id field is different
+                const item = row?.action =="driver_assigned" || row?.action =="driver_removed" ?
+                {
+                  name:driver?.name,
+                  href:"/dashboard/drivers/"+id
+                }
+                :
+                {
+                  name:padWithZeros(id,5),
+                  href:"/dashboard/maintenance/"+id
+                }
+                return `<a href=${item?.href} style="color: #00A76F; text-decoration: underline;">${item?.name}</a>`;
               }
             )
           }}

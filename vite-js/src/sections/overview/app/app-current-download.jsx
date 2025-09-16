@@ -12,7 +12,6 @@ import { Stack } from '@mui/system';
 // ----------------------------------------------------------------------
 
 const CHART_HEIGHT = 400;
-
 const LEGEND_HEIGHT = 72;
 
 const StyledChart = styled(Chart)(({ theme }) => ({
@@ -29,7 +28,7 @@ const StyledChart = styled(Chart)(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-export default function AppCurrentDownload({ title, subheader, chart, ...other }) {
+export default function AppCurrentDownload({ title, subheader, chart,locale, ...other }) {
   const theme = useTheme();
 
   const { colors, series, options } = chart;
@@ -38,9 +37,7 @@ export default function AppCurrentDownload({ title, subheader, chart, ...other }
 
   const chartOptions = useChart({
     chart: {
-      sparkline: {
-        enabled: true,
-      },
+      sparkline: { enabled: true },
     },
     colors,
     labels: series.map((i) => i.label),
@@ -50,8 +47,11 @@ export default function AppCurrentDownload({ title, subheader, chart, ...other }
       floating: true,
       position: 'bottom',
       horizontalAlign: 'center',
+      formatter: (seriesName, opts) => {
+        const value = opts.w.globals.series[opts.seriesIndex];
+        return `${seriesName} – (${fNumber(value)})`;
+      },
     },
-
     tooltip: {
       fillSeriesColor: false,
       y: {
@@ -83,18 +83,17 @@ export default function AppCurrentDownload({ title, subheader, chart, ...other }
   });
 
   return (
-    <Card {...other} sx={{height:"100%"}} >
+    <Card dir="rtl" {...other} sx={{ height: '100%' }}>
       <CardHeader title={title} subheader={subheader} sx={{ mb: 5 }} />
 
       <StyledChart
-        dir="ltr"
+        dir={locale == "ar" ? "rtl":"ltr"}
         type="donut"
         series={chartSeries}
         options={chartOptions}
         width="100%"
         height={280}
       />
-      
     </Card>
   );
 }

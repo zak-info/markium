@@ -49,7 +49,7 @@ import SimpleAutocomplete from 'src/components/hook-form/rhf-simple-autocomplete
 
 
 
-export function DeleteCurrentRole({ odo, id, close, roles,setCarDetails }) {
+export function DeleteCurrentRole({ odo, id, close,role, roles,setCarDetails }) {
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslate();
 

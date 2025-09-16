@@ -180,10 +180,11 @@ export default function RolesCreateView({ currentRole }) {
     } = methods;
 
     const values = watch();
+    console.log("currentRole : ",currentRole)
     useEffect(() => {
         if (currentRole?.id) {
             // setValue('nameEn', currentRole?.translations?.find(i => i?.lang_id == 2 )?.name);
-            setValue('nameAr', currentRole?.translations?.find(i => i?.lang_id == 1)?.name);
+            setValue('nameAr', currentRole?.translations?.find(i => i?.lang_id == 1)?.name || currentRole?.key);
             setSelectedPermissions(currentRole?.permissions.map(p => p.id) || []);
         }
     }, [currentRole, setValue]);

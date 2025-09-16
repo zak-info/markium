@@ -58,6 +58,7 @@
   "account": "حساب",
   "product": "منتج",
   "invoice": "فاتورة",
+  "invoices": "الفواتير",
   "details": "تفاصيل",
   "checkout": "الدفع",
   "calendar": "تقويم",
@@ -109,7 +110,7 @@
   "date": "التاريخ",
   "transaction": "العملية",
   "addNewMaintain": "إضافة صيانة جديدة",
-  "maintenanceItems": "سجل الصيانات",
+  "maintenanceItems": "بنود الصيانة",
   "numberOfMaintenanceDays": "عدد أيام الصيانة",
   "malfunction": "سبب العطل",
   "manualy": "شغل اليد",
@@ -780,6 +781,7 @@
   "name_cannot_have_leading_or_trailing_spaces": "لا يمكن أن يبدأ الاسم أو ينتهي بمسافات",
   "start_date_must_be_after_end_date": "تاريخ البداية يجب أن يكون بعد تاريخ النهاية",
   "are_u_sure_to_delete": "هل انت متأكد من حذف {{item}} : {{item2}}",
+  "unable_to_delete_role": "لا يمكن حذف الدور : {{item}} ، لابد من إزالة المستخدمين منه لحذفه",
   "production_year_cannot_be_in_future": "سنة الإنتاج لا يمكن أن تكون في المستقبل",
   "vehicleInformation": "معلومات المركبة",
   "maintenanceInformation": "معلومات الصيانة",
@@ -795,5 +797,12 @@
   "invalid_10_digit_number": "يرجى إدخال 10 أرقام بالضبط",
   "amount_is_required": "المبلغ مطلوب",
   "paiment_date_is_required": "تاريخ الدفع مطلوب",
-  "amount_must_be_positive": "يجب أن يكون المبلغ موجباً"
+  "amount_must_be_positive": "يجب أن يكون المبلغ موجباً",
+  "image": "صورة",
+  "file": "ملف",
+  "pdf": "ملف PDF",
+  "word": "ملف Word",
+  "excel": "ملف Excel",
+  "cant_close_maintenance_unless_one_clause_at_least": "لا يمكن إغلاق الصيانة ما لم تتم إضافة بند واحد على الأقل"
+ 
 }

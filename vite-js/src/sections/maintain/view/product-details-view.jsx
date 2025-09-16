@@ -55,11 +55,12 @@ export default function OrderDetailsView({ id }) {
 
   // const { maintenance, mutate } = useGetMaintenance();
   const { maintenance, mutate } = useShowMaintenance(id);
+
   const { driver } = useGetDetailedDriver(maintenance?.car?.driver_id);
   const { clauses } = useGetClauses(id)
   const { maintenance_specs } = useGetMaintenanceSpecs()
   const maintenanceclauses = clauses.filter(item => item.maintenance_id == id)
-  console.log("current maintenanceclauses : ", maintenanceclauses);
+  console.log(" maintenance : maintenance : maintenance : ", maintenance);
 
   const [tableData, setTableData] = useState(clauses.filter(item => item.maintenance_id == id))
   useEffect(() => {
@@ -99,27 +100,21 @@ export default function OrderDetailsView({ id }) {
       />
 
       <Grid container spacing={3}>
-        <Grid xs={12} md={16}>
-          <Stack spacing={3} direction={{ xs: 'column-reverse', md: 'row' }}>
-            <Grid xs={12} md={18} >
-              <OrderDetailsItems
-                currentMentainance={currentMentainance}
-                setCurrentMentainance={setCurrentMentainance}
-                maintenance_type={data?.maintenance_type_enum?.find(item => item.key == currentMentainance?.maintainance_type)?.translations[0]?.name}
-                currentCar={currentCar}
-                driver={driver}
-                items={currentMentainance?.items}
-                taxes={currentMentainance?.taxes}
-                shipping={currentMentainance?.shipping}
-                discount={currentMentainance?.discount}
-                subTotal={currentMentainance?.subTotal}
-                totalAmount={currentMentainance?.totalAmount}
-              />
-            </Grid>
-            {/* <Grid xs={12} md={6} >
-              <InvoiceListView />
-            </Grid> */}
-          </Stack>
+        <Grid xs={12} md={18} >
+          <OrderDetailsItems
+            maintenanceclauses={maintenanceclauses}
+            currentMentainance={currentMentainance}
+            setCurrentMentainance={setCurrentMentainance}
+            maintenance_type={data?.maintenance_type_enum?.find(item => item.key == currentMentainance?.maintainance_type)?.translations[0]?.name}
+            currentCar={currentCar}
+            driver={driver}
+            items={currentMentainance?.items}
+            taxes={currentMentainance?.taxes}
+            shipping={currentMentainance?.shipping}
+            discount={currentMentainance?.discount}
+            subTotal={currentMentainance?.subTotal}
+            totalAmount={currentMentainance?.totalAmount}
+          />
         </Grid>
       </Grid>
 
@@ -150,25 +145,6 @@ export default function OrderDetailsView({ id }) {
             ]}
           />
         </Grid>
-        {/* <Grid xs={12} md={12}>
-          <AppNewInvoice
-            sx={{ marginTop: "10px" }}
-            title={t('maintenanceItems')}
-            maintenance_id={id}
-            maintenanceclauses={maintenanceclauses.map(item => item)}
-            tableData={tableData?.map(item => ({ ...item, total: item.cost * item?.quantity, clause: data?.maintenance_specifications?.find(item2 => item2.id == item?.related_id)?.name }))}
-            setTableData={setTableData}
-            tableLabels={[
-              { id: "related_type", key_to_update: "related_type", label: t("clause_type"), editable: false, creatable: true, type: "select", options: [{ value: "periodic", label: t("periodic") }, { value: "not-periodic", label: t("not_periodic") }], width: 180 },
-              { id: "clause", key_to_update: "related_id", label: t("clause"), editable: false, creatable: true, type: "select", options: [...periodic_maintenance, ...maintenance_specs?.filter(item => !item?.is_periodic)]?.map(item => ({ value: item.id, label: item?.name })), width: 180 },
-              { id: "cost", key_to_update: "cost", label: t("cost"), editable: true, creatable: true, type: "number", width: 140 },
-              { id: "quantity", key_to_update: "quantity", label: t("qte"), editable: true, creatable: true, type: "number", width: 100 },
-              { id: "piece_status", key_to_update: "piece_status", label: t("piece_status"), editable: true, creatable: true, type: "select", options: data?.piece_status_enum?.map(item => ({ value: item.key, label: item?.translations[0]?.name })), width: 140 },
-              { id: "total", key_to_update: "total", label: t("total"), editable: false, creatable: false, width: 140 },
-              { id: "note", key_to_update: "note", label: t("note"), editable: true, creatable: true, width: 140 },
-            ]}
-          />
-        </Grid> */}
       </Grid>
     </Container>
   );

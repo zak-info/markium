@@ -146,3 +146,19 @@ export function fileData(file) {
     lastModifiedDate: file.lastModifiedDate,
   };
 }
+
+
+// utils/file-utils.js
+export function normalizeInvoices(invoices, baseUrl = "") {
+  return invoices?.map((inv) => {
+    const path = baseUrl ? `${baseUrl}/${inv.invoice_path}` : inv.invoice_path;
+
+    return {
+      id: inv.id,
+      name: inv.invoice_path.split("/").pop(),
+      path,           // used by fileFormat()
+      preview: path,  // used for images
+      size: 0,        // optional
+    };
+  });
+}

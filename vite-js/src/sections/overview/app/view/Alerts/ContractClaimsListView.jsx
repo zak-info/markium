@@ -58,7 +58,7 @@ export default function ContractClaimsListView({ claimsLoading, data, with_contr
                 { id: 'amount', label: t('amount'), type: 'text', width: 140 },
                 // { id: 'date', label: t('date'), type: 'text', width: 140 },
                 { id: 'payment_date', label: t('paiment_date'), type: 'text', width: 140 },
-                { id: 'gstatus', label: t('status'), type: 'label', color: 'error', width: 140 },
+                // { id: 'gstatus', label: t('status'), type: 'label', color: 'error', width: 140 },
                 // {
                 //     id: 'actions',
                 //     label: t('actions'),
@@ -73,7 +73,7 @@ export default function ContractClaimsListView({ claimsLoading, data, with_contr
                 { id: 'amount', label: t('amount'), type: 'text', width: 140 },
                 // { id: 'date', label: t('date'), type: 'text', width: 140 },
                 { id: 'payment_date', label: t('paiment_date'), type: 'text', width: 140 },
-                { id: 'gstatus', label: t('status'), type: 'label', color: 'error', width: 140 },
+                // { id: 'gstatus', label: t('status'), type: 'label', color: 'error', width: 140 },
                 // {
                 //     id: 'actions',
                 //     label: t('actions'),

@@ -782,5 +782,12 @@
      "at_least_one_representors": "At least one representative is required",
      "amount_is_required": "Amount is required",
     "paiment_date_is_required": "Payment date is required",
-    "amount_must_be_positive": "Amount must be positive"
+    "amount_must_be_positive": "Amount must be positive",
+    "image":"image",
+    "file":"File",
+    "pdf":"PDF File",
+    "word":"Word File",
+    "excel":"Excel File",
+    "cant_close_maintenance_unless_one_clause_at_least": "Can't close maintenance unless at least one clause is added"
+  
 }

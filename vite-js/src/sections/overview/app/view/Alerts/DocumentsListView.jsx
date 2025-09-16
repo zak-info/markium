@@ -53,6 +53,7 @@ export default function DocumentsListView({ }) {
     const { data: vData } = useValues();
     const { car } = useGetCar()
     const { drivers } = useGetDrivers()
+    console.log("drivers : ",drivers)
     const { documents, mutate, documentsLoading } = useGetDocuments()
     const { clients } = useGetClients()
     const settings = useSettingsContext();
@@ -144,10 +145,10 @@ export default function DocumentsListView({ }) {
 
 
     useEffect(() => {
-        setDataFiltered(RformulateTable(documents));
+        setDataFiltered(RformulateTable(documents?.filter( dd=> dd?.status?.key != "not_yet_attachment")));
     }, [vData,documents, car, drivers, clients]);
     useEffect(() => {
-        setTableData(RformulateTable(documents));
+        setTableData(RformulateTable(documents?.filter( dd=> dd?.status?.key != "not_yet_attachment")));
     }, [vData,documents, car, drivers, clients]);
 
     return (
@@ -158,7 +159,7 @@ export default function DocumentsListView({ }) {
                         documentsLoading ?
                             <LoadingScreen sx={{ my: 8 }} color='primary' />
                             :
-                            <ZaityListView TABLE_HEAD={[...TABLE_HEAD]} dense="medium" zaityTableDate={dataFiltered || []} onSelectedRows={({ data, setTableData }) => { return <onSelectedRowsComponent configurable_type={"roles"} setTableData={setTableData} data={car} /> }} />
+                            <ZaityListView  TABLE_HEAD={[...TABLE_HEAD]} zaityTableDate={dataFiltered || []} onSelectedRows={({ data, setTableData }) => { return <onSelectedRowsComponent configurable_type={"roles"} setTableData={setTableData} data={car} rowsPerPage={4} dense={"small"} rowsPerPageOptions={[4]} /> }} />
                     }
                    
                 </Card>

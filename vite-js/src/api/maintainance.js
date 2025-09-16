@@ -42,7 +42,7 @@ export function useShowMaintenance(id) {
 
   const memoizedValue = useMemo(
     () => ({
-      maintenance: data?.data || [],
+      maintenance: data?.data || {},
       maintenanceLoading: isLoading,
       maintenanceError: error,
       maintenanceValidating: isValidating,

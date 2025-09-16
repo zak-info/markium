@@ -1,25 +1,44 @@
 import React from "react";
-import { Chip } from "@mui/material";
+import { Button, Chip, IconButton } from "@mui/material";
 import { differenceInDays } from "date-fns";
 import { t } from "i18next";
 import { useBoolean } from "src/hooks/use-boolean";
 import { usePopover } from "src/components/custom-popover";
 import ContentDialog from "src/components/custom-dialog/content-dialog";
 import EditExitDate from "./EditExitDate";
+import Iconify from "src/components/iconify";
 
-const EditExitDatePopUp = ({ currentMentainance,setCurrentMentainance }) => {
+const EditExitDatePopUp = ({ currentMentainance, date, setCurrentMentainance }) => {
   const completed = useBoolean();
   const popover = usePopover();
 
 
+  const openDialog = () => {
+    popover.onClose();
+    completed.onTrue()
+  }
+
+
   return (
     <>
-      <Chip
+      <Button
         onClick={() => {
           completed.onTrue();
           popover.onClose();
         }}
-        sx={{ marginInlineStart: "18px" }} variant="soft" label={t("edit")} color={"warning"} />
+        sx={{mb:0}}
+        // sx={{ marginInlineStart: "18px" }}
+        variant="soft"
+        // label={date} 
+        color={"warning"}
+        endIcon={<Iconify icon="mynaui:edit-solid" width={14} />}
+
+      >
+        {date}
+      </Button>
+      {/* <IconButton color={"warning"} onClick={openDialog}>
+        <Iconify icon="mynaui:edit-solid" />
+      </IconButton> */}
       <ContentDialog
         open={completed.value}
         onClose={completed.onFalse}

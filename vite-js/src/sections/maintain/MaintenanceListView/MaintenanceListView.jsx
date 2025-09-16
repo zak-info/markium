@@ -35,6 +35,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import FormProvider, { RHFUpload } from 'src/components/hook-form';
 import { LoadingButton } from '@mui/lab';
 import { LoadingScreen } from 'src/components/loading-screen';
+import { MarkAsCompletedForm } from './MarkAsCompletedForm';
 
 
 
@@ -331,100 +332,5 @@ const ElementActions = ({ item, setTableData }) => {
 
 
 
-export function MarkAsCompletedForm({ setTableData, maintenanceId, close }) {
-    const { enqueueSnackbar } = useSnackbar();
-    const { t } = useTranslate();
-
-    const NewUserSchema = Yup.object().shape({
-        invoice: Yup.mixed().nullable()
-    });
-
-    const defaultValues = useMemo(
-        () => ({
-            invoice: ''
-        }),
-        []
-    );
-
-    const methods = useForm({
-        resolver: yupResolver(NewUserSchema),
-        defaultValues,
-    });
-
-    const {
-        reset,
-        watch,
-        control,
-        setValue,
-        handleSubmit,
-        formState: { isSubmitting, errors },
-    } = methods;
-
-    const onSubmit = handleSubmit(async (data) => {
-        try {
-            const formData = new FormData();
-            if (Array.isArray(data.invoice)) {
-                data.invoice.forEach((file) => {
-                    formData.append("invoice[]", file);
-                });
-            } else {
-                formData.append("invoice[]", data.invoice);
-            }
-
-            const response = await markMaintenanceAsCompeleted(maintenanceId, formData);
-            enqueueSnackbar(t("operation_success"), { variant: 'success' });
-            setTableData(prev =>
-                prev.map(c =>
-                    c.id == maintenanceId
-                        ? {
-                            ...c,
-                            status: {
-                                key: "completed",
-                                translations: [{ name: t("completed") }],
-                            },
-                            condition:t("completed"),
-                            color:"success",
-                        }
-                        :
-                        c
-                )
-            );
-            close();
-        } catch (error) {
-            showError(error)
-        }
-    });
-
-
-
-
-
-    return (
-        <FormProvider methods={methods} onSubmit={onSubmit}>
-            <Grid container spacing={3}>
-                <Grid xs={12} md={12}>
-                    <Box
-                        rowGap={3}
-                        columnGap={2}
-                        display="grid"
-                        p={4}
-                        gridTemplateColumns={{
-                            xs: 'repeat(1, 1fr)',
-                            sm: 'repeat(1, 1fr)',
-                        }}
-                    >
-                        <RHFUpload multiple name="invoice" lable={"Upload Invoice File"} />
-
-                    </Box>
-                    <Stack alignItems="flex-end" sx={{ mt: 3 }}>
-                        <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                            {t("submit")}
-                        </LoadingButton>
-                    </Stack>
-                </Grid>
-            </Grid>
-        </FormProvider>
-    )
-}
 
 

@@ -63,7 +63,7 @@ const defaultFilters = {
 
 // ----------------------------------------------------------------------
 
-export default function ZaityListView({ TABLE_HEAD, dense, zaityTableDate, onSelectedRows,maxWidth,rowsPerPage,minHeight }) {
+export default function ZaityListView({ TABLE_HEAD, dense, zaityTableDate, onSelectedRows,maxWidth,rowsPerPage,minHeight , rowsPerPageOptions }) {
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslate();
 
@@ -209,6 +209,7 @@ export default function ZaityListView({ TABLE_HEAD, dense, zaityTableDate, onSel
       </TableContainer>
 
       <TablePaginationCustom
+      rowsPerPageOptions={rowsPerPageOptions}
         count={dataFiltered.length}
         page={table.page}
         rowsPerPage={(rowsPerPage || table.rowsPerPage)}

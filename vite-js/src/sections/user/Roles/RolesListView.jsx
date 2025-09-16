@@ -176,7 +176,7 @@ const onSelectedRowsComponent = ({ configurable_type, setTableData, data }) => {
 };
 
 
-const ElementActions = ({ item, setTableData,roles }) => {
+const ElementActions = ({ item, setTableData, roles }) => {
     const popover = usePopover();
     const confirm = useBoolean();
     const del = useBoolean();
@@ -212,7 +212,7 @@ const ElementActions = ({ item, setTableData,roles }) => {
         <Box display={"flex"} rowGap={"10px"} sx={{ gap: '10px' }} >
             <PermissionsContext action={"delete.role"} >
                 <Button
-                disabled={item?.users_count && item?.users_count > 0}
+                    // disabled={item?.users_count && item?.users_count > 0}
                     onClick={() => {
                         confirm.onTrue();
                         popover.onClose();
@@ -263,7 +263,7 @@ const ElementActions = ({ item, setTableData,roles }) => {
                 onClose={del.onFalse}
                 title={t("delete")}
                 content={
-                    <DeleteCurrentRole roles={roles?.filter(i => i?.id != item?.id)?.map(i => ({id:i?.id , name:i.translations?.find(ii => ii.lang_id == 1)?.name || i.translations?.find(ii => ii.lang_id == 2)?.name || i.key}))} id={item?.id}  close={() => del?.onFalse()} />
+                    <DeleteCurrentRole roles={roles?.filter(i => i?.id != item?.id)?.map(i => ({ id: i?.id, name: i.translations?.find(ii => ii.lang_id == 1)?.name || i.translations?.find(ii => ii.lang_id == 2)?.name || i.key }))} role={item} id={item?.id} close={() => del?.onFalse()} />
                 }
             />
 
@@ -272,9 +272,10 @@ const ElementActions = ({ item, setTableData,roles }) => {
                 open={confirm.value}
                 onClose={confirm.onFalse}
                 title={t("delete")}
-                content={t("are_you_sure_want_to_delete")}
+                content={t('unable_to_delete_role',{item:item?.name})}
                 action={
                     <LoadingButton
+                        disabled={item?.users_count && item?.users_count > 0}
                         isSubmitting={postloader}
                         loading={postloader}
                         variant="contained"

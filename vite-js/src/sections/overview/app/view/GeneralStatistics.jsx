@@ -137,9 +137,23 @@ export default function GeneralStatistics() {
                 :
                 (
                   <>
-                    <EcommerceSaleByGender
+                    {/* <EcommerceSaleByGender
                       title={t('vehicles')}
                       total={car?.length}
+                      chart={{
+                        // colors: ["#6457AA", "#423524", "#678FFF", "#987324"],
+                        series: statistics?.cars_by_status?.map(item => ({
+                          label: item?.status?.key === 'available' ? t('activated') :
+                            item?.status?.key === 'rented' ? t('bussy') :
+                              item?.status?.key === 'under_maintenance' ? t('under_maintenance') :
+                                item?.status?.translations?.[langsNum[currentLang.value]]?.name || 'N/A',
+                          value: item?.count || 0
+                        })) || []
+                      }}
+                    /> */}
+                    <AppCurrentDownload
+                      title={t('vehicles')}
+                      locale='ar'
                       chart={{
                         // colors: ["#6457AA", "#423524", "#678FFF", "#987324"],
                         series: statistics?.cars_by_status?.map(item => ({
@@ -163,9 +177,19 @@ export default function GeneralStatistics() {
               renderChartSkeleton()
             ) : (
               <>
-                <EcommerceSaleByGender
+                {/* <EcommerceSaleByGender
                   title={t('drivers')}
                   total={drivers?.length}
+                  chart={{
+                    series: [
+                      { label: t('available'), value: statistics?.drivers_by_rental?.not_rented || 0 },
+                      { label: t('bussy'), value: statistics?.drivers_by_rental?.rented || 0 },
+                    ]
+                  }}
+                /> */}
+                <AppCurrentDownload
+                  title={t('drivers')}
+                  locale='ar'
                   chart={{
                     series: [
                       { label: t('available'), value: statistics?.drivers_by_rental?.not_rented || 0 },

@@ -102,78 +102,28 @@ function AppNewInvoiceRow({ row, attachement_name }) {
     console.log(STORAGE_API + "/" + row?.invoice_path);
   }, [])
 
-  const handleDownload = () => {
-    popover.onClose();
-    console.info('DOWNLOAD', row.id);
-  };
-
-  const handlePrint = () => {
-    popover.onClose();
-    console.info('PRINT', row.id);
-  };
-
-  const handleShare = () => {
-    popover.onClose();
-    console.info('SHARE', row.id);
-  };
-
-  const handleDelete = () => {
-    popover.onClose();
-    console.info('DELETE', row.id);
-  };
+ 
 
   return (
     <>
       <TableRow>
         <TableCell>{attachement_name}</TableCell>
 
-        {row?.attachment_path ? <TableCell> <a href={paths.dashboard.documents.preview + `?url=${"/" + row?.attachment_path}`} target='_blank' ><Label variant="soft" color="success">{t("preview")}</Label></a></TableCell> : null}
+        <TableCell>
+          {row?.attachment_path ?
+            <a href={paths.dashboard.documents.preview + `?url=${"/" + row?.attachment_path}`} target='_blank'><Label variant="soft" color="success">{t("preview")}</Label></a>
+            :
+            "--"}
+        </TableCell>
         <TableCell>
           {row?.invoice_path ?
-            <a href={paths.dashboard.documents.preview + `?url=${"/" + row?.invoice_path}`} target='_blank' ><Label variant="soft" color="success">{t("preview")}</Label></a>
+            <a href={paths.dashboard.documents.preview + `?url=${"/" + row?.invoice_path}`} target='_blank'><Label variant="soft" color="success">{t("preview")}</Label></a>
             :
             "--"
           }
         </TableCell>
-        {/* <TableCell><a href={STORAGE_API + "/" + row?.invoice_path} target='_blank' ><Label variant="soft" color="success">View</Label></a></TableCell> */}
-
-        {/* <TableCell>{fCurrency(row.cost) || '-'}</TableCell> */}
-        {/* 
-        <TableCell align="right" sx={{ pr: 1 }}>
-          <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
-            <Iconify icon="eva:more-vertical-fill" />
-          </IconButton>
-        </TableCell> */}
       </TableRow>
 
-      <CustomPopover
-        open={popover.open}
-        onClose={popover.onClose}
-        arrow="right-top"
-        sx={{ width: 160 }}
-      >
-        <MenuItem onClick={handleDownload}>
-          <Iconify icon="eva:cloud-download-fill" />
-          Download
-        </MenuItem>
-
-        <MenuItem onClick={handlePrint}>
-          <Iconify icon="solar:printer-minimalistic-bold" />
-          Print
-        </MenuItem>
-
-        <MenuItem onClick={handleShare}>
-          <Iconify icon="solar:share-bold" />
-          Share
-        </MenuItem>
-
-        <Divider sx={{ borderStyle: 'dashed' }} />
-
-        <MenuItem onClick={handleDelete} sx={{ color: 'error.main' }}>
-          <Iconify icon="solar:trash-bin-trash-bold" />
-          Delete
-        </MenuItem>
-      </CustomPopover>
     </>
   );
 }
