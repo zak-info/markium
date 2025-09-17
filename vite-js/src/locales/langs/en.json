@@ -779,15 +779,17 @@
     "expiry_date_must_start_from_tomorow": "Expiry date must start from tomorrow",
     "field_required": "This field is required",
     "invalid_10_digit_number": "Please enter exactly 10 digits",
-     "at_least_one_representors": "At least one representative is required",
-     "amount_is_required": "Amount is required",
+    "at_least_one_representors": "At least one representative is required",
+    "amount_is_required": "Amount is required",
     "paiment_date_is_required": "Payment date is required",
     "amount_must_be_positive": "Amount must be positive",
-    "image":"image",
-    "file":"File",
-    "pdf":"PDF File",
-    "word":"Word File",
-    "excel":"Excel File",
-    "cant_close_maintenance_unless_one_clause_at_least": "Can't close maintenance unless at least one clause is added"
-  
+    "image": "image",
+    "pdf": "PDF File",
+    "word": "Word File",
+    "excel": "Excel File",
+    "cant_close_maintenance_unless_one_clause_at_least": "Can't close maintenance unless at least one clause is added",
+    "chassis_number_must_be_17_digits": "Chassis number must be exactly 17 digits",
+    "chassis_number_only_numbers": "Chassis number must contain only numbers",
+    "vin_must_be_9_digits": "VIN must be exactly 9 digits",
+    "vin_only_numbers": "VIN must contain only numbers"
 }

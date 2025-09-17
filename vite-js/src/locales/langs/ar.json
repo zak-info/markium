@@ -799,10 +799,12 @@
   "paiment_date_is_required": "تاريخ الدفع مطلوب",
   "amount_must_be_positive": "يجب أن يكون المبلغ موجباً",
   "image": "صورة",
-  "file": "ملف",
   "pdf": "ملف PDF",
   "word": "ملف Word",
   "excel": "ملف Excel",
-  "cant_close_maintenance_unless_one_clause_at_least": "لا يمكن إغلاق الصيانة ما لم تتم إضافة بند واحد على الأقل"
- 
+  "cant_close_maintenance_unless_one_clause_at_least": "لا يمكن إغلاق الصيانة ما لم تتم إضافة بند واحد على الأقل",
+  "chassis_number_must_be_17_digits": "رقم الهيكل يجب أن يكون 17 رقماً بالضبط",
+  "chassis_number_only_numbers": "رقم الهيكل يجب أن يحتوي على أرقام فقط",
+  "vin_must_be_9_digits": "الرقم التسلسلي يجب أن يكون 9 أرقام بالضبط",
+  "vin_only_numbers": "الرقم التسلسلي يجب أن يحتوي على أرقام فقط"
 }

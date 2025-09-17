@@ -137,7 +137,8 @@ export default function UserNewEditForm({ currentCar }) {
 
 
   const validateUnicity = (list, key, value) => {
-    return list?.map(item => item?.[key])?.filter(item => item?.[key] != currentCar?.[key])?.includes(value.trim())
+    // return list?.map(item => item?.[key])?.filter(item => item?.[key] != currentCar?.[key])?.includes(value.trim())
+    return list.find (item => item?.[key] == value.trim())?.id ? true : false
   }
 
   const methods = useForm({
@@ -282,10 +283,55 @@ export default function UserNewEditForm({ currentCar }) {
 
               <RHFTextField required name="plat_number" label={t('plateNumber')} error={validateUnicity(car.filter(item => item?.plat_number != currentCar?.plat_number), "plat_number", values?.plat_number)} helperText={validateUnicity(car, "plat_number", values?.plat_number) ? t('plat_number_already_exists') : null} disabled={currentCar?.id} />
 
-              <RHFTextField required name="chassis_number" label={t('structureNo')} error={validateUnicity(car, "chassis_number", values?.chassis_number) ? true : false} helperText={validateUnicity(car, "chassis_number", values?.chassis_number) ? t('chassis_number_already_exists') : null} disabled={currentCar?.id} />
+              {/* <RHFTextField required name="chassis_number" label={t('structureNo')} error={validateUnicity(car, "chassis_number", values?.chassis_number) ? true : false} helperText={validateUnicity(car, "chassis_number", values?.chassis_number) ? t('chassis_number_already_exists') : null} disabled={currentCar?.id} /> */}
+
+              <RHFTextField
+                required
+                name="chassis_number"
+                label={t('structureNo')}
+                error={
+                  validateUnicity(car, "chassis_number", values?.chassis_number) ? true :
+                    values?.chassis_number && values.chassis_number.length !== 17 ? true :
+                      values?.chassis_number && !/^\d{17}$/.test(values.chassis_number) ? true :
+                        false
+                }
+                helperText={
+                  validateUnicity(car, "chassis_number", values?.chassis_number)
+                    ? t('chassis_number_already_exists')
+                    : values?.chassis_number && values.chassis_number.length !== 17
+                      ? t('chassis_number_must_be_17_digits')
+                      : values?.chassis_number && !/^\d{17}$/.test(values.chassis_number)
+                        ? t('chassis_number_only_numbers')
+                        : null
+                }
+                disabled={currentCar?.id}
+              />
 
 
-              <RHFTextField required name="vin" label={t('serialNumber')} error={validateUnicity(car.filter(item => item?.vin != currentCar?.vin), "vin", values?.vin)} helperText={validateUnicity(car, "vin", values?.vin) ? t('vin_already_exists') : null} disabled={currentCar?.id} />
+
+              {/* <RHFTextField required name="vin" label={t('serialNumber')} error={validateUnicity(car.filter(item => item?.vin != currentCar?.vin), "vin", values?.vin)} helperText={validateUnicity(car, "vin", values?.vin) ? t('vin_already_exists') : null} disabled={currentCar?.id} /> */}
+              <RHFTextField
+                required
+                name="vin"
+                label={t('serialNumber')}
+                error={
+                  validateUnicity(car.filter(item => item?.vin != currentCar?.vin), "vin", values?.vin) ? true :
+                    values?.vin && values.vin.length !== 9 ? true :
+                      values?.vin && !/^\d{9}$/.test(values.vin) ? true :
+                        false
+                }
+                helperText={
+                  validateUnicity(car.filter(item => item?.vin != currentCar?.vin), "vin", values?.vin)
+                    ? t('vin_already_exists')
+                    : values?.vin && values.vin.length !== 9
+                      ? t('vin_must_be_9_digits')
+                      : values?.vin && !/^\d{9}$/.test(values.vin)
+                        ? t('vin_only_numbers')
+                        : null
+                }
+                disabled={currentCar?.id}
+              />
+
               <RHFTextField
                 required
                 name="odometer"
