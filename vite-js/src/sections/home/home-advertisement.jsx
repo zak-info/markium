@@ -12,6 +12,7 @@ import { bgGradient } from 'src/theme/css';
 
 import Iconify from 'src/components/iconify';
 import { varFade, MotionViewport } from 'src/components/animate';
+import { t } from 'i18next';
 
 // ----------------------------------------------------------------------
 
@@ -32,8 +33,7 @@ export default function HomeAdvertisement() {
         variants={varFade().inDown}
         sx={{ color: 'common.white', mb: 5, typography: 'h2' }}
       >
-        Get started with
-        <br /> Minimal kit today
+        {t("get_started_zaity_plus")}
       </Box>
 
       <Stack
@@ -54,7 +54,7 @@ export default function HomeAdvertisement() {
               bgcolor: 'common.white',
             }}
           >
-            Purchase Now
+           {t("purchase_now")}
           </Button>
         </m.div>
 
@@ -72,7 +72,7 @@ export default function HomeAdvertisement() {
               '&:hover': { borderColor: 'currentColor' },
             }}
           >
-            Get Free Version
+            {t("start_free_trial")}
           </Button>
         </m.div>
       </Stack>

@@ -42,6 +42,7 @@ import Label from 'src/components/label';
 import Image from 'src/components/image';
 import Iconify from 'src/components/iconify';
 import { varFade, MotionViewport } from 'src/components/animate';
+import { t } from 'i18next';
 
 // ----------------------------------------------------------------------
 
@@ -56,7 +57,7 @@ export default function HomeHugePackElements() {
 
   const [rating, setRating] = useState(2);
 
-  const [currentTab, setCurrentTab] = useState('Angular');
+  const [currentTab, setCurrentTab] = useState('Client');
 
   const handleChangeTab = useCallback((event, newValue) => {
     setCurrentTab(newValue);
@@ -77,7 +78,7 @@ export default function HomeHugePackElements() {
         href={paths.components}
         endIcon={<Iconify icon="eva:arrow-ios-forward-fill" width={18} sx={{ ml: -0.5 }} />}
       >
-        View All Components
+       {t("discover_more")}
       </Button>
     </m.div>
   );
@@ -92,14 +93,13 @@ export default function HomeHugePackElements() {
     >
       <m.div variants={varFade().inUp}>
         <Typography component="div" variant="overline" sx={{ color: 'text.disabled' }}>
-          Interface Starter Kit
+          {t("fleet_starter_kit")}
         </Typography>
       </m.div>
 
       <m.div variants={varFade().inUp}>
         <Typography variant="h2" sx={{ my: 3 }}>
-          Huge pack <br />
-          of elements
+          {t("huge_pack")}
         </Typography>
       </m.div>
 
@@ -110,8 +110,7 @@ export default function HomeHugePackElements() {
             color: 'text.secondary',
           }}
         >
-          We collected most popular elements. Menu, sliders, buttons, inputs etc. are all here. Just
-          dive in!
+          {t("radical_solution")}
         </Typography>
       </m.div>
 
@@ -147,7 +146,7 @@ export default function HomeHugePackElements() {
             color="primary"
             startIcon={<Iconify icon="solar:cart-plus-bold" />}
           >
-            Add To Cart
+           {t("claim")+ " "+t("+12") }
           </Button>
         </m.div>
 
@@ -157,7 +156,7 @@ export default function HomeHugePackElements() {
             color="primary"
             startIcon={<Iconify icon="eva:cloud-upload-fill" />}
           >
-            Upload
+            {t("file") + " "+t("invoice")} 
           </Button>
         </m.div>
 
@@ -189,11 +188,11 @@ export default function HomeHugePackElements() {
               boxShadow: (theme) => `inset 0 -2px 0 0 ${alpha(theme.palette.grey[500], 0.08)}`,
             }}
           >
-            {['Angular', 'React', 'Vue'].map((tab) => (
+            {['Claim', 'Contract', 'Client'].map((tab) => (
               <Tab
                 key={tab}
                 value={tab}
-                label={tab}
+                label={t(tab.toLowerCase())}
                 sx={{
                   '&:not(:last-of-type)': { mr: 3 },
                 }}
@@ -230,8 +229,8 @@ export default function HomeHugePackElements() {
             color="error"
             variant="soft"
             onDelete={() => {}}
-            avatar={<Avatar alt={_mock.fullName(2)} src={_mock.image.avatar(2)} />}
-            label="Chip"
+            avatar={<Avatar alt={_mock.fullName(2)} src={_mock.image.avatar(3)} />}
+            label={t("alert")}
           />
         </m.div>
       </Stack>
@@ -270,7 +269,7 @@ export default function HomeHugePackElements() {
 
         <m.div variants={varFade().in}>
           <Label variant="filled" startIcon={<Iconify icon="fluent:mail-24-filled" />}>
-            Label
+            {t("confirm")}
           </Label>
         </m.div>
       </Stack>
@@ -297,8 +296,8 @@ export default function HomeHugePackElements() {
 
         <m.div variants={varFade().in}>
           <Alert severity="success" onClose={() => {}}>
-            <AlertTitle>Success</AlertTitle>
-            This is a success alert — <strong>check it out!</strong>
+            <AlertTitle>{t("success")}</AlertTitle>
+            {t("operation_success")} — <strong>{t("check")}</strong>
           </Alert>
         </m.div>
       </Stack>
@@ -315,13 +314,13 @@ export default function HomeHugePackElements() {
             sx={{ width: 1 }}
           >
             <m.div variants={varFade().in}>
-              <FormControlLabel control={<Switch defaultChecked />} label="Switch" sx={{ m: 0 }} />
+              <FormControlLabel control={<Switch defaultChecked />} label={t("enable")} sx={{ m: 0 }} />
             </m.div>
 
             <m.div variants={varFade().in}>
               <FormControlLabel
                 control={<Radio color="error" defaultChecked />}
-                label="Radio Button"
+                label={t("alert")}
                 sx={{ m: 0 }}
               />
             </m.div>
@@ -329,7 +328,7 @@ export default function HomeHugePackElements() {
             <m.div variants={varFade().in}>
               <FormControlLabel
                 control={<Checkbox color="info" defaultChecked />}
-                label="Checkbox"
+                label={t("enabled")}
                 sx={{ m: 0 }}
               />
             </m.div>
@@ -337,7 +336,7 @@ export default function HomeHugePackElements() {
             <m.div variants={varFade().in}>
               <FormControlLabel
                 control={<Checkbox color="warning" indeterminate />}
-                label="Indeterminate"
+                label={t("warning")}
                 sx={{ m: 0 }}
               />
             </m.div>
@@ -354,8 +353,8 @@ export default function HomeHugePackElements() {
                 }}
               >
                 <CardHeader
-                  title="Jayvion Simon"
-                  subheader="California, United States"
+                  title={t("شركة العليا للطاقة")}
+                  subheader={t("الرياض - المملكة العربية السعودية")}
                   avatar={
                     <Badge
                       variant="online"
@@ -390,7 +389,7 @@ export default function HomeHugePackElements() {
                 </Box>
 
                 <Typography variant="body2" sx={{ color: 'text.secondary', pt: 2, px: 2 }}>
-                  Phasellus dolor. Fusce egestas elit eget lorem. Quisque id odio.
+                  {/* Phasellus dolor. Fusce egestas elit eget lorem. Quisque id odio. */}
                 </Typography>
 
                 <Stack direction="row" sx={{ px: 2, py: 1 }}>
@@ -417,18 +416,18 @@ export default function HomeHugePackElements() {
 
             <Stack spacing={3} sx={{ width: 1 }}>
               <m.div variants={varFade().in}>
-                <TextField fullWidth label="Text Field" value="Value" />
+                <TextField fullWidth label={t("name")} value="...." />
               </m.div>
 
               <m.div variants={varFade().in}>
                 <TextField
                   select
                   fullWidth
-                  label="Select"
+                  label={t("type")}
                   value={select}
                   onChange={handleChangeSelect}
                 >
-                  {['Option 1', 'Option 2', 'Option 3', 'Option 4'].map((option) => (
+                  {[t("type")+" 1", t("type")+" 2", t("type")+" 3", t("type")+" 4"].map((option) => (
                     <MenuItem key={option} value={option}>
                       {option}
                     </MenuItem>
@@ -437,7 +436,7 @@ export default function HomeHugePackElements() {
               </m.div>
 
               <m.div variants={varFade().in}>
-                <TextField fullWidth multiline rows={3} label="Textarea" />
+                <TextField fullWidth multiline rows={3} label={t("description")} />
               </m.div>
             </Stack>
           </Stack>

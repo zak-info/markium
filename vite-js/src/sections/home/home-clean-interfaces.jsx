@@ -8,6 +8,7 @@ import Typography from '@mui/material/Typography';
 
 import Image from 'src/components/image';
 import { varFade, MotionViewport } from 'src/components/animate';
+import { t } from 'i18next';
 
 // ----------------------------------------------------------------------
 
@@ -25,7 +26,7 @@ export default function HomeCleanInterfaces() {
     >
       <m.div variants={varFade().inUp}>
         <Typography component="div" variant="overline" sx={{ color: 'text.disabled' }}>
-          clean & clear
+          {t("discover_more")}
         </Typography>
       </m.div>
 
@@ -37,9 +38,10 @@ export default function HomeCleanInterfaces() {
               theme.palette.mode === 'light'
                 ? 'unset'
                 : `4px 4px 16px ${alpha(theme.palette.grey[800], 0.48)}`,
+
           }}
         >
-          Beautiful, modern and clean user interfaces
+          {t("beautiful_ui")}
         </Typography>
       </m.div>
     </Stack>

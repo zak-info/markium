@@ -23,7 +23,7 @@ export default function MainLayout({ children }) {
     if (authenticated) {
       router.replace('/dashboard');
     } else {
-      router.replace('/auth/jwt/login');
+      router.replace('/');
     }
   }, [authenticated]);
 
@@ -33,7 +33,7 @@ export default function MainLayout({ children }) {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: 1 }}>
-      <Header />
+      {/* <Header /> */}
 
       <Box
         component="main"

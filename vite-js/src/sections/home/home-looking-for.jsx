@@ -13,6 +13,7 @@ import { useResponsive } from 'src/hooks/use-responsive';
 import Image from 'src/components/image';
 import Iconify from 'src/components/iconify';
 import { varFade, MotionViewport } from 'src/components/animate';
+import { t } from 'i18next';
 
 // ----------------------------------------------------------------------
 
@@ -29,7 +30,7 @@ export default function HomeLookingFor() {
       href={paths.zoneUI}
       endIcon={<Iconify icon="eva:arrow-ios-forward-fill" />}
     >
-      Visit Zone Landing Page
+      {t("start_journey")}
     </Button>
   );
 
@@ -44,7 +45,7 @@ export default function HomeLookingFor() {
     >
       <m.div variants={varFade().inDown}>
         <Typography variant="overline" component="div" sx={{ color: 'text.disabled' }}>
-          Looking For a
+         {t("looking_for")}
         </Typography>
       </m.div>
 
@@ -56,7 +57,7 @@ export default function HomeLookingFor() {
             mb: { md: 5 },
           }}
         >
-          Landing Page Template?
+          {t("opportunity")}
         </Typography>
       </m.div>
 

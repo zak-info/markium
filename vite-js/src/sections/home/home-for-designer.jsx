@@ -15,6 +15,7 @@ import { bgGradient, textGradient } from 'src/theme/css';
 
 import Iconify from 'src/components/iconify';
 import { varFade, MotionViewport } from 'src/components/animate';
+import { t } from 'i18next';
 
 // ----------------------------------------------------------------------
 
@@ -27,7 +28,7 @@ export default function HomeForDesigner() {
     <Box sx={{ textAlign: { xs: 'center', md: 'unset' }, mt: { xs: 10, md: 20 } }}>
       <m.div variants={varFade().inUp}>
         <Typography component="div" variant="overline" sx={{ color: 'text.disabled' }}>
-          Professional Kit
+          {t("professional_kit")}
         </Typography>
       </m.div>
 
@@ -42,7 +43,7 @@ export default function HomeForDesigner() {
             ),
           }}
         >
-          For Designer
+          {t("for_enterprises")}
         </Typography>
       </m.div>
 
@@ -54,9 +55,9 @@ export default function HomeForDesigner() {
           endIcon={<Iconify icon="eva:arrow-ios-forward-fill" />}
           target="_blank"
           rel="noopener"
-          href={paths.figma}
+          href={paths.dashboard.root}
         >
-          Figma Workspace
+            {t("check_workspace")}
         </Button>
       </m.div>
     </Box>

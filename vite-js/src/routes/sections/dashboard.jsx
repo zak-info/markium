@@ -9,6 +9,8 @@ import ContractCreatePage from 'src/pages/dashboard/clients/contracts-new';
 import SettingsView from 'src/sections/settings/view';
 import { DataContextProvider } from 'src/context/system-data/DataContext';
 import PermissionsRouteContext from 'src/auth/context/permissions/permissions-route-context';
+import { element } from 'prop-types';
+import HomePage from 'src/pages/home';
 
 
 // ----------------------------------------------------------------------
@@ -390,4 +392,8 @@ export const dashboardRoutes = [
       { path: 'blank', element: <BlankPage /> },
     ],
   },
+  {
+    path:'home',
+    element:<HomePage />
+  }
 ];

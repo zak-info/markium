@@ -16,6 +16,7 @@ import { _socials } from 'src/_mock';
 
 import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
+import { t } from 'i18next';
 
 // ----------------------------------------------------------------------
 
@@ -62,9 +63,9 @@ export default function Footer() {
         <Logo sx={{ mb: 1, mx: 'auto' }} />
 
         <Typography variant="caption" component="div">
-          © All rights reserved
-          <br /> made by
-          <Link href="https://minimals.cc/"> minimals.cc </Link>
+          © {t("all_rights_reserved")}
+          <br /> {t("made_by_zaity")}
+          {/* <Link href="https://minimals.cc/"> zaity team </Link> */}
         </Typography>
       </Container>
     </Box>

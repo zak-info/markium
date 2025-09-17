@@ -21,6 +21,7 @@ import { bgBlur, bgGradient, textGradient } from 'src/theme/css';
 
 import Iconify from 'src/components/iconify';
 import { varFade, MotionContainer } from 'src/components/animate';
+import { t } from 'i18next';
 
 // ----------------------------------------------------------------------
 
@@ -168,7 +169,7 @@ export default function HomeHero() {
       sx={{
         height: 1,
         mx: 'auto',
-        maxWidth: 480,
+        maxWidth: 680,
         opacity: opacity > 0 ? opacity : 0,
         mt: {
           md: `-${HEADER.H_DESKTOP + percent * 2.5}px`,
@@ -182,13 +183,13 @@ export default function HomeHero() {
             textAlign: 'center',
           }}
         >
-          Start a <br />
-          New Project with
+          {t("manage_fleet")}
         </Typography>
       </m.div>
 
       <m.div variants={varFade().in}>
         <StyledTextGradient
+        sx={{height:"150px"}}
           animate={{ backgroundPosition: '200% center' }}
           transition={{
             repeatType: 'reverse',
@@ -197,16 +198,15 @@ export default function HomeHero() {
             repeat: Infinity,
           }}
         >
-          Zaity Plus
+          {t("zaity_plus")}
         </StyledTextGradient>
       </m.div>
 
       <m.div variants={varFade().in}>
         <Typography variant="body2" sx={{ textAlign: 'center' }}>
-          The starting point for your next project is based on MUI.Easy customization Helps you
-          build apps faster and better.
+         {t("starting_point")}
         </Typography>
-      </m.div>
+      </m.div>            
 
       <m.div variants={varFade().in}>
         <Stack
@@ -219,9 +219,9 @@ export default function HomeHero() {
           <Rating readOnly value={4.95} precision={0.1} max={5} />
           <Typography variant="caption" sx={{ color: 'text.secondary' }}>
             <Box component="strong" sx={{ mr: 0.5, color: 'text.primary' }}>
-              4.96/5
+              4.1/5
             </Box>
-            (99+ reviews)
+            {/* (99+ reviews) */}
           </Typography>
         </Stack>
       </m.div>
@@ -235,12 +235,12 @@ export default function HomeHero() {
               color="inherit"
               size="large"
               variant="contained"
-              startIcon={<Iconify icon="eva:flash-fill" width={24} />}
+              startIcon={<Iconify icon="tabler:shield-lock-filled" width={24} />}
             >
-              Live Preview
+              {t("login")}
             </Button>
 
-            <Link
+            {/* <Link
               color="inherit"
               variant="caption"
               target="_blank"
@@ -254,7 +254,7 @@ export default function HomeHero() {
             >
               <Iconify icon="eva:external-link-fill" width={16} sx={{ mr: 0.5 }} />
               Get Free Version
-            </Link>
+            </Link> */}
           </Stack>
 
           <Button
@@ -264,15 +264,15 @@ export default function HomeHero() {
             startIcon={<Iconify icon="eva:external-link-fill" width={24} />}
             target="_blank"
             rel="noopener"
-            href={paths.figma}
+            href={paths.dashboard.root}
             sx={{ borderColor: 'text.primary' }}
           >
-            Design Preview
+            {t("ask_demo")}
           </Button>
         </Stack>
       </m.div>
 
-      <Stack spacing={3} sx={{ textAlign: 'center' }}>
+      {/* <Stack spacing={3} sx={{ textAlign: 'center' }}>
         <m.div variants={varFade().in}>
           <Typography variant="overline" sx={{ opacity: 0.48 }}>
             Available For
@@ -291,7 +291,7 @@ export default function HomeHero() {
             </m.div>
           ))}
         </Stack>
-      </Stack>
+      </Stack> */}
     </Stack>
   );
 

@@ -10,6 +10,7 @@ import Typography from '@mui/material/Typography';
 import Image from 'src/components/image';
 import { useSettingsContext } from 'src/components/settings';
 import { varFade, MotionViewport } from 'src/components/animate';
+import { t } from 'i18next';
 
 // ----------------------------------------------------------------------
 
@@ -20,21 +21,21 @@ export default function HomeDarkMode() {
     <Stack alignItems="center" spacing={3}>
       <m.div variants={varFade().inUp}>
         <Typography component="div" variant="overline" sx={{ color: 'primary.main' }}>
-          Easy switch between styles.
+         {t("easy_to_use")}
         </Typography>
       </m.div>
 
       <m.div variants={varFade().inUp}>
         <Typography variant="h2" sx={{ color: 'common.white' }}>
-          Dark mode
+          {t("productive_mode")}
         </Typography>
       </m.div>
 
-      <m.div variants={varFade().inUp}>
+      {/* <m.div variants={varFade().inUp}>
         <Typography sx={{ color: 'grey.500' }}>
           A dark theme that feels easier on the eyes.
         </Typography>
-      </m.div>
+      </m.div> */}
 
       <m.div variants={varFade().inUp}>
         <Switch

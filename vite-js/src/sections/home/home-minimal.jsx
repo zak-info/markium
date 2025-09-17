@@ -8,25 +8,26 @@ import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 
 import { varFade, MotionViewport } from 'src/components/animate';
+import { t } from 'i18next';
+import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
 const CARDS = [
   {
     icon: ' /assets/icons/home/ic_make_brand.svg',
-    title: 'Branding',
-    description: 'Consistent design makes it easy to brand your own.',
+    title: t("manage_vehicles_title"),
+    description: t("manage_vehicles_desc"),
   },
   {
     icon: ' /assets/icons/home/ic_design.svg',
-    title: 'UI & UX Design',
-    description:
-      'The kit is built on the principles of the atomic design system. It helps you to create projects fastest and easily customized packages for your projects.',
+    title: t("track_maintenances_title"),
+    description: t("track_maintenances_desc"),
   },
   {
     icon: ' /assets/icons/home/ic_development.svg',
-    title: 'Development',
-    description: 'Easy to customize and extend, saving you time and money.',
+    title: t("contracts_incomes_title"),
+    description: t("contracts_incomes_desc"),
   },
 ];
 
@@ -49,13 +50,13 @@ export default function HomeMinimal() {
       >
         <m.div variants={varFade().inUp}>
           <Typography component="div" variant="overline" sx={{ color: 'text.disabled' }}>
-            Zaity Plus
+            {t("zaity_plus")}
           </Typography>
         </m.div>
 
         <m.div variants={varFade().inDown}>
           <Typography variant="h2">
-            What Minimal <br /> helps you?
+            {t("what_zaity_plus")}
           </Typography>
         </m.div>
       </Stack>
@@ -79,11 +80,10 @@ export default function HomeMinimal() {
                 p: (theme) => theme.spacing(10, 5),
                 ...(index === 1 && {
                   boxShadow: (theme) => ({
-                    md: `-40px 40px 80px ${
-                      theme.palette.mode === 'light'
+                    md: `-40px 40px 80px ${theme.palette.mode === 'light'
                         ? alpha(theme.palette.grey[500], 0.16)
                         : alpha(theme.palette.common.black, 0.4)
-                    }`,
+                      }`,
                   }),
                 }),
               }}
@@ -95,6 +95,7 @@ export default function HomeMinimal() {
                 sx={{ mx: 'auto', width: 48, height: 48 }}
               />
 
+              {/* <Iconify icon="ion:car-sport" width="512" height="512"  /> */}
               <Typography variant="h5" sx={{ mt: 8, mb: 2 }}>
                 {card.title}
               </Typography>
