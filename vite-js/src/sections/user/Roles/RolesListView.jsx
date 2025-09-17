@@ -272,7 +272,7 @@ const ElementActions = ({ item, setTableData, roles }) => {
                 open={confirm.value}
                 onClose={confirm.onFalse}
                 title={t("delete")}
-                content={t('unable_to_delete_role',{item:item?.name})}
+                content={item?.users_count && item?.users_count > 0 ? t('unable_to_delete_role',{item:item?.name}) : t('are_u_sure_to_delete',{item:t("role"),item2:item?.translations?.find(i => i.lang_id == 1)?.name || item?.translations?.find(i => i.lang_id == 2)?.name || item?.key})}
                 action={
                     <LoadingButton
                         disabled={item?.users_count && item?.users_count > 0}
