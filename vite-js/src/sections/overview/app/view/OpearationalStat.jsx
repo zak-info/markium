@@ -226,7 +226,7 @@ export default function OpearationalStat() {
                   handleThisMonth={() => setClaims(Gclaims?.filter(item => new Date(item?.paiment_date) >= new Date(Date.now() - 30 * 86400000)))}
                   handleThisYear={() => setClaims(Gclaims?.filter(item => new Date(item?.paiment_date) >= new Date(Date.now() - 365 * 86400000)))}
                   chart={{
-                    colors: ["#FFD666", "#C684FF", "#00A76F", "#987324"],
+                    colors: ["#FF5630", "#C684FF", "#00A76F", "#987324"],
                     series: [
                       { label: t('due_claim'), value: claims?.filter(item => item?.status?.key === 'due_claim').length },
                       { label: t('activated'), value: claims?.filter(item => ['not_yet_claim', 'overdue_claim', 'severely_overdue_claim'].includes(item?.status?.key)).length },
@@ -255,7 +255,7 @@ export default function OpearationalStat() {
                 handleThisMonth={() => setContracts(Gcontracts?.filter(item => new Date(item?.created_at) >= new Date(Date.now() - 30 * 86400000)))}
                 handleThisYear={() => setContracts(Gcontracts?.filter(item => new Date(item?.created_at) >= new Date(Date.now() - 365 * 86400000)))}
                 chart={{
-                  colors: ["#FFD666", "#00A76F", "#00A76F", "#987324"],
+                  colors: ["#FF5630", "#00A76F", "#00A76F", "#987324"],
                   series: [
                     { label: t('activated'), value: contracts?.filter(item => new Date(item?.periods?.[0]?.end_date) > new Date()).length },
                     { label: t('finished'), value: contracts?.filter(item => new Date(item?.periods?.[0]?.end_date) <= new Date()).length },
@@ -281,7 +281,7 @@ export default function OpearationalStat() {
                 handleThisMonth={() => setMaintenances(maintenance?.filter(item => new Date(item?.created_at) >= new Date(Date.now() - 30 * 86400000)))}
                 handleThisYear={() => setMaintenances(maintenance?.filter(item => new Date(item?.created_at) >= new Date(Date.now() - 365 * 86400000)))}
                 chart={{
-                  colors: ["#00A76F", "#FFD666", "#678FFF", "#987324"],
+                  colors: ["#00A76F", "#FF5630", "#678FFF", "#987324"],
                   series: [
                     { label: t('completed'), value: maintenances?.filter(item => item?.status?.key == "completed").length },
                     { label: t('pending'), value: maintenances?.filter(item => item?.status?.key == "pending").length },
@@ -298,8 +298,9 @@ export default function OpearationalStat() {
         <BankingBalanceStatistics
           title={t("time_rev")}
           // subheader="(+43% Income | +12% Expense) than last year"
+          // 8e33ff
           chart={{
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
+            categories: [t('jan'),t('feb'),t('mar') ,t('apr'),t('may') ,t('jun'),t('jul') ,t('aug') ,t('sep') ],
             series: [
               {
                 type: 'Year',
