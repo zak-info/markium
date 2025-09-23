@@ -159,7 +159,7 @@ export default function DocumentsListView({ }) {
                         documentsLoading ?
                             <LoadingScreen sx={{ my: 8 }} color='primary' />
                             :
-                            <ZaityListView  TABLE_HEAD={[...TABLE_HEAD]} zaityTableDate={dataFiltered || []} onSelectedRows={({ data, setTableData }) => { return <onSelectedRowsComponent configurable_type={"roles"} setTableData={setTableData} data={car} rowsPerPage={4} dense={"small"} rowsPerPageOptions={[4]} /> }} />
+                            <ZaityListView  TABLE_HEAD={[...TABLE_HEAD]} zaityTableDate={dataFiltered || []} height={400} onSelectedRows={({ data, setTableData }) => { return <onSelectedRowsComponent configurable_type={"roles"} setTableData={setTableData} data={car}   rowsPerPageOptions={[4]}  /> }} rowsPerPage={4} dense={"small"} />
                     }
                    
                 </Card>

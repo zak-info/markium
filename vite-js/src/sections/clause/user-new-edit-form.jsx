@@ -107,10 +107,10 @@ export default function UserNewEditForm({ maintenance_id, currentClause, setTabl
       let body = donnes;
       console.log(" body enqueueSnackbar :",body)
 
-      if(Number(credentials.cost) <= 0){
-        enqueueSnackbar(t("cost_must_be_positive"), { variant: 'error' });
-        return ;
-      }
+      // if(Number(credentials.cost) <= 0){
+      //   enqueueSnackbar(t("cost_must_be_positive"), { variant: 'error' });
+      //   return ;
+      // }
       if(Number(credentials.quantity) <= 0){
         enqueueSnackbar(t("quantity_must_be_positive"), { variant: 'error' });
         return ;

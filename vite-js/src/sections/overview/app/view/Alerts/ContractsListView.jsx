@@ -160,7 +160,7 @@ export default function ContractsListView({ }) {
                         contractsLoading ?
                             <LoadingScreen sx={{ my: 8 }} color='primary' />
                             :
-                            <ZaityListView rowsPerPage={3} minHeight={400} maxHeight={400} TABLE_HEAD={[...TABLE_HEAD]} dense="medium" zaityTableDate={dataFiltered || []} onSelectedRows={({ data, setTableData }) => { return <onSelectedRowsComponent configurable_type={"roles"} setTableData={setTableData} data={contracts} /> }} />
+                            <ZaityListView  minHeight={400} maxHeight={400} TABLE_HEAD={[...TABLE_HEAD]}  zaityTableDate={dataFiltered || []} height={400} onSelectedRows={({ data, setTableData }) => { return <onSelectedRowsComponent configurable_type={"roles"} setTableData={setTableData} data={contracts}  /> }} rowsPerPage={4} dense={"small"}  />
                     }
                     {/* </ZaityTableFilters> */}
                     {/* </ZaityTableTabs> */}

@@ -63,7 +63,7 @@ const defaultFilters = {
 
 // ----------------------------------------------------------------------
 
-export default function ZaityListView({ TABLE_HEAD, dense, zaityTableDate, onSelectedRows,maxWidth,rowsPerPage,minHeight , rowsPerPageOptions }) {
+export default function ZaityListView({ TABLE_HEAD, dense, zaityTableDate, onSelectedRows,maxWidth,rowsPerPage,minHeight,height , rowsPerPageOptions }) {
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslate();
 
@@ -147,7 +147,7 @@ export default function ZaityListView({ TABLE_HEAD, dense, zaityTableDate, onSel
   );
   return (
     <>
-      <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
+      <TableContainer sx={{ position: 'relative', overflow: 'hidden', height: height ? `${height}px` : 'auto' }}>
         {/* <TableSelectedAction
           dense={table.dense ? "small":"small"}
           numSelected={table.selected.length}
@@ -165,8 +165,8 @@ export default function ZaityListView({ TABLE_HEAD, dense, zaityTableDate, onSel
           }
         /> */}
 
-        <Scrollbar>
-          <Table size={dense} sx={{ minWidth: 660 , maxWidth ,minHeight }}>
+        <Scrollbar sx={{ maxHeight: height ? `${height}px` : 'none' }}>
+          <Table size={dense} sx={{ minWidth: 660 , maxWidth ,minHeight, height: height ? `${height}px` : undefined }}>
             <TableHeadCustom
               order={table.order}
               orderBy={table.orderBy}

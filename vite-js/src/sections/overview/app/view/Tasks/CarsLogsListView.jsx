@@ -152,7 +152,7 @@ export default function CarsLogsListView({ }) {
                         carLoading ?
                             <LoadingScreen sx={{ my: 8 }} color='primary' />
                             :
-                            <ZaityListView rowsPerPage={3} TABLE_HEAD={[...TABLE_HEAD]} dense="medium" zaityTableDate={dataFiltered || []} onSelectedRows={({ data, setTableData }) => { return <onSelectedRowsComponent configurable_type={"roles"} setTableData={setTableData} data={car} /> }} />
+                            <ZaityListView  TABLE_HEAD={[...TABLE_HEAD]}  zaityTableDate={dataFiltered || []} onSelectedRows={({ data, setTableData }) => { return <onSelectedRowsComponent configurable_type={"roles"} setTableData={setTableData} data={car} /> }} rowsPerPage={4} dense={"small"} height={400}  />
                     }
                 </Card>
             </Container>

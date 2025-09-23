@@ -141,7 +141,7 @@ export default function ContractClaimsListView({ claimsLoading, data, with_contr
                         claimsLoading ?
                             <LoadingScreen sx={{ my: 8 }} color='primary' />
                             :
-                            <ZaityListView  TABLE_HEAD={[...TABLE_HEAD]} dense="medium" zaityTableDate={dataFiltered || []} onSelectedRows={({ data, setTableData }) => { return <onSelectedRowsComponent configurable_type={"roles"} setTableData={setTableData} data={data} /> }} />
+                            <ZaityListView  TABLE_HEAD={[...TABLE_HEAD]} zaityTableDate={dataFiltered || []} height={400} onSelectedRows={({ data, setTableData }) => { return <onSelectedRowsComponent configurable_type={"roles"} setTableData={setTableData} data={data}  /> }} rowsPerPage={4} dense={"small"}  />
                     }
                     {/* </ZaityTableTabs> */}
                 </Card>
