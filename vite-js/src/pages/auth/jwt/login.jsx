@@ -8,7 +8,7 @@ export default function LoginPage() {
   return (
     <>
       <Helmet>
-        <title> Zaity: Login</title>
+        <title> Markium: Login</title>
       </Helmet>
 
       <JwtLoginView />

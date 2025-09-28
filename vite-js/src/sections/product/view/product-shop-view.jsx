@@ -174,7 +174,7 @@ export default function ProductShopView() {
 
       {(notFound || productsEmpty) && renderNotFound}
 
-      <ProductList products={dataFiltered} loading={productsLoading} />
+      <ProductList products={products} loading={productsLoading} />
     </Container>
   );
 }

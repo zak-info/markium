@@ -1,8 +1,8 @@
 // vite.config.js
 import path from "path";
-import { defineConfig } from "file:///Users/zak-info/Documents/Projects/zaityPlus/vite-js/node_modules/vite/dist/node/index.js";
-import react from "file:///Users/zak-info/Documents/Projects/zaityPlus/vite-js/node_modules/@vitejs/plugin-react-swc/index.mjs";
-import checker from "file:///Users/zak-info/Documents/Projects/zaityPlus/vite-js/node_modules/vite-plugin-checker/dist/esm/main.js";
+import { defineConfig } from "file:///Users/zak-info/Documents/Projects/markium/vite-js/node_modules/vite/dist/node/index.js";
+import react from "file:///Users/zak-info/Documents/Projects/markium/vite-js/node_modules/@vitejs/plugin-react-swc/index.mjs";
+import checker from "file:///Users/zak-info/Documents/Projects/markium/vite-js/node_modules/vite-plugin-checker/dist/esm/main.js";
 var vite_config_default = defineConfig({
   plugins: [
     react(),
@@ -25,10 +25,10 @@ var vite_config_default = defineConfig({
     ]
   },
   server: {
-    port: 3030
+    port: 3031
   },
   preview: {
-    port: 3030
+    port: 3031
   }
 });
 export {

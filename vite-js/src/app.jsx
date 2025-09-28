@@ -44,8 +44,8 @@ export default function App() {
               themeMode: 'light', // 'light' | 'dark'
               themeDirection: 'ltr', //  'rtl' | 'ltr'
               themeContrast: 'default', // 'default' | 'bold'
-              themeLayout: 'mini', // 'vertical' | 'horizontal' | 'mini'
-              themeColorPresets: 'default', // 'default' | 'cyan' | 'purple' | 'blue' | 'orange' | 'red'
+              themeLayout: 'vertical', // 'vertical' | 'horizontal' | 'mini'
+              themeColorPresets: 'blue', // 'default' | 'cyan' | 'purple' | 'blue' | 'orange' | 'red'
               themeStretch: false,
             }}
           >

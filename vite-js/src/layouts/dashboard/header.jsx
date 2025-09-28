@@ -74,15 +74,7 @@ export default function Header({ onOpenNav }) {
         spacing={{ xs: 0.5, sm: 1 }}
       >
 
-        {/* <div>
-          <input type="checkbox" class="checkbox" id="checkbox" />
-          <label for="checkbox" class="checkbox-label">
-            <i class="fas fa-moon"></i>
-            <i class="fas fa-sun"></i>
-            <span class="ball"></span>
-          </label>
-        </div> */}
-
+       
         <div style={{display:"flex",alignItems:"center"}}>
           {darkMode == "dark" ?
             <m.button  initial={{ opacity: 0 }}  animate={{ opacity: 1 }} transition={{duration: 0.2}} onClick={Toggle} style={{background:"none",border:"none"}}>
@@ -113,7 +105,7 @@ export default function Header({ onOpenNav }) {
 
         {/* <ContactsPopover /> */}
 
-        {/* <SettingsButton /> */}
+        <SettingsButton />
 
 
         <AccountPopover />

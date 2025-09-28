@@ -8,7 +8,7 @@ export default function HomePage() {
   return (
     <>
       <Helmet>
-        <title> Zaity Plus : Home Page</title>
+        <title> Markium : Home Page</title>
       </Helmet>
 
       <HomeView />

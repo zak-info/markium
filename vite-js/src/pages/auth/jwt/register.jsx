@@ -8,7 +8,7 @@ export default function RegisterPage() {
   return (
     <>
       <Helmet>
-        <title> Zaity: Register</title>
+        <title> Markium: Register</title>
       </Helmet>
 
       <JwtRegisterView />
