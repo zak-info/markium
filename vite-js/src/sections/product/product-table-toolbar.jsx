@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
@@ -8,6 +8,7 @@ import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import OutlinedInput from '@mui/material/OutlinedInput';
 
+import { useTranslate } from 'src/locales';
 import Iconify from 'src/components/iconify';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 
@@ -20,11 +21,21 @@ export default function ProductTableToolbar({
   stockOptions,
   publishOptions,
 }) {
+  const { t } = useTranslate();
+
   const popover = usePopover();
 
-  const [stock, setStock] = useState(filters.stock);
+  const [stock, setStock] = useState(filters.stock || []);
 
-  const [publish, setPublish] = useState(filters.publish);
+  const [status, setStatus] = useState(filters.status || []);
+
+  useEffect(() => {
+    setStock(filters.stock || []);
+  }, [filters.stock]);
+
+  useEffect(() => {
+    setStatus(filters.status || []);
+  }, [filters.status]);
 
   const handleChangeStock = useCallback((event) => {
     const {
@@ -33,20 +44,20 @@ export default function ProductTableToolbar({
     setStock(typeof value === 'string' ? value.split(',') : value);
   }, []);
 
-  const handleChangePublish = useCallback((event) => {
+  const handleChangeStatus = useCallback((event) => {
     const {
       target: { value },
     } = event;
-    setPublish(typeof value === 'string' ? value.split(',') : value);
+    setStatus(typeof value === 'string' ? value.split(',') : value);
   }, []);
 
   const handleCloseStock = useCallback(() => {
     onFilters('stock', stock);
   }, [onFilters, stock]);
 
-  const handleClosePublish = useCallback(() => {
-    onFilters('publish', publish);
-  }, [onFilters, publish]);
+  const handleCloseStatus = useCallback(() => {
+    onFilters('status', status);
+  }, [onFilters, status]);
 
   return (
     <>
@@ -56,13 +67,13 @@ export default function ProductTableToolbar({
           width: { xs: 1, md: 200 },
         }}
       >
-        <InputLabel>Stock</InputLabel>
+        <InputLabel>{t('stock_status')}</InputLabel>
 
         <Select
           multiple
           value={stock}
           onChange={handleChangeStock}
-          input={<OutlinedInput label="Stock" />}
+          input={<OutlinedInput label={t('stock_status')} />}
           renderValue={(selected) => selected.map((value) => value).join(', ')}
           onClose={handleCloseStock}
           sx={{ textTransform: 'capitalize' }}
@@ -82,20 +93,20 @@ export default function ProductTableToolbar({
           width: { xs: 1, md: 200 },
         }}
       >
-        <InputLabel>Publish</InputLabel>
+        <InputLabel>{t('status')}</InputLabel>
 
         <Select
           multiple
-          value={publish}
-          onChange={handleChangePublish}
-          input={<OutlinedInput label="Publish" />}
+          value={status}
+          onChange={handleChangeStatus}
+          input={<OutlinedInput label={t('status')} />}
           renderValue={(selected) => selected.map((value) => value).join(', ')}
-          onClose={handleClosePublish}
+          onClose={handleCloseStatus}
           sx={{ textTransform: 'capitalize' }}
         >
           {publishOptions.map((option) => (
             <MenuItem key={option.value} value={option.value}>
-              <Checkbox disableRipple size="small" checked={publish.includes(option.value)} />
+              <Checkbox disableRipple size="small" checked={status?.includes(option?.value)} />
               {option.label}
             </MenuItem>
           ))}
@@ -114,7 +125,7 @@ export default function ProductTableToolbar({
           }}
         >
           <Iconify icon="solar:printer-minimalistic-bold" />
-          Print
+          {t('print')}
         </MenuItem>
 
         <MenuItem
@@ -123,7 +134,7 @@ export default function ProductTableToolbar({
           }}
         >
           <Iconify icon="solar:import-bold" />
-          Import
+          {t('import')}
         </MenuItem>
 
         <MenuItem
@@ -132,7 +143,7 @@ export default function ProductTableToolbar({
           }}
         >
           <Iconify icon="solar:export-bold" />
-          Export
+          {t('export')}
         </MenuItem>
       </CustomPopover>
     </>

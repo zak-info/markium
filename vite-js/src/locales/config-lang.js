@@ -85,7 +85,7 @@ export const allLangs = [
     value: 'ar',
     systemValue: merge(arSDDataGrid, arSACore),
     adapterLocale: arSAAdapter,
-    icon: 'flagpack:sa',
+    icon: 'flagpack:dz',
     numberFormat: {
       code: 'ar',
       currency: 'AED',

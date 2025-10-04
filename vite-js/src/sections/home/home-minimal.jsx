@@ -16,18 +16,18 @@ import Iconify from 'src/components/iconify';
 const CARDS = [
   {
     icon: ' /assets/icons/home/ic_make_brand.svg',
-    title: t("manage_vehicles_title"),
-    description: t("manage_vehicles_desc"),
+    title: t("create_products_title"),
+    description: t("create_products_desc"),
   },
   {
     icon: ' /assets/icons/home/ic_design.svg',
-    title: t("track_maintenances_title"),
-    description: t("track_maintenances_desc"),
+    title: t("manage_orders_title"),
+    description: t("manage_orders_desc"),
   },
   {
     icon: ' /assets/icons/home/ic_development.svg',
-    title: t("contracts_incomes_title"),
-    description: t("contracts_incomes_desc"),
+    title: t("track_delivery_title"),
+    description: t("track_delivery_desc"),
   },
 ];
 
@@ -50,13 +50,13 @@ export default function HomeMinimal() {
       >
         <m.div variants={varFade().inUp}>
           <Typography component="div" variant="overline" sx={{ color: 'text.disabled' }}>
-            {t("zaity_plus")}
+            {t("markium")}
           </Typography>
         </m.div>
 
         <m.div variants={varFade().inDown}>
           <Typography variant="h2">
-            {t("what_zaity_plus")}
+            {t("what_markium")}
           </Typography>
         </m.div>
       </Stack>

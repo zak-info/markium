@@ -48,16 +48,20 @@ export const fetcher = async (args) => {
 
 // ----------------------------------------------------------------------
 
+
+export const api_version = "v1"
+
+
 export const endpoints = {
   chat: '/api/chat',
   kanban: '/api/kanban',
   calendar: '/api/calendar',
   auth: {
-    me: '/api/auth/me',
-    login: '/auth/login',
-    register: '/api/auth/register',
-    changePassword: '/auth/changePassword',
-    changePasswordByAdmin: '/auth/changePasswordByAdmin',
+    me: `/auth/me`,
+    login: `/auth/login`,
+    register: `/auth/signup`,
+    changePassword: `/auth/changePassword`,
+    changePasswordByAdmin: `/auth/changePasswordByAdmin`,
   },
   clauses: {
     root: `/maintenance/clauses`,
@@ -78,8 +82,9 @@ export const endpoints = {
     search: '/api/post/search',
   },
   product: {
+    root: '/products',
     list: '/api/product/list',
-    details: '/api/product/details',
+    details:(id)=> `/api/product/${id}`,
     search: '/api/product/search',
   },
   utils: { values: '/values' },

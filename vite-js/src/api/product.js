@@ -1,24 +1,23 @@
 import useSWR from 'swr';
 import { useMemo } from 'react';
 
-import { fetcher, endpoints } from 'src/utils/axios';
+import axios , { fetcher, endpoints } from 'src/utils/axios';
 
 // ----------------------------------------------------------------------
 
 export function useGetProducts() {
-  const URL = endpoints.product.list;
-
+  const URL = endpoints.product.root;
   const { data, isLoading, error, isValidating } = useSWR(URL, fetcher);
 
   const memoizedValue = useMemo(
     () => ({
-      products: data?.products || [],
+      products: data?.data?.products || [],
       productsLoading: isLoading,
       productsError: error,
       productsValidating: isValidating,
-      productsEmpty: !isLoading && !data?.products.length,
+      productsEmpty: !isLoading && !data?.data?.products?.length,
     }),
-    [data?.products, error, isLoading, isValidating]
+    [data?.data?.products, error, isLoading, isValidating]
   );
 
   return memoizedValue;
@@ -27,18 +26,18 @@ export function useGetProducts() {
 // ----------------------------------------------------------------------
 
 export function useGetProduct(productId) {
-  const URL = productId ? [endpoints.product.details, { params: { productId } }] : '';
+  const URL = endpoints.product.root;
 
   const { data, isLoading, error, isValidating } = useSWR(URL, fetcher);
 
   const memoizedValue = useMemo(
     () => ({
-      product: data?.product,
+      product: data?.data?.products?.find( p => p.id == productId) || {},
       productLoading: isLoading,
       productError: error,
       productValidating: isValidating,
     }),
-    [data?.product, error, isLoading, isValidating]
+    [data?.data?.products, error, isLoading, isValidating]
   );
 
   return memoizedValue;
@@ -65,4 +64,12 @@ export function useSearchProducts(query) {
   );
 
   return memoizedValue;
+}
+
+
+
+export async function createProduct(body) {
+  const URL = endpoints.product.root;
+
+  return await axios.post(URL, body);
 }

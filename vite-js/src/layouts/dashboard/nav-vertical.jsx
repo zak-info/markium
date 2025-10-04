@@ -19,6 +19,7 @@ import { NAV } from '../config-layout';
 import { useNavData } from './config-navigation';
 import NavToggleButton from '../common/nav-toggle-button';
 import { Typography } from '@mui/material';
+import { t } from 'i18next';
 
 // ----------------------------------------------------------------------
 
@@ -52,7 +53,7 @@ export default function NavVertical({ openNav, onCloseNav }) {
       <Box display="flex" alignItems="center" sx={{ mt: 3, ml: 4, mb: 1 }}>
         <Logo />
         <Typography color="primary" mx={1} fontWeight="500">
-          زيتي أعمال
+        {t("markium")}
         </Typography>
       </Box>
 

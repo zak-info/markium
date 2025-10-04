@@ -183,7 +183,7 @@ export default function HomeHero() {
             textAlign: 'center',
           }}
         >
-          {t("manage_fleet")}
+          {t("manage_store")}
         </Typography>
       </m.div>
 
@@ -198,13 +198,13 @@ export default function HomeHero() {
             repeat: Infinity,
           }}
         >
-          {t("zaity_plus")}
+          {t("markium")}
         </StyledTextGradient>
       </m.div>
 
       <m.div variants={varFade().in}>
         <Typography variant="body2" sx={{ textAlign: 'center' }}>
-         {t("starting_point")}
+         {t("store_starting_point")}
         </Typography>
       </m.div>            
 
@@ -267,7 +267,7 @@ export default function HomeHero() {
             href={paths.dashboard.root}
             sx={{ borderColor: 'text.primary' }}
           >
-            {t("ask_demo")}
+            {t("start_free_trial")}
           </Button>
         </Stack>
       </m.div>

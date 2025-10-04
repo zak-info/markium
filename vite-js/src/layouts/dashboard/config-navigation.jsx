@@ -75,91 +75,29 @@ export function useNavData() {
       {
         subheader: t('management'),
         items: [
-          // USER
           // {
-          //   title: t('company'),
-          //   path: paths.dashboard.company.root,
-          //   icon: ICONS.menuItem,
+          //   title: t('vehicles'),
+          //   path: paths.dashboard.vehicle.root,
+          //   icon: ICONS.car,
+          //   permissions:["read.car"],
           //   children: [
-          //     { title: t('list'), path: paths.dashboard.company.root },
-          //     { title: t('create'), path: paths.dashboard.company.root },
+          //     { title: t('vehiclesList'), permissions:"read.car", path: paths.dashboard.vehicle.root },
+          //     { title: t('logAndNotification'), permissions:"read.car_log", path: paths.dashboard.vehicle.log },
+          //     { title: t('costAndInput'), permissions:"read.car", path: paths.dashboard.vehicle.inputs },
           //   ],
           // },
-
           {
-            title: t('vehicles'),
-            path: paths.dashboard.vehicle.root,
-            icon: ICONS.car,
-            permissions:["read.car"],
+            title: t('products'),
+            path: paths.dashboard.product.root,
+            icon: ICONS.product,
             children: [
-              { title: t('vehiclesList'), permissions:"read.car", path: paths.dashboard.vehicle.root },
-              { title: t('logAndNotification'), permissions:"read.car_log", path: paths.dashboard.vehicle.log },
-              { title: t('costAndInput'), permissions:"read.car", path: paths.dashboard.vehicle.inputs },
-            ],
-          },
-          // USER
-          {
-            title: t('maintenance'),
-            path: paths.dashboard.maintenance.root,
-            icon: ICONS.maintenance,
-            permissions:["read.maintenance"],
-            children: [
-              { title: t('maintainList'), permissions:"read.maintenance",path: paths.dashboard.maintenance.root },
-              { title: t('allNoti'), permissions:"read.maintenance_log",path: paths.dashboard.maintenance.notifications },
-              { title: t('inMaintenance'), permissions:"read.maintenance",path: paths.dashboard.maintenance.currentInMaintenance },
-              // { title: t('list'), path: paths.dashboard.user.list },
-              // { title: t('create'), path: paths.dashboard.user.new },
-              // { title: t('edit'), path: paths.dashboard.user.demo.edit },
-              // { title: t('account'), path: paths.dashboard.user.account },
-            ],
-          },
-
-          // USER
-          {
-            title: t('documents'),
-            path: paths.dashboard.documents.root,
-            icon: ICONS.file,
-            permissions:["read.attachment"],
-            children: [
-              { title: t('documents'),permissions:"read.attachment", path: paths.dashboard.documents.root },
-              // { title: t('allNoti'), path: paths.dashboard.documents.alerts },
-              // { title: t('list'), path: paths.dashboard.user.list },
-              // { title: t('create'), path: paths.dashboard.user.new },
-              // { title: t('edit'), path: paths.dashboard.user.demo.edit },
-              // { title: t('account'), path: paths.dashboard.user.account },
-            ],
-          },
-
-          // PRODUCT
-          {
-            title: t('drivers'),
-            path: paths.dashboard.drivers.root,
-            icon: ICONS.driver,
-            permissions:["read.driver"],
-            children: [
-              { title: t('driversList'),permissions:"read.driver", path: paths.dashboard.drivers.root },
-              // { title: t('alerts'), path: paths.dashboard.drivers.alerts },
-              // { title: t('salaries'), path: paths.dashboard.drivers.salary },
-              // {
-              //   title: t('details'),
-              //   path: paths.dashboard.product.demo.details,
-              // },
-              // { title: t('create'), path: paths.dashboard.product.new },
-              // { title: t('edit'), path: paths.dashboard.product.demo.edit },
-            ],
-          },
-
-          // ORDER
-          {
-            title: t('clients'),
-            path: paths.dashboard.clients.root,
-            icon: ICONS.user,
-            permissions:["read.client"],
-            children: [
-              { title: t('clients'), permissions:"read.client",path: paths.dashboard.clients.root },
-              // { title: t('alerts'), permissions:"read.client",path: paths.dashboard.clients.alerts },
-              { title: t('contracts'),permissions:"read.contract", path: paths.dashboard.clients.contracts },
-              { title: t('claims'), permissions:"read.claim",path: paths.dashboard.clients.claims },
+              { title: t('alerts'), path: paths.dashboard.product.root },
+              {
+                title: t('details'),
+                path: paths.dashboard.product.demo.details,
+              },
+              { title: t('create'), path: paths.dashboard.product.new },
+              { title: t('list'), path: paths.dashboard.product.root },
             ],
           },
         ],
@@ -170,28 +108,14 @@ export function useNavData() {
         subheader: t('other_cases'),
         items: [
           {
-            title: t('settings'),
-            path: paths.dashboard.settings.root,
-            icon: ICONS.settings,
-            permissions:["read.color","read.car_company","read.car_model","read.spec","read.attahcment_name","read.country","read.neighborhood","read.state"],
-            roles: ['admin', 'manager'],
-            // permissions:"read.system_settings",
-          },
-          // {
-          //   title: t('reports'),
-          //   path: paths.dashboard.permission,
-          //   icon: ICONS.blog,
-          //   roles: ['admin', 'manager'],
-          // },
-          {
             title: t('users'),
             path: paths.dashboard.user.list,
             icon: ICONS.lock,
             roles: ['admin', 'manager'],
-            permissions:["read.user"],
+            permissions: ["read.user"],
             children: [
-              { title: t('users'),permissions:"read.user",path: paths.dashboard.user.list },
-              { title: t('roles'), permissions:"read.role",path: paths.dashboard.user.roles },
+              { title: t('users'), permissions: "read.user", path: paths.dashboard.user.list },
+              { title: t('roles'), permissions: "read.role", path: paths.dashboard.user.roles },
             ],
           },
         ],

@@ -93,13 +93,13 @@ export default function HomeHugePackElements() {
     >
       <m.div variants={varFade().inUp}>
         <Typography component="div" variant="overline" sx={{ color: 'text.disabled' }}>
-          {t("fleet_starter_kit")}
+          {t("store_starter_kit")}
         </Typography>
       </m.div>
 
       <m.div variants={varFade().inUp}>
         <Typography variant="h2" sx={{ my: 3 }}>
-          {t("huge_pack")}
+          {t("powerful_features")}
         </Typography>
       </m.div>
 
@@ -110,7 +110,7 @@ export default function HomeHugePackElements() {
             color: 'text.secondary',
           }}
         >
-          {t("radical_solution")}
+          {t("store_solution")}
         </Typography>
       </m.div>
 
@@ -146,7 +146,7 @@ export default function HomeHugePackElements() {
             color="primary"
             startIcon={<Iconify icon="solar:cart-plus-bold" />}
           >
-           {t("claim")+ " "+t("+12") }
+           {t("add_to_cart")}
           </Button>
         </m.div>
 
@@ -156,7 +156,7 @@ export default function HomeHugePackElements() {
             color="primary"
             startIcon={<Iconify icon="eva:cloud-upload-fill" />}
           >
-            {t("file") + " "+t("invoice")} 
+            {t("upload_product")}
           </Button>
         </m.div>
 
@@ -188,7 +188,7 @@ export default function HomeHugePackElements() {
               boxShadow: (theme) => `inset 0 -2px 0 0 ${alpha(theme.palette.grey[500], 0.08)}`,
             }}
           >
-            {['Claim', 'Contract', 'Client'].map((tab) => (
+            {['Orders', 'Products', 'Customers'].map((tab) => (
               <Tab
                 key={tab}
                 value={tab}
@@ -230,7 +230,7 @@ export default function HomeHugePackElements() {
             variant="soft"
             onDelete={() => {}}
             avatar={<Avatar alt={_mock.fullName(2)} src={_mock.image.avatar(3)} />}
-            label={t("alert")}
+            label={t("notification")}
           />
         </m.div>
       </Stack>
@@ -269,7 +269,7 @@ export default function HomeHugePackElements() {
 
         <m.div variants={varFade().in}>
           <Label variant="filled" startIcon={<Iconify icon="fluent:mail-24-filled" />}>
-            {t("confirm")}
+            {t("verified")}
           </Label>
         </m.div>
       </Stack>
@@ -297,7 +297,7 @@ export default function HomeHugePackElements() {
         <m.div variants={varFade().in}>
           <Alert severity="success" onClose={() => {}}>
             <AlertTitle>{t("success")}</AlertTitle>
-            {t("operation_success")} — <strong>{t("check")}</strong>
+            {t("order_placed_successfully")} — <strong>{t("verified")}</strong>
           </Alert>
         </m.div>
       </Stack>
@@ -314,13 +314,13 @@ export default function HomeHugePackElements() {
             sx={{ width: 1 }}
           >
             <m.div variants={varFade().in}>
-              <FormControlLabel control={<Switch defaultChecked />} label={t("enable")} sx={{ m: 0 }} />
+              <FormControlLabel control={<Switch defaultChecked />} label={t("in_stock")} sx={{ m: 0 }} />
             </m.div>
 
             <m.div variants={varFade().in}>
               <FormControlLabel
                 control={<Radio color="error" defaultChecked />}
-                label={t("alert")}
+                label={t("urgent")}
                 sx={{ m: 0 }}
               />
             </m.div>
@@ -328,7 +328,7 @@ export default function HomeHugePackElements() {
             <m.div variants={varFade().in}>
               <FormControlLabel
                 control={<Checkbox color="info" defaultChecked />}
-                label={t("enabled")}
+                label={t("published")}
                 sx={{ m: 0 }}
               />
             </m.div>
@@ -353,8 +353,8 @@ export default function HomeHugePackElements() {
                 }}
               >
                 <CardHeader
-                  title={t("شركة العليا للطاقة")}
-                  subheader={t("الرياض - المملكة العربية السعودية")}
+                  title={t("premium_electronics_store")}
+                  subheader={t("riyadh_saudi_arabia")}
                   avatar={
                     <Badge
                       variant="online"
@@ -427,7 +427,7 @@ export default function HomeHugePackElements() {
                   value={select}
                   onChange={handleChangeSelect}
                 >
-                  {[t("type")+" 1", t("type")+" 2", t("type")+" 3", t("type")+" 4"].map((option) => (
+                  {[t("electronics"), t("clothing"), t("home_goods"), t("books")].map((option) => (
                     <MenuItem key={option} value={option}>
                       {option}
                     </MenuItem>

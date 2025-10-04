@@ -7,14 +7,17 @@ import { paths } from 'src/routes/paths';
 // root@172.233.43.164
 // BETest@15371
 
+export const api_version = "v1"
+
+
 // export const HOST_API = 'http://172.105.83.136:8044/api';
 // export const STORAGE_API = 'http://172.105.83.136:8044/storage';
 // export const HOST_API = 'http://172.233.43.164:8000/api';
 // export const STORAGE_API = 'http://172.233.43.164:8000/storage';
-export const HOST_API = 'http://127.0.0.1:8000/api'; 
-export const STORAGE_API = 'http://127.0.0.1:8000/storage';
-// export const HOST_API = 'https://be.zaity.co/api';
-// export const STORAGE_API = 'https://be.zaity.co/storage';
+// export const HOST_API = 'http://127.0.0.1:8000/api'; 
+// export const STORAGE_API = 'http://127.0.0.1:8000/storage';
+export const HOST_API = `http://be.markium.online/api/${api_version}`;
+export const STORAGE_API = 'http://be.markium.online/storage';
 export const ASSETS_API = import.meta.env.VITE_ASSETS_API;
 
 export const FIREBASE_API = {

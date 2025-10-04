@@ -20,6 +20,7 @@ import { useRouter } from 'src/routes/hooks';
 import { RouterLink } from 'src/routes/components';
 
 import { useBoolean } from 'src/hooks/use-boolean';
+import { useTranslate } from 'src/locales';
 
 import { useGetProducts } from 'src/api/product';
 import { PRODUCT_STOCK_OPTIONS } from 'src/_mock';
@@ -39,17 +40,19 @@ import {
   RenderCellPublish,
   RenderCellProduct,
   RenderCellCreatedAt,
+  RenderCellDiscount,
+  RenderCellStatus,
 } from '../product-table-row';
 
 // ----------------------------------------------------------------------
 
-const PUBLISH_OPTIONS = [
-  { value: 'published', label: 'Published' },
+const STATUS_OPTIONS = [
+  { value: 'deployed', label: 'Deployed' },
   { value: 'draft', label: 'Draft' },
 ];
 
 const defaultFilters = {
-  publish: [],
+  status: [],
   stock: [],
 };
 
@@ -63,6 +66,8 @@ const HIDE_COLUMNS_TOGGLABLE = ['category', 'actions'];
 
 export default function ProductListView() {
   const { enqueueSnackbar } = useSnackbar();
+
+  const { t } = useTranslate();
 
   const confirmRows = useBoolean();
 
@@ -81,7 +86,7 @@ export default function ProductListView() {
   const [columnVisibilityModel, setColumnVisibilityModel] = useState(HIDE_COLUMNS);
 
   useEffect(() => {
-    if (products.length) {
+    if (products?.length) {
       setTableData(products);
     }
   }, [products]);
@@ -108,20 +113,20 @@ export default function ProductListView() {
     (id) => {
       const deleteRow = tableData.filter((row) => row.id !== id);
 
-      enqueueSnackbar('Delete success!');
+      enqueueSnackbar(t('delete_success'));
 
       setTableData(deleteRow);
     },
-    [enqueueSnackbar, tableData]
+    [enqueueSnackbar, tableData, t]
   );
 
   const handleDeleteRows = useCallback(() => {
     const deleteRows = tableData.filter((row) => !selectedRowIds.includes(row.id));
 
-    enqueueSnackbar('Delete success!');
+    enqueueSnackbar(t('delete_success'));
 
     setTableData(deleteRows);
-  }, [enqueueSnackbar, selectedRowIds, tableData]);
+  }, [enqueueSnackbar, selectedRowIds, tableData, t]);
 
   const handleEditRow = useCallback(
     (id) => {
@@ -140,46 +145,62 @@ export default function ProductListView() {
   const columns = [
     {
       field: 'category',
-      headerName: 'Category',
+      headerName: t('category'),
+      width: 140,
       filterable: false,
     },
     {
       field: 'name',
-      headerName: 'Product',
+      headerName: t('product_name'),
       flex: 1,
-      minWidth: 360,
+      minWidth: 320,
       hideable: false,
       renderCell: (params) => <RenderCellProduct params={params} />,
     },
     {
-      field: 'createdAt',
-      headerName: 'Create at',
-      width: 160,
-      renderCell: (params) => <RenderCellCreatedAt params={params} />,
+      field: 'quantity',
+      headerName: t('quantity'),
+      width: 100,
+      align: 'center',
+      headerAlign: 'center',
     },
     {
-      field: 'inventoryType',
-      headerName: 'Stock',
-      width: 160,
-      type: 'singleSelect',
-      valueOptions: PRODUCT_STOCK_OPTIONS,
+      field: 'is_in_stock',
+      headerName: t('stock_status'),
+      width: 130,
       renderCell: (params) => <RenderCellStock params={params} />,
     },
     {
-      field: 'price',
-      headerName: 'Price',
-      width: 140,
-      editable: true,
-      renderCell: (params) => <RenderCellPrice params={params} />,
+      field: 'sale_price',
+      headerName: t('sale_price'),
+      width: 120,
+      renderCell: (params) => <RenderCellPrice params={params} field="sale_price" />,
     },
     {
-      field: 'publish',
-      headerName: 'Publish',
-      width: 110,
+      field: 'real_price',
+      headerName: t('real_price'),
+      width: 120,
+      renderCell: (params) => <RenderCellPrice params={params} field="real_price" />,
+    },
+    {
+      field: 'has_discount',
+      headerName: t('discount'),
+      width: 130,
+      renderCell: (params) => <RenderCellDiscount params={params} />,
+    },
+    {
+      field: 'status',
+      headerName: t('status'),
+      width: 120,
       type: 'singleSelect',
-      editable: true,
-      valueOptions: PUBLISH_OPTIONS,
-      renderCell: (params) => <RenderCellPublish params={params} />,
+      valueOptions: STATUS_OPTIONS,
+      renderCell: (params) => <RenderCellStatus params={params} />,
+    },
+    {
+      field: 'created_at',
+      headerName: t('created_at'),
+      width: 160,
+      renderCell: (params) => <RenderCellCreatedAt params={params} />,
     },
     {
       type: 'actions',
@@ -195,19 +216,19 @@ export default function ProductListView() {
         <GridActionsCellItem
           showInMenu
           icon={<Iconify icon="solar:eye-bold" />}
-          label="View"
+          label={t('view')}
           onClick={() => handleViewRow(params.row.id)}
         />,
         <GridActionsCellItem
           showInMenu
           icon={<Iconify icon="solar:pen-bold" />}
-          label="Edit"
+          label={t('edit')}
           onClick={() => handleEditRow(params.row.id)}
         />,
         <GridActionsCellItem
           showInMenu
           icon={<Iconify icon="solar:trash-bin-trash-bold" />}
-          label="Delete"
+          label={t('delete')}
           onClick={() => {
             handleDeleteRow(params.row.id);
           }}
@@ -233,14 +254,14 @@ export default function ProductListView() {
         }}
       >
         <CustomBreadcrumbs
-          heading="List"
+          heading={t('list')}
           links={[
-            { name: 'Dashboard', href: paths.dashboard.root },
+            { name: t('dashboard'), href: paths.dashboard.root },
             {
-              name: 'Product',
+              name: t('products'),
               href: paths.dashboard.product.root,
             },
-            { name: 'List' },
+            { name: t('list') },
           ]}
           action={
             <Button
@@ -249,7 +270,7 @@ export default function ProductListView() {
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
             >
-              New Product
+              {t('new_product')}
             </Button>
           }
           sx={{
@@ -294,7 +315,7 @@ export default function ProductListView() {
                       filters={filters}
                       onFilters={handleFilters}
                       stockOptions={PRODUCT_STOCK_OPTIONS}
-                      publishOptions={PUBLISH_OPTIONS}
+                      publishOptions={STATUS_OPTIONS}
                     />
 
                     <GridToolbarQuickFilter />
@@ -313,7 +334,7 @@ export default function ProductListView() {
                           startIcon={<Iconify icon="solar:trash-bin-trash-bold" />}
                           onClick={confirmRows.onTrue}
                         >
-                          Delete ({selectedRowIds.length})
+                          {t('delete')} ({selectedRowIds.length})
                         </Button>
                       )}
 
@@ -334,8 +355,8 @@ export default function ProductListView() {
                   )}
                 </>
               ),
-              noRowsOverlay: () => <EmptyContent title="No Data" />,
-              noResultsOverlay: () => <EmptyContent title="No results found" />,
+              noRowsOverlay: () => <EmptyContent title={t('no_data')} />,
+              noResultsOverlay: () => <EmptyContent title={t('no_results_found')} />,
             }}
             slotProps={{
               columnsPanel: {
@@ -349,10 +370,10 @@ export default function ProductListView() {
       <ConfirmDialog
         open={confirmRows.value}
         onClose={confirmRows.onFalse}
-        title="Delete"
+        title={t('delete')}
         content={
           <>
-            Are you sure want to delete <strong> {selectedRowIds.length} </strong> items?
+            {t('are_you_sure_delete')} <strong> {selectedRowIds.length} </strong> {t('items')}?
           </>
         }
         action={
@@ -364,7 +385,7 @@ export default function ProductListView() {
               confirmRows.onFalse();
             }}
           >
-            Delete
+            {t('delete')}
           </Button>
         }
       />
@@ -375,14 +396,18 @@ export default function ProductListView() {
 // ----------------------------------------------------------------------
 
 function applyFilter({ inputData, filters }) {
-  const { stock, publish } = filters;
+  const { stock, status } = filters;
 
   if (stock.length) {
-    inputData = inputData.filter((product) => stock.includes(product.inventoryType));
+    inputData = inputData.filter((product) => {
+      if (stock.includes('in_stock')) return product.is_in_stock;
+      if (stock.includes('out_of_stock')) return !product.is_in_stock;
+      return true;
+    });
   }
 
-  if (publish.length) {
-    inputData = inputData.filter((product) => publish.includes(product.publish));
+  if (status.length) {
+    inputData = inputData.filter((product) => status.includes(product.status));
   }
 
   return inputData;

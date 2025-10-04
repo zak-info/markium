@@ -103,53 +103,54 @@ export function AuthProvider({ children }) {
   }, [initialize]);
 
   // LOGIN
-  const login = useCallback(async (username, password) => {
+  const login = useCallback(async (phone, password) => {
     const body = {
-      username,
+      phone,
       password,
     };
     try {
       const response = await axios.post(endpoints.auth.login, body);
-      const { token, user } = response.data.data;
+      const { token, client } = response.data.data;
       setSession(token);
-      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify({ ...user }));
+      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify({ ...client }));
       dispatch({
         type: 'LOGIN',
         payload: {
           user: {
-            ...user,
+            ...client,
             token,
           },
         },
       });
       return {success: true, message: 'Login successful!'}
     } catch (error) {
-      console.error('Login failed:', error);  // Don't refresh the page here
-      return {success: false, message: 'Login successful!'}
-      // throw new Error('Invalid credentials');  // Propagate error to display in the UI
+      console.error('Login failed:', error);
+      return {success: false, message: 'Login failed!'}
     }
   }, []);
 
   // REGISTER
-  const register = useCallback(async (email, password, firstName, lastName) => {
+  const register = useCallback(async (name, phone, password, store_name) => {
     const data = {
-      email,
+      name,
+      phone,
       password,
-      firstName,
-      lastName,
+      store_name,
+      is_phone_verified:true
     };
 
     const response = await axios.post(endpoints.auth.register, data);
 
-    const { token, user } = response.data;
+    const { token, client } = response.data.data;
 
-    localStorage.setItem(STORAGE_KEY, token);
+    setSession(token);
+    localStorage.setItem(USER_STORAGE_KEY, JSON.stringify({ ...client }));
 
     dispatch({
       type: 'REGISTER',
       payload: {
         user: {
-          ...user,
+          ...client,
           token,
         },
       },

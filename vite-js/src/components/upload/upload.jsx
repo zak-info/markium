@@ -30,6 +30,7 @@ export default function Upload({
   onDelete,
   onRemove,
   onRemoveAll,
+  thumbnail,
   sx,
   accept,
   ...other
@@ -138,7 +139,11 @@ export default function Upload({
 
       {hasFiles && (
         <Box sx={{ my: 3 }}>
-          <MultiFilePreview files={previewFiles} onRemove={(file) => setPreviewFiles(previewFiles.filter((f) => f !== file))} />
+          <MultiFilePreview
+            files={previewFiles}
+            thumbnail={thumbnail}
+            onRemove={(file) => setPreviewFiles(previewFiles.filter((f) => f !== file))}
+          />
         </Box>
       )}
 
@@ -165,6 +170,7 @@ Upload.propTypes = {
   files: PropTypes.array,
   helperText: PropTypes.string,
   multiple: PropTypes.bool,
+  thumbnail: PropTypes.bool,
   onChange: PropTypes.func,
   onDelete: PropTypes.func,
   onRemove: PropTypes.func,

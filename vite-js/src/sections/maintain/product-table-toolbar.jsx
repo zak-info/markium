@@ -95,7 +95,7 @@ export default function ProductTableToolbar({
         >
           {publishOptions.map((option) => (
             <MenuItem key={option.value} value={option.value}>
-              <Checkbox disableRipple size="small" checked={publish.includes(option.value)} />
+              <Checkbox disableRipple size="small" checked={publish?.includes(option?.value)} />
               {option.label}
             </MenuItem>
           ))}
