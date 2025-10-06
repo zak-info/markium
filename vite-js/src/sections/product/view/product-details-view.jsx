@@ -52,6 +52,7 @@ const SUMMARY = [
 
 export default function ProductDetailsView({ id }) {
   const { product, productLoading, productError } = useGetProduct(id);
+  console.log("product :" ,product)
 
   const settings = useSettingsContext();
 
@@ -61,7 +62,7 @@ export default function ProductDetailsView({ id }) {
 
   useEffect(() => {
     if (product) {
-      setPublish(product?.publish);
+      setPublish(product?.status || product?.publish || '');
     }
   }, [product]);
 
@@ -154,7 +155,7 @@ export default function ProductDetailsView({ id }) {
             },
             {
               value: 'reviews',
-              label: `Reviews (${product.reviews.length})`,
+              label: `Reviews (${product?.reviews?.length || 0})`,
             },
           ].map((tab) => (
             <Tab key={tab.value} value={tab.value} label={tab.label} />
@@ -167,10 +168,10 @@ export default function ProductDetailsView({ id }) {
 
         {currentTab === 'reviews' && (
           <ProductDetailsReview
-            ratings={product.ratings}
-            reviews={product.reviews}
-            totalRatings={product.totalRatings}
-            totalReviews={product.totalReviews}
+            ratings={product?.ratings || []}
+            reviews={product?.reviews || []}
+            totalRatings={product?.totalRatings || 0}
+            totalReviews={product?.totalReviews || 0}
           />
         )}
       </Card>

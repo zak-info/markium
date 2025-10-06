@@ -10,10 +10,15 @@ const axiosInstance = axios.create({ baseURL: HOST_API });
 axiosInstance.interceptors.response.use(
   (res) => res,
   (error) => {
-    // Check for 401 status and redirect to login
+    // Check for 401 status and redirect to login (except for public routes)
     if (error.response?.status === 401) {
-      // Assuming you're using React Router v6
-      window.location.href = '/auth/jwt/login'; // Replace with your login route
+      const publicRoutes = ['/products', '/api/product'];
+      const isPublicRoute = publicRoutes.some(route => error.config?.url?.includes(route));
+
+      // Only redirect to login if it's not a public route
+      if (!isPublicRoute) {
+        window.location.href = '/auth/jwt/login';
+      }
     }
     return Promise.reject((error.response && error.response.data) || 'Something went wrong');
   }

@@ -26,7 +26,7 @@ export default function Lightbox({
   onGetCurrentIndex,
   ...other
 }) {
-  const totalItems = slides ? slides.length : 0;
+  const totalItems = slides ? slides?.length : 0;
 
   return (
     <>

@@ -17,6 +17,7 @@ import { useRouter } from 'src/routes/hooks';
 
 import { fCurrency, fShortenNumber } from 'src/utils/format-number';
 
+import { useTranslate } from 'src/locales';
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 import { ColorPicker } from 'src/components/color-utils';
@@ -35,23 +36,36 @@ export default function ProductDetailsSummary({
   ...other
 }) {
   const router = useRouter();
+  const { t } = useTranslate();
 
   const {
     id,
     name,
-    sizes,
-    price,
-    coverUrl,
-    colors,
-    newLabel,
-    available,
-    priceSale,
-    saleLabel,
-    totalRatings,
-    totalReviews,
-    inventoryType,
-    subDescription,
-  } = product;
+    variations = [],
+    real_price,
+    images = [],
+    colors = [],
+    quantity,
+    sale_price,
+    status,
+    has_discount,
+    discount_percentage,
+    is_in_stock,
+    description,
+  } = product || {};
+
+  const price = parseFloat(sale_price || real_price) || 0;
+  const priceSale = has_discount ? parseFloat(real_price) : null;
+  const coverUrl = images?.[0] || '';
+  const available = quantity || 0;
+  const sizes = variations || [];
+  const colorsArray = colors || [];
+  const inventoryType = is_in_stock ? (quantity > 10 ? 'in_stock' : 'low_stock') : 'out_of_stock';
+  const subDescription = description;
+  const totalRatings = 0;
+  const totalReviews = 0;
+  const newLabel = { enabled: false, content: '' };
+  const saleLabel = has_discount ? { enabled: true, content: `${Math.round(discount_percentage || 0)}% OFF` } : { enabled: false, content: '' };
 
   const existProduct = !!items?.length && items.map((item) => item.id).includes(id);
 
@@ -65,8 +79,8 @@ export default function ProductDetailsSummary({
     coverUrl,
     available,
     price,
-    colors: colors[0],
-    size: sizes[4],
+    colors: colorsArray[0] || '',
+    size: sizes[0] || '',
     quantity: available < 1 ? 0 : 1,
   };
 
@@ -80,7 +94,16 @@ export default function ProductDetailsSummary({
 
   useEffect(() => {
     if (product) {
-      reset(defaultValues);
+      reset({
+        id,
+        name,
+        coverUrl,
+        available,
+        price,
+        colors: colorsArray[0] || '',
+        size: sizes[0] || '',
+        quantity: available < 1 ? 0 : 1,
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product]);
@@ -143,7 +166,7 @@ export default function ProductDetailsSummary({
         }}
       >
         <Iconify icon="mingcute:add-line" width={16} sx={{ mr: 1 }} />
-        Compare
+        {t('compare')}
       </Link>
 
       <Link
@@ -155,7 +178,7 @@ export default function ProductDetailsSummary({
         }}
       >
         <Iconify icon="solar:heart-bold" width={16} sx={{ mr: 1 }} />
-        Favorite
+        {t('favorite')}
       </Link>
 
       <Link
@@ -167,15 +190,15 @@ export default function ProductDetailsSummary({
         }}
       >
         <Iconify icon="solar:share-bold" width={16} sx={{ mr: 1 }} />
-        Share
+        {t('share')}
       </Link>
     </Stack>
   );
 
-  const renderColorOptions = (
+  const renderColorOptions = colorsArray.length > 0 ? (
     <Stack direction="row">
       <Typography variant="subtitle2" sx={{ flexGrow: 1 }}>
-        Color
+        {t('color')}
       </Typography>
 
       <Controller
@@ -183,20 +206,20 @@ export default function ProductDetailsSummary({
         control={control}
         render={({ field }) => (
           <ColorPicker
-            colors={colors}
-            selected={field.value}
+            colors={colorsArray}
+            selected={field?.value}
             onSelectColor={(color) => field.onChange(color)}
             limit={4}
           />
         )}
       />
     </Stack>
-  );
+  ) : null;
 
-  const renderSizeOptions = (
+  const renderSizeOptions = sizes.length > 0 ? (
     <Stack direction="row">
       <Typography variant="subtitle2" sx={{ flexGrow: 1 }}>
-        Size
+        {t('size')}
       </Typography>
 
       <RHFSelect
@@ -204,7 +227,7 @@ export default function ProductDetailsSummary({
         size="small"
         helperText={
           <Link underline="always" color="textPrimary">
-            Size Chart
+            {t('size_chart')}
           </Link>
         }
         sx={{
@@ -223,12 +246,12 @@ export default function ProductDetailsSummary({
         ))}
       </RHFSelect>
     </Stack>
-  );
+  ) : null;
 
   const renderQuantity = (
     <Stack direction="row">
       <Typography variant="subtitle2" sx={{ flexGrow: 1 }}>
-        Quantity
+        {t('quantity')}
       </Typography>
 
       <Stack spacing={1}>
@@ -242,7 +265,7 @@ export default function ProductDetailsSummary({
         />
 
         <Typography variant="caption" component="div" sx={{ textAlign: 'right' }}>
-          Available: {available}
+          {t('available')}: {available}
         </Typography>
       </Stack>
     </Stack>
@@ -260,11 +283,11 @@ export default function ProductDetailsSummary({
         onClick={handleAddCart}
         sx={{ whiteSpace: 'nowrap' }}
       >
-        Add to Cart
+        {t('add_to_cart')}
       </Button>
 
       <Button fullWidth size="large" type="submit" variant="contained" disabled={disabledActions}>
-        Buy Now
+        {t('buy_now')}
       </Button>
     </Stack>
   );
@@ -285,11 +308,11 @@ export default function ProductDetailsSummary({
       }}
     >
       <Rating size="small" value={totalRatings} precision={0.1} readOnly sx={{ mr: 1 }} />
-      {`(${fShortenNumber(totalReviews)} reviews)`}
+      {`(${fShortenNumber(totalReviews)} ${t('reviews')})`}
     </Stack>
   );
 
-  const renderLabels = (newLabel.enabled || saleLabel.enabled) && (
+  const renderLabels = (newLabel?.enabled || saleLabel?.enabled) && (
     <Stack direction="row" alignItems="center" spacing={1}>
       {newLabel.enabled && <Label color="info">{newLabel.content}</Label>}
       {saleLabel.enabled && <Label color="error">{saleLabel.content}</Label>}
@@ -302,14 +325,18 @@ export default function ProductDetailsSummary({
       sx={{
         typography: 'overline',
         color:
-          (inventoryType === 'out of stock' && 'error.main') ||
-          (inventoryType === 'low stock' && 'warning.main') ||
+          (inventoryType === 'out_of_stock' && 'error.main') ||
+          (inventoryType === 'low_stock' && 'warning.main') ||
           'success.main',
       }}
     >
-      {inventoryType}
+      {t(inventoryType)}
     </Box>
   );
+
+  if (!product) {
+    return null;
+  }
 
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>

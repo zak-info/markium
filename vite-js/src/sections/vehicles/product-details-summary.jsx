@@ -39,19 +39,31 @@ export default function ProductDetailsSummary({
   const {
     id,
     name,
-    sizes,
-    price,
-    coverUrl,
-    colors,
-    newLabel,
-    available,
-    priceSale,
-    saleLabel,
-    totalRatings,
-    totalReviews,
-    inventoryType,
-    subDescription,
-  } = product;
+    variations = [],
+    real_price,
+    images = [],
+    colors = [],
+    quantity,
+    sale_price,
+    status,
+    has_discount,
+    discount_percentage,
+    is_in_stock,
+    description,
+  } = product || {};
+
+  const price = parseFloat(sale_price || real_price) || 0;
+  const priceSale = has_discount ? parseFloat(real_price) : null;
+  const coverUrl = images?.[0] || '';
+  const available = quantity || 0;
+  const sizes = variations || [];
+  const colorsArray = colors || [];
+  const inventoryType = is_in_stock ? (quantity > 10 ? 'in stock' : 'low stock') : 'out of stock';
+  const subDescription = description;
+  const totalRatings = 0;
+  const totalReviews = 0;
+  const newLabel = { enabled: false, content: '' };
+  const saleLabel = has_discount ? { enabled: true, content: `${Math.round(discount_percentage || 0)}% OFF` } : { enabled: false, content: '' };
 
   const existProduct = !!items?.length && items.map((item) => item.id).includes(id);
 
@@ -65,8 +77,8 @@ export default function ProductDetailsSummary({
     coverUrl,
     available,
     price,
-    colors: colors[0],
-    size: sizes[4],
+    colors: colorsArray[0] || '',
+    size: sizes[0] || '',
     quantity: available < 1 ? 0 : 1,
   };
 
@@ -80,7 +92,16 @@ export default function ProductDetailsSummary({
 
   useEffect(() => {
     if (product) {
-      reset(defaultValues);
+      reset({
+        id,
+        name,
+        coverUrl,
+        available,
+        price,
+        colors: colorsArray[0] || '',
+        size: sizes[0] || '',
+        quantity: available < 1 ? 0 : 1,
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product]);
@@ -172,7 +193,7 @@ export default function ProductDetailsSummary({
     </Stack>
   );
 
-  const renderColorOptions = (
+  const renderColorOptions = colorsArray.length > 0 ? (
     <Stack direction="row">
       <Typography variant="subtitle2" sx={{ flexGrow: 1 }}>
         Color
@@ -183,7 +204,7 @@ export default function ProductDetailsSummary({
         control={control}
         render={({ field }) => (
           <ColorPicker
-            colors={colors}
+            colors={colorsArray}
             selected={field.value}
             onSelectColor={(color) => field.onChange(color)}
             limit={4}
@@ -191,9 +212,9 @@ export default function ProductDetailsSummary({
         )}
       />
     </Stack>
-  );
+  ) : null;
 
-  const renderSizeOptions = (
+  const renderSizeOptions = sizes.length > 0 ? (
     <Stack direction="row">
       <Typography variant="subtitle2" sx={{ flexGrow: 1 }}>
         Size
@@ -223,7 +244,7 @@ export default function ProductDetailsSummary({
         ))}
       </RHFSelect>
     </Stack>
-  );
+  ) : null;
 
   const renderQuantity = (
     <Stack direction="row">
@@ -310,6 +331,10 @@ export default function ProductDetailsSummary({
       {inventoryType}
     </Box>
   );
+
+  if (!product) {
+    return null;
+  }
 
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>

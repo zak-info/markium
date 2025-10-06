@@ -97,7 +97,7 @@ export default function LightboxView() {
                   md: 'repeat(4, 1fr)',
                 }}
               >
-                {slides.map((slide) => {
+                {slides?.map((slide) => {
                   const thumbnail = slide.type === 'video' ? slide.poster : slide.src;
 
                   return (

@@ -9,6 +9,8 @@
     "dev": "vite",
     "start": "vite preview",
     "build": "vite build",
+    "build:ssg": "vite build && node scripts/prerender.js",
+    "build:ssr": "vite build && node scripts/prerender-ssr-simple.js",
     "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\"",
     "lint:fix": "eslint --fix \"src/**/*.{js,jsx,ts,tsx}\"",
     "prettier": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",

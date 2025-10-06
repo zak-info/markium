@@ -125,24 +125,30 @@ export default function ProductNewEditForm({ currentProduct }) {
       formData.append('real_price', data.real_price || 0);
       formData.append('sale_price', data.sale_price || 0);
 
-      // Append images (files)
+      // Append images (files) as array
       if (data.images && data.images.length > 0) {
         data.images.forEach((image) => {
-          formData.append('images', image);
+          formData.append('images[]', image);
         });
       }
 
-      // Append arrays as JSON strings
+      // Append arrays as separate items (not JSON strings)
       if (data.variations && data.variations.length > 0) {
-        formData.append('variations', JSON.stringify(data.variations));
+        data.variations.forEach((variation) => {
+          formData.append('variations[]', variation);
+        });
       }
 
       if (data.colors && data.colors.length > 0) {
-        formData.append('colors', JSON.stringify(data.colors));
+        data.colors.forEach((color) => {
+          formData.append('colors[]', color);
+        });
       }
 
       if (data.tags && data.tags.length > 0) {
-        formData.append('tags', JSON.stringify(data.tags));
+        data.tags.forEach((tag) => {
+          formData.append('tags[]', tag);
+        });
       }
 
       console.info('FormData entries:');

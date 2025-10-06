@@ -232,25 +232,11 @@ const ElementActions = ({ item, setTableData }) => {
                 arrow="right-top"
                 sx={{ width: 200 }}
             >
-                {
-                    !item?.contract?.id && !item?.car?.id ?
-                        <MenuItem
-                            onClick={() => {
-                                confirm.onTrue();
-                                popover.onClose();
-                            }}
-                            sx={{ color: 'error.main' }}
-                        >
-                            <Iconify icon="solar:trash-bin-trash-bold" />
-                            {t('delete')}
-                        </MenuItem>
-                        :
-                        null
-                }
+               
                
                 <MenuItem
                     onClick={() => {
-                        router.push(paths.dashboard.drivers.details(item?.id));
+                        router.push(paths.dashboard.product.details(item?.id));
                         popover.onClose();
                     }}
                 >

@@ -31,6 +31,9 @@ export default function Router() {
       ),
     },
 
+    
+    // Main routes
+    ...mainRoutes,
     // Auth routes
     ...authRoutes,
     ...authDemoRoutes,
@@ -38,8 +41,7 @@ export default function Router() {
     // Dashboard routes
     ...dashboardRoutes,
 
-    // Main routes
-    ...mainRoutes,
+
 
     // Components routes
     ...componentsRoutes,
