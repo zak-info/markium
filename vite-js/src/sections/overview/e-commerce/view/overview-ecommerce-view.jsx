@@ -27,11 +27,13 @@ import EcommerceCurrentBalance from '../ecommerce-current-balance';
 import { useContext } from 'react';
 import { AuthContext } from 'src/auth/context/jwt';
 import { useTranslation } from 'react-i18next';
+import { useGetProducts } from 'src/api/product';
 
 // ----------------------------------------------------------------------
 
 export default function OverviewEcommerceView() {
   const { user } = useContext(AuthContext);
+  const {products} = useGetProducts()
 
   const theme = useTheme();
 
@@ -63,7 +65,7 @@ export default function OverviewEcommerceView() {
           <EcommerceWidgetSummary
             title={t('products_published')}
             percent={2.6}
-            total={765}
+            total={products?.length}
             chart={{
               series: [22, 8, 35, 50, 82, 84, 77, 12, 87, 43],
             }}

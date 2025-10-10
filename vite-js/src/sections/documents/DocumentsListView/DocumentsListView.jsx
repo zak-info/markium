@@ -115,6 +115,24 @@ export default function DocumentsListView({ }) {
 
     const RformulateTable = (data) => {
         return data?.map((item) => {
+            let color = "default";
+            
+            // Apply status conditions: deployed, processing, draft, failed
+            if (item?.status === "deployed") {
+                color = "success";
+            } else if (item?.status === "processing") {
+                color = "warning";
+            } else if (item?.status === "draft") {
+                color = "default";
+            } else if (item?.status === "failed") {
+                color = "error";
+            } else if (item?.status?.key == "not_yet_attachment") {
+                color = "default";
+            } else if (item?.status?.key == "soon_attachment") {
+                color = "warning";
+            } else {
+                color = "error";
+            }
 
             return {
                 ...item,
@@ -135,7 +153,7 @@ export default function DocumentsListView({ }) {
                 attachment_type: vData?.attachment_types?.find(i => i.id == item?.attachment_type_id).translations[0]?.name,
                 // gstatus: vData?.attachemnt_notification_statuses?.find(i => i.id == item?.status?.id).translations[0]?.name,
                 gstatus:item?.status?.translations[0]?.name,
-                color: item?.status?.key == "not_yet_attachment" ? "default" : item?.status?.key == "soon_attachment" ? "warning" : "error",
+                color,
                 type:t(item?.attachable_type),
 
 

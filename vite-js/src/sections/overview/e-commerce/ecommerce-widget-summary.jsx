@@ -100,7 +100,7 @@ export default function EcommerceWidgetSummary({ title, percent, total, chart, s
           {fNumber(total)}
         </Typography>
 
-        {renderTrending}
+        {/* {renderTrending} */}
       </Box>
 
       <Chart

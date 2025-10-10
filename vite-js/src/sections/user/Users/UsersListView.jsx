@@ -108,15 +108,38 @@ export default function UsersListView({ }) {
     // Output: "apples, bananas, and oranges"
 
     const RformulateTable = (data) => {
-        return data?.map(item => ({
-            ...item,
-            roles:translateSelectedRoles(item.roles,roles,currentLang?.value),
-            // roles2:item.roles,
-            // roles: arrayToSentence(item.roles.map(i => i.key)),
-
-            status: item?.is_banned ? t("banned") : t("active"),
-            color: item?.is_banned ? "error" : "success"
-        })) || [];
+        return data?.map(item => {
+            let color = "default";
+            let status = "";
+            
+            // Apply status conditions: deployed, processing, draft, failed
+            if (item?.status === "deployed") {
+                color = "success";
+                status = t("deployed");
+            } else if (item?.status === "processing") {
+                color = "warning";
+                status = t("processing");
+            } else if (item?.status === "draft") {
+                color = "default";
+                status = t("draft");
+            } else if (item?.status === "failed") {
+                color = "error";
+                status = t("failed");
+            } else if (item?.is_banned) {
+                color = "error";
+                status = t("banned");
+            } else {
+                color = "success";
+                status = t("active");
+            }
+            
+            return {
+                ...item,
+                roles: translateSelectedRoles(item.roles, roles, currentLang?.value),
+                status,
+                color
+            };
+        }) || [];
     }
 
     useEffect(() => {

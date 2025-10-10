@@ -14,6 +14,7 @@ import { useBoolean } from 'src/hooks/use-boolean';
 import { fShortenNumber } from 'src/utils/format-number';
 
 import Iconify from 'src/components/iconify';
+import { useTranslate } from 'src/locales';
 
 import ProductReviewList from './product-review-list';
 import ProductReviewNewForm from './product-review-new-form';
@@ -22,19 +23,20 @@ import ProductReviewNewForm from './product-review-new-form';
 
 export default function ProductDetailsReview({ totalRatings, totalReviews, ratings, reviews }) {
   const review = useBoolean();
+  const { t } = useTranslate();
 
   const total = sumBy(ratings, (star) => star.starCount);
 
   const renderSummary = (
     <Stack spacing={1} alignItems="center" justifyContent="center">
-      <Typography variant="subtitle2">Average rating</Typography>
+      <Typography variant="subtitle2">{t('average_rating')}</Typography>
 
       <Typography variant="h2">{totalRatings}/5</Typography>
 
       <Rating readOnly value={totalRatings} precision={0.1} />
 
       <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-        ({fShortenNumber(totalReviews)} reviews)
+        ({fShortenNumber(totalReviews)} {t('reviews')})
       </Typography>
     </Stack>
   );
@@ -96,7 +98,7 @@ export default function ProductDetailsReview({ totalRatings, totalReviews, ratin
         onClick={review.onTrue}
         startIcon={<Iconify icon="solar:pen-bold" />}
       >
-        Write your review
+        {t('write_your_review')}
       </Button>
     </Stack>
   );

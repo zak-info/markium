@@ -50,5 +50,27 @@
   "upgrade_to_pro": "Passer à la version Pro",
   "demo": {
     "title": "France"
-  }
+  },
+  "product_original": "100% Original",
+  "product_original_desc": "Nous vous garantissons de recevoir uniquement des produits authentiques provenant de fabricants vérifiés et de distributeurs agréés.",
+  "product_replacement": "Remplacement de 10 jours",
+  "product_replacement_desc": "Remplacement gratuit sous 10 jours si vous recevez un produit défectueux ou endommagé.",
+  "product_warranty": "Garantie d'un an",
+  "product_warranty_desc": "Couverture complète de la garantie du fabricant pendant 1 an à compter de la date d'achat.",
+  "product_description": "Description",
+  "product_reviews": "Avis",
+  "average_rating": "Note moyenne",
+  "write_your_review": "Écrire votre avis",
+  "add_review": "Ajouter un avis",
+  "your_review_about_this_product": "Votre avis sur ce produit:",
+  "review_required": "L'avis est requis",
+  "rating_must_be_greater": "La note doit être supérieure ou égale à 1",
+  "name_required": "Le nom est requis",
+  "email_required": "L'email est requis",
+  "email_must_be_valid": "L'email doit être une adresse valide",
+  "review_label": "Avis",
+  "name_label": "Nom",
+  "email_label": "Email",
+  "post": "Publier",
+  "verified_purchase": "Achat vérifié"
 }

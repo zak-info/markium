@@ -110,6 +110,22 @@ export default function MaintenanceListView({ }) {
 
     const RformulateTable = (data) => {
         return data?.map((item) => {
+            let color = "default";
+            
+            // Apply status conditions: deployed, processing, draft, failed
+            if (item?.status === "deployed") {
+                color = "success";
+            } else if (item?.status === "processing") {
+                color = "warning";
+            } else if (item?.status === "draft") {
+                color = "default";
+            } else if (item?.status === "failed") {
+                color = "error";
+            } else if (item?.status?.key == "pending") {
+                color = "warning";
+            } else if (item?.status?.key == "completed") {
+                color = "success";
+            }
 
             return {
                 ...item,
@@ -119,7 +135,7 @@ export default function MaintenanceListView({ }) {
                 work_site: item?.state?.translations[0]?.name,
                 remaining_dais: item?.remaining_days + " " + (item?.remaining_days > 2 && item?.remaining_days < 10 ? t("days") : t("day")),
                 condition: item?.status?.translations[0]?.name,
-                color: item?.status?.key == "pending" ? "warning" : item?.status?.key == "completed" ? "success" : "default",
+                color,
                 entrydate: fDate(item?.entry_date),
                 exitdate: fDate(item?.exit_date),
                 createdat: fDate(item?.created_at),

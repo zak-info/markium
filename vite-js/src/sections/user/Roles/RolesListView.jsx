@@ -54,10 +54,26 @@ export default function RolesListView({ }) {
     }
 
     const RformulateTable = (data) => {
-        return data?.map(item => ({
-            ...item,
-            name: item?.translations?.find(i => i.lang_id == 1)?.name || item?.translations?.find(i => i.lang_id == 2)?.name || item?.key
-        })) || [];
+        return data?.map(item => {
+            let color = "default";
+            
+            // Apply status conditions: deployed, processing, draft, failed
+            if (item?.status === "deployed") {
+                color = "success";
+            } else if (item?.status === "processing") {
+                color = "warning";
+            } else if (item?.status === "draft") {
+                color = "default";
+            } else if (item?.status === "failed") {
+                color = "error";
+            }
+            
+            return {
+                ...item,
+                name: item?.translations?.find(i => i.lang_id == 1)?.name || item?.translations?.find(i => i.lang_id == 2)?.name || item?.key,
+                color
+            };
+        }) || [];
     }
 
     useEffect(() => {

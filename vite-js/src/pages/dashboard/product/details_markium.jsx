@@ -1,25 +1,23 @@
 import { Helmet } from 'react-helmet-async';
-import { useParams } from 'src/routes/hooks';
-import OrdersListView from 'src/sections/order/OrdersListView/OrdersListView';
 
-// import { OrderListView } from 'src/sections/order/view';
+import { useParams } from 'src/routes/hooks';
+
+import ProductDetailsMarkiumView from 'src/sections/product/view/product-details-view-markium';
 
 // ----------------------------------------------------------------------
 
-export default function OrderListPage() {
-
+export default function ProductDetailsPage() {
   const params = useParams();
 
   const { id } = params;
 
-
   return (
     <>
       <Helmet>
-        <title> Dashboard: Order List</title>
+        <title> Dashboard: Product Details</title>
       </Helmet>
 
-      <OrdersListView product_id={id} />
+      <ProductDetailsMarkiumView id={`${id}`} />
     </>
   );
 }

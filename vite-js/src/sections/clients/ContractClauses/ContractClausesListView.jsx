@@ -63,7 +63,24 @@ export default function ContractClausesListView({ data , contract }) {
             let statusLabel = t("under_rent");
             let color = "success";
 
-            if (item?.replacer) {
+            // Apply status conditions: deployed, processing, draft, failed
+            if (item?.status === "deployed") {
+                gstatus = "deployed";
+                statusLabel = t("deployed");
+                color = "success";
+            } else if (item?.status === "processing") {
+                gstatus = "processing";
+                statusLabel = t("processing");
+                color = "warning";
+            } else if (item?.status === "draft") {
+                gstatus = "draft";
+                statusLabel = t("draft");
+                color = "default";
+            } else if (item?.status === "failed") {
+                gstatus = "failed";
+                statusLabel = t("failed");
+                color = "error";
+            } else if (item?.replacer) {
                 gstatus = "replaced";
                 statusLabel = t("replaced");
                 color = "secondary";

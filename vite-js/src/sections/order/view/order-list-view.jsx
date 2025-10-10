@@ -42,6 +42,7 @@ import {
 import OrderTableRow from '../order-table-row';
 import OrderTableToolbar from '../order-table-toolbar';
 import OrderTableFiltersResult from '../order-table-filters-result';
+import { t } from 'i18next';
 
 // ----------------------------------------------------------------------
 
@@ -112,6 +113,7 @@ export default function OrderListView() {
     },
     [table]
   );
+  
 
   const handleResetFilters = useCallback(() => {
     setFilters(defaultFilters);

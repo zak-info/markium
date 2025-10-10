@@ -15,16 +15,19 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import FormHelperText from '@mui/material/FormHelperText';
 
+import { useTranslate } from 'src/locales';
 import FormProvider, { RHFTextField } from 'src/components/hook-form';
 
 // ----------------------------------------------------------------------
 
 export default function ProductReviewNewForm({ onClose, ...other }) {
+  const { t } = useTranslate();
+
   const ReviewSchema = Yup.object().shape({
-    rating: Yup.number().min(1, 'Rating must be greater than or equal to 1'),
-    review: Yup.string().required('Review is required'),
-    name: Yup.string().required('Name is required'),
-    email: Yup.string().required('Email is required').email('Email must be a valid email address'),
+    rating: Yup.number().min(1, t('rating_must_be_greater')),
+    review: Yup.string().required(t('review_required')),
+    name: Yup.string().required(t('name_required')),
+    email: Yup.string().required(t('email_required')).email(t('email_must_be_valid')),
   });
 
   const defaultValues = {
@@ -65,11 +68,11 @@ export default function ProductReviewNewForm({ onClose, ...other }) {
   return (
     <Dialog onClose={onClose} {...other}>
       <FormProvider methods={methods} onSubmit={onSubmit}>
-        <DialogTitle> Add Review </DialogTitle>
+        <DialogTitle>{t('add_review')}</DialogTitle>
 
         <DialogContent>
           <Stack direction="row" flexWrap="wrap" alignItems="center" spacing={1.5}>
-            <Typography variant="body2">Your review about this product:</Typography>
+            <Typography variant="body2">{t('your_review_about_this_product')}</Typography>
 
             <Controller
               name="rating"
@@ -89,20 +92,20 @@ export default function ProductReviewNewForm({ onClose, ...other }) {
 
           {!!errors.rating && <FormHelperText error> {errors.rating?.message}</FormHelperText>}
 
-          <RHFTextField name="review" label="Review *" multiline rows={3} sx={{ mt: 3 }} />
+          <RHFTextField name="review" label={`${t('review_label')} *`} multiline rows={3} sx={{ mt: 3 }} />
 
-          <RHFTextField name="name" label="Name *" sx={{ mt: 3 }} />
+          <RHFTextField name="name" label={`${t('name_label')} *`} sx={{ mt: 3 }} />
 
-          <RHFTextField name="email" label="Email *" sx={{ mt: 3 }} />
+          <RHFTextField name="email" label={`${t('email_label')} *`} sx={{ mt: 3 }} />
         </DialogContent>
 
         <DialogActions>
           <Button color="inherit" variant="outlined" onClick={onCancel}>
-            Cancel
+            {t('cancel')}
           </Button>
 
           <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-            Post
+            {t('post')}
           </LoadingButton>
         </DialogActions>
       </FormProvider>

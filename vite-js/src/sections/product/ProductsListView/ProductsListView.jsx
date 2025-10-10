@@ -69,18 +69,30 @@ export default function ProductsListView({ }) {
         // { id: 'birth_date', label: t('birth_date'), type: "text", width: 140 },
         { id: 'real_price', label: t('real_price'), type: "text", width: 140 },
         { id: 'sale_price', label: t('sale_price'), type: "text", width: 100 },
-        { id: 'status', label: t('status'), type: "label", width: 140 },
+        { id: 'c_status', label: t('status'), type: "label", width: 140 },
         { id: 'actions', label: t('actions'), type: "threeDots", component: (item) => <ElementActions item={item} setTableData={setTableData} />, width: 200, align: "right" },
     ]
 
 
     const RformulateTable = (data) => {
         return data?.map((item) => {
+            let color = "default";
+            
+            // Apply status conditions: deployed, processing, draft, failed
+            if (item?.status === "deployed") {
+                color = "success";
+            } else if (item?.status === "processing") {
+                color = "warning";
+            } else if (item?.status === "draft") {
+                color = "default";
+            } else if (item?.status === "failed") {
+                color = "error";
+            }
 
             return {
                 ...item,
-                status:  t(item?.status),
-                color: item?.status == "processing" ? "warning" : "success",
+                c_status: t(item?.status),
+                color,
                 // car_model: vData?.car_companies?.flatMap(i => i.models)?.find(i => i.id == item?.car?.car_model_id)?.translations[0]?.name,
 
             };
@@ -107,10 +119,14 @@ export default function ProductsListView({ }) {
         name: '',
     };
 
+    // Filter by status (draft, processing, deployed, failed)
+
     const items = [
         { key: 'all', label: t('all'), match: () => true },
-        { key: 'available', label: t('available'), match: (item) => !item?.is_rented, color: 'success' },
-        { key: 'is_rented', label: t('bussy'), match: (item) => item?.is_rented, color: 'warning' },
+        { key: 'deployed', label: t('deployed'), match: (item) => !item?.status == "deployed", color: 'success' },
+        { key: 'processing', label: t('processing'), match: (item) => item?.status == "processing", color: 'warning' },
+        { key: 'draft', label: t('draft'), match: (item) => item?.status == "draft", color: 'default' },
+        { key: 'failed', label: t('not_enabled'), match: (item) => item?.status == "failed", color: 'error' },
     ];
 
     const filterFunction = (data, filters) => {
@@ -217,6 +233,17 @@ const ElementActions = ({ item, setTableData }) => {
 
 
 
+    const copyToClipboard = () => {
+        navigator.clipboard.writeText(item?.product_url)
+            .then(() => {
+                enqueueSnackbar(t("operation_success"));
+            })
+            .catch(err => {
+                showError(err)
+            });
+    }
+
+
 
 
     return (
@@ -232,8 +259,8 @@ const ElementActions = ({ item, setTableData }) => {
                 arrow="right-top"
                 sx={{ width: 200 }}
             >
-               
-               
+
+
                 <MenuItem
                     onClick={() => {
                         router.push(paths.dashboard.product.details(item?.id));
@@ -251,6 +278,15 @@ const ElementActions = ({ item, setTableData }) => {
                 >
                     <Iconify icon="solar:pen-bold" />
                     {t('edit')}
+                </MenuItem>
+                <MenuItem
+                    onClick={(e) => {
+                        copyToClipboard();
+                        popover.onClose();
+                    }}
+                >
+                    <Iconify icon="solar:copy-bold-duotone" />
+                    {t('copy_link')}
                 </MenuItem>
             </CustomPopover>
 

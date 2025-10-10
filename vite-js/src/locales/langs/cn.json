@@ -50,5 +50,11 @@
   "upgrade_to_pro": "升级到专业版",
   "demo": {
     "title": "Chinese"
-  }
+  },
+  "product_original": "100% 正品",
+  "product_original_desc": "巧克力棒、拐杖糖、冰淇淋、太妃糖、饼干芝麻酥。",
+  "product_replacement": "10天退换",
+  "product_replacement_desc": "棉花糖饼干、甜甜圈、水果蛋糕威化。",
+  "product_warranty": "一年保修",
+  "product_warranty_desc": "棉花糖、姜饼蛋糕，我喜欢甜甜的糖。"
 }

@@ -39,6 +39,8 @@ import { deleteDriver, useGetDrivers } from 'src/api/drivers';
 import { secondary } from 'src/theme/palette';
 import { color } from 'framer-motion';
 import { LoadingScreen } from 'src/components/loading-screen';
+import { useGetProducts } from 'src/api/product';
+import { useGetOrdersByProduct } from 'src/api/orders';
 
 
 
@@ -46,14 +48,10 @@ import { LoadingScreen } from 'src/components/loading-screen';
 // ----------------------------------------------------------------------
 
 
-export default function DriverListView({ }) {
+export default function OrdersListView({ product_id}) {
 
     const { data: vData } = useValues();
-    const { car } = useGetCar()
-    const { drivers, driversLoading } = useGetDrivers()
-    const { documents, mutate } = useGetDocuments()
-    const { clients } = useGetClients();
-    const { items: carModels } = useGetSystemVisibleItem("car_model");
+    const { orders, ordersLoading } = useGetOrdersByProduct(product_id)
 
 
     const [tableData, setTableData] = useState([]);
@@ -62,16 +60,11 @@ export default function DriverListView({ }) {
     let TABLE_HEAD = [
         { id: 'name', label: t('name'), type: "two-lines-link", first: (row) => { return row?.name }, second: (row) => { return row?.phone_number }, link: (row) => { return paths.dashboard.drivers.details(row.id) }, width: 180 },
         // { id: 'phone_number', label: t('phone_number'), type: "text", width: 140 },
-        { id: 'residence_permit_number', label: t('residence_permit_number'), type: "text", width: 140 },
+        { id: 'quantity', label: t('quantity'), type: "text", width: 140 },
         // { id: 'birth_date', label: t('birth_date'), type: "text", width: 140 },
-        { id: 'gender', label: t('gender'), type: "text", width: 140 },
-        { id: 'd_nationality', label: t('nationality'), type: "text", width: 100 },
-        { id: 'd_state', label: t('state'), type: "text", width: 100 },
-        { id: 'attached_to', label: t('car'), type: "two-lines-link", first: (row) => { return row?.car?.model?.translations?.name || "--" }, second: (row) => { return row?.car?.plat_number }, link: (row) => { return row?.car?.id ? paths.dashboard.vehicle.details(row?.car?.id) : "#" }, width: 140 },
-        // { id: 'c_driver', label: t('driver'), type: "long_text", length: 3, width: 200 },
+        { id: 'real_price', label: t('real_price'), type: "text", width: 140 },
+        { id: 'sale_price', label: t('sale_price'), type: "text", width: 100 },
         { id: 'status', label: t('status'), type: "label", width: 140 },
-        { id: 'c_contract', label: t('contract'), type: "two-lines-link", first: (row) => { return row?.contract?.ref || "--" }, second: (row) => { }, link: (row) => { return row?.contract?.id ? paths.dashboard.clients.contractsDetails(row?.contract?.id) : "#" }, width: 180 },
-        { id: 'c_client', label: t('client'), type: "two-lines-link", first: (row) => { return row?.client?.name || "--" }, second: (row) => { }, link: (row) => { return row?.contract?.id ? paths.dashboard.clients.details(row?.client?.id) : "#" }, width: 180 },
         { id: 'actions', label: t('actions'), type: "threeDots", component: (item) => <ElementActions item={item} setTableData={setTableData} />, width: 200, align: "right" },
     ]
 
@@ -79,39 +72,22 @@ export default function DriverListView({ }) {
     const RformulateTable = (data) => {
         return data?.map((item) => {
             let color = "default";
-            let status = "";
             
             // Apply status conditions: deployed, processing, draft, failed
             if (item?.status === "deployed") {
                 color = "success";
-                status = t("deployed");
             } else if (item?.status === "processing") {
                 color = "warning";
-                status = t("processing");
             } else if (item?.status === "draft") {
                 color = "default";
-                status = t("draft");
             } else if (item?.status === "failed") {
                 color = "error";
-                status = t("failed");
-            } else if (item?.contract?.id) {
-                color = "warning";
-                status = t("bussy");
-            } else {
-                color = "success";
-                status = t("available");
             }
 
             return {
                 ...item,
-                phonenumber: item?.phone_number != "N/A" ? "--" : item?.phone_number,
-                gender: item?.isMale ? t("male") : t("female"),
-                d_nationality: item?.nationality?.translations?.name,
-                d_state: item?.state?.translations?.name,
-                status,
+                status: t(item?.status),
                 color,
-                // car_model: vData?.car_companies?.flatMap(i => i.models)?.find(i => i.id == item?.car?.car_model_id)?.translations[0]?.name,
-
             };
         }) || [];
     };
@@ -125,8 +101,6 @@ export default function DriverListView({ }) {
                 item?.gender?.toLowerCase().includes(value?.toLowerCase()) ||
                 item?.residence_permit_number?.toLowerCase().includes(value?.toLowerCase()) ||
                 item?.d_nationality?.toLowerCase().includes(value?.toLowerCase()) ||
-                item?.car?.plat_number?.toLowerCase().includes(value?.toLowerCase()) ||
-                item?.car_model?.toLowerCase().includes(value?.toLowerCase()) ||
                 item?.contract?.ref?.toLowerCase().includes(value?.toLowerCase()) ||
                 item?.d_state?.toLowerCase().includes(value?.toLowerCase()),
         },
@@ -153,31 +127,29 @@ export default function DriverListView({ }) {
 
 
     useEffect(() => {
-        setDataFiltered(RformulateTable(drivers));
-    }, [drivers, vData, carModels]);
+        setDataFiltered(RformulateTable(orders));
+    }, [orders, vData]);
     useEffect(() => {
-        setTableData(RformulateTable(drivers));
-    }, [drivers, vData, carModels]);
+        setTableData(RformulateTable(orders));
+    }, [orders, vData]);
 
     return (
         <>
             <ZaityHeadContainer
-                heading={t("driversList")}
+                heading={t("productsList")}
                 action={
-                    <PermissionsContext action={"create.driver"} >
-                        <Button
-                            component={RouterLink}
-                            href={paths.dashboard.drivers.new}
-                            variant="contained"
-                            startIcon={<Iconify icon="mingcute:add-line" />}
-                        >
-                            {t("addNewDriver")}
-                        </Button>
-                    </PermissionsContext>
+                    <Button
+                        component={RouterLink}
+                        href={paths.dashboard.product.new}
+                        variant="contained"
+                        startIcon={<Iconify icon="mingcute:add-line" />}
+                    >
+                        {t("addNewProduct")}
+                    </Button>
                 }
                 links={[
                     { name: t('dashboard'), href: paths.dashboard.root },
-                    { name: t("driversList"), href: paths.dashboard.drivers.root },
+                    { name: t("productsList"), href: paths.dashboard.product.root },
                     { name: t('list') },
                 ]}
             >
@@ -186,10 +158,10 @@ export default function DriverListView({ }) {
                         {/* <ZaityTableTabs key='attachable_type' data={tableData} items={items2} defaultFilters={defaultFilters} setTableDate={setDataFiltered} filterFunction={filterFunction}> */}
                         <ZaityTableFilters data={dataFiltered} tableData={tableData} setTableDate={setDataFiltered} items={filters} defaultFilters={defaultFilters} dataFiltered={tableData} searchText={t("search_by") + " " + t("name") + " " + t("or_any_value") + " ..."}  >
                             {
-                                driversLoading ?
+                                ordersLoading ?
                                     <LoadingScreen sx={{ my: 8 }} color='primary' />
                                     :
-                                    <ZaityListView TABLE_HEAD={[...TABLE_HEAD]} dense="medium" zaityTableDate={dataFiltered || []} onSelectedRows={({ data, setTableData }) => { return <onSelectedRowsComponent configurable_type={"roles"} setTableData={setTableData} data={car} /> }} />
+                                    <ZaityListView TABLE_HEAD={[...TABLE_HEAD]} dense="medium" zaityTableDate={dataFiltered || []} onSelectedRows={({ data, setTableData }) => { return <onSelectedRowsComponent configurable_type={"roles"} setTableData={setTableData} data={products} /> }} />
                             }
                         </ZaityTableFilters>
                         {/* </ZaityTableTabs> */}
@@ -263,52 +235,33 @@ const ElementActions = ({ item, setTableData }) => {
                 arrow="right-top"
                 sx={{ width: 200 }}
             >
-                {
-                    !item?.contract?.id &&  !item?.car?.id ?
-                        <PermissionsContext action={'delete.maintenance'}>
-                            <MenuItem
-                                onClick={() => {
-                                    confirm.onTrue();
-                                    popover.onClose();
-                                }}
-                                sx={{ color: 'error.main' }}
-                            >
-                                <Iconify icon="solar:trash-bin-trash-bold" />
-                                {t('delete')}
-                            </MenuItem>
-                        </PermissionsContext>
-                        :
-                        null
-                }
-                <PermissionsContext action={'update.maintenance'}>
-                    <MenuItem
-                        onClick={() => {
-                            onEditRow(item?.id);
-                            popover.onClose();
-                        }}
-                    >
-                        <Iconify icon="solar:pen-bold" />
-                        {t('edit')}
-                    </MenuItem>
-                </PermissionsContext>
-                <PermissionsContext action={'read.maintenance'}>
-                    <MenuItem
-                        onClick={() => {
-                            router.push(paths.dashboard.drivers.details(item?.id));
-                            popover.onClose();
-                        }}
-                    >
-                        <Iconify icon="solar:eye-bold" />
-                        {t('overview')}
-                    </MenuItem>
-                </PermissionsContext>
+               
+               
+                <MenuItem
+                    onClick={() => {
+                        router.push(paths.dashboard.product.details(item?.id));
+                        popover.onClose();
+                    }}
+                >
+                    <Iconify icon="solar:eye-bold" />
+                    {t('overview')}
+                </MenuItem>
+                <MenuItem
+                    onClick={(e) => {
+                        router.push(paths.dashboard.product.edit(item?.id));
+                        popover.onClose();
+                    }}
+                >
+                    <Iconify icon="solar:pen-bold" />
+                    {t('edit')}
+                </MenuItem>
             </CustomPopover>
 
             <ConfirmDialog
                 open={confirm.value}
                 onClose={confirm.onFalse}
                 title={t("delete")}
-                content={t('are_u_sure_to_delete',{item:t("driver"),item2:item?.name})}
+                content={t('are_u_sure_to_delete', { item: t("driver"), item2: item?.name })}
                 action={
                     <LoadingButton
                         isSubmitting={postloader}

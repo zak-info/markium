@@ -96,17 +96,32 @@ export default function CarsListView({ }) {
             const company = clients?.find((c) => c.id === contract?.company_id);
             console.log('company.find : ', company);
             let condition;
-            // else if (item?.contract?.ref && statusKey !== "rented") {
-            //     condition = `${statusName} / ${t("rented")}`;
-            // }
-            if (statusKey === "available" || statusKey === "under_preparation") {
+            let color = "default";
+            
+            // Apply status conditions: deployed, processing, draft, failed
+            if (item?.status === "deployed") {
+                color = "success";
+                condition = t("deployed");
+            } else if (item?.status === "processing") {
+                color = "warning";
+                condition = t("processing");
+            } else if (item?.status === "draft") {
+                color = "default";
+                condition = t("draft");
+            } else if (item?.status === "failed") {
+                color = "error";
+                condition = t("failed");
+            } else if (statusKey === "available" || statusKey === "under_preparation") {
                 condition = statusName;
+                color = statusKey === "available" ? "success" : "secondary";
             } else if (statusKey == "under_maintenance") {
                 condition = t("under_maintenance") + (item?.is_rented ? "/" + t("rented") : "");
+                color = "error";
             } else {
                 condition = statusName;
+                color = "warning";
             }
-            const color = statusKey === "available" ? "success" : statusKey === "under_maintenance" ? "error" : statusKey === "under_preparation" ? "secondary" : "warning";
+            
             return {
                 ...item,
                 color,

@@ -20,7 +20,6 @@ import { PRODUCT_PUBLISH_OPTIONS } from 'src/_mock';
 import Iconify from 'src/components/iconify';
 import EmptyContent from 'src/components/empty-content';
 import { useSettingsContext } from 'src/components/settings';
-import { useTranslate } from 'src/locales';
 
 import { ProductDetailsSkeleton } from '../product-skeleton';
 import ProductDetailsReview from '../product-details-review';
@@ -31,32 +30,31 @@ import ProductDetailsDescription from '../product-details-description';
 
 // ----------------------------------------------------------------------
 
+const SUMMARY = [
+  {
+    title: '100% Original',
+    description: 'Chocolate bar candy canes ice cream toffee cookie halvah.',
+    icon: 'solar:verified-check-bold',
+  },
+  {
+    title: '10 Day Replacement',
+    description: 'Marshmallow biscuit donut dragée fruitcake wafer.',
+    icon: 'solar:clock-circle-bold',
+  },
+  {
+    title: 'Year Warranty',
+    description: 'Cotton candy gingerbread cake I love sugar sweet.',
+    icon: 'solar:shield-check-bold',
+  },
+];
+
 // ----------------------------------------------------------------------
 
-export default function ProductDetailsView({ id }) {
+export default function ProductDetailsMarkiumView({ id }) {
   const { product, productLoading, productError } = useGetProduct(id);
   console.log("product :" ,product)
 
   const settings = useSettingsContext();
-  const { t } = useTranslate();
-
-  const SUMMARY = [
-    {
-      title: t('product_original'),
-      description: t('product_original_desc'),
-      icon: 'solar:verified-check-bold',
-    },
-    {
-      title: t('product_replacement'),
-      description: t('product_replacement_desc'),
-      icon: 'solar:clock-circle-bold',
-    },
-    {
-      title: t('product_warranty'),
-      description: t('product_warranty_desc'),
-      icon: 'solar:shield-check-bold',
-    },
-  ];
 
   const [currentTab, setCurrentTab] = useState('description');
 
@@ -153,11 +151,11 @@ export default function ProductDetailsView({ id }) {
           {[
             {
               value: 'description',
-              label: t('product_description'),
+              label: 'Description',
             },
             {
               value: 'reviews',
-              label: `${t('product_reviews')} (${product?.reviews?.length || 0})`,
+              label: `Reviews (${product?.reviews?.length || 0})`,
             },
           ].map((tab) => (
             <Tab key={tab.value} value={tab.value} label={tab.label} />
@@ -191,6 +189,6 @@ export default function ProductDetailsView({ id }) {
   );
 }
 
-ProductDetailsView.propTypes = {
+ProductDetailsMarkiumView.propTypes = {
   id: PropTypes.string,
 };

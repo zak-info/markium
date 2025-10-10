@@ -106,20 +106,23 @@ export default function ContractClaimsListView({ claimsLoading, data, with_contr
 
     const RformulateTable = (data = []) => {
         return data?.map(item => {
-            // let gstatus = "under_rent";
-            // let statusLabel = t("under_rent");
-            let color = "secondary";
+            let color = "default";
 
-            if (item?.status?.key == "paid_claim") {
+            // Apply status conditions: deployed, processing, draft, failed
+            if (item?.status === "deployed" || item?.status?.key == "paid_claim") {
                 color = "success";
-            } else if (item?.status?.key == "due_claim") {
+            } else if (item?.status === "processing" || item?.status?.key == "due_claim") {
                 color = "warning";
+            } else if (item?.status === "draft") {
+                color = "default";
+            } else if (item?.status === "failed") {
+                color = "error";
+            } else {
+                color = "secondary";
             }
 
             return {
                 ...item,
-                // gstatus,
-                // status: statusLabel,
                 color,
             };
         });

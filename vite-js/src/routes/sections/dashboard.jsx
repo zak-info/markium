@@ -205,6 +205,7 @@ export const dashboardRoutes = [
           { path: 'list', element: <ProductListPage /> },
           { path: ':id', element: <ProductDetailsPage /> },
           { path: 'new', element: <ProductCreatePage /> },
+          { path: ':id/orders', element: <OrderListPage /> },
           { path: ':id/edit', element: <ProductEditPage /> },
         ],
       },

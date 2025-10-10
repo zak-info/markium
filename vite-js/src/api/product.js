@@ -2,12 +2,15 @@ import useSWR from 'swr';
 import { useMemo } from 'react';
 
 import axios , { fetcher, endpoints } from 'src/utils/axios';
+import { HOST_API } from 'src/config-global';
 
 // ----------------------------------------------------------------------
 
 export function useGetProducts() {
   const URL = endpoints.product.root;
-  const { data, isLoading, error, isValidating } = useSWR(URL, fetcher);
+  const { data, isLoading, error, isValidating } = useSWR( URL, fetcher);
+  console.log("URL , ",URL)
+  console.log("data , ",data)
 
   const memoizedValue = useMemo(
     () => ({

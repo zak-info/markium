@@ -41,7 +41,7 @@ const Logo = forwardRef(({ disabledLink = false, sx, ...other }, ref) => {
             <defs>
               <linearGradient id="grad4" x1="0%" y1="0%" x2="100%" y2="0%">
                 <stop offset="0%" stopColor={PRIMARY_MAIN} />
-                <stop offset="100%" stopColor={ACCENT} />
+                <stop offset="100%" stopColor={PRIMARY_LIGHT} />
               </linearGradient>
             </defs>
             <path

@@ -75,16 +75,30 @@ export default function ContractsListView({ }) {
 
     const RformulateTable = (data) => {
         return data?.map((item) => {
+            let color = "default";
+            
+            // Apply status conditions: deployed, processing, draft, failed
+            if (item?.status === "deployed") {
+                color = "success";
+            } else if (item?.status === "processing") {
+                color = "warning";
+            } else if (item?.status === "draft") {
+                color = "default";
+            } else if (item?.status === "failed") {
+                color = "error";
+            } else if (item?.is_rented) {
+                color = "warning";
+            } else {
+                color = "success";
+            }
 
             return {
                 ...item,
-
-                color: item?.is_rented ? "warning" : "success",
+                color,
                 client : clients?.find( i => i.id == item?.client_id),
                 contractDate : fDate(item?.periods[0]?.start_date,"yyyy-MM-dd"),
                 contractEndDate : fDate(item?.periods[0]?.end_date,"yyyy-MM-dd"),
                 c_payment_method : t(item?.payment_method?.name),
-
             };
         }) || [];
     };

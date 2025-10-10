@@ -12,7 +12,7 @@ axiosInstance.interceptors.response.use(
   (error) => {
     // Check for 401 status and redirect to login (except for public routes)
     if (error.response?.status === 401) {
-      const publicRoutes = ['/products', '/api/product'];
+      const publicRoutes = ['/products','/product', '/api/product'];
       const isPublicRoute = publicRoutes.some(route => error.config?.url?.includes(route));
 
       // Only redirect to login if it's not a public route
@@ -88,9 +88,10 @@ export const endpoints = {
   },
   product: {
     root: '/products',
-    list: '/api/product/list',
-    details:(id)=> `/api/product/${id}`,
-    search: '/api/product/search',
+    list: '/product/list',
+    details:(id)=> `/product/${id}`,
+    orders:(id)=> `/products/${id}/orders`,
+    search: '/product/search',
   },
   utils: { values: '/values' },
   company: {
