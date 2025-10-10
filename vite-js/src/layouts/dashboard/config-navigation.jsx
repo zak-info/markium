@@ -102,7 +102,7 @@ export function useNavData() {
             path: paths.dashboard.order.root,
             icon: ICONS.order,
             children: [
-              { title: t('alerts'), path: paths.dashboard.order.root },
+              // { title: t('alerts'), path: paths.dashboard.order.root },
               // {title: t('details'),path: paths.dashboard.product.demo.details,},
               // { title: t('create'), path: paths.dashboard.product.new },
               { title: t('list'), path: paths.dashboard.order.root },

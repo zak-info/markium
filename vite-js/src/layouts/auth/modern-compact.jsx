@@ -1,13 +1,28 @@
 import PropTypes from 'prop-types';
+import { useEffect } from 'react';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
+
+import { useRouter } from 'src/routes/hooks';
+
+import { useAuthContext } from 'src/auth/hooks';
 
 import Header from '../common/header-simple';
 
 // ----------------------------------------------------------------------
 
 export default function AuthModernCompactLayout({ children }) {
+  const { authenticated } = useAuthContext();
+  const router = useRouter();
+
+  // Redirect to dashboard if already authenticated
+  useEffect(() => {
+    if (authenticated) {
+      router.push('/dashboard');
+    }
+  }, [authenticated, router]);
+
   return (
     <>
       <Header />

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import Box from '@mui/material/Box';
@@ -20,11 +20,13 @@ import { useNavData } from './config-navigation';
 import NavToggleButton from '../common/nav-toggle-button';
 import { Typography } from '@mui/material';
 import { t } from 'i18next';
+import { AuthContext } from 'src/auth/context/jwt';
 
 // ----------------------------------------------------------------------
 
 export default function NavVertical({ openNav, onCloseNav }) {
-  const { user } = useMockedUser();
+  // const { user } = useMockedUser();
+  const { user } = useContext(AuthContext);
 
   const pathname = usePathname();
 
@@ -53,7 +55,7 @@ export default function NavVertical({ openNav, onCloseNav }) {
       <Box display="flex" alignItems="center" sx={{ mt: 3, ml: 4, mb: 1 }}>
         <Logo />
         <Typography color="primary" mx={1} fontWeight="500">
-        {t("markium")}
+        {user?.store_name  || t("markium")}
         </Typography>
       </Box>
 

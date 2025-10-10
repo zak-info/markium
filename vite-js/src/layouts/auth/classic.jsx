@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { useEffect } from 'react';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
@@ -9,6 +10,7 @@ import { alpha, useTheme } from '@mui/material/styles';
 
 import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
+import { useRouter } from 'src/routes/hooks';
 
 import { useResponsive } from 'src/hooks/use-responsive';
 
@@ -54,12 +56,19 @@ const METHODS = [
 ];
 
 export default function AuthClassicLayout({ children, image, title }) {
-  const { method } = useAuthContext();
+  const { method, authenticated } = useAuthContext();
 
   const theme = useTheme();
-
+  const router = useRouter();
   const mdUp = useResponsive('up', 'md');
   const { t } = useTranslate();
+
+  // Redirect to dashboard if already authenticated
+  useEffect(() => {
+    if (authenticated) {
+      router.push('/dashboard');
+    }
+  }, [authenticated, router]);
 
   const renderLogo = (
     <Logo

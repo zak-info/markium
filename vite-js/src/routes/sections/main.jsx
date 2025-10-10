@@ -89,6 +89,16 @@ export const mainRoutes = [
       { path: '500', element: <Page500 /> },
       { path: '404', element: <Page404 /> },
       { path: '403', element: <Page403 /> },
+      { path: 'contact-us', element: <ContactPage /> },
+      {
+        path: 'product',
+        children: [
+          { element: <ProductListPage />, index: true },
+          { path: 'list', element: <ProductListPage /> },
+          { path: ':id', element: <ProductDetailsPage /> },
+          { path: 'checkout', element: <ProductCheckoutPage /> },
+        ],
+      },
     ],
   },
 ];

@@ -271,6 +271,15 @@ const ElementActions = ({ item, setTableData }) => {
                     {t('overview')}
                 </MenuItem>
                 <MenuItem
+                    onClick={() => {
+                        router.push(paths.dashboard.product.orders(item?.id));
+                        popover.onClose();
+                    }}
+                >
+                    <Iconify icon="hugeicons:product-loading" />
+                    {t('see_orders')}
+                </MenuItem>
+                <MenuItem
                     onClick={(e) => {
                         router.push(paths.dashboard.product.edit(item?.id));
                         popover.onClose();

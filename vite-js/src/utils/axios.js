@@ -12,7 +12,7 @@ axiosInstance.interceptors.response.use(
   (error) => {
     // Check for 401 status and redirect to login (except for public routes)
     if (error.response?.status === 401) {
-      const publicRoutes = ['/products','/product', '/api/product'];
+      const publicRoutes = ['/products','/product/4', '/api/product'];
       const isPublicRoute = publicRoutes.some(route => error.config?.url?.includes(route));
 
       // Only redirect to login if it's not a public route
@@ -27,6 +27,17 @@ axiosInstance.interceptors.response.use(
 // Add a request interceptor
 axiosInstance.interceptors.request.use(
   (config) => {
+    // Add authentication token
+    const token = localStorage.getItem('accessToken');
+    console.log('Request token:', token);
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+      console.log('Authorization header set:', config.headers.Authorization);
+    } else {
+      console.log('No token found in localStorage');
+    }
+
+    // Add language header
     const settings = localStorage.getItem('settings');
     if (settings !== null) {
       const getLang = JSON.parse(settings);
@@ -91,6 +102,7 @@ export const endpoints = {
     list: '/product/list',
     details:(id)=> `/product/${id}`,
     orders:(id)=> `/products/${id}/orders`,
+    updateOrdersStatus:(product_id,order_id)=> `/products/${product_id}/orders/${order_id}/status`,
     search: '/product/search',
   },
   utils: { values: '/values' },

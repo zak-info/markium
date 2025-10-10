@@ -6,8 +6,11 @@ import OrdersListView from 'src/sections/order/OrdersListView/OrdersListView';
 
 // ----------------------------------------------------------------------
 
-export default function OrderListPage() {
+export default function ProductOrdersListPage() {
 
+  const params = useParams();
+
+  const { id } = params;
 
 
   return (
@@ -16,7 +19,7 @@ export default function OrderListPage() {
         <title> Dashboard: Order List</title>
       </Helmet>
 
-      <OrdersListView  />
+      <OrdersListView product_id={id} />
     </>
   );
 }

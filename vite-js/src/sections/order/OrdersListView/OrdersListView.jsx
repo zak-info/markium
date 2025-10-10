@@ -18,7 +18,7 @@ import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import { fileData } from 'src/components/file-thumbnail'; // [keep for later use]
 import Iconify from 'src/components/iconify';
 import { useBoolean } from 'src/hooks/use-boolean';
-import { useTranslate } from 'src/locales';
+import { useLocales, useTranslate } from 'src/locales';
 import { RouterLink } from 'src/routes/components';
 import { useRouter } from 'src/routes/hooks';
 import { paths } from 'src/routes/paths';
@@ -40,7 +40,7 @@ import { secondary } from 'src/theme/palette';
 import { color } from 'framer-motion';
 import { LoadingScreen } from 'src/components/loading-screen';
 import { useGetProducts } from 'src/api/product';
-import { useGetOrdersByProduct } from 'src/api/orders';
+import { updateOrder, useGetOrdersByProduct } from 'src/api/orders';
 
 
 
@@ -48,45 +48,57 @@ import { useGetOrdersByProduct } from 'src/api/orders';
 // ----------------------------------------------------------------------
 
 
-export default function OrdersListView({ product_id}) {
-
-    const { data: vData } = useValues();
+export default function OrdersListView({ product_id }) {
     const { orders, ordersLoading } = useGetOrdersByProduct(product_id)
-
+    const { currentLang } = useLocales()
 
     const [tableData, setTableData] = useState([]);
     const [dataFiltered, setDataFiltered] = useState([]);
 
     let TABLE_HEAD = [
-        { id: 'name', label: t('name'), type: "two-lines-link", first: (row) => { return row?.name }, second: (row) => { return row?.phone_number }, link: (row) => { return paths.dashboard.drivers.details(row.id) }, width: 180 },
-        // { id: 'phone_number', label: t('phone_number'), type: "text", width: 140 },
-        { id: 'quantity', label: t('quantity'), type: "text", width: 140 },
+        { id: 'name', label: t('name'), type: "text", width: 180 },
+        { id: 'phone', label: t('phone'), type: "text", width: 140 },
+        { id: 'quantity', label: t('quantity'), type: "text", width: 60 },
+        { id: 'product', label: t('product'), type: "text", width: 140 },
         // { id: 'birth_date', label: t('birth_date'), type: "text", width: 140 },
-        { id: 'real_price', label: t('real_price'), type: "text", width: 140 },
-        { id: 'sale_price', label: t('sale_price'), type: "text", width: 100 },
-        { id: 'status', label: t('status'), type: "label", width: 140 },
-        { id: 'actions', label: t('actions'), type: "threeDots", component: (item) => <ElementActions item={item} setTableData={setTableData} />, width: 200, align: "right" },
+        // { id: 'real_price', label: t('real_price'), type: "text", width: 140 },
+        // { id: 'sale_price', label: t('sale_price'), type: "text", width: 100 },
+        { id: 'c_status', label: t('status'), type: "label", width: 100 },
+        { id: 'full_address', label: t('address'), type: "long_text", length: 2, width: 200 },
+        { id: 'actions', label: t('actions'), type: "threeDots", component: (item) => <ElementActions item={item} setTableData={setTableData} />, width: 60, align: "right" },
     ]
 
 
     const RformulateTable = (data) => {
         return data?.map((item) => {
             let color = "default";
-            
-            // Apply status conditions: deployed, processing, draft, failed
-            if (item?.status === "deployed") {
+            let translatedStatus = "";
+
+            // Apply status conditions: pending, confirmed, shipped, delivered, cancelled
+            if (item?.status === "delivered") {
                 color = "success";
-            } else if (item?.status === "processing") {
+                translatedStatus = t("delivered");
+            } else if (item?.status === "shipped") {
+                color = "info";
+                translatedStatus = t("shipped");
+            } else if (item?.status === "confirmed") {
+                color = "secondary";
+                translatedStatus = t("confirmed");
+            } else if (item?.status === "pending") {
                 color = "warning";
-            } else if (item?.status === "draft") {
-                color = "default";
-            } else if (item?.status === "failed") {
+                translatedStatus = t("pending");
+            } else if (item?.status === "cancelled") {
                 color = "error";
+                translatedStatus = t("cancelled");
             }
 
             return {
                 ...item,
-                status: t(item?.status),
+                name: item?.customer?.full_name,
+                phone: item?.customer?.phone,
+                product: item?.product?.name,
+                c_status: translatedStatus,
+                full_address: currentLang?.value == "ar" ? item?.address?.wilaya?.name_ar + ", " + item?.address?.commune?.name_ar + " " + item?.address?.street_address : item?.address?.wilaya?.name + " " + item?.address?.commune?.name + " " + item?.address?.street_address,
                 color,
             };
         }) || [];
@@ -95,25 +107,35 @@ export default function OrdersListView({ product_id}) {
 
     const filters = [
         {
-            key: 'name', label: t('name'), match: (item, value) =>
-                item?.name?.toLowerCase().includes(value?.toLowerCase()) ||
-                item?.phonenumber?.toLowerCase().includes(value?.toLowerCase()) ||
-                item?.gender?.toLowerCase().includes(value?.toLowerCase()) ||
-                item?.residence_permit_number?.toLowerCase().includes(value?.toLowerCase()) ||
-                item?.d_nationality?.toLowerCase().includes(value?.toLowerCase()) ||
-                item?.contract?.ref?.toLowerCase().includes(value?.toLowerCase()) ||
-                item?.d_state?.toLowerCase().includes(value?.toLowerCase()),
+            key: 'search', label: t('search'), match: (item, value) =>
+                item?.customer?.full_name?.toLowerCase().includes(value?.toLowerCase()) ||
+                item?.customer?.first_name?.toLowerCase().includes(value?.toLowerCase()) ||
+                item?.customer?.last_name?.toLowerCase().includes(value?.toLowerCase()) ||
+                item?.customer?.phone?.toLowerCase().includes(value?.toLowerCase()) ||
+                item?.product?.name?.toLowerCase().includes(value?.toLowerCase()) ||
+                item?.address?.street_address?.toLowerCase().includes(value?.toLowerCase()) ||
+                item?.address?.commune?.name?.toLowerCase().includes(value?.toLowerCase()) ||
+                item?.address?.commune?.name_ar?.toLowerCase().includes(value?.toLowerCase()) ||
+                item?.address?.wilaya?.name?.toLowerCase().includes(value?.toLowerCase()) ||
+                item?.address?.wilaya?.name_ar?.toLowerCase().includes(value?.toLowerCase()) ||
+                item?.address?.full_address?.toLowerCase().includes(value?.toLowerCase()) ||
+                item?.id?.toString().includes(value) ||
+                item?.notes?.toLowerCase().includes(value?.toLowerCase()),
         },
     ];
 
     const defaultFilters = {
-        name: '',
+        search: '',
     };
 
+    // Filter by status (pending, confirmed, shipped, delivered, cancelled)
     const items = [
         { key: 'all', label: t('all'), match: () => true },
-        { key: 'available', label: t('available'), match: (item) => !item?.is_rented, color: 'success' },
-        { key: 'is_rented', label: t('bussy'), match: (item) => item?.is_rented, color: 'warning' },
+        { key: 'pending', label: t('pending'), match: (item) => item?.status === 'pending', color: 'warning' },
+        { key: 'confirmed', label: t('confirmed'), match: (item) => item?.status === 'confirmed', color: 'secondary' },
+        { key: 'shipped', label: t('shipped'), match: (item) => item?.status === 'shipped', color: 'info' },
+        { key: 'delivered', label: t('delivered'), match: (item) => item?.status === 'delivered', color: 'success' },
+        { key: 'cancelled', label: t('cancelled'), match: (item) => item?.status === 'cancelled', color: 'error' },
     ];
 
     const filterFunction = (data, filters) => {
@@ -128,28 +150,28 @@ export default function OrdersListView({ product_id}) {
 
     useEffect(() => {
         setDataFiltered(RformulateTable(orders));
-    }, [orders, vData]);
+    }, [orders]);
     useEffect(() => {
         setTableData(RformulateTable(orders));
-    }, [orders, vData]);
+    }, [orders]);
 
     return (
         <>
             <ZaityHeadContainer
-                heading={t("productsList")}
-                action={
-                    <Button
-                        component={RouterLink}
-                        href={paths.dashboard.product.new}
-                        variant="contained"
-                        startIcon={<Iconify icon="mingcute:add-line" />}
-                    >
-                        {t("addNewProduct")}
-                    </Button>
-                }
+                heading={t("ordersList")}
+                // action={
+                //     <Button
+                //         component={RouterLink}
+                //         href={paths.dashboard.product.new}
+                //         variant="contained"
+                //         startIcon={<Iconify icon="mingcute:add-line" />}
+                //     >
+                //         {t("addNewProduct")}
+                //     </Button>
+                // }
                 links={[
                     { name: t('dashboard'), href: paths.dashboard.root },
-                    { name: t("productsList"), href: paths.dashboard.product.root },
+                    { name: t("ordersList"), href: paths.dashboard.order.root },
                     { name: t('list') },
                 ]}
             >
@@ -161,7 +183,7 @@ export default function OrdersListView({ product_id}) {
                                 ordersLoading ?
                                     <LoadingScreen sx={{ my: 8 }} color='primary' />
                                     :
-                                    <ZaityListView TABLE_HEAD={[...TABLE_HEAD]} dense="medium" zaityTableDate={dataFiltered || []} onSelectedRows={({ data, setTableData }) => { return <onSelectedRowsComponent configurable_type={"roles"} setTableData={setTableData} data={products} /> }} />
+                                    <ZaityListView TABLE_HEAD={[...TABLE_HEAD]} dense="medium" zaityTableDate={dataFiltered || []} onSelectedRows={({ data, setTableData }) => { return <onSelectedRowsComponent configurable_type={"roles"} setTableData={setTableData} data={orders} /> }} />
                             }
                         </ZaityTableFilters>
                         {/* </ZaityTableTabs> */}
@@ -179,52 +201,63 @@ export default function OrdersListView({ product_id}) {
 const ElementActions = ({ item, setTableData }) => {
     const popover = usePopover();
     const confirm = useBoolean();
-    const ban = useBoolean();
-    const completed = useBoolean();
     const loading = useBoolean();
-    const router = useRouter();
 
     const [postloader, setPostloader] = useState(false)
+    const [selectedStatus, setSelectedStatus] = useState(null)
 
+    // Define all possible statuses with their colors and icons
+    const statuses = [
+        { key: 'pending', label: t('pending'), color: 'warning', icon: 'solar:clock-circle-bold' },
+        { key: 'confirmed', label: t('confirmed'), color: 'secondary', icon: 'solar:check-circle-bold' },
+        { key: 'shipped', label: t('shipped'), color: 'info', icon: 'solar:box-bold' },
+        { key: 'delivered', label: t('delivered'), color: 'success', icon: 'solar:verified-check-bold' },
+        { key: 'cancelled', label: t('cancelled'), color: 'error', icon: 'solar:close-circle-bold' },
+    ];
 
+    const handleStatusClick = (status) => {
+        setSelectedStatus(status);
+        popover.onClose();
+        confirm.onTrue();
+    };
 
+    const onChangeStatus = useCallback(
+        async () => {
+            if (!selectedStatus) return;
 
-    const onEditRow = useCallback(
-        (id) => {
-            router.push(paths.dashboard.drivers.edit(id));
-        },
-        [router]
-    );
-
-    const onDeleteRow = useCallback(
-        async (id) => {
             setPostloader(true)
-            console.log("id : ", id);
             try {
                 loading.onTrue()
-                const res = await deleteDriver(id);
-                console.log("res : ", res);
-                setTableData(prev => prev?.filter(i => i.id != id))
+                // TODO: Implement API call to update order status
+                await updateOrder(item.product.id, item.id, {status:selectedStatus.key })
+                // const res = await updateOrderStatus(item?.id, selectedStatus.key);
+                console.log("Changing order status:", { orderId: item?.id, newStatus: selectedStatus.key });
+
+                // Update table data optimistically
+                setTableData(prev => prev?.map(order =>
+                    order.id == item?.id ? { ...order, status: selectedStatus.key, color: selectedStatus?.color, c_status: t(selectedStatus.key) } : order
+                ))
+
                 enqueueSnackbar(t("operation_success"));
                 confirm.onFalse();
                 loading.onFalse()
                 setPostloader(false)
+                setSelectedStatus(null)
             } catch (error) {
-                console.log("error : ", error);
+                console.log("ersetSelectedStatus setSelectedStatus setSelectedStatus ror : ", error);
                 setPostloader(false)
                 loading.onFalse()
                 showError(error)
             }
-        }
+        },
+        [loading, confirm, setTableData, selectedStatus, item?.id]
     );
-
 
 
 
 
     return (
         <Box display={"flex"} rowGap={"10px"} sx={{ gap: '10px' }} >
-
             <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
                 <Iconify icon="eva:more-vertical-fill" />
             </IconButton>
@@ -233,46 +266,44 @@ const ElementActions = ({ item, setTableData }) => {
                 open={popover.open}
                 onClose={popover.onClose}
                 arrow="right-top"
-                sx={{ width: 200 }}
+                sx={{ width: 220 }}
             >
-               
-               
-                <MenuItem
-                    onClick={() => {
-                        router.push(paths.dashboard.product.details(item?.id));
-                        popover.onClose();
-                    }}
-                >
-                    <Iconify icon="solar:eye-bold" />
-                    {t('overview')}
-                </MenuItem>
-                <MenuItem
-                    onClick={(e) => {
-                        router.push(paths.dashboard.product.edit(item?.id));
-                        popover.onClose();
-                    }}
-                >
-                    <Iconify icon="solar:pen-bold" />
-                    {t('edit')}
-                </MenuItem>
+                {statuses
+                    .filter(status => status.key !== item?.status) // Don't show current status
+                    .map((status) => (
+                        <MenuItem
+                            key={status.key}
+                            onClick={() => handleStatusClick(status)}
+                            disabled={postloader}
+                            sx={{
+                                color: `${status.color}.main`,
+                                '&:hover': {
+                                    backgroundColor: `${status.color}.lighter`,
+                                }
+                            }}
+                        >
+                            <Iconify icon={status.icon} sx={{ mr: 1 }} />
+                            {t('change_to')} {status.label}
+                        </MenuItem>
+                    ))}
             </CustomPopover>
 
             <ConfirmDialog
                 open={confirm.value}
                 onClose={confirm.onFalse}
-                title={t("delete")}
-                content={t('are_u_sure_to_delete', { item: t("driver"), item2: item?.name })}
+                title={t("change_status")}
+                content={t('confirm_status_change', {
+                    order: `#${item?.id}`,
+                    status: selectedStatus?.label || ''
+                })}
                 action={
                     <LoadingButton
-                        isSubmitting={postloader}
                         loading={postloader}
                         variant="contained"
-                        color="error"
-                        onClick={() => {
-                            onDeleteRow(item?.id);
-                        }}
+                        color={selectedStatus?.color || 'primary'}
+                        onClick={onChangeStatus}
                     >
-                        {t("delete")}
+                        {t("confirm")}
                     </LoadingButton>
                 }
             />

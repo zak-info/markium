@@ -1,17 +1,31 @@
 import PropTypes from 'prop-types';
+import { useEffect } from 'react';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 
+import { useRouter } from 'src/routes/hooks';
+
 import { useResponsive } from 'src/hooks/use-responsive';
+
+import { useAuthContext } from 'src/auth/hooks';
 
 import Logo from 'src/components/logo';
 
 // ----------------------------------------------------------------------
 
 export default function AuthModernLayout({ children, image }) {
+  const { authenticated } = useAuthContext();
+  const router = useRouter();
   const mdUp = useResponsive('up', 'md');
+
+  // Redirect to dashboard if already authenticated
+  useEffect(() => {
+    if (authenticated) {
+      router.push('/dashboard');
+    }
+  }, [authenticated, router]);
 
   const renderContent = (
     <Stack

@@ -133,6 +133,7 @@ export const paths = {
       root: `${ROOTS.DASHBOARD}/product`,
       new: `${ROOTS.DASHBOARD}/product/new`,
       details: (id) => `${ROOTS.DASHBOARD}/product/${id}`,
+      orders: (id) => `${ROOTS.DASHBOARD}/product/${id}/orders`,
       edit: (id) => `${ROOTS.DASHBOARD}/product/${id}/edit`,
       demo: {
         details: `${ROOTS.DASHBOARD}/product/${MOCK_ID}`,

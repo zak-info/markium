@@ -69,7 +69,7 @@ function renderCell(head_row, row, popover, router) {
     case 'text':
       return row?.[head_row?.id] || '--';
     case 'long_text':
-      return <ExpandableText text={row?.[head_row?.id]} length={head_row?.length} /> || '--';
+      return <ExpandableText text={row?.[head_row?.id]} length={head_row?.length}  /> || '--';
 
     case 'two-lines':
       return (
