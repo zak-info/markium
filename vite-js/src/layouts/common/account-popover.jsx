@@ -132,9 +132,9 @@ export default function AccountPopover() {
               {option.label}
             </MenuItem>
           ))}
-          <MenuItem key={"change_password"} onClick={() => {complete.onTrue(); popover.onClose()}}>
+          {/* <MenuItem key={"change_password"} onClick={() => {complete.onTrue(); popover.onClose()}}>
             {t("edit_password")}
-          </MenuItem>
+          </MenuItem> */}
         </Stack>
 
         <Divider sx={{ borderStyle: 'dashed' }} />

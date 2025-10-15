@@ -79,5 +79,6 @@ export async function createProduct(body) {
 
 export async function updateOrder(product_id,order_id, body) {
     const URL = endpoints.product.updateOrdersStatus(product_id,order_id);
+    console.log(" URL : ",URL)
     return await axios.patch(URL, body);
 }

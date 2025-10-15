@@ -221,7 +221,8 @@ const ElementActions = ({ item, setTableData }) => {
             try {
                 loading.onTrue()
                 // TODO: Implement API call to update order status
-                await updateOrder(item.product.id, item.id, {status:selectedStatus.key })
+                console.log("item : ",item)
+                await updateOrder(item.product_id, item.id, {status:selectedStatus.key })
                 // const res = await updateOrderStatus(item?.id, selectedStatus.key);
                 console.log("Changing order status:", { orderId: item?.id, newStatus: selectedStatus.key });
 
@@ -239,7 +240,7 @@ const ElementActions = ({ item, setTableData }) => {
                 console.log("ersetSelectedStatus setSelectedStatus setSelectedStatus ror : ", error);
                 setPostloader(false)
                 loading.onFalse()
-                showError(error)
+                showError(error.error)
             }
         },
         [loading, confirm, setTableData, selectedStatus, item?.id]
