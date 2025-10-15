@@ -111,6 +111,7 @@ export default function AuthClassicLayout({ children, image, title }) {
         }),
       }}
     >
+      
       <Typography variant="h3" sx={{ maxWidth: 480, textAlign: 'center' }}>
         {title || t('hi_welcome_back')}
         {/* Hi, Welcome back */}
@@ -156,6 +157,7 @@ export default function AuthClassicLayout({ children, image, title }) {
     <Stack
       component="main"
       direction="row"
+      position={"relative"}
       sx={{
         minHeight: '100vh',
       }}

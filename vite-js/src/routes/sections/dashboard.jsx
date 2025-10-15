@@ -6,7 +6,6 @@ import DashboardLayout from 'src/layouts/dashboard';
 
 import { LoadingScreen } from 'src/components/loading-screen';
 import ContractCreatePage from 'src/pages/dashboard/clients/contracts-new';
-import SettingsView from 'src/sections/settings/view';
 import { DataContextProvider } from 'src/context/system-data/DataContext';
 import PermissionsRouteContext from 'src/auth/context/permissions/permissions-route-context';
 import { element } from 'prop-types';
@@ -60,6 +59,17 @@ const AdminSystemItemListPage = lazy(() => import('src/pages/dashboard/settings/
 const SystemItemListPage = lazy(() => import('src/pages/dashboard/settings/items/items'));
 const SystemItemCreatePage = lazy(() => import('src/pages/dashboard/settings/items/items-new'));
 const SystemItemEditPage = lazy(() => import('src/pages/dashboard/settings/items/items-edit'));
+
+
+const SettingsView = lazy(() => import('src/pages/dashboard/settings/view'));
+const AccountSettingsView = lazy(() => import('src/pages/dashboard/settings/account-settings-view'));
+const StoreLogoView = lazy(() => import('src/pages/dashboard/settings/store-logo-view'));
+const StoreDataView = lazy(() => import('src/pages/dashboard/settings/store-data-view'));
+const YearlyPaymentView = lazy(() => import('src/pages/dashboard/settings/yearly-payment-view'));
+const SystemPointsView = lazy(() => import('src/pages/dashboard/settings/system-points-view'));
+
+
+
 // INVOICE
 const InvoiceListPage = lazy(() => import('src/pages/dashboard/invoice/list'));
 const InvoiceDetailsPage = lazy(() => import('src/pages/dashboard/invoice/details'));
@@ -294,6 +304,11 @@ export const dashboardRoutes = [
         path: 'settings',
         children: [
           { element: <SettingsView />, index: true },
+          { path: 'account', element: <AccountSettingsView /> },
+          { path: 'store-logo', element: <StoreLogoView /> },
+          { path: 'store-data', element: <StoreDataView /> },
+          { path: 'yearly-payment', element: <YearlyPaymentView /> },
+          { path: 'points', element: <SystemPointsView /> },
           { path: "pm", element: <SystemItemListPage collection={{metadata:"Maintenance Specification",type:"maintenance_specification"}} />, index: true },
           { path: 'pm/new', element: <SystemItemCreatePage collection={{metadata:"Maintenance Specification",type:"maintenance_specification"}} /> },
           { path: 'pm/:id/edit', element: <SystemItemEditPage collection={{metadata:"Maintenance Specification",type:"maintenance_specification"}} /> },

@@ -43,6 +43,12 @@ const reducer = (state, action) => {
       user: action.payload.user,
     };
   }
+  if (action.type === 'UPDATE_USER') {
+    return {
+      ...state,
+      user: action.payload.user,
+    };
+  }
   if (action.type === 'LOGOUT') {
     return {
       ...state,
@@ -131,15 +137,18 @@ export function AuthProvider({ children }) {
 
   // REGISTER
   const register = useCallback(async (name, phone, password, store_name) => {
-    const data = {
-      name,
-      phone,
-      password,
-      store_name,
-      is_phone_verified:true
-    };
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('phone', phone);
+    formData.append('password', password);
+    formData.append('store_name', store_name);
+    formData.append('is_phone_verified', true);
 
-    const response = await axios.post(endpoints.auth.register, data);
+    const response = await axios.post(endpoints.auth.register, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
 
     const { token, client } = response.data.data;
 
@@ -166,6 +175,29 @@ export function AuthProvider({ children }) {
     });
   }, []);
 
+  // UPDATE USER
+  const updateUser = useCallback((userData) => {
+    // Deep merge for nested objects like store
+    const updatedUser = {
+      ...state.user,
+      ...userData,
+      // Handle nested objects properly
+      ...(userData.store && state.user?.store && {
+        store: {
+          ...state.user.store,
+          ...userData.store,
+        }
+      })
+    };
+    localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(updatedUser));
+    dispatch({
+      type: 'UPDATE_USER',
+      payload: {
+        user: updatedUser,
+      },
+    });
+  }, [state.user]);
+
   // ----------------------------------------------------------------------
 
   const checkAuthenticated = state.user ? 'authenticated' : 'unauthenticated';
@@ -186,8 +218,9 @@ export function AuthProvider({ children }) {
       login,
       register,
       logout,
+      updateUser,
     }),
-    [login, logout, register, state.user, status]
+    [login, logout, register, updateUser, state.user, status]
   );
 
   return <AuthContext.Provider value={memoizedValue}>{children}</AuthContext.Provider>;

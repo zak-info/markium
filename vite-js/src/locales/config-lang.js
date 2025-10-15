@@ -47,17 +47,17 @@ export const allLangs = [
       currency: 'USD',
     },
   },
-  // {
-  //   label: 'French',
-  //   value: 'fr',
-  //   systemValue: merge(frFRDate, frFRDataGrid, frFRCore),
-  //   adapterLocale: frFRAdapter,
-  //   icon: 'flagpack:fr',
-  //   numberFormat: {
-  //     code: 'fr-Fr',
-  //     currency: 'EUR',
-  //   },
-  // },
+  {
+    label: 'French',
+    value: 'fr',
+    systemValue: merge(frFRDate, frFRDataGrid, frFRCore),
+    adapterLocale: frFRAdapter,
+    icon: 'flagpack:fr',
+    numberFormat: {
+      code: 'fr-Fr',
+      currency: 'EUR',
+    },
+  },
   // {
   //   label: 'Vietnamese',
   //   value: 'vi',

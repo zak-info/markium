@@ -188,6 +188,11 @@ export const paths = {
     },
     settings: {
       root: `${ROOTS.DASHBOARD}/settings`,
+      account: `${ROOTS.DASHBOARD}/settings/account`,
+      store_logo: `${ROOTS.DASHBOARD}/settings/store-logo`,
+      store_data: `${ROOTS.DASHBOARD}/settings/store-data`,
+      yearly_payment: `${ROOTS.DASHBOARD}/settings/yearly-payment`,
+      points: `${ROOTS.DASHBOARD}/settings/points`,
       pm: `${ROOTS.DASHBOARD}/settings/pm`,
       new: `${ROOTS.DASHBOARD}/settings/pm/new`,
       edit: (id)=>`${ROOTS.DASHBOARD}/settings/pm/${id}/edit`,

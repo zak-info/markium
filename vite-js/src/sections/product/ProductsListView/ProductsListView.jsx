@@ -39,7 +39,8 @@ import { deleteDriver, useGetDrivers } from 'src/api/drivers';
 import { secondary } from 'src/theme/palette';
 import { color } from 'framer-motion';
 import { LoadingScreen } from 'src/components/loading-screen';
-import { useGetProducts } from 'src/api/product';
+import { useGetProducts, deployProduct } from 'src/api/product';
+import Label from 'src/components/label';
 
 
 
@@ -49,14 +50,7 @@ import { useGetProducts } from 'src/api/product';
 
 export default function ProductsListView({ }) {
 
-    const { data: vData } = useValues();
-    const { car } = useGetCar()
-    const { drivers, driversLoading } = useGetDrivers()
     const { products, productsLoading } = useGetProducts()
-    console.log("products : ", products)
-    const { documents, mutate } = useGetDocuments()
-    const { clients } = useGetClients();
-    const { items: carModels } = useGetSystemVisibleItem("car_model");
 
 
     const [tableData, setTableData] = useState([]);
@@ -69,6 +63,7 @@ export default function ProductsListView({ }) {
         // { id: 'birth_date', label: t('birth_date'), type: "text", width: 140 },
         { id: 'real_price', label: t('real_price'), type: "text", width: 140 },
         { id: 'sale_price', label: t('sale_price'), type: "text", width: 100 },
+        { id: 'orders', label: t('orders'), type: "render", render: (item) => <OrdersDropdown item={item} />, width: 220 },
         { id: 'c_status', label: t('status'), type: "label", width: 140 },
         { id: 'actions', label: t('actions'), type: "threeDots", component: (item) => <ElementActions item={item} setTableData={setTableData} />, width: 200, align: "right" },
     ]
@@ -141,10 +136,10 @@ export default function ProductsListView({ }) {
 
     useEffect(() => {
         setDataFiltered(RformulateTable(products));
-    }, [products, vData, carModels]);
+    }, [products]);
     useEffect(() => {
         setTableData(RformulateTable(products));
-    }, [products, vData, carModels]);
+    }, [products]);
 
     return (
         <>
@@ -174,7 +169,7 @@ export default function ProductsListView({ }) {
                                 productsLoading ?
                                     <LoadingScreen sx={{ my: 8 }} color='primary' />
                                     :
-                                    <ZaityListView TABLE_HEAD={[...TABLE_HEAD]} dense="medium" zaityTableDate={dataFiltered || []} onSelectedRows={({ data, setTableData }) => { return <onSelectedRowsComponent configurable_type={"roles"} setTableData={setTableData} data={car} /> }} />
+                                    <ZaityListView TABLE_HEAD={[...TABLE_HEAD]} dense="medium" zaityTableDate={dataFiltered || []} onSelectedRows={({ data, setTableData }) => { return <onSelectedRowsComponent configurable_type={"roles"} setTableData={setTableData} data={products} /> }} />
                             }
                         </ZaityTableFilters>
                         {/* </ZaityTableTabs> */}
@@ -195,9 +190,11 @@ const ElementActions = ({ item, setTableData }) => {
     const ban = useBoolean();
     const completed = useBoolean();
     const loading = useBoolean();
+    const deployConfirm = useBoolean();
     const router = useRouter();
 
     const [postloader, setPostloader] = useState(false)
+    const [deployLoader, setDeployLoader] = useState(false)
 
 
 
@@ -242,6 +239,26 @@ const ElementActions = ({ item, setTableData }) => {
                 showError(err)
             });
     }
+
+    const onDeployProduct = useCallback(
+        async (id) => {
+            setDeployLoader(true)
+            try {
+                const res = await deployProduct(id);
+                console.log("deploy res : ", res);
+                // Update the item status in the table
+                setTableData(prev => prev?.map(i => i.id === id ? {...i, status: 'deployed', color: 'success', c_status: t('deployed')} : i))
+                enqueueSnackbar(t("operation_success"));
+                deployConfirm.onFalse();
+                setDeployLoader(false)
+            } catch (error) {
+                console.log("error : ", error);
+                setDeployLoader(false)
+                showError(error)
+            }
+        },
+        [setTableData, deployConfirm]
+    );
 
 
 
@@ -297,6 +314,18 @@ const ElementActions = ({ item, setTableData }) => {
                     <Iconify icon="solar:copy-bold-duotone" />
                     {t('copy_link')}
                 </MenuItem>
+                {item?.status === 'processing' && (
+                    <MenuItem
+                        onClick={(e) => {
+                            deployConfirm.onTrue();
+                            popover.onClose();
+                        }}
+                        sx={{ color: 'warning.main' }}
+                    >
+                        <Iconify icon="solar:upload-bold" />
+                        {t('deploy')}
+                    </MenuItem>
+                )}
             </CustomPopover>
 
             <ConfirmDialog
@@ -318,10 +347,126 @@ const ElementActions = ({ item, setTableData }) => {
                     </LoadingButton>
                 }
             />
+
+            <ConfirmDialog
+                open={deployConfirm.value}
+                onClose={deployConfirm.onFalse}
+                title={t("deploy")}
+                content={t('are_you_sure_you_want_to_deploy_this_product')}
+                action={
+                    <LoadingButton
+                        isSubmitting={deployLoader}
+                        loading={deployLoader}
+                        variant="contained"
+                        color="warning"
+                        onClick={() => {
+                            onDeployProduct(item?.id);
+                        }}
+                    >
+                        {t("deploy")}
+                    </LoadingButton>
+                }
+            />
         </Box>
     );
 };
 
 
+// ----------------------------------------------------------------------
+
+const OrdersDropdown = ({ item }) => {
+    const popover = usePopover();
+    const { t } = useTranslate();
+
+    // Get orders data from the product item
+    const orders = item?.orders_count || {};
+
+    // Calculate total orders
+    const totalOrders = orders?.all_orders || 0;
+
+    // Define order status types with their translations and colors
+    const orderStatuses = [
+        { key: 'all_orders', label: 'all', color: 'default' },
+        { key: 'pending', label: 'pending', color: 'warning' },
+        { key: 'completed', label: 'completed', color: 'success' },
+        { key: 'shipped', label: 'shipped', color: 'secondary' },
+        { key: 'delivered', label: 'delivered', color: 'info' },
+        { key: 'cancelled', label: 'cancelled', color: 'error' },
+    ];
+
+    return (
+        <>
+            <Button
+                size="small"
+                variant="soft"
+                color="success"
+                endIcon={<Iconify icon={popover.open ? 'eva:arrow-up-fill' : 'eva:arrow-down-fill'} />}
+                onClick={popover.onOpen}
+                sx={{
+                    fontWeight: 600,
+                    justifyContent: 'flex-start',
+                    '&:hover': { backgroundColor: 'action.hover' }
+                }}
+            >
+                {totalOrders} {t('orders')}
+            </Button>
+
+            <CustomPopover
+                open={popover.open}
+                onClose={popover.onClose}
+                arrow="left-top"
+                sx={{ width: 220, p: 0 }}
+            >
+                <Box sx={{ p: 1 }}>
+                    <Typography variant="subtitle2" sx={{ px: 1, py: 0.75, color: 'text.secondary' }}>
+                        {t('order_status')}
+                    </Typography>
+                    <Stack spacing={0.5}>
+                        {orderStatuses.map((status) => {
+                            const count = orders[status.key] || 0;
+                            return (
+                                <Box
+                                    key={status.key}
+                                    sx={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'space-between',
+                                        px: 1.5,
+                                        py: 0.75,
+                                        borderRadius: 0.75,
+                                        '&:hover': { backgroundColor: 'action.hover' }
+                                    }}
+                                >
+                                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                                        {t(status.label)}
+                                    </Typography>
+                                    <Label
+                                        sx={{
+                                            minWidth: 28,
+                                            height: 22,
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            borderRadius: 0.75,
+                                            // backgroundColor: `${status.color}.lighter`,
+                                            // color: `${status.color}.darker`,
+                                            fontWeight: 600,
+                                            fontSize: '0.75rem',
+                                            px: 0.75
+                                        }}
+                                        color={status.color}
+                                        variant={"soft"}
+                                    >
+                                        {count}
+                                    </Label>
+                                </Box>
+                            );
+                        })}
+                    </Stack>
+                </Box>
+            </CustomPopover>
+        </>
+    );
+};
 
 

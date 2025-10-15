@@ -116,6 +116,14 @@ export function useNavData() {
       {
         subheader: t('other_cases'),
         items: [
+           {
+            title: t('settings'),
+            path: paths.dashboard.settings.root,
+            icon: ICONS.settings,
+            permissions:["read.color","read.car_company","read.car_model","read.spec","read.attahcment_name","read.country","read.neighborhood","read.state"],
+            roles: ['admin', 'manager'],
+            // permissions:"read.system_settings",
+          },
           {
             title: t('users'),
             path: paths.dashboard.user.list,

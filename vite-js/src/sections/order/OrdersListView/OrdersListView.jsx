@@ -41,6 +41,7 @@ import { color } from 'framer-motion';
 import { LoadingScreen } from 'src/components/loading-screen';
 import { useGetProducts } from 'src/api/product';
 import { updateOrder, useGetOrdersByProduct } from 'src/api/orders';
+import ExportOrdersButton from './ExportOrdersButton';
 
 
 
@@ -159,16 +160,7 @@ export default function OrdersListView({ product_id }) {
         <>
             <ZaityHeadContainer
                 heading={t("ordersList")}
-                // action={
-                //     <Button
-                //         component={RouterLink}
-                //         href={paths.dashboard.product.new}
-                //         variant="contained"
-                //         startIcon={<Iconify icon="mingcute:add-line" />}
-                //     >
-                //         {t("addNewProduct")}
-                //     </Button>
-                // }
+                action={<ExportOrdersButton orders={orders} />}
                 links={[
                     { name: t('dashboard'), href: paths.dashboard.root },
                     { name: t("ordersList"), href: paths.dashboard.order.root },

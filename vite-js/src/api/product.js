@@ -9,8 +9,6 @@ import { HOST_API } from 'src/config-global';
 export function useGetProducts() {
   const URL = endpoints.product.root;
   const { data, isLoading, error, isValidating } = useSWR( URL, fetcher);
-  console.log("URL , ",URL)
-  console.log("data , ",data)
 
   const memoizedValue = useMemo(
     () => ({
@@ -66,7 +64,6 @@ export function useSearchProducts(query) {
     }),
     [data?.results, error, isLoading, isValidating]
   );
-
   return memoizedValue;
 }
 
@@ -74,6 +71,10 @@ export function useSearchProducts(query) {
 
 export async function createProduct(body) {
   const URL = endpoints.product.root;
-
   return await axios.post(URL, body);
+}
+
+export async function deployProduct(id) {
+  const URL = endpoints.product.deploy(id)
+  return await axios.post(URL);
 }

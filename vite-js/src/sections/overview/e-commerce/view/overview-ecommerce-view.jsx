@@ -28,12 +28,14 @@ import { useContext } from 'react';
 import { AuthContext } from 'src/auth/context/jwt';
 import { useTranslation } from 'react-i18next';
 import { useGetProducts } from 'src/api/product';
+import { useGetOrders } from 'src/api/orders';
 
 // ----------------------------------------------------------------------
 
 export default function OverviewEcommerceView() {
   const { user } = useContext(AuthContext);
   const {products} = useGetProducts()
+  const {orders} = useGetOrders()
 
   const theme = useTheme();
 
@@ -65,7 +67,7 @@ export default function OverviewEcommerceView() {
           <EcommerceWidgetSummary
             title={t('products_published')}
             percent={2.6}
-            total={products?.length}
+            total={products?.length || "0"}
             chart={{
               series: [22, 8, 35, 50, 82, 84, 77, 12, 87, 43],
             }}
@@ -76,7 +78,7 @@ export default function OverviewEcommerceView() {
           <EcommerceWidgetSummary
             title={t('orders_received')}
             percent={-0.1}
-            total={18765}
+            total={orders?.length || "0"}
             chart={{
               colors: [theme.palette.info.light, theme.palette.info.main],
               series: [56, 47, 40, 62, 73, 30, 23, 54, 67, 68],
@@ -86,9 +88,9 @@ export default function OverviewEcommerceView() {
 
         <Grid xs={12} md={4}>
           <EcommerceWidgetSummary
-            title={t('orders_delivered')}
+            title={t('order_confirmed')}
             percent={0.6}
-            total={4876}
+            total={orders?.filter( i => i.status == "confirmed")?.length || "0"}
             chart={{
               colors: [theme.palette.warning.light, theme.palette.warning.main],
               series: [40, 70, 75, 70, 50, 28, 7, 64, 38, 27],
@@ -99,11 +101,11 @@ export default function OverviewEcommerceView() {
         <Grid xs={12} md={6} lg={4}>
           <EcommerceSaleByGender
             title={t('order_status')}
-            total={2324}
+            total={orders?.length || "0"}
             chart={{
               series: [
-                { label: t('pending'), value: 44 },
-                { label: t('delivered'), value: 75 },
+                { label: t('pending'), value: orders?.filter( i => i.status == "pending")?.length },
+                { label: t('delivered'), value: orders?.filter( i => i.status == "delivered")?.length },
               ],
             }}
           />
@@ -160,7 +162,7 @@ export default function OverviewEcommerceView() {
           />
         </Grid>
 
-        <Grid xs={12} md={6} lg={8}>
+        {/* <Grid xs={12} md={6} lg={8}>
           <EcommerceSalesOverview title={t('orders_overview')} data={_ecommerceSalesOverview} />
         </Grid>
 
@@ -170,9 +172,9 @@ export default function OverviewEcommerceView() {
             currentBalance={187650}
             sentAmount={25500}
           />
-        </Grid>
+        </Grid> */}
 
-        <Grid xs={12} md={6} lg={8}>
+        {/* <Grid xs={12} md={6} lg={8}>
           <EcommerceBestSalesman
             title={t('top_products')}
             tableData={_ecommerceBestSalesman}
@@ -188,7 +190,7 @@ export default function OverviewEcommerceView() {
 
         <Grid xs={12} md={6} lg={4}>
           <EcommerceLatestProducts title={t('latest_products')} list={_ecommerceLatestProducts} />
-        </Grid>
+        </Grid> */}
       </Grid>
     </Container>
   );

@@ -37,6 +37,31 @@ export function useGetOrdersByProduct(product_id) {
     return memoizedValue;
 }
 
+
+export function useGetOrders() {
+    const { data, isLoading, error, isValidating, mutate } = useSWR(
+      endpoints.product.allOrders,
+        fetcher,
+        options
+    );
+    console.log("data : ",data);
+    console.log("error : ",error);
+
+    const memoizedValue = useMemo(
+        () => ({
+            orders: data?.data || [],
+            ordersLoading: isLoading,
+            ordersError: error,
+            ordersValidating: isValidating,
+            ordersEmpty: !isLoading && !data?.data?.length,
+            mutate,
+        }),
+        [data, error, isLoading, isValidating]
+    );
+
+    return memoizedValue;
+}
+
 // ----------------------------------------------------------------------
 
 

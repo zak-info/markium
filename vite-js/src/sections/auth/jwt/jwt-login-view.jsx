@@ -87,10 +87,10 @@ export default function JwtLoginView() {
 
   const LoginSchema = Yup.object().shape({
     phone: Yup.string()
-      .required(t('phone_is_required')),
-      // .test('phone-validation', t('phone_is_invalid'), (value) => {
-      //   return validatePhone(value);
-      // }),
+      .required(t('phone_is_required'))
+      .test('phone-validation', t('phone_is_invalid'), (value) => {
+        return validatePhone(value);
+      }),
     password: Yup.string().required(t('password_is_required')),
   });
 

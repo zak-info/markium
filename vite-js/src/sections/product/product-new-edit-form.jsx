@@ -254,10 +254,10 @@ export default function ProductNewEditForm({ currentProduct }) {
               <RHFSelect native name="category" label={t('category')} InputLabelProps={{ shrink: true }}>
                 <option value="">{t('select_category')}</option>
                 {PRODUCT_CATEGORY_GROUP_OPTIONS.map((category) => (
-                  <optgroup key={category.group} label={category.group}>
+                  <optgroup key={category.group} label={t(`category_group_${category.group.toLowerCase().replace(/\s+/g, '_')}`)}>
                     {category.classify.map((classify) => (
                       <option key={classify} value={classify}>
-                        {classify}
+                        {t(`category_${classify.toLowerCase().replace(/\s+/g, '_')}`)}
                       </option>
                     ))}
                   </optgroup>
@@ -268,7 +268,10 @@ export default function ProductNewEditForm({ currentProduct }) {
                 checkbox
                 name="colors"
                 label={t('colors')}
-                options={PRODUCT_COLOR_NAME_OPTIONS}
+                options={PRODUCT_COLOR_NAME_OPTIONS.map(color => ({
+                  ...color,
+                  label: t(`color_${color.value}`)
+                }))}
               />
 
               <RHFMultiSelect checkbox name="variations" label={t('sizes')} options={PRODUCT_SIZE_OPTIONS} />
@@ -280,7 +283,7 @@ export default function ProductNewEditForm({ currentProduct }) {
               placeholder={`+ ${t('tags')}`}
               multiple
               freeSolo
-              options={_tags.map((option) => option)}
+              options={_tags.map((option) => t(`tag_${option.toLowerCase()}`))}
               getOptionLabel={(option) => option}
               renderOption={(props, option) => (
                 <li {...props} key={option}>

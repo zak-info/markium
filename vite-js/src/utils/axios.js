@@ -6,19 +6,13 @@ import { HOST_API } from 'src/config-global';
 // ----------------------------------------------------------------------
 
 const axiosInstance = axios.create({ baseURL: HOST_API });
-
 axiosInstance.interceptors.response.use(
   (res) => res,
   (error) => {
-    // Check for 401 status and redirect to login (except for public routes)
+    // Check for 401 status and redirect to login
     if (error.response?.status === 401) {
-      const publicRoutes = ['/products','/product/4', '/api/product'];
-      const isPublicRoute = publicRoutes.some(route => error.config?.url?.includes(route));
-
-      // Only redirect to login if it's not a public route
-      if (!isPublicRoute) {
-        window.location.href = '/auth/jwt/login';
-      }
+      // Assuming you're using React Router v6
+      window.location.href = '/auth/jwt/login'; // Replace with your login route
     }
     return Promise.reject((error.response && error.response.data) || 'Something went wrong');
   }
@@ -27,17 +21,6 @@ axiosInstance.interceptors.response.use(
 // Add a request interceptor
 axiosInstance.interceptors.request.use(
   (config) => {
-    // Add authentication token
-    const token = localStorage.getItem('accessToken');
-    console.log('Request token:', token);
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-      console.log('Authorization header set:', config.headers.Authorization);
-    } else {
-      console.log('No token found in localStorage');
-    }
-
-    // Add language header
     const settings = localStorage.getItem('settings');
     if (settings !== null) {
       const getLang = JSON.parse(settings);
@@ -101,7 +84,9 @@ export const endpoints = {
     root: '/products',
     list: '/product/list',
     details:(id)=> `/product/${id}`,
+    deploy:(id)=> `/products/${id}/deploy`,
     orders:(id)=> `/products/${id}/orders`,
+    allOrders:`/products/orders`,
     updateOrdersStatus:(product_id,order_id)=> `/products/${product_id}/orders/${order_id}/status`,
     search: '/product/search',
   },
@@ -183,5 +168,8 @@ export const endpoints = {
 
   drivers: {
     list: '/driver',
+  },
+  store: {
+    logo: '/store/logo',
   },
 };
