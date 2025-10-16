@@ -17,11 +17,12 @@ export default function AuthModernCompactLayout({ children }) {
   const router = useRouter();
 
   // Redirect to dashboard if already authenticated
-  useEffect(() => {
-    if (authenticated) {
-      router.push('/dashboard');
-    }
-  }, [authenticated, router]);
+  
+  // useEffect(() => {
+  //   if (authenticated) {
+  //     router.push('/dashboard');
+  //   }
+  // }, [authenticated, router]);
 
   return (
     <>

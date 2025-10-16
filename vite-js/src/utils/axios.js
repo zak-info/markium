@@ -11,8 +11,12 @@ axiosInstance.interceptors.response.use(
   (error) => {
     // Check for 401 status and redirect to login
     if (error.response?.status === 401) {
-      // Assuming you're using React Router v6
-      window.location.href = '/auth/jwt/login'; // Replace with your login route
+      // Clear session data
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('zaity-user-info');
+
+      // Redirect to login
+      window.location.href = '/auth/jwt/login';
     }
     return Promise.reject((error.response && error.response.data) || 'Something went wrong');
   }

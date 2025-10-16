@@ -20,6 +20,7 @@ import { varHover } from 'src/components/animate';
 import { useSnackbar } from 'src/components/snackbar';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import { useTranslate } from 'src/locales';
+import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
@@ -82,6 +83,19 @@ export default function AccountPopover() {
     router.push(path);
   };
 
+  const handleCopyStoreUrl = () => {
+    const storeUrl = "http://markium-stores.website-es-mad-1.linodeobjects.com/?store="+user?.store?.ref || "#";
+    navigator.clipboard.writeText(storeUrl)
+      .then(() => {
+        enqueueSnackbar(t('store_url_copied'), { variant: 'success' });
+        popover.onClose();
+      })
+      .catch((err) => {
+        console.error('Failed to copy:', err);
+        enqueueSnackbar(t('failed_to_copy'), { variant: 'error' });
+      });
+  };
+
   return (
     <>
       <IconButton
@@ -135,7 +149,16 @@ export default function AccountPopover() {
           {/* <MenuItem key={"change_password"} onClick={() => {complete.onTrue(); popover.onClose()}}>
             {t("edit_password")}
           </MenuItem> */}
+          <MenuItem
+            onClick={handleCopyStoreUrl}
+          >
+            {/* <Iconify icon="solar:copy-bold" sx={{ mr: 1 }} /> */}
+            {t('copy_store_url')}
+          </MenuItem>
         </Stack>
+
+        {/* <Divider sx={{ borderStyle: 'dashed' }} /> */}
+
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 

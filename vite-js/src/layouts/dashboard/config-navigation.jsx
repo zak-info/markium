@@ -124,17 +124,17 @@ export function useNavData() {
             roles: ['admin', 'manager'],
             // permissions:"read.system_settings",
           },
-          {
-            title: t('users'),
-            path: paths.dashboard.user.list,
-            icon: ICONS.lock,
-            roles: ['admin', 'manager'],
-            permissions: ["read.user"],
-            children: [
-              { title: t('users'), permissions: "read.user", path: paths.dashboard.user.list },
-              { title: t('roles'), permissions: "read.role", path: paths.dashboard.user.roles },
-            ],
-          },
+          // {
+          //   title: t('users'),
+          //   path: paths.dashboard.user.list,
+          //   icon: ICONS.lock,
+          //   roles: ['admin', 'manager'],
+          //   permissions: ["read.user"],
+          //   children: [
+          //     { title: t('users'), permissions: "read.user", path: paths.dashboard.user.list },
+          //     { title: t('roles'), permissions: "read.role", path: paths.dashboard.user.roles },
+          //   ],
+          // },
         ],
       },
     ],

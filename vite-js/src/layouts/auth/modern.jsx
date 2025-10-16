@@ -21,11 +21,11 @@ export default function AuthModernLayout({ children, image }) {
   const mdUp = useResponsive('up', 'md');
 
   // Redirect to dashboard if already authenticated
-  useEffect(() => {
-    if (authenticated) {
-      router.push('/dashboard');
-    }
-  }, [authenticated, router]);
+  // useEffect(() => {
+  //   if (authenticated) {
+  //     router.push('/dashboard');
+  //   }
+  // }, [authenticated, router]);
 
   const renderContent = (
     <Stack

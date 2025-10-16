@@ -6,6 +6,7 @@ import CompactLayout from 'src/layouts/compact';
 import AuthClassicLayout from 'src/layouts/auth/classic';
 
 import { SplashScreen } from 'src/components/loading-screen';
+import { t } from 'i18next';
 
 // ----------------------------------------------------------------------
 
@@ -61,7 +62,7 @@ const authAmplify = {
       path: 'register',
       element: (
         <GuestGuard>
-          <AuthClassicLayout title="Manage the job more effectively with Minimal">
+          <AuthClassicLayout title={t("manage_work_effectively")}>
             <AmplifyRegisterPage />
           </AuthClassicLayout>
         </GuestGuard>
@@ -104,7 +105,7 @@ const authJwt = {
       path: 'register',
       element: (
         <GuestGuard>
-          <AuthClassicLayout title="Manage the job more effectively with Minimal">
+          <AuthClassicLayout title={t("manage_work_effectively")}>
             <JwtRegisterPage />
           </AuthClassicLayout>
         </GuestGuard>
@@ -135,7 +136,7 @@ const authFirebase = {
       path: 'register',
       element: (
         <GuestGuard>
-          <AuthClassicLayout title="Manage the job more effectively with Minimal">
+          <AuthClassicLayout title={t("manage_work_effectively")}>
             <FirebaseRegisterPage />
           </AuthClassicLayout>
         </GuestGuard>
@@ -206,7 +207,7 @@ const authSupabase = {
       path: 'register',
       element: (
         <GuestGuard>
-          <AuthClassicLayout title="Manage the job more effectively with Minimal">
+          <AuthClassicLayout title={t("manage_work_effectively")}>
             <SupabaseRegisterPage />
           </AuthClassicLayout>
         </GuestGuard>

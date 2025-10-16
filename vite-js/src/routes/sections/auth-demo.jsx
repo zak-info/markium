@@ -7,6 +7,7 @@ import AuthClassicLayout from 'src/layouts/auth/classic';
 import AuthModernCompactLayout from 'src/layouts/auth/modern-compact';
 
 import { SplashScreen } from 'src/components/loading-screen';
+import { t } from 'i18next';
 
 // ----------------------------------------------------------------------
 
@@ -45,7 +46,7 @@ const authClassic = {
     {
       path: 'register',
       element: (
-        <AuthClassicLayout title="Manage the job more effectively with Minimal">
+        <AuthClassicLayout title={t("manage_work_effectively")}>
           <RegisterClassicPage />
         </AuthClassicLayout>
       ),

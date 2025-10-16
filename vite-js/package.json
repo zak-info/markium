@@ -1,6 +1,6 @@
 {
-  "name": "@minimal-kit/vite-js",
-  "author": "Minimals",
+  "name": "Markium app",
+  "author": "Markium",
   "version": "5.7.0",
   "description": "Vite & JavaScript",
   "private": true,
