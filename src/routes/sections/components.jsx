@@ -56,18 +56,15 @@ const FormValidationPage = lazy(() => import('src/pages/components/extra/form-va
 const ImagePage = lazy(() => import('src/pages/components/extra/image'));
 const LabelPage = lazy(() => import('src/pages/components/extra/label'));
 const LightboxPage = lazy(() => import('src/pages/components/extra/lightbox'));
-const MapPage = lazy(() => import('src/pages/components/extra/map'));
 const MegaMenuPage = lazy(() => import('src/pages/components/extra/mega-menu'));
 const MultiLanguagePage = lazy(() => import('src/pages/components/extra/multi-language'));
 const NavigationBarPage = lazy(() => import('src/pages/components/extra/navigation-bar'));
-const OrganizationalChartPage = lazy(() => import('src/pages/components/extra/organization-chart'));
 const ScrollbarPage = lazy(() => import('src/pages/components/extra/scroll'));
 const SnackbarPage = lazy(() => import('src/pages/components/extra/snackbar'));
 const TextMaxLinePage = lazy(() => import('src/pages/components/extra/text-max-line'));
 const UploadPage = lazy(() => import('src/pages/components/extra/upload'));
 const MarkdownPage = lazy(() => import('src/pages/components/extra/markdown'));
 const ScrollProgressPage = lazy(() => import('src/pages/components/extra/scroll-progress'));
-const WalktourPage = lazy(() => import('src/pages/components/extra/walktour'));
 
 // ----------------------------------------------------------------------
 
@@ -152,21 +149,15 @@ export const componentsRoutes = [
               { path: 'image', element: <ImagePage /> },
               { path: 'label', element: <LabelPage /> },
               { path: 'lightbox', element: <LightboxPage /> },
-              { path: 'map', element: <MapPage /> },
               { path: 'mega-menu', element: <MegaMenuPage /> },
               { path: 'multi-language', element: <MultiLanguagePage /> },
               { path: 'navigation-bar', element: <NavigationBarPage /> },
-              {
-                path: 'organization-chart',
-                element: <OrganizationalChartPage />,
-              },
               { path: 'scroll', element: <ScrollbarPage /> },
               { path: 'snackbar', element: <SnackbarPage /> },
               { path: 'text-max-line', element: <TextMaxLinePage /> },
               { path: 'upload', element: <UploadPage /> },
               { path: 'markdown', element: <MarkdownPage /> },
               { path: 'scroll-progress', element: <ScrollProgressPage /> },
-              { path: 'walktour', element: <WalktourPage /> },
             ],
           },
         ],
