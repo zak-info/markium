@@ -1,0 +1,72 @@
+{
+    "product": {
+        "id": 2,
+        "slug": "testing-adidas",
+        "name": "Testing Adidas",
+        "description": "High-quality cotton t-shirt with modern design and comfortable fit",
+        "content": "<h1>Premium T-Shirt<\/h1><p>This premium t-shirt is made from 100% cotton and features a modern design that's perfect for casual wear.<\/p>",
+        "category": "shoes",
+        "tags": [
+            "premium",
+            "cotton"
+        ],
+        "status": "processing"
+    },
+    "pricing": {
+        "real_price": "39.99",
+        "sale_price": "29.99",
+        "currency": "USD",
+        "has_discount": true,
+        "discount_percentage": 25.01,
+        "savings_amount": 10.000000000000004
+    },
+    "inventory": {
+        "quantity": 100,
+        "is_in_stock": true,
+        "low_stock_threshold": 5
+    },
+    "attributes": {
+        "variations": [
+            "Size S",
+            "Size M",
+            "Size L"
+        ],
+        "colors": [
+            "Red",
+            "Blue"
+        ],
+        "dimensions": null,
+        "weight": null
+    },
+    "media": {
+        "images": [
+            "images\/image-1.png"
+        ],
+        "videos": [],
+        "documents": []
+    },
+    "store": {
+        "name": "Johns Store",
+        "owner": "John Doe",
+        "contact": {
+            "phone": "+1234567890"
+        }
+    },
+    "seo": {
+        "title": "Testing Adidas",
+        "description": "High-quality cotton t-shirt with modern design and comfortable fit",
+        "keywords": [
+            "premium",
+            "cotton"
+        ],
+        "canonical_url": null
+    },
+    "meta": {
+        "created_at": "2025-10-04T14:39:32.000000Z",
+        "updated_at": "2025-10-04T14:39:33.000000Z",
+        "generated_at": "2025-10-04T14:45:33.166201Z",
+        "template_version": "v1",
+        "api_version": "v1",
+        "folder_name": "testing_adidas-shoes-johns_store-2"
+    }
+}
