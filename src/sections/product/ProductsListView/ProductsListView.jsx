@@ -89,7 +89,6 @@ export default function ProductsListView({ }) {
                 ...item,
                 c_status: t(item?.status),
                 color,
-                // car_model: vData?.car_companies?.flatMap(i => i.models)?.find(i => i.id == item?.car?.car_model_id)?.translations[0]?.name,
 
             };
         }) || [];
@@ -99,15 +98,7 @@ export default function ProductsListView({ }) {
     const filters = [
         {
             key: 'name', label: t('name'), match: (item, value) =>
-                item?.name?.toLowerCase().includes(value?.toLowerCase()) ||
-                item?.phonenumber?.toLowerCase().includes(value?.toLowerCase()) ||
-                item?.gender?.toLowerCase().includes(value?.toLowerCase()) ||
-                item?.residence_permit_number?.toLowerCase().includes(value?.toLowerCase()) ||
-                item?.d_nationality?.toLowerCase().includes(value?.toLowerCase()) ||
-                item?.car?.plat_number?.toLowerCase().includes(value?.toLowerCase()) ||
-                item?.car_model?.toLowerCase().includes(value?.toLowerCase()) ||
-                item?.contract?.ref?.toLowerCase().includes(value?.toLowerCase()) ||
-                item?.d_state?.toLowerCase().includes(value?.toLowerCase()),
+                item?.name?.toLowerCase().includes(value?.toLowerCase()) 
         },
     ];
 
