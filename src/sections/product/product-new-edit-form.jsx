@@ -164,7 +164,7 @@ export default function ProductNewEditForm({ currentProduct }) {
 
       await  currentProduct?.id ? updateProduct(currentProduct.id , formData) : createProduct(formData);
       enqueueSnackbar(currentProduct ? t('update_success') : t('create_success'));
-      router.push(paths.dashboard.product.root);
+      // router.push(paths.dashboard.product.root);
     } catch (error) {
       console.log("error error ",error);
       showError(error.error)

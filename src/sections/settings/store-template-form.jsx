@@ -22,6 +22,7 @@ import { AuthContext } from 'src/auth/context/jwt';
 import Iconify from 'src/components/iconify';
 import { createProduct } from 'src/api/orders';
 import { updateTheme } from 'src/api/theme';
+import { updateStoreConfig } from 'src/api/store';
 
 // ----------------------------------------------------------------------
 
@@ -91,6 +92,13 @@ const TEMPLATES = [
     preview: '/assets/templates/spices.png',
   },
   {
+    id: 'bags',
+    title: 'Bags',
+    description: 'Modern and elegant design perfect for bags and accessories stores',
+    image: '/assets/templates/bags.png',
+    preview: '/assets/templates/bags.png',
+  },
+  {
     id: 'default',
     title: 'Default',
     description: 'Stylish and sophisticated design for fashion stores',
@@ -124,6 +132,7 @@ export default function StoreTemplateForm() {
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       await updateTheme({theme_name:selectedTemplate})
+       await updateStoreConfig({config:{theme_name:selectedTemplate}})
 
       // Update user session with new template
       // updateUser({

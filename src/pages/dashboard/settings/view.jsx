@@ -42,6 +42,9 @@ export default function SettingsView() {
         // { type: "store_data", header: "store_data", subheader: "manage_store_information", href: paths?.dashboard.settings.store_data },
         { type: "store_template", header: "store_template", subheader: "choose_and_update_store_theme", href: paths?.dashboard.settings.store_template },
         { type: "add-categories", header: "categories", subheader: "manage_product_categories", href: paths?.dashboard.settings.categories },
+        { type: "contacts_social", header: "contacts_social_media", subheader: "manage_contact_info_and_social_links", href: paths?.dashboard.settings.contacts_social },
+        { type: "color_palette", header: "color_palette", subheader: "customize_color_scheme_and_branding", href: paths?.dashboard.settings.color_palette },
+
       ]
     },
     {
@@ -52,6 +55,27 @@ export default function SettingsView() {
         { type: "points_settings", header: "points_settings", subheader: "configure_points_and_rewards_system", href: paths?.dashboard.settings.points },
       ]
     },
+    {
+      title: "marketing_settings",
+      icon: "solar:chart-2-bold-duotone",
+      items: [
+        { type: "marketing_pixels", header: "social_media_pixels", subheader: "configure_tracking_pixels_and_analytics", href: paths?.dashboard.settings.marketing_pixels },
+      ]
+    },
+    {
+      title: "delivery_settings",
+      icon: "solar:box-bold-duotone",
+      items: [
+        { type: "delivery_companies", header: "delivery_companies", subheader: "configure_delivery_companies_integration", href: paths?.dashboard.settings.delivery_companies },
+      ]
+    },
+    // {
+    //   title: "appearance_settings",
+    //   icon: "solar:palette-bold-duotone",
+    //   items: [
+    //     { type: "color_palette", header: "color_palette", subheader: "customize_color_scheme_and_branding", href: paths?.dashboard.settings.color_palette },
+    //   ]
+    // },
   ]
 
 
@@ -78,7 +102,7 @@ export default function SettingsView() {
           mb: { xs: 3, md: 5 },
         }}
       />
-    
+
       <RoleBasedGuard hasContent roles={[role]} sx={{ py: 10 }}>
         {
           groups?.map((group, index) => (
@@ -111,7 +135,7 @@ export default function SettingsView() {
             </>
           ))
         }
-       
+
       </RoleBasedGuard>
     </Container>
   );
