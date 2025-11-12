@@ -1,7 +1,7 @@
 import * as Yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useContext, useMemo, useState } from 'react';
+import { useContext, useMemo, useState, useEffect } from 'react';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -25,15 +25,17 @@ import FormProvider, {
   RHFSwitch,
 } from 'src/components/hook-form';
 import showError from 'src/utils/show_error';
-import { updateStoreConfig } from 'src/api/store';
+import { updateStoreConfig, useGetMyStore } from 'src/api/store';
 import { AuthContext } from 'src/auth/context/jwt';
 
 // ----------------------------------------------------------------------
 
 export default function DeliveryCompaniesForm() {
+  const { user } = useContext(AuthContext)
+    const { store } = useGetMyStore(user?.store?.slug);
+    console.log("store",store);
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslate();
-  const { user } = useContext(AuthContext);
 
   const [loading, setLoading] = useState(false);
 
@@ -120,17 +122,23 @@ export default function DeliveryCompaniesForm() {
     const defaults = {};
 
     deliveryCompanies.forEach((company) => {
-      defaults[`${company.id}_enabled`] = false;
+      // Load from store data if available
+      const companyData = store?.config?.delivery?.[company.id];
+
+      // Handle both string "true"/"false" and boolean values
+      const enabledValue = companyData?.enabled;
+      defaults[`${company.id}_enabled`] = enabledValue === true || enabledValue === "true";
 
       company.fields.forEach((field) => {
-        defaults[field.name] = field.defaultValue || '';
+        const fieldKey = field.name.replace(`${company.id}_`, '');
+        defaults[field.name] = companyData?.[fieldKey] || '';
       });
     });
 
     return defaults;
   };
 
-  const defaultValues = useMemo(() => buildDefaultValues(), []);
+  const defaultValues = useMemo(() => buildDefaultValues(), [store]);
 
   const methods = useForm({
     resolver: yupResolver(DeliveryCompaniesSchema),
@@ -138,12 +146,20 @@ export default function DeliveryCompaniesForm() {
   });
 
   const {
+    reset,
     watch,
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
 
   const values = watch();
+
+  // Reset form when store data is loaded
+  useEffect(() => {
+    if (store) {
+      reset(defaultValues);
+    }
+  }, [store, reset, defaultValues]);
 
   const onSubmit = handleSubmit(async (data) => {
     try {

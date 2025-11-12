@@ -1,7 +1,7 @@
 import * as Yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useMemo, useState } from 'react';
+import { useContext, useMemo, useState, useEffect } from 'react';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -24,11 +24,14 @@ import FormProvider, {
   RHFSwitch,
 } from 'src/components/hook-form';
 import showError from 'src/utils/show_error';
-import { updateStoreConfig } from 'src/api/store';
+import { updateStoreConfig, useGetMyStore } from 'src/api/store';
+import { AuthContext } from 'src/auth/context/jwt';
 
 // ----------------------------------------------------------------------
 
 export default function MarketingPixelsForm() {
+  const { user } = useContext(AuthContext)
+  const { store } = useGetMyStore(user?.store?.slug);
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslate();
 
@@ -98,37 +101,21 @@ export default function MarketingPixelsForm() {
   const defaultValues = useMemo(
     () => ({
       // Facebook
-      facebook_pixel_enabled: false,
-      facebook_pixel_id: '',
-      facebook_access_token: '',
+      facebook_pixel_enabled: store?.config?.pixels?.facebook_pixel?.enabled || false,
+      facebook_pixel_id: store?.config?.pixels?.facebook_pixel?.pixel_id || '',
+      facebook_access_token: store?.config?.pixels?.facebook_pixel?.access_token || '',
 
       // TikTok
-      tiktok_pixel_enabled: false,
-      tiktok_pixel_id: '',
-      tiktok_access_token: '',
+      tiktok_pixel_enabled: store?.config?.pixels?.tiktok_pixel?.enabled || false,
+      tiktok_pixel_id: store?.config?.pixels?.tiktok_pixel?.pixel_id || '',
+      tiktok_access_token: store?.config?.pixels?.tiktok_pixel?.access_token || '',
 
       // Google Analytics
-      google_analytics_enabled: false,
-      google_analytics_id: '',
-      google_analytics_measurement_id: '',
-
-      // Google Tag Manager
-      // google_tag_manager_enabled: false,
-      // google_tag_manager_id: '',
-
-      // Snapchat
-      // snapchat_pixel_enabled: false,
-      // snapchat_pixel_id: '',
-
-      // // Pinterest
-      // pinterest_tag_enabled: false,
-      // pinterest_tag_id: '',
-
-      // // Twitter
-      // twitter_pixel_enabled: false,
-      // twitter_pixel_id: '',
+      google_analytics_enabled: store?.config?.pixels?.google_analytics?.enabled || false,
+      google_analytics_id: store?.config?.pixels?.google_analytics?.tracking_id || '',
+      google_analytics_measurement_id: store?.config?.pixels?.google_analytics?.measurement_id || '',
     }),
-    []
+    [store]
   );
 
   const methods = useForm({
@@ -137,12 +124,20 @@ export default function MarketingPixelsForm() {
   });
 
   const {
+    reset,
     watch,
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
 
   const values = watch();
+
+  // Reset form when store data is loaded
+  useEffect(() => {
+    if (store) {
+      reset(defaultValues);
+    }
+  }, [store, reset, defaultValues]);
 
   const onSubmit = handleSubmit(async (data) => {
     try {

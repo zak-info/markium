@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 
 import Box from '@mui/material/Box';
@@ -12,12 +12,15 @@ import Divider from '@mui/material/Divider';
 import TextField from '@mui/material/TextField';
 import Paper from '@mui/material/Paper';
 import Chip from '@mui/material/Chip';
+import Button from '@mui/material/Button';
 
 import { useTranslate } from 'src/locales';
 import Iconify from 'src/components/iconify';
 import { useSnackbar } from 'src/components/snackbar';
 import FormProvider from 'src/components/hook-form';
-import { updateStoreConfig } from 'src/api/store';
+import { updateStoreConfig, useGetMyStore } from 'src/api/store';
+import { ConfirmDialog } from 'src/components/custom-dialog';
+import { AuthContext } from 'src/auth/context/jwt';
 
 // ----------------------------------------------------------------------
 
@@ -28,10 +31,10 @@ const hexToRgb = (hex) => {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
   return result
     ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16),
-      }
+      r: parseInt(result[1], 16),
+      g: parseInt(result[2], 16),
+      b: parseInt(result[3], 16),
+    }
     : null;
 };
 
@@ -85,18 +88,18 @@ const hslToRgb = (h, s, l) => {
     const hue2rgb = (p, q, t) => {
       if (t < 0) t += 1;
       if (t > 1) t -= 1;
-      if (t < 1/6) return p + (q - p) * 6 * t;
-      if (t < 1/2) return q;
-      if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+      if (t < 1 / 6) return p + (q - p) * 6 * t;
+      if (t < 1 / 2) return q;
+      if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
       return p;
     };
 
     const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
     const p = 2 * l - q;
 
-    r = hue2rgb(p, q, h + 1/3);
+    r = hue2rgb(p, q, h + 1 / 3);
     g = hue2rgb(p, q, h);
-    b = hue2rgb(p, q, h - 1/3);
+    b = hue2rgb(p, q, h - 1 / 3);
   }
 
   return { r: r * 255, g: g * 255, b: b * 255 };
@@ -258,14 +261,20 @@ const generateBorderColor = (hex, desaturate, lightnessAdjust) => {
 // ----------------------------------------------------------------------
 
 export default function ColorPaletteForm() {
+  const { user } = useContext(AuthContext)
+  const { store } = useGetMyStore(user?.store?.slug);
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslate();
   const [loading, setLoading] = useState(false);
-  const [generatedPalette, setGeneratedPalette] = useState(null);
+  const [generatedPalette, setGeneratedPalette] = useState(store?.config?.colorPalette || null);
+  const [DEFAULT_PRIMARY_COLOR, setDEFAULT_PRIMARY_COLOR] = useState( store?.config?.colorPalette?.primary?.main || '#E91E63');
+  const [openConfirm, setOpenConfirm] = useState(false);
+
+  // const DEFAULT_PRIMARY_COLOR = store?.config?.colorPalette?.primary?.main || '#E91E63';
 
   const methods = useForm({
     defaultValues: {
-      primaryColor: '#E91E63',
+      primaryColor: DEFAULT_PRIMARY_COLOR,
     },
   });
 
@@ -273,8 +282,32 @@ export default function ColorPaletteForm() {
     control,
     watch,
     handleSubmit,
+    setValue,
     formState: { isSubmitting },
   } = methods;
+
+  const handleOpenConfirm = () => {
+    setOpenConfirm(true);
+  };
+
+  const handleCloseConfirm = () => {
+    setOpenConfirm(false);
+  };
+
+  const handleResetToDefault = async () => {
+    try {
+      setLoading(true);
+      setOpenConfirm(false);
+
+      await updateStoreConfig({ config: { colorPalette: "" } })
+
+      enqueueSnackbar(t('color_palette_reset_successfully'), { variant: 'success' });
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.error(error);
+    }
+  };
 
   const primaryColor = watch('primaryColor');
 
@@ -282,6 +315,11 @@ export default function ColorPaletteForm() {
   useEffect(() => {
     generatePalette(primaryColor);
   }, [primaryColor]);
+
+   useEffect(() => {
+    setGeneratedPalette(store?.config?.colorPalette);
+    setDEFAULT_PRIMARY_COLOR(store?.config?.colorPalette?.primary?.main)
+  }, [store]);
 
   const generatePalette = (baseColor) => {
     // Detect emotional tone
@@ -311,6 +349,7 @@ export default function ColorPaletteForm() {
     };
 
     // Generate tertiary colors (UI states)
+   
     const tertiary = {
       main: baseColor,
       hover: generateHoverState(baseColor),           // +10° hue, +10% brightness
@@ -320,7 +359,6 @@ export default function ColorPaletteForm() {
       dark: adjustDarkness(baseColor, 15),
       contrast: getContrastColor(baseColor),
     };
-
     // Generate adaptive background colors (brand-tinted neutrals)
     const background = {
       default: '#FFFFFF',
@@ -330,6 +368,8 @@ export default function ColorPaletteForm() {
     };
 
     // Text colors with accessibility check
+     
+
     const text = {
       primary: '#212B36',
       secondary: '#637381',
@@ -343,7 +383,6 @@ export default function ColorPaletteForm() {
       main: generateBorderColor(baseColor, 60, -10),     // desaturate 60%, darken 10%
       dark: generateBorderColor(baseColor, 40, -25),     // desaturate 40%, darken 25%
     };
-
     // Emotional gradients
     const gradients = {
       hero: `linear-gradient(135deg, ${primary.main} 0%, ${primary.dark} 100%)`,
@@ -398,7 +437,7 @@ export default function ColorPaletteForm() {
 
       // Console log the JSON
       console.log('Generated Color Palette:', generatedPalette);
-      await updateStoreConfig({config:{colorPalette:generatedPalette}})
+      await updateStoreConfig({ config: { colorPalette: generatedPalette } })
 
       enqueueSnackbar(t('color_palette_generated_successfully'), { variant: 'success' });
       setLoading(false);
@@ -563,6 +602,18 @@ export default function ColorPaletteForm() {
                   )}
                 </Stack>
               </Box>
+
+              <Divider />
+
+              <Button
+                fullWidth
+                variant="outlined"
+                color="inherit"
+                onClick={handleOpenConfirm}
+                startIcon={<Iconify icon="solar:restart-bold" />}
+              >
+                {t('reset_to_default')}
+              </Button>
             </Stack>
           </Card>
         </Grid>
@@ -709,6 +760,23 @@ export default function ColorPaletteForm() {
           </Stack>
         </Grid>
       </Grid>
+
+      <ConfirmDialog
+        open={openConfirm}
+        onClose={handleCloseConfirm}
+        title={t('confirm_reset')}
+        content={t('confirm_reset_color_palette_message')}
+        action={
+          <Button
+            variant="contained"
+            color="error"
+            onClick={handleResetToDefault}
+            disabled={loading}
+          >
+            {t('reset')}
+          </Button>
+        }
+      />
     </FormProvider>
   );
 }

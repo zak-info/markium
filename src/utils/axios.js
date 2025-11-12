@@ -179,5 +179,6 @@ export const endpoints = {
   store: {
     logo: '/store/logo',
     root: '/store',
+    slug: (slug)=>`/stores/${slug}`,
   },
 };

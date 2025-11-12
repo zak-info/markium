@@ -1,7 +1,7 @@
 import * as Yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useMemo, useState } from 'react';
+import { useContext, useMemo, useState, useEffect } from 'react';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -20,11 +20,15 @@ import FormProvider, {
   RHFTextField,
 } from 'src/components/hook-form';
 import showError from 'src/utils/show_error';
-import { updateStoreConfig } from 'src/api/store';
+import { updateStoreConfig, useGetMyStore } from 'src/api/store';
+import { AuthContext } from 'src/auth/context/jwt';
 
 // ----------------------------------------------------------------------
 
 export default function ContactsSocialForm() {
+    const { user } = useContext(AuthContext)
+    const { store } = useGetMyStore(user?.store?.slug);
+    console.log("store :store : ",store);
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslate();
 
@@ -50,21 +54,18 @@ export default function ContactsSocialForm() {
   const defaultValues = useMemo(
     () => ({
       // Contact
-      phone: '',
-      whatsapp: '',
-      telegram: '',
-      email: '',
+      phone: store?.config?.contacts_social?.contacts?.phone || '',
+      whatsapp: store?.config?.contacts_social?.contacts?.whatsapp || '',
+      telegram: store?.config?.contacts_social?.contacts?.telegram || '',
+      email: store?.config?.contacts_social?.contacts?.email || '',
 
       // Social Media
-      facebook: '',
-      instagram: '',
-      tiktok: '',
-      twitter: '',
-      youtube: '',
-      linkedin: '',
-      snapchat: '',
+      facebook: store?.config?.contacts_social?.social_media?.facebook || '',
+      instagram: store?.config?.contacts_social?.social_media?.instagram || '',
+      tiktok: store?.config?.contacts_social?.social_media?.tiktok || '',
+      youtube: store?.config?.contacts_social?.social_media?.youtube || '',
     }),
-    []
+    [store]
   );
 
   const methods = useForm({
@@ -73,9 +74,17 @@ export default function ContactsSocialForm() {
   });
 
   const {
+    reset,
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
+
+  // Reset form when store data is loaded
+  useEffect(() => {
+    if (store) {
+      reset(defaultValues);
+    }
+  }, [store, reset, defaultValues]);
 
   const onSubmit = handleSubmit(async (data) => {
     try {
@@ -95,8 +104,6 @@ export default function ContactsSocialForm() {
           tiktok: data.tiktok,
           twitter: data.twitter,
           youtube: data.youtube,
-          // linkedin: data.linkedin,
-          // snapchat: data.snapchat,
         },
       };
 

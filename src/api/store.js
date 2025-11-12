@@ -1,6 +1,43 @@
-import axios, { endpoints } from 'src/utils/axios';
+
+import { useMemo } from 'react';
+import useSWR, { mutate } from 'swr';
+import axios, { fetcher, endpoints } from 'src/utils/axios';
 
 // ----------------------------------------------------------------------
+
+
+
+const options = {
+    revalidateIfStale: true,
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+};
+
+
+
+export function useGetMyStore(slug) {
+  const URL = endpoints.store.slug(slug);
+  const { data, isLoading, error, isValidating, mutate } = useSWR(
+    URL,
+    fetcher,
+    options
+  );
+
+  const memoizedValue = useMemo(
+    () => ({
+      store: data?.data?.store || {},
+      storeLoading: isLoading,
+      storeError: error,
+      storeValidating: isValidating,
+      storeEmpty: !isLoading && !data?.data?.length,
+      mutate,
+    }),
+    [data, error, isLoading, isValidating]
+  );
+
+  return memoizedValue;
+}
+
 
 export async function updateStoreLogo(formData) {
   const URL = endpoints.store.root;
