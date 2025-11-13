@@ -199,6 +199,8 @@ export const paths = {
       delivery_companies: `${ROOTS.DASHBOARD}/settings/delivery-companies`,
       contacts_social: `${ROOTS.DASHBOARD}/settings/contacts-social`,
       color_palette: `${ROOTS.DASHBOARD}/settings/color-palette`,
+      store_language: `${ROOTS.DASHBOARD}/settings/store-language`,
+      contact_support: `${ROOTS.DASHBOARD}/contact-support`,
       pm: `${ROOTS.DASHBOARD}/settings/pm`,
       new: `${ROOTS.DASHBOARD}/settings/pm/new`,
       edit: (id)=>`${ROOTS.DASHBOARD}/settings/pm/${id}/edit`,

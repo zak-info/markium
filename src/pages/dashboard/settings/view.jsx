@@ -41,25 +41,27 @@ export default function SettingsView() {
         { type: "store_logo", header: "store_logo", subheader: "upload_and_update_store_logo", href: paths?.dashboard.settings.store_logo },
         // { type: "store_data", header: "store_data", subheader: "manage_store_information", href: paths?.dashboard.settings.store_data },
         { type: "store_template", header: "store_template", subheader: "choose_and_update_store_theme", href: paths?.dashboard.settings.store_template },
-        { type: "add-categories", header: "categories", subheader: "manage_product_categories", href: paths?.dashboard.settings.categories },
-        { type: "contacts_social", header: "contacts_social_media", subheader: "manage_contact_info_and_social_links", href: paths?.dashboard.settings.contacts_social },
+        { type: "store_language", header: "store_language", subheader: "set_default_store_language", href: paths?.dashboard.settings.store_language },
         { type: "color_palette", header: "color_palette", subheader: "customize_color_scheme_and_branding", href: paths?.dashboard.settings.color_palette },
+        { type: "add-categories", header: "categories", subheader: "manage_product_categories", href: paths?.dashboard.settings.categories },
 
       ]
     },
-    {
-      title: "payment_settings",
-      icon: "solar:card-bold-duotone",
-      items: [
-        { type: "yearly_payment", header: "yearly_payment", subheader: "manage_yearly_subscription_payment", href: paths?.dashboard.settings.yearly_payment },
-        { type: "points_settings", header: "points_settings", subheader: "configure_points_and_rewards_system", href: paths?.dashboard.settings.points },
-      ]
-    },
+    // {
+    //   title: "payment_settings",
+    //   icon: "solar:card-bold-duotone",
+    //   items: [
+    //     { type: "yearly_payment", header: "yearly_payment", subheader: "manage_yearly_subscription_payment", href: paths?.dashboard.settings.yearly_payment },
+    //     { type: "points_settings", header: "points_settings", subheader: "configure_points_and_rewards_system", href: paths?.dashboard.settings.points },
+    //   ]
+    // },
     {
       title: "marketing_settings",
       icon: "solar:chart-2-bold-duotone",
       items: [
         { type: "marketing_pixels", header: "social_media_pixels", subheader: "configure_tracking_pixels_and_analytics", href: paths?.dashboard.settings.marketing_pixels },
+        { type: "contacts_social", header: "contacts_social_media", subheader: "manage_contact_info_and_social_links", href: paths?.dashboard.settings.contacts_social },
+
       ]
     },
     {
@@ -124,11 +126,11 @@ export default function SettingsView() {
               >
                 {
                   group.items?.map((item, index2) => (
-                    <PermissionsContext action={"read." + item?.type} >
+                    <Link href={item?.href} underline='none'>
                       <Card key={index2} sx={{ pb: 2 }}>
                         <CardHeader title={t(item?.header)} subheader={<Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>{t(item?.subheader)}<Link href={item?.href} sx={{ fontSize: "0.7rem" }}><Iconify icon="tabler:arrow-narrow-left" width="32px" height="32px" sx={{ color: 'primary.main' }} /></Link></Box>} />
                       </Card>
-                    </PermissionsContext>
+                    </Link>
                   ))
                 }
               </Box>

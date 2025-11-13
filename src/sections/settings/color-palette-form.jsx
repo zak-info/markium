@@ -624,7 +624,7 @@ export default function ColorPaletteForm() {
             {/* Primary Colors */}
             <Card sx={{ p: 3 }}>
               <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
-                <Iconify icon="solar:star-bold" width={24} color="primary.main" />
+                <Iconify icon="solar:star-bold" width={24} sx={{ color: 'primary.main' }} />
                 <Typography variant="h6">{t('primary_colors')}</Typography>
                 <Chip label={t('brand_identity')} size="small" color="primary" />
               </Stack>
@@ -641,7 +641,7 @@ export default function ColorPaletteForm() {
             {/* Secondary Colors */}
             <Card sx={{ p: 3 }}>
               <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
-                <Iconify icon="solar:crown-bold" width={24} color="secondary.main" />
+                <Iconify icon="solar:crown-bold" width={24} sx={{ color: 'secondary.main' }} />
                 <Typography variant="h6">{t('secondary_colors')}</Typography>
                 <Chip label={t('accent')} size="small" color="secondary" />
               </Stack>
@@ -658,7 +658,7 @@ export default function ColorPaletteForm() {
             {/* Tertiary Colors (UI States) */}
             <Card sx={{ p: 3 }}>
               <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
-                <Iconify icon="solar:mouse-circle-bold" width={24} color="primary.main" />
+                <Iconify icon="solar:mouse-circle-bold" width={24} sx={{ color: 'primary.main' }} />
                 <Typography variant="h6">{t('tertiary_colors')}</Typography>
                 <Chip label="UI States" size="small" color="info" />
               </Stack>
@@ -743,7 +743,7 @@ export default function ColorPaletteForm() {
             }}
           >
             <Stack direction="row" spacing={1} alignItems="center">
-              <Iconify icon="solar:code-bold" width={20} color="info.main" />
+              <Iconify icon="solar:code-bold" width={20} sx={{ color: 'info.main' }} />
               <Typography variant="body2" color="text.secondary">
                 {t('palette_will_be_logged_to_console')}
               </Typography>

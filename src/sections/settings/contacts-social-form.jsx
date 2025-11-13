@@ -45,10 +45,7 @@ export default function ContactsSocialForm() {
     facebook: Yup.string().url(t('must_be_valid_url')),
     instagram: Yup.string().url(t('must_be_valid_url')),
     tiktok: Yup.string().url(t('must_be_valid_url')),
-    twitter: Yup.string().url(t('must_be_valid_url')),
     youtube: Yup.string().url(t('must_be_valid_url')),
-    linkedin: Yup.string().url(t('must_be_valid_url')),
-    snapchat: Yup.string().url(t('must_be_valid_url')),
   });
 
   const defaultValues = useMemo(
@@ -102,7 +99,6 @@ export default function ContactsSocialForm() {
           facebook: data.facebook,
           instagram: data.instagram,
           tiktok: data.tiktok,
-          twitter: data.twitter,
           youtube: data.youtube,
         },
       };
@@ -131,10 +127,7 @@ export default function ContactsSocialForm() {
     { name: 'facebook', label: 'Facebook', icon: 'eva:facebook-fill', color: '#1877F2', placeholder: 'https://facebook.com/yourpage' },
     { name: 'instagram', label: 'Instagram', icon: 'ant-design:instagram-filled', color: '#E4405F', placeholder: 'https://instagram.com/youraccount' },
     { name: 'tiktok', label: 'TikTok', icon: 'ic:baseline-tiktok', color: '#000000', placeholder: 'https://tiktok.com/@youraccount' },
-    { name: 'twitter', label: 'Twitter', icon: 'fa6-brands:x-twitter', color: '#000000', placeholder: 'https://twitter.com/youraccount' },
     { name: 'youtube', label: 'YouTube', icon: 'ant-design:youtube-filled', color: '#FF0000', placeholder: 'https://youtube.com/c/yourchannel' },
-    // { name: 'linkedin', label: 'LinkedIn', icon: 'ant-design:linkedin-filled', color: '#0A66C2', placeholder: 'https://linkedin.com/company/yourcompany' },
-    // { name: 'snapchat', label: 'Snapchat', icon: 'fa6-brands:snapchat', color: '#FFFC00', placeholder: 'https://snapchat.com/add/yourusername' },
   ];
 
   return (
@@ -155,7 +148,7 @@ export default function ContactsSocialForm() {
             <Stack spacing={3}>
               <Box>
                 <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
-                  <Iconify icon="solar:phone-calling-bold-duotone" width={28} color="primary.main" />
+                  <Iconify icon="solar:phone-calling-bold-duotone" width={28} sx={{ color: 'primary.main' }} />
                   <Typography variant="h6">{t('contact_information')}</Typography>
                 </Stack>
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
@@ -195,7 +188,7 @@ export default function ContactsSocialForm() {
             <Stack spacing={3}>
               <Box>
                 <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
-                  <Iconify icon="solar:share-bold-duotone" width={28} color="primary.main" />
+                  <Iconify icon="solar:share-bold-duotone" width={28} sx={{ color: 'primary.main' }} />
                   <Typography variant="h6">{t('social_media_links')}</Typography>
                 </Stack>
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>

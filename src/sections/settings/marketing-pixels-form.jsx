@@ -290,8 +290,6 @@ export default function MarketingPixelsForm() {
                       backgroundColor: 'action.hover',
                     },
                   }}
-                // direction="column"
-                // direction={{ xs: "column", md: "row" }}
                 >
                   <Stack direction={"row"} spacing={2} alignItems="center" sx={{ width: '100%' }}>
                     <Iconify icon={section.icon} width={32} sx={{ color: section.color }} />
