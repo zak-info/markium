@@ -48,6 +48,7 @@ const ICONS = {
   maintenance: <Iconify icon="map:car-repair" />,
   document: <Iconify icon="carbon:document" />,
   driver: <Iconify icon="healthicons:truck-driver" />,
+  support: <Iconify icon="solar:chat-round-call-bold-duotone" />,
 };
 
 // ----------------------------------------------------------------------
@@ -123,6 +124,11 @@ export function useNavData() {
             permissions:["read.color","read.car_company","read.car_model","read.spec","read.attahcment_name","read.country","read.neighborhood","read.state"],
             roles: ['admin', 'manager'],
             // permissions:"read.system_settings",
+          },
+          {
+            title: t('contact_support'),
+            path: paths.dashboard.settings.contact_support,
+            icon: ICONS.support,
           },
           // {
           //   title: t('users'),

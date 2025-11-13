@@ -50,13 +50,13 @@ const Logo = forwardRef(({ disabledLink = false, user, sx, ...other }, ref) => {
           component="div"
           sx={{
             width: 40,
-            height: 40,
+            height: 30,
             display: 'inline-flex',
             ...sx,
           }}
           {...other}
         >
-          <svg width="40" height="40" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+          {/* <svg width="40" height="40" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
                 <defs>
                   <linearGradient id="grad4" x1="0%" y1="0%" x2="100%" y2="0%">
                     <stop offset="0%" stopColor={PRIMARY_MAIN} />
@@ -72,12 +72,12 @@ const Logo = forwardRef(({ disabledLink = false, user, sx, ...other }, ref) => {
                   strokeLinejoin="round"
                 />
                 <circle cx="60" cy="75" r="4" fill={PRIMARY_MAIN} />
-              </svg>
-          {/* <Box
+              </svg> */}
+          <Box
             component="img"
-            src={`/logo/${settings.themeColorPresets}.svg`}
-            sx={{ width: 40, height: 40, cursor: 'pointer', ...sx }}
-          /> */}
+            src={`/logo/${settings.themeColorPresets}.png`}
+            sx={{ width: 40, height: 30, cursor: 'pointer', ...sx }}
+          />
         </Box>
         {/* <Box
           ref={ref}

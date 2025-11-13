@@ -69,6 +69,12 @@ const StoreDataView = lazy(() => import('src/pages/dashboard/settings/store-data
 const StoreTemplateView = lazy(() => import('src/pages/dashboard/settings/store-template-view'));
 const YearlyPaymentView = lazy(() => import('src/pages/dashboard/settings/yearly-payment-view'));
 const SystemPointsView = lazy(() => import('src/pages/dashboard/settings/system-points-view'));
+const MarketingPixelsView = lazy(() => import('src/pages/dashboard/settings/marketing-pixels-view'));
+const DeliveryCompaniesView = lazy(() => import('src/pages/dashboard/settings/delivery-companies-view'));
+const ContactsSocialView = lazy(() => import('src/pages/dashboard/settings/contacts-social-view'));
+const ColorPaletteView = lazy(() => import('src/pages/dashboard/settings/color-palette-view'));
+const StoreLanguageView = lazy(() => import('src/pages/dashboard/settings/store-language-view'));
+const ContactSupportView = lazy(() => import('src/pages/dashboard/contact-support-view'));
 
 
 
@@ -313,6 +319,11 @@ export const dashboardRoutes = [
           { path: 'store-template', element: <StoreTemplateView /> },
           { path: 'yearly-payment', element: <YearlyPaymentView /> },
           { path: 'points', element: <SystemPointsView /> },
+          { path: 'marketing-pixels', element: <MarketingPixelsView /> },
+          { path: 'delivery-companies', element: <DeliveryCompaniesView /> },
+          { path: 'contacts-social', element: <ContactsSocialView /> },
+          { path: 'color-palette', element: <ColorPaletteView /> },
+          { path: 'store-language', element: <StoreLanguageView /> },
           { path: "pm", element: <SystemItemListPage collection={{metadata:"Maintenance Specification",type:"maintenance_specification"}} />, index: true },
           { path: 'pm/new', element: <SystemItemCreatePage collection={{metadata:"Maintenance Specification",type:"maintenance_specification"}} /> },
           { path: 'pm/:id/edit', element: <SystemItemEditPage collection={{metadata:"Maintenance Specification",type:"maintenance_specification"}} /> },
@@ -414,6 +425,7 @@ export const dashboardRoutes = [
       { path: 'kanban', element: <KanbanPage /> },
       { path: 'permission', element: <PermissionDeniedPage /> },
       { path: 'blank', element: <BlankPage /> },
+      { path: 'contact-support', element: <ContactSupportView /> },
     ],
   },
   {

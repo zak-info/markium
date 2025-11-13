@@ -22,6 +22,7 @@ import { AuthContext } from 'src/auth/context/jwt';
 import Iconify from 'src/components/iconify';
 import { createProduct } from 'src/api/orders';
 import { updateTheme } from 'src/api/theme';
+import { updateStoreConfig } from 'src/api/store';
 
 // ----------------------------------------------------------------------
 
@@ -91,6 +92,41 @@ const TEMPLATES = [
     preview: '/assets/templates/spices.png',
   },
   {
+    id: 'bags',
+    title: 'Bags',
+    description: 'Modern and elegant design perfect for bags and accessories stores',
+    image: '/assets/templates/bags.png',
+    preview: '/assets/templates/bags.png',
+  },
+  {
+    id: 'hardware-store',
+    title: 'Hardware Store',
+    description: 'Professional and robust design perfect for hardware and tools stores',
+    image: '/assets/templates/hardware-store.png',
+    preview: '/assets/templates/hardware-store.png',
+  },
+  {
+    id: 'electronics',
+    title: 'Electronics',
+    description: 'Modern and tech-focused design perfect for electronics and gadget stores',
+    image: '/assets/templates/electronics.png',
+    preview: '/assets/templates/electronics.png',
+  },
+  {
+    id: 'health-cosmetics',
+    title: 'Health & Cosmetics',
+    description: 'Clean and elegant design perfect for health and beauty stores',
+    image: '/assets/templates/health.png',
+    preview: '/assets/templates/health.png',
+  },
+  {
+    id: 'women-fashion',
+    title: 'Women Fashion',
+    description: 'Elegant and stylish design perfect for women\'s fashion and apparel stores',
+    image: '/assets/templates/women-fashion.png',
+    preview: '/assets/templates/women-fashion.png',
+  },
+  {
     id: 'default',
     title: 'Default',
     description: 'Stylish and sophisticated design for fashion stores',
@@ -124,6 +160,7 @@ export default function StoreTemplateForm() {
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       await updateTheme({theme_name:selectedTemplate})
+       await updateStoreConfig({config:{theme_name:selectedTemplate}})
 
       // Update user session with new template
       // updateUser({
