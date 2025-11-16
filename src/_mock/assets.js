@@ -323,6 +323,28 @@ export const _productNames = [
   'Run Star Hike Platform Sneaker',
 ];
 
+
+export const _adsNames = [
+  'More markium users are joining your store',
+  'Get more sales with markium ads',
+  'Boost your store traffic with markium ads',
+  'Reach more customers with markium ads',
+  'Increase your sales with markium ads',
+  'Promote your products with markium ads',
+  'Grow your business with markium ads',
+  'Attract more visitors with markium ads',
+  'Enhance your store visibility with markium ads',
+  'Maximize your sales potential with markium ads',
+  'Expand your customer base with markium ads',
+  'Drive more traffic to your store with markium ads',
+  'Get noticed with markium ads',
+  'Boost your online presence with markium ads',
+  'Increase your revenue with markium ads',
+  'Promote your brand with markium ads',
+  'Grow your audience with markium ads',
+  
+];
+
 // ----------------------------------------------------------------------
 
 export const _tourNames = [

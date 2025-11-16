@@ -9,7 +9,7 @@ import { OrderDetailsView } from 'src/sections/order/view';
 export default function OrderDetailsPage() {
   const params = useParams();
 
-  const { id } = params;
+  const { product_id, order_id } = params;
 
   return (
     <>
@@ -17,7 +17,7 @@ export default function OrderDetailsPage() {
         <title> Dashboard: Order Details</title>
       </Helmet>
 
-      <OrderDetailsView id={`${id}`} />
+      <OrderDetailsView product_id={product_id} order_id={order_id} />
     </>
   );
 }

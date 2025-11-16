@@ -236,6 +236,7 @@ export default function HomeHero() {
               size="large"
               variant="contained"
               startIcon={<Iconify icon="tabler:shield-lock-filled" width={24} />}
+              sx={{ zIndex: 9999, position: 'relative' }}
             >
               {t("login")}
             </Button>

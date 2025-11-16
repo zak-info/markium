@@ -200,6 +200,7 @@ export const paths = {
       contacts_social: `${ROOTS.DASHBOARD}/settings/contacts-social`,
       color_palette: `${ROOTS.DASHBOARD}/settings/color-palette`,
       store_language: `${ROOTS.DASHBOARD}/settings/store-language`,
+      store_location: `${ROOTS.DASHBOARD}/settings/store-location`,
       contact_support: `${ROOTS.DASHBOARD}/contact-support`,
       pm: `${ROOTS.DASHBOARD}/settings/pm`,
       new: `${ROOTS.DASHBOARD}/settings/pm/new`,
@@ -290,7 +291,7 @@ export const paths = {
     },
     order: {
       root: `${ROOTS.DASHBOARD}/order`,
-      details: (id) => `${ROOTS.DASHBOARD}/order/${id}`,
+      details: (product_id, order_id) => `${ROOTS.DASHBOARD}/products/${product_id}/orders/${order_id}`,
       demo: {
         details: `${ROOTS.DASHBOARD}/order/${MOCK_ID}`,
       },

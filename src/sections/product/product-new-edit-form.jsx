@@ -160,11 +160,11 @@ export default function ProductNewEditForm({ currentProduct }) {
         console.log(pair[0] + ':', pair[1]);
       }
 
-      console.log("operateProduct "+ currentProduct?.id ? 'update' : 'create'  );
+      console.log("operateProduct ", currentProduct?.id ? 'update' : 'create'  );
 
       await  currentProduct?.id ? updateProduct(currentProduct.id , formData) : createProduct(formData);
       enqueueSnackbar(currentProduct ? t('update_success') : t('create_success'));
-      // router.push(paths.dashboard.product.root);
+      router.push(paths.dashboard.product.root);
     } catch (error) {
       console.log("error error ",error);
       showError(error.error)

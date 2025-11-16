@@ -173,9 +173,9 @@ export const _ecommerceLatestProducts = [...Array(5)].map((_, index) => {
   };
 });
 
-export const _ecommerceNewProducts = [...Array(5)].map((_, index) => ({
+export const _ecommerceNewProducts = [...Array(7)].map((_, index) => ({
   id: _mock.id(index),
-  name: _mock.productName(index),
+  name: _mock.adsName(index),
   coverUrl: _mock.image.product(index),
 }));
 

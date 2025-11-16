@@ -129,3 +129,27 @@ export async function changeCategoryVisibility(id,body) {
     const URL = endpoints.settings.categories+"/"+id;
     return await axios.put(URL, body);
 }
+
+
+export function useGetWilayas() {
+  const URL = endpoints.settings.wilayas;
+  const { data, isLoading, error, isValidating, mutate } = useSWR(
+    URL,
+    fetcher,
+    options
+  );
+
+  const memoizedValue = useMemo(
+    () => ({
+      wilayas: data?.data || [],
+      wilayasLoading: isLoading,
+      wilayasError: error,
+      wilayasValidating: isValidating,
+      wilayasEmpty: !isLoading && !data?.data?.length,
+      mutate,
+    }),
+    [data, error, isLoading, isValidating]
+  );
+
+  return memoizedValue;
+}

@@ -42,6 +42,7 @@ export default function SettingsView() {
         // { type: "store_data", header: "store_data", subheader: "manage_store_information", href: paths?.dashboard.settings.store_data },
         { type: "store_template", header: "store_template", subheader: "choose_and_update_store_theme", href: paths?.dashboard.settings.store_template },
         { type: "store_language", header: "store_language", subheader: "set_default_store_language", href: paths?.dashboard.settings.store_language },
+        { type: "store_location", header: "store_location", subheader: "set_store_location_center_wilaya", href: paths?.dashboard.settings.store_location },
         { type: "color_palette", header: "color_palette", subheader: "customize_color_scheme_and_branding", href: paths?.dashboard.settings.color_palette },
         { type: "add-categories", header: "categories", subheader: "manage_product_categories", href: paths?.dashboard.settings.categories },
 

@@ -67,6 +67,35 @@ export function useGetOrders(page = 1, perPage = 100) {
     return memoizedValue;
 }
 
+export function useGetOrder(product_id,order_id,page = 1, perPage = 100) {
+    const params = new URLSearchParams({ page, per_page: perPage });
+    const url = `${endpoints.product?.order(product_id, order_id)}?${params.toString()}`;
+    console.log("url : ",url);
+
+    const { data, isLoading, error, isValidating, mutate } = useSWR(
+        url,
+        fetcher,
+        options
+    );
+    console.log("data : ", data);
+    console.log("error : ", error);
+
+    const memoizedValue = useMemo(
+        () => ({
+            order: data?.data || [],
+            orderLoading: isLoading,
+            orderError: error,
+            orderValidating: isValidating,
+            orderEmpty: !isLoading && !data?.data?.length,
+            mutate,
+        }),
+        [data, error, isLoading, isValidating]
+    );
+
+    return memoizedValue;
+}
+
+
 // ----------------------------------------------------------------------
 
 

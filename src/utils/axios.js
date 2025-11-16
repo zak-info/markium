@@ -92,6 +92,7 @@ export const endpoints = {
     assets:(id)=> `/products/${id}/assets`,
     deploy:(id)=> `/products/${id}/deploy`,
     orders:(id)=> `/products/${id}/orders`,
+    order:(id,order_id)=> `/products/${id}/orders/${order_id}`,
     allOrders:`/orders`,
     updateOrdersStatus:(product_id,order_id)=> `/products/${product_id}/orders/${order_id}/status`,
     search: '/product/search',
@@ -150,7 +151,8 @@ export const endpoints = {
     visibility: '/system-settings/visibility',
     mainspecs: '/maintenance/specifications',
     new: "/contract/claims",
-    logs: "/contract/claims/logs"
+    logs: "/contract/claims/logs",
+    wilayas : "/wilayas",
   },
   users: {
     root: '/auth/registerCompanyEmployeer',
@@ -180,5 +182,11 @@ export const endpoints = {
     logo: '/store/logo',
     root: '/store',
     slug: (slug)=>`/stores/${slug}`,
+  },
+  delivery: {
+    testYalidine: '/delivery/test-yalidine',
+    testZRExpress: '/delivery/test-zrexpress',
+    testMaystro: '/delivery/test-maystro',
+    testEcotrack: '/delivery/test-ecotrack',
   },
 };

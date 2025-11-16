@@ -147,8 +147,8 @@ export default function StoreLanguageForm() {
                       <Card
                         key={language.code}
                         sx={{
-                          p: 2.5,
-                          cursor: 'pointer',
+                          p: 2.5 ,
+                          cursor: 'pointer' ,
                           border: (theme) =>
                             selectedLanguage === language.code
                               ? `2px solid ${theme.palette.primary.main}`
@@ -177,7 +177,7 @@ export default function StoreLanguageForm() {
                             />
                           }
                           label={
-                            <Stack direction="row" spacing={2} alignItems="center" sx={{ width: '100%', ml: 1 }}>
+                            <Stack direction="row" spacing={2} alignItems="center" sx={{  ml: 1 }}>
                               <Avatar
                                 sx={{
                                   width: 56,

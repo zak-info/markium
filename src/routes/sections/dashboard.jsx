@@ -74,6 +74,7 @@ const DeliveryCompaniesView = lazy(() => import('src/pages/dashboard/settings/de
 const ContactsSocialView = lazy(() => import('src/pages/dashboard/settings/contacts-social-view'));
 const ColorPaletteView = lazy(() => import('src/pages/dashboard/settings/color-palette-view'));
 const StoreLanguageView = lazy(() => import('src/pages/dashboard/settings/store-language-view'));
+const StoreLocationView = lazy(() => import('src/pages/dashboard/settings/store-location-view'));
 const ContactSupportView = lazy(() => import('src/pages/dashboard/contact-support-view'));
 
 
@@ -225,8 +226,15 @@ export const dashboardRoutes = [
           { path: ':id', element: <ProductDetailsPage /> },
           { path: 'new', element: <ProductCreatePage /> },
           { path: ':id/orders', element: <ProductOrdersListPage /> },
+          { path: ':product_id/orders/:order_id', element: <ProductOrdersListPage /> },
           { path: ':id/edit', element: <ProductEditPage /> },
           { path: ':id/upload-assets', element: <ProductUploadAssetsPage /> },
+        ],
+      },
+      {
+        path: 'products',
+        children: [
+          { path: ':product_id/orders/:order_id', element: <OrderDetailsPage /> },
         ],
       },
       {
@@ -302,11 +310,11 @@ export const dashboardRoutes = [
       },
 
       {
-        path: 'order',
+        path: 'orders',
         children: [
           { element: <OrderListPage />, index: true },
           { path: 'list', element: <OrderListPage /> },
-          { path: ':id', element: <OrderDetailsPage /> },
+          // { path: 'products/:product_id/orders/:order_id', element: <OrderDetailsPage /> },
         ],
       },
       {
@@ -324,6 +332,7 @@ export const dashboardRoutes = [
           { path: 'contacts-social', element: <ContactsSocialView /> },
           { path: 'color-palette', element: <ColorPaletteView /> },
           { path: 'store-language', element: <StoreLanguageView /> },
+          { path: 'store-location', element: <StoreLocationView /> },
           { path: "pm", element: <SystemItemListPage collection={{metadata:"Maintenance Specification",type:"maintenance_specification"}} />, index: true },
           { path: 'pm/new', element: <SystemItemCreatePage collection={{metadata:"Maintenance Specification",type:"maintenance_specification"}} /> },
           { path: 'pm/:id/edit', element: <SystemItemEditPage collection={{metadata:"Maintenance Specification",type:"maintenance_specification"}} /> },

@@ -27,6 +27,7 @@ import {
   _productNames,
   _descriptions,
   _phoneNumbers,
+  _adsNames,
 } from './assets';
 
 // ----------------------------------------------------------------------
@@ -42,6 +43,7 @@ export const _mock = {
   jobTitle: (index) => _jobTitles[index],
   tourName: (index) => _tourNames[index],
   productName: (index) => _productNames[index],
+  adsName: (index) => _adsNames[index],
   sentence: (index) => _sentences[index],
   description: (index) => _descriptions[index],
   // Contact
@@ -69,7 +71,7 @@ export const _mock = {
     avatar: (index) => `${ASSETS_API}/assets/images/avatar/avatar_${index + 1}.jpg`,
     travel: (index) => `${ASSETS_API}/assets/images/travel/travel_${index + 1}.jpg`,
     company: (index) => `${ASSETS_API}/assets/images/company/company_${index + 1}.png`,
-    product: (index) => `${ASSETS_API}/assets/images/m_product/product_${index + 1}.jpg`,
+    product: (index) => `/assets/slider/${index + 1}.png`,
     portrait: (index) => `${ASSETS_API}/assets/images/portrait/portrait_${index + 1}.jpg`,
   },
 };

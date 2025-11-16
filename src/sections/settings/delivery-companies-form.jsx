@@ -15,6 +15,7 @@ import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
 
 import { useTranslate } from 'src/locales';
 import Iconify from 'src/components/iconify';
@@ -27,6 +28,10 @@ import FormProvider, {
 import showError from 'src/utils/show_error';
 import { updateStoreConfig, useGetMyStore } from 'src/api/store';
 import { AuthContext } from 'src/auth/context/jwt';
+import ContentDialog from 'src/components/custom-dialog/content-dialog';
+import { testDeliveryCredentials } from 'src/api/delivery';
+import CircularProgress from '@mui/material/CircularProgress';
+import { alpha } from '@mui/material/styles';
 
 // ----------------------------------------------------------------------
 
@@ -38,6 +43,13 @@ export default function DeliveryCompaniesForm() {
   const { t } = useTranslate();
 
   const [loading, setLoading] = useState(false);
+  const [testModal, setTestModal] = useState({
+    open: false,
+    companyId: null,
+    companyName: '',
+  });
+  const [testLoading, setTestLoading] = useState(false);
+  const [testResult, setTestResult] = useState(null);
 
   // Define delivery companies with their required fields
   const deliveryCompanies = [
@@ -161,6 +173,57 @@ export default function DeliveryCompaniesForm() {
     }
   }, [store, reset, defaultValues]);
 
+  const handleOpenTestModal = (company) => {
+    setTestModal({
+      open: true,
+      companyId: company.id,
+      companyName: company.name,
+    });
+    setTestResult(null);
+  };
+
+  const handleCloseTestModal = () => {
+    setTestModal({
+      open: false,
+      companyId: null,
+      companyName: '',
+    });
+    setTestLoading(false);
+    setTestResult(null);
+  };
+
+  const handleTestCredentials = async () => {
+    try {
+      setTestLoading(true);
+      setTestResult(null);
+
+      const companyId = testModal.companyId;
+      const apiId = values[`${companyId}_api_id`];
+      const apiToken = values[`${companyId}_api_token`];
+
+      // Call the test API
+      const result = await testDeliveryCredentials(companyId, apiId, apiToken);
+
+      setTestResult(result);
+      setTestLoading(false);
+
+      // Show snackbar notification
+      if (result.success) {
+        enqueueSnackbar(t('credentials_test_passed'), { variant: 'success' });
+      } else {
+        enqueueSnackbar(t('credentials_test_failed'), { variant: 'error' });
+      }
+    } catch (error) {
+      setTestLoading(false);
+      setTestResult({
+        success: false,
+        message: 'Test failed',
+        error: error.message || 'Unknown error occurred',
+      });
+      showError(error);
+    }
+  };
+
   const onSubmit = handleSubmit(async (data) => {
     try {
       setLoading(true);
@@ -275,6 +338,28 @@ export default function DeliveryCompaniesForm() {
                         }}
                       />
                     ))}
+
+                    {/* Test Credentials Button */}
+                    {values[`${company.id}_enabled`] &&
+                     values[`${company.id}_api_id`] &&
+                     values[`${company.id}_api_token`] && (
+                      <Button
+                        variant="outlined"
+                        size="large"
+                        onClick={() => handleOpenTestModal(company)}
+                        startIcon={<Iconify icon="solar:test-tube-bold" />}
+                        sx={{
+                          borderStyle: 'dashed',
+                          borderWidth: 2,
+                          '&:hover': {
+                            borderStyle: 'dashed',
+                            borderWidth: 2,
+                          },
+                        }}
+                      >
+                        {t('test_credentials')}
+                      </Button>
+                    )}
                   </Stack>
                 </AccordionDetails>
               </Accordion>
@@ -313,6 +398,141 @@ export default function DeliveryCompaniesForm() {
           </Stack>
         </Grid>
       </Grid>
+
+      {/* Test Credentials Dialog */}
+      <ContentDialog
+        open={testModal.open}
+        onClose={testLoading ? undefined : handleCloseTestModal}
+        title={t('test_credentials')}
+        description={testModal.companyName}
+        maxWidth="sm"
+        content={
+          <Stack spacing={3}>
+            {/* Status Box */}
+            <Box
+              sx={{
+                p: 3,
+                borderRadius: 2,
+                bgcolor: (theme) => {
+                  if (!testResult && !testLoading) return alpha(theme.palette.primary.main, 0.08);
+                  if (testLoading) return alpha(theme.palette.warning.main, 0.08);
+                  if (testResult?.success) return alpha(theme.palette.success.main, 0.08);
+                  return alpha(theme.palette.error.main, 0.08);
+                },
+                border: (theme) => {
+                  if (!testResult && !testLoading) return `1px solid ${alpha(theme.palette.primary.main, 0.24)}`;
+                  if (testLoading) return `1px solid ${alpha(theme.palette.warning.main, 0.24)}`;
+                  if (testResult?.success) return `1px solid ${alpha(theme.palette.success.main, 0.24)}`;
+                  return `1px solid ${alpha(theme.palette.error.main, 0.24)}`;
+                },
+                textAlign: 'center',
+              }}
+            >
+              <Stack spacing={2} alignItems="center">
+                {/* Icon */}
+                {testLoading ? (
+                  <CircularProgress size={48} sx={{ color: 'warning.main' }} />
+                ) : (
+                  <Box
+                    sx={{
+                      width: 56,
+                      height: 56,
+                      borderRadius: '50%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      bgcolor: (theme) => {
+                        if (!testResult) return alpha(theme.palette.primary.main, 0.12);
+                        if (testResult.success) return alpha(theme.palette.success.main, 0.12);
+                        return alpha(theme.palette.error.main, 0.12);
+                      },
+                    }}
+                  >
+                    <Iconify
+                      icon={
+                        !testResult
+                          ? 'solar:test-tube-bold'
+                          : testResult.success
+                          ? 'solar:check-circle-bold'
+                          : 'solar:close-circle-bold'
+                      }
+                      width={32}
+                      sx={{
+                        color: !testResult
+                          ? 'primary.main'
+                          : testResult.success
+                          ? 'success.main'
+                          : 'error.main',
+                      }}
+                    />
+                  </Box>
+                )}
+
+                {/* Status Text */}
+                <Box>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      color: testLoading
+                        ? 'warning.main'
+                        : !testResult
+                        ? 'primary.main'
+                        : testResult.success
+                        ? 'success.main'
+                        : 'error.main',
+                      fontWeight: 600,
+                    }}
+                  >
+                    {testLoading
+                      ? t('testing_credentials')
+                      : !testResult
+                      ? t('ready_to_test')
+                      : testResult.success
+                      ? t('credentials_valid')
+                      : t('credentials_invalid')}
+                  </Typography>
+                  {testResult?.message && (
+                    <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                      {testResult.message}
+                    </Typography>
+                  )}
+                </Box>
+              </Stack>
+            </Box>
+
+            {/* Error Details */}
+            {testResult?.error && (
+              <Alert severity="error" sx={{ textAlign: 'left' }}>
+                <Typography variant="body2">{testResult.error}</Typography>
+              </Alert>
+            )}
+
+            {/* Actions */}
+            <Stack direction="row" spacing={2} justifyContent="flex-end">
+              {!testLoading && (
+                <Button
+                  variant="outlined"
+                  onClick={handleCloseTestModal}
+                  size="large"
+                >
+                  {testResult?.success ? t('close') : t('cancel')}
+                </Button>
+              )}
+              {!testResult?.success && (
+                <LoadingButton
+                  variant="contained"
+                  onClick={handleTestCredentials}
+                  loading={testLoading}
+                  size="large"
+                  startIcon={<Iconify icon="solar:test-tube-bold" />}
+                >
+                  {t('test_now')}
+                </LoadingButton>
+              )}
+            </Stack>
+          </Stack>
+        }
+      />
     </FormProvider>
   );
 }

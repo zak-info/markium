@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { useState } from 'react';
 
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
@@ -9,9 +10,12 @@ import Typography from '@mui/material/Typography';
 import { RouterLink } from 'src/routes/components';
 
 import { fDateTime } from 'src/utils/format-time';
+import { useTranslate } from 'src/locales';
+import { useBoolean } from 'src/hooks/use-boolean';
 
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
+import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 
 // ----------------------------------------------------------------------
@@ -21,10 +25,37 @@ export default function OrderDetailsToolbar({
   backLink,
   createdAt,
   orderNumber,
-  statusOptions,
   onChangeStatus,
+  loading = false,
 }) {
+  const { t } = useTranslate();
   const popover = usePopover();
+  const confirm = useBoolean();
+  const [selectedStatus, setSelectedStatus] = useState(null);
+
+  // Define all possible statuses with their colors and icons
+  const statuses = [
+    { key: 'pending', label: t('pending'), color: 'warning', icon: 'solar:clock-circle-bold' },
+    { key: 'confirmed', label: t('confirmed'), color: 'secondary', icon: 'solar:check-circle-bold' },
+    { key: 'shipped', label: t('shipped'), color: 'info', icon: 'solar:box-bold' },
+    { key: 'delivered', label: t('delivered'), color: 'success', icon: 'solar:verified-check-bold' },
+    { key: 'cancelled', label: t('cancelled'), color: 'error', icon: 'solar:close-circle-bold' },
+  ];
+
+  const currentStatusInfo = statuses.find(s => s.key === status) || statuses[0];
+
+  const handleStatusClick = (statusInfo) => {
+    setSelectedStatus(statusInfo);
+    popover.onClose();
+    confirm.onTrue();
+  };
+
+  const handleConfirmStatusChange = async () => {
+    if (!selectedStatus) return;
+    await onChangeStatus(selectedStatus.key);
+    confirm.onFalse();
+    setSelectedStatus(null);
+  };
 
   return (
     <>
@@ -42,17 +73,13 @@ export default function OrderDetailsToolbar({
 
           <Stack spacing={0.5}>
             <Stack spacing={1} direction="row" alignItems="center">
-              <Typography variant="h4"> Order {orderNumber} </Typography>
+              <Typography variant="h4">{t('order')} #{orderNumber}</Typography>
               <Label
                 variant="soft"
-                color={
-                  (status === 'completed' && 'success') ||
-                  (status === 'pending' && 'warning') ||
-                  (status === 'cancelled' && 'error') ||
-                  'default'
-                }
+                color={currentStatusInfo.color}
+                startIcon={<Iconify icon={currentStatusInfo.icon} />}
               >
-                {status}
+                {currentStatusInfo.label}
               </Label>
             </Stack>
 
@@ -74,21 +101,10 @@ export default function OrderDetailsToolbar({
             variant="outlined"
             endIcon={<Iconify icon="eva:arrow-ios-downward-fill" />}
             onClick={popover.onOpen}
+            disabled={loading}
             sx={{ textTransform: 'capitalize' }}
           >
-            {status}
-          </Button>
-
-          <Button
-            color="inherit"
-            variant="outlined"
-            startIcon={<Iconify icon="solar:printer-minimalistic-bold" />}
-          >
-            Print
-          </Button>
-
-          <Button color="inherit" variant="contained" startIcon={<Iconify icon="solar:pen-bold" />}>
-            Edit
+            {t('change_status')}
           </Button>
         </Stack>
       </Stack>
@@ -97,30 +113,75 @@ export default function OrderDetailsToolbar({
         open={popover.open}
         onClose={popover.onClose}
         arrow="top-right"
-        sx={{ width: 140 }}
+        sx={{ width: 220 }}
       >
-        {statusOptions.map((option) => (
-          <MenuItem
-            key={option.value}
-            selected={option.value === status}
-            onClick={() => {
-              popover.onClose();
-              onChangeStatus(option.value);
-            }}
-          >
-            {option.label}
-          </MenuItem>
-        ))}
+        {statuses
+          .filter(statusInfo => statusInfo.key !== status) // Don't show current status
+          .map((statusInfo) => (
+            <MenuItem
+              key={statusInfo.key}
+              onClick={() => handleStatusClick(statusInfo)}
+              disabled={loading}
+              sx={{
+                color: `${statusInfo.color}.main`,
+                '&:hover': {
+                  backgroundColor: `${statusInfo.color}.lighter`,
+                }
+              }}
+            >
+              <Iconify icon={statusInfo.icon} sx={{ mr: 1 }} />
+              {t('change_to')} {statusInfo.label}
+            </MenuItem>
+          ))}
       </CustomPopover>
+
+      <ConfirmDialog
+        open={confirm.value}
+        onClose={confirm.onFalse}
+        title={t('change_order_status')}
+        content={
+          <Stack spacing={2}>
+            <Typography variant="body2">
+              {t('confirm_change_order_status_message', {
+                status: selectedStatus?.label?.toLowerCase()
+              })}
+            </Typography>
+            {selectedStatus && (
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <Typography variant="body2" color="text.secondary">
+                  {t('new_status')}:
+                </Typography>
+                <Label
+                  variant="soft"
+                  color={selectedStatus.color}
+                  startIcon={<Iconify icon={selectedStatus.icon} />}
+                >
+                  {selectedStatus.label}
+                </Label>
+              </Stack>
+            )}
+          </Stack>
+        }
+        action={
+          <Button
+            variant="contained"
+            color={selectedStatus?.color || 'primary'}
+            onClick={handleConfirmStatusChange}
+            disabled={loading}
+          >
+            {t('confirm')}
+          </Button>
+        }
+      />
     </>
   );
 }
 
 OrderDetailsToolbar.propTypes = {
   backLink: PropTypes.string,
-  createdAt: PropTypes.instanceOf(Date),
+  createdAt: PropTypes.string,
   onChangeStatus: PropTypes.func,
-  orderNumber: PropTypes.string,
+  orderNumber: PropTypes.number,
   status: PropTypes.string,
-  statusOptions: PropTypes.array,
+  loading: PropTypes.bool,
 };

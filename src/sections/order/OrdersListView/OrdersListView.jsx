@@ -268,6 +268,15 @@ const ElementActions = ({ item, setTableData }) => {
                 arrow="right-top"
                 sx={{ width: 220 }}
             >
+                <MenuItem
+                    component={RouterLink}
+                    href={paths.dashboard.order.details(item?.product_id,item?.id)}
+                    onClick={popover.onClose}
+                >
+                    <Iconify icon="solar:eye-bold" sx={{ mr: 1 }} />
+                    {t('overview')}
+                </MenuItem>
+
                 {statuses
                     .filter(status => status.key !== item?.status) // Don't show current status
                     .map((status) => (
